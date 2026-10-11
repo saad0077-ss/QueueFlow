@@ -1,0 +1,46 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // 1. Clinics, Services & Doctors (Publicly viewable by patients)
+    match /clinics/{clinicId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+    match /services/{serviceId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+    match /doctors/{doctorId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+
+    // 2. User Profiles
+    match /users/{userId} {
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // 3. Appointments (Patients can create & view their own bookings)
+    match /appointments/{appointmentId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated();
+    }
+
+    // 4. Queues & Tickets (Real-time live queue tracking)
+    match /queues/{queueId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+    match /tickets/{ticketId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+  }
+}
