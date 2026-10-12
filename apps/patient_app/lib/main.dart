@@ -2,34 +2,39 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'firebase_options.dart';
+import 'core/theme/app_theme.dart';
+import 'core/widgets/app_snack_bar.dart';
+import 'features/splash/presentation/pages/splash_screen.dart';
+import 'features/auth/data/repositories/auth_repository_impl.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize Firebase safely (guards against Hot Restart & native auto-init)
+  try {
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+    } 
+  } catch (e) { 
+    debugPrint('Firebase already initialized: $e');
+  }
  
-  // Initialize Firebase for Patient Mobile/Web App
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-
   runApp(const PatientApp());
 }
-
-class PatientApp extends StatelessWidget {
-  const PatientApp({super.key});
-
+      
+class PatientApp extends StatelessWidget {    
+  final Widget? home;
+  const PatientApp({super.key, this.home});
+ 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {  
     return MaterialApp(
-      title: 'QueueFlow — Patient App',
+      title: 'QueueFlow',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF02569B),
-          brightness: Brightness.light,
-        ),
-        useMaterial3: true,
-      ),
-      home: const PatientHomeScreen(),
+      theme: AppTheme.darkTheme,
+      home: home ?? const SplashScreen(),  
     );
   }
 }
@@ -77,7 +82,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
         ),
         actions: [
           Container(
-            margin: const EdgeInsets.only(right: 12),
+            margin: const EdgeInsets.only(right: 8),
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
               color: Colors.green.shade50,
@@ -94,6 +99,24 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                 ),
               ],
             ),
+          ),
+          IconButton(
+            tooltip: 'Sign Out',
+            icon: const Icon(Icons.logout_rounded, color: Colors.grey),
+            onPressed: () async {
+              await AuthRepositoryImpl().signOut();
+              if (context.mounted) {
+                AppSnackBar.showInfo(
+                  context,
+                  title: 'Signed Out',
+                  message: 'You have been signed out successfully.',
+                );
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (_) => const SplashScreen()),
+                  (route) => false,
+                );
+              }
+            },
           ),
         ],
       ),
@@ -128,20 +151,20 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
       ),
     );
   }
-
-  // 1. DISCOVER TAB
+ 
+  // 1. DISCOVER TAB 
   Widget _buildDiscoverTab() {
     return ListView(
       padding: const EdgeInsets.all(16),
-      children: [
+      children: [ 
         // Search Banner
         Container(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20), 
           decoration: BoxDecoration(
             gradient: const LinearGradient(
               colors: [Color(0xFF02569B), Color(0xFF0284C7)],
               begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+              end: Alignment.bottomRight, 
             ),
             borderRadius: BorderRadius.circular(16),
           ),
@@ -437,7 +460,14 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                 side: BorderSide(color: Colors.red.shade200),
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
-              onPressed: () => setState(() => _myTokenNumber = null),
+              onPressed: () {
+                setState(() => _myTokenNumber = null);
+                AppSnackBar.showWarning(
+                  context,
+                  title: 'Left Queue',
+                  message: 'You have left the queue and cancelled your token.',
+                );
+              },
               icon: const Icon(Icons.cancel_outlined),
               label: const Text('Leave Queue'),
             ),
@@ -566,42 +596,69 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
             ElevatedButton(
               style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF02569B), foregroundColor: Colors.white),
               onPressed: () async {
-                final firestore = FirebaseFirestore.instance;
-                final queueRef = firestore.collection('queues').doc(_clinicId);
+                final patientName = nameController.text.trim();
+                if (patientName.isEmpty) {
+                  AppSnackBar.showWarning(
+                    context,
+                    title: 'Name Required',
+                    message: 'Please enter a patient name to reserve a queue token.',
+                  );
+                  return;
+                }
 
-                // Atomic Transaction
-                final token = await firestore.runTransaction((transaction) async {
-                  final snap = await transaction.get(queueRef);
-                  int total = snap.exists ? (snap.data()?['totalIssued'] ?? 0) : 0;
-                  int waiting = snap.exists ? (snap.data()?['waitingCount'] ?? 0) : 0;
+                try {
+                  final firestore = FirebaseFirestore.instance;
+                  final queueRef = firestore.collection('queues').doc(_clinicId);
 
-                  final nextNum = total + 1;
-                  final tokenStr = 'A-${nextNum.toString().padLeft(3, '0')}';
+                  // Atomic Transaction
+                  final token = await firestore.runTransaction((transaction) async {
+                    final snap = await transaction.get(queueRef);
+                    int total = snap.exists ? (snap.data()?['totalIssued'] ?? 0) : 0;
+                    int waiting = snap.exists ? (snap.data()?['waitingCount'] ?? 0) : 0;
 
-                  transaction.set(queueRef, {
-                    'totalIssued': nextNum,
-                    'waitingCount': waiting + 1,
-                    'status': 'open',
-                  }, SetOptions(merge: true));
+                    final nextNum = total + 1;
+                    final tokenStr = 'A-${nextNum.toString().padLeft(3, '0')}';
 
-                  return tokenStr;
-                });
+                    transaction.set(queueRef, {
+                      'totalIssued': nextNum,
+                      'waitingCount': waiting + 1,
+                      'status': 'open',
+                    }, SetOptions(merge: true));
 
-                // Write Ticket
-                await firestore.collection('tickets').add({
-                  'token': token,
-                  'clinicId': _clinicId,
-                  'patientName': nameController.text.trim(),
-                  'status': 'waiting',
-                  'joinedAt': FieldValue.serverTimestamp(),
-                });
+                    return tokenStr;
+                  });
 
-                setState(() {
-                  _myTokenNumber = token;
-                  _currentIndex = 1; // Switch to Queue tab
-                });
+                  // Write Ticket
+                  await firestore.collection('tickets').add({
+                    'token': token,
+                    'clinicId': _clinicId,
+                    'patientName': patientName,
+                    'status': 'waiting',
+                    'joinedAt': FieldValue.serverTimestamp(),
+                  });
 
-                if (ctx.mounted) Navigator.pop(ctx);
+                  setState(() {
+                    _myTokenNumber = token;
+                    _currentIndex = 1; // Switch to Queue tab
+                  });
+
+                  if (ctx.mounted) Navigator.pop(ctx);
+                  if (mounted) {
+                    AppSnackBar.showSuccess(
+                      context,
+                      title: 'Queue Joined',
+                      message: 'Token $token issued successfully! Tracking position now.',
+                    );
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    AppSnackBar.showError(
+                      context,
+                      title: 'Failed to Join Queue',
+                      message: e.toString(),
+                    );
+                  }
+                }
               },
               child: const Text('Get My Token'),
             ),
@@ -636,23 +693,40 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
             ElevatedButton(
               style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF02569B), foregroundColor: Colors.white),
               onPressed: () async {
-                await FirebaseFirestore.instance.collection('appointments').add({
-                  'bookingRef': ref,
-                  'clinicName': clinicName,
-                  'clinicId': _clinicId,
-                  'date': 'Tomorrow',
-                  'timeSlot': '10:30 AM',
-                  'status': 'confirmed',
-                  'createdAt': FieldValue.serverTimestamp(),
-                });
-                setState(() => _currentIndex = 2); // Switch to Bookings
-                if (ctx.mounted) Navigator.pop(ctx);
+                try {
+                  await FirebaseFirestore.instance.collection('appointments').add({
+                    'bookingRef': ref,
+                    'clinicName': clinicName,
+                    'clinicId': _clinicId,
+                    'date': 'Tomorrow',
+                    'timeSlot': '10:30 AM',
+                    'status': 'confirmed',
+                    'createdAt': FieldValue.serverTimestamp(),
+                  });
+                  setState(() => _currentIndex = 2); // Switch to Bookings
+                  if (ctx.mounted) Navigator.pop(ctx);
+                  if (mounted) {
+                    AppSnackBar.showSuccess(
+                      context,
+                      title: 'Appointment Booked',
+                      message: 'Booking $ref confirmed at $clinicName.',
+                    );
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    AppSnackBar.showError(
+                      context,
+                      title: 'Booking Failed',
+                      message: e.toString(),
+                    );
+                  }
+                }
               },
               child: const Text('Confirm Appointment'),
             ),
           ],
         );
       },
-    );
+    ); 
   }
 }
