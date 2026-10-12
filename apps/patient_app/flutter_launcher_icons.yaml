@@ -1,0 +1,14 @@
+# Optional: regenerate with `dart run flutter_launcher_icons`
+flutter_launcher_icons:
+  android: "ic_launcher"
+  ios: true
+  remove_alpha_ios: true
+  image_path: "assets/icon/app-icon-1024.png"            # copy store/app-store-1024.png here
+  adaptive_icon_background: "#2563EB"
+  adaptive_icon_foreground: "assets/icon/adaptive-foreground-1024.png"  # copy source/adaptive-foreground-1024.png
+  adaptive_icon_monochrome: "assets/icon/adaptive-foreground-1024.png"
+  web:
+    generate: true
+    image_path: "assets/icon/app-icon-1024.png"
+    background_color: "#2563EB"
+    theme_color: "#2563EB"

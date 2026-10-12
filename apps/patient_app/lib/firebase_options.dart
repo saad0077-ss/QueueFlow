@@ -34,8 +34,8 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAP5Aw2DNU7h30wiSPyfURug8zmVFp2DS8',
-    appId: '1:1070765440897:android:a1b2c3d4e5f6',
+    apiKey: 'AIzaSyCNz35ogQhGlC_Ahx3YYkTBR8cg0VRVxck',
+    appId: '1:1070765440897:android:5c23840be3d07173347280',
     messagingSenderId: '1070765440897',
     projectId: 'queueflow-db2e1',
     storageBucket: 'queueflow-db2e1.firebasestorage.app',
