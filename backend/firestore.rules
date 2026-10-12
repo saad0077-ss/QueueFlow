@@ -42,5 +42,10 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isAuthenticated();
     }
+
+    // 5. Rate limit tracking for emails (Cloud Functions access only)
+    match /email_send_log/{uid} {
+      allow read, write: if false; 
+    }
   }
 }

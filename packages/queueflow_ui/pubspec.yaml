@@ -1,0 +1,11 @@
+name: queueflow_ui
+description: Shared Design System and Theme for QueueFlow apps.
+version: 0.0.1
+publish_to: 'none'
+
+environment:
+  sdk: ^3.13.3
+
+dependencies:
+  flutter:
+    sdk: flutter
