@@ -28,16 +28,31 @@ class ClinicAuthRepositoryImpl implements ClinicAuthRepository {
       if (credential.user == null) {
         throw Exception('Sign-in failed.');
       }
+      // If clinic was in INVITED status, successful sign-in activates it
+      await _markClinicAsActive(cleanEmail);
       return ClinicStaffModel.fromFirebaseUser(credential.user!);
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        throw Exception('Staff account not found.');
-      } else if (e.code == 'wrong-password' || e.code == 'invalid-credential') {
-        throw Exception('Invalid credentials.');
+      if (e.code == 'user-not-found' || e.code == 'invalid-credential' || e.code == 'wrong-password') {
+        try {
+          final clinicSnap = await _firestore
+              .collection('clinics')
+              .where('adminEmail', isEqualTo: cleanEmail)
+              .where('status', isEqualTo: 'INVITED')
+              .get();
+          if (clinicSnap.docs.isNotEmpty) {
+            throw Exception(
+                'Your clinic account is not activated yet. Please click the activation link sent to $cleanEmail to set your password.');
+          }
+        } catch (inner) {
+          if (inner.toString().contains('clinic account is not activated yet')) {
+            rethrow;
+          }
+        }
+        throw Exception('Invalid email or password. Please verify credentials.');
       } else if (e.code == 'too-many-requests') {
-        throw Exception('Too many attempts.');
+        throw Exception('Too many attempts. Please try again in a few moments.');
       }
-      throw Exception('Sign-in failed.');
+      throw Exception('Sign-in failed. Please check credentials.');
     }
   }
 
@@ -66,6 +81,10 @@ class ClinicAuthRepositoryImpl implements ClinicAuthRepository {
           'status': 'active',
           'activatedAt': FieldValue.serverTimestamp(),
         }, SetOptions(merge: true));
+
+        // Update clinic status to 'ACTIVE' in clinics collection
+        await _markClinicAsActive(cleanEmail);
+
         return ClinicStaffModel.fromFirebaseUser(
           user,
           fallbackName: doctorName,
@@ -76,19 +95,72 @@ class ClinicAuthRepositoryImpl implements ClinicAuthRepository {
       throw Exception('Activation failed.');
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
-        final signInCred = await _firebaseAuth.signInWithEmailAndPassword(
-          email: cleanEmail,
-          password: password,
-        );
-        return ClinicStaffModel.fromFirebaseUser(
-          signInCred.user!,
-          fallbackName: doctorName,
-          role: role,
-          clinicName: clinicName,
-        );
+        try {
+          final signInCred = await _firebaseAuth.signInWithEmailAndPassword(
+            email: cleanEmail,
+            password: password,
+          );
+          if (signInCred.user != null) {
+            await signInCred.user!.updateDisplayName(doctorName);
+            await _firestore.collection('users').doc(signInCred.user!.uid).set({
+              'email': cleanEmail,
+              'name': doctorName,
+              'role': 'clinic_admin',
+              'clinicName': clinicName,
+              'status': 'active',
+              'activatedAt': FieldValue.serverTimestamp(),
+            }, SetOptions(merge: true));
+
+            // Update clinic status to 'ACTIVE' in clinics collection
+            await _markClinicAsActive(cleanEmail);
+
+            return ClinicStaffModel.fromFirebaseUser(
+              signInCred.user!,
+              fallbackName: doctorName,
+              role: role,
+              clinicName: clinicName,
+            );
+          }
+        } on FirebaseAuthException catch (authErr) {
+          if (authErr.code == 'invalid-credential' || authErr.code == 'wrong-password') {
+            throw Exception(
+              'An account with this email is already registered with a different password. Please sign in on the login page or use "Forgot password" to reset it.',
+            );
+          }
+          throw Exception(
+            authErr.message ?? 'Credentials could not be verified.',
+          );
+        }
+      } else if (e.code == 'weak-password') {
+        throw Exception('Password is too weak. Please use at least 8 characters with numbers and letters.');
       }
-      throw Exception('Account activation failed.');
+      throw Exception(e.message ?? 'Account activation failed.');
     }
+  }
+
+  Future<void> _markClinicAsActive(String cleanEmail) async {
+    try {
+      final clinicSnap = await _firestore
+          .collection('clinics')
+          .where('adminEmail', isEqualTo: cleanEmail)
+          .get();
+      for (final doc in clinicSnap.docs) {
+        await doc.reference.update({
+          'status': 'ACTIVE',
+          'activatedAt': FieldValue.serverTimestamp(),
+        });
+      }
+      final inviteSnap = await _firestore
+          .collection('invites')
+          .where('adminEmail', isEqualTo: cleanEmail)
+          .get();
+      for (final doc in inviteSnap.docs) {
+        await doc.reference.update({
+          'status': 'activated',
+          'activatedAt': FieldValue.serverTimestamp(),
+        });
+      }
+    } catch (_) {}
   }
 
   @override

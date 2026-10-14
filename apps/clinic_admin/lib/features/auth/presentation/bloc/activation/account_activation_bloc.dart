@@ -7,8 +7,26 @@ class AccountActivationBloc
     extends Bloc<AccountActivationEvent, AccountActivationState> {
   final ActivateClinicAccountUseCase activateUseCase;
 
-  AccountActivationBloc({required this.activateUseCase})
-      : super(const AccountActivationState()) {
+  AccountActivationBloc({
+    required this.activateUseCase,
+    String? initialEmail,
+    String? initialDoctorName,
+    String? initialClinicName,
+    String? initialRole,
+  }) : super(AccountActivationState(
+          inviteEmail: (initialEmail != null && initialEmail.isNotEmpty)
+              ? initialEmail
+              : 'admin@clinic.com',
+          doctorName: (initialDoctorName != null && initialDoctorName.isNotEmpty)
+              ? initialDoctorName
+              : 'Clinic Admin',
+          clinicName: (initialClinicName != null && initialClinicName.isNotEmpty)
+              ? initialClinicName
+              : 'Healthcare Clinic',
+          role: (initialRole != null && initialRole.isNotEmpty)
+              ? initialRole
+              : 'Clinic Admin',
+        )) {
     on<ActivationPasswordChanged>(_onPasswordChanged);
     on<ActivationConfirmPasswordChanged>(_onConfirmChanged);
     on<ActivationTogglePassword>(_onTogglePassword);
@@ -118,9 +136,13 @@ class AccountActivationBloc
       );
       emit(state.copyWith(isLoading: false, activatedStaff: staff));
     } catch (e) {
+      String msg = e.toString().replaceFirst('Exception: ', '');
+      if (msg.contains('malformed or has expired') || msg.contains('invalid-credential')) {
+        msg = 'An account with this email is already registered with a different password. Please log in or use "Forgot password" to reset it.';
+      }
       emit(state.copyWith(
         isLoading: false,
-        errorMessage: e.toString().replaceFirst('Exception: ', ''),
+        errorMessage: msg,
       ));
     }
   }

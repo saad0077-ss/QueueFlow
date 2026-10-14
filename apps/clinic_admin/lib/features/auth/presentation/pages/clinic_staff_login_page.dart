@@ -12,15 +12,14 @@ import '../bloc/sign_in/clinic_sign_in_event.dart';
 import '../bloc/sign_in/clinic_sign_in_state.dart';
 import '../widgets/clinic_hero_banner.dart';
 import '../widgets/clinic_input_field.dart';
-import 'clinic_account_activation_page.dart';
 
 class ClinicStaffLoginPage extends StatelessWidget {
   const ClinicStaffLoginPage({super.key});
-
+    
   @override
   Widget build(BuildContext context) {
-    final repo = ClinicAuthRepositoryImpl();
-    return BlocProvider(
+    final repo = ClinicAuthRepositoryImpl(); 
+    return BlocProvider(   
       create: (_) => ClinicSignInBloc(
         signInUseCase: ClinicSignInUseCase(repo),
         resetPasswordUseCase: ResetClinicPasswordUseCase(repo),
@@ -127,18 +126,6 @@ class _ClinicStaffLoginView extends StatelessWidget {
                   'Access is restricted to authorized clinic staff. Contact your clinic\nadministrator if you need an account.',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.inter(fontSize: 11.5, color: const Color(0xFF64748B), height: 1.5),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Center(
-                child: TextButton(
-                  onPressed: () => Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const ClinicAccountActivationPage()),
-                  ),
-                  child: Text(
-                    'Have an invite link? Activate clinic account',
-                    style: GoogleFonts.inter(fontSize: 12, color: const Color(0xFF38BDF8)),
-                  ),
                 ),
               ),
             ],

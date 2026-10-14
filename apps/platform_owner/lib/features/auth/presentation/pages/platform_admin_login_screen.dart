@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../../core/widgets/gradient_submit_button.dart';
-import '../../../../main.dart';
+import '../../../dashboard/presentation/pages/platform_clinics_page.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/usecases/sign_in_usecase.dart';
@@ -34,78 +34,48 @@ class _PlatformAdminLoginView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDesktop = MediaQuery.sizeOf(context).width >= 900;
-
     return Scaffold(
       backgroundColor: const Color(0xFF070B14),
       body: BlocConsumer<SignInBloc, SignInState>(
         listener: (context, state) {
           if (state.admin != null) {
-            AppSnackBar.showSuccess(
-              context,
-              message: 'Signed in.',
-            );
+            AppSnackBar.showSuccess(context, message: 'Signed in.');
             Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (_) => const PlatformOwnerDashboard()),
+              MaterialPageRoute(builder: (_) => const PlatformClinicsPage()),
             );
           }
           if (state.errorMessage != null) {
-            AppSnackBar.showError(
-              context,
-              message: state.errorMessage!,
-            );
+            AppSnackBar.showError(context, message: state.errorMessage!);
           }
         },
-        builder: (context, state) {
-          return Row(
-            children: [
-              if (isDesktop)
-                const Expanded(flex: 5, child: HeroAnalyticsBanner()),
-              Expanded(
-                flex: isDesktop ? 6 : 1,
-                child: _buildLoginForm(context, state, isDesktop),
-              ),
-            ],
-          );
-        },
+        builder: (context, state) => Row(
+          children: [
+            if (isDesktop) const Expanded(flex: 5, child: HeroAnalyticsBanner()),
+            Expanded(flex: isDesktop ? 6 : 1, child: _buildForm(context, state, isDesktop)),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildLoginForm(
-    BuildContext context,
-    SignInState state,
-    bool isDesktop,
-  ) {
+  Widget _buildForm(BuildContext context, SignInState state, bool isDesktop) {
     final bloc = context.read<SignInBloc>();
     return Center(
       child: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(
-          horizontal: isDesktop ? 64 : 24,
-          vertical: 36,
-        ),
+        padding: EdgeInsets.symmetric(horizontal: isDesktop ? 64 : 24, vertical: 36),
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 430),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
             children: [
               Text(
                 'Platform Owner Console',
-                style: GoogleFonts.inter(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  letterSpacing: -0.5,
-                ),
+                style: GoogleFonts.inter(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.white),
               ),
               const SizedBox(height: 6),
               Text(
                 'Manage tenant registry, SaaS plan tiers, financial intelligence, and audit logs.',
-                style: GoogleFonts.inter(
-                  fontSize: 14,
-                  color: const Color(0xFF94A3B8),
-                  height: 1.4,
-                ),
+                style: GoogleFonts.inter(fontSize: 14, color: const Color(0xFF94A3B8), height: 1.4),
               ),
               const SizedBox(height: 28),
               AdminInputField(
@@ -129,14 +99,11 @@ class _PlatformAdminLoginView extends StatelessWidget {
                 onFieldSubmitted: (_) => bloc.add(const SignInSubmitted()),
                 suffixIcon: IconButton(
                   icon: Icon(
-                    state.isPasswordObscured
-                        ? Icons.visibility_outlined
-                        : Icons.visibility_off_outlined,
+                    state.isPasswordObscured ? Icons.visibility_outlined : Icons.visibility_off_outlined,
                     color: const Color(0xFF64748B),
                     size: 20,
                   ),
-                  onPressed: () =>
-                      bloc.add(const SignInTogglePasswordVisibility()),
+                  onPressed: () => bloc.add(const SignInTogglePasswordVisibility()),
                 ),
               ),
               const SizedBox(height: 28),
@@ -145,16 +112,12 @@ class _PlatformAdminLoginView extends StatelessWidget {
                 isLoading: state.isLoading,
                 onPressed: () => bloc.add(const SignInSubmitted()),
               ),
-              const SizedBox(height: 28),
+              const SizedBox(height: 24),
               Center(
                 child: Text(
                   'Access is restricted to authorized platform owners.\nContact system security if you require administrative access.',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.inter(
-                    fontSize: 12,
-                    color: const Color(0xFF64748B),
-                    height: 1.5,
-                  ),
+                  style: GoogleFonts.inter(fontSize: 12, color: const Color(0xFF64748B), height: 1.5),
                 ),
               ),
             ],
@@ -163,4 +126,4 @@ class _PlatformAdminLoginView extends StatelessWidget {
       ),
     );
   }
-  }
+}
