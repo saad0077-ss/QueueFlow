@@ -31,57 +31,63 @@ class AppSnackBar {
     final colors = _colorsFor(type);
     final icon = _iconFor(type);
     final screenWidth = MediaQuery.sizeOf(context).width;
-    const double toastWidth = 230;
-    final double leftMargin =
-        (screenWidth - toastWidth - 24).clamp(16.0, double.infinity);
+    final isDesktop = screenWidth >= 768;
 
     messenger.showSnackBar(
       SnackBar(
-        content: InkWell(
-          onTap: () => messenger.hideCurrentSnackBar(),
-          borderRadius: BorderRadius.circular(12),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(colors: colors),
+        content: Align(
+          alignment: isDesktop ? Alignment.bottomRight : Alignment.bottomCenter,
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () => messenger.hideCurrentSnackBar(),
               borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: colors.first.withValues(alpha: 0.32),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
+              child: Container(
+                constraints: BoxConstraints(
+                  minWidth: 160,
+                  maxWidth: (screenWidth - 48).clamp(260.0, 560.0),
                 ),
-              ],
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 18,
-                  height: 18,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.24),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(icon, color: Colors.white, size: 11),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(colors: colors),
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: colors.first.withValues(alpha: 0.38),
+                      blurRadius: 16,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      message,
-                      maxLines: 1,
-                      style: const TextStyle(
-                        fontSize: 12.5,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 20,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.25),
+                        shape: BoxShape.circle,
+                      ),
+                      alignment: Alignment.center,
+                      child: Icon(icon, color: Colors.white, size: 13),
+                    ),
+                    const SizedBox(width: 10),
+                    Flexible(
+                      child: Text(
+                        message,
+                        style: const TextStyle(
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                          letterSpacing: 0.15,
+                          height: 1.25,
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),
@@ -89,8 +95,8 @@ class AppSnackBar {
         elevation: 0,
         behavior: SnackBarBehavior.floating,
         padding: EdgeInsets.zero,
-        margin: EdgeInsets.only(left: leftMargin, right: 24, bottom: 20),
-        duration: const Duration(milliseconds: 3000),
+        margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+        duration: const Duration(milliseconds: 3200),
       ),
     );
   }
