@@ -6,7 +6,6 @@ import '../../../../core/widgets/gradient_submit_button.dart';
 import '../bloc/sign_in/clinic_sign_in_bloc.dart';
 import '../bloc/sign_in/clinic_sign_in_event.dart';
 import '../bloc/sign_in/clinic_sign_in_state.dart';
-import '../pages/clinic_account_activation_page.dart';
 import 'clinic_input_field.dart';
 
 /// The form widget used inside ClinicStaffLoginPage.
@@ -100,25 +99,7 @@ class ClinicStaffLoginForm extends StatelessWidget {
             isLoading: state.isLoading,
             onPressed: () => bloc.add(const ClinicSignInSubmitted()),
           ),
-          const SizedBox(height: 16),
-
-          // Activate Account Link
-          Center(
-            child: TextButton(
-              onPressed: () => Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (_) => const ClinicAccountActivationPage()),
-              ),
-              child: Text(
-                'Have an invite link? Activate clinic account',
-                style: GoogleFonts.inter(
-                  fontSize: 12,
-                  color: const Color(0xFF38BDF8),
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 24),
 
           // Footer Notice
           Center(
