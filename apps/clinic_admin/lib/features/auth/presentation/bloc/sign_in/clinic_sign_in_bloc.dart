@@ -6,7 +6,7 @@ import 'clinic_sign_in_state.dart';
 
 class ClinicSignInBloc extends Bloc<ClinicSignInEvent, ClinicSignInState> {
   static final RegExp _emailRegex =
-      RegExp(r'^[\w\.-]+@[\w\.-]+\.[a-zA-Z]{2,}$');
+      RegExp(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$');
 
   final ClinicSignInUseCase signInUseCase;
   final ResetClinicPasswordUseCase resetPasswordUseCase;

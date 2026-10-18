@@ -61,7 +61,7 @@ class ClinicInputField extends StatelessWidget {
             hintText: hintText,
             hintStyle: GoogleFonts.inter(color: const Color(0xFF64748B), fontSize: 13.5),
             errorText: errorText,
-            errorStyle: GoogleFonts.inter(color: const Color(0xFF94A3B8), fontSize: 11.5),
+            errorStyle: GoogleFonts.inter(color: const Color(0xFFEF4444), fontSize: 11.5),
             prefixIcon: Icon(prefixIcon, color: showValid ? green : const Color(0xFF64748B), size: 18),
             suffixIcon: onToggleObscure != null
                 ? IconButton(
@@ -84,7 +84,7 @@ class ClinicInputField extends StatelessWidget {
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: Color(0xFF1E293B)),
+              borderSide: const BorderSide(color: Color(0xFFEF4444), width: 1.2),
             ),
             focusedErrorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),

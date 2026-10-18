@@ -3,7 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'features/auth/presentation/pages/clinic_account_activation_page.dart';
 import 'features/auth/presentation/pages/clinic_staff_login_page.dart';
-import 'features/queue/presentation/pages/clinic_dashboard_page.dart';
+import 'features/dashboard/presentation/pages/clinic_dashboard_page.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -43,7 +43,9 @@ class ClinicAdminApp extends StatelessWidget {
                   return const Scaffold(
                     backgroundColor: Color(0xFF070B14),
                     body: Center(
-                      child: CircularProgressIndicator(color: Color(0xFF38BDF8)),
+                      child: CircularProgressIndicator(
+                        color: Color(0xFF38BDF8),
+                      ),
                     ),
                   );
                 }
