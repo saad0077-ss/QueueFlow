@@ -49,6 +49,10 @@ class ClinicAdminApp extends StatelessWidget {
                     ),
                   );
                 }
+
+                if (snapshot.hasData && snapshot.data != null) {
+                  return const ClinicDashboardPage(); 
+                }
                 return snapshot.hasData && snapshot.data != null
                     ? const ClinicDashboardPage()
                     : const ClinicStaffLoginPage();
