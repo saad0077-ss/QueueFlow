@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+
 import '../../domain/entities/user_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../models/user_model.dart';
@@ -12,15 +13,14 @@ class AuthRepositoryImpl implements AuthRepository {
   static const String _webClientId =
       '1070765440897-a9u9ma9rks2ncd3660he26qams1a4krd.apps.googleusercontent.com';
 
-  AuthRepositoryImpl({
-    FirebaseAuth? firebaseAuth,
-    GoogleSignIn? googleSignIn,
-  })  : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
-        _googleSignIn = googleSignIn ??
-            GoogleSignIn(
-              clientId: kIsWeb ? _webClientId : null,
-              serverClientId: _webClientId,
-            );
+  AuthRepositoryImpl({FirebaseAuth? firebaseAuth, GoogleSignIn? googleSignIn})
+    : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
+      _googleSignIn =
+          googleSignIn ??
+          GoogleSignIn(
+            clientId: kIsWeb ? _webClientId : null,
+            serverClientId: _webClientId,
+          );
 
   @override
   UserEntity? getCurrentUser() {
@@ -66,7 +66,6 @@ class AuthRepositoryImpl implements AuthRepository {
     final user = credential.user!;
     await user.updateDisplayName(fullName);
 
-
     // Send built-in verification email directly via Firebase Auth
     try {
       await user.sendEmailVerification();
@@ -94,7 +93,7 @@ class AuthRepositoryImpl implements AuthRepository {
         throw FirebaseAuthException(
           code: 'ERROR_ABORTED_BY_USER',
           message: 'Google Sign-In was cancelled by user.',
-        ); 
+        );
       }
 
       final GoogleSignInAuthentication googleAuth =
@@ -104,8 +103,9 @@ class AuthRepositoryImpl implements AuthRepository {
         idToken: googleAuth.idToken,
       );
 
-      final userCredential =
-          await _firebaseAuth.signInWithCredential(credential);
+      final userCredential = await _firebaseAuth.signInWithCredential(
+        credential,
+      );
       final user = userCredential.user!;
 
       return UserModel(
