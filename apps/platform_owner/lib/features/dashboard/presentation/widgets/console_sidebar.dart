@@ -11,6 +11,7 @@ class ConsoleSidebar extends StatelessWidget {
   Widget build(BuildContext context) {
     const items = [
       {'icon': Icons.grid_view_rounded, 'label': 'Clinics'},
+      {'icon': Icons.layers_outlined, 'label': 'Departments'},
       {'icon': Icons.people_outline_rounded, 'label': 'Users'},
       {'icon': Icons.help_outline_rounded, 'label': 'Support Tickets'},
       {'icon': Icons.receipt_long_outlined, 'label': 'Plan & Billing'},

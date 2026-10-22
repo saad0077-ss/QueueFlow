@@ -179,7 +179,7 @@ class _ClinicDetailsViewState extends State<ClinicDetailsView> {
             style: GoogleFonts.inter(color: const Color(0xFF334155), fontSize: 14),
           ),
           const SizedBox(width: 12),
-          Flexible(
+          Expanded(
             child: Text(
               clinic.name,
               maxLines: 1,
@@ -191,7 +191,7 @@ class _ClinicDetailsViewState extends State<ClinicDetailsView> {
               ),
             ),
           ),
-          const Spacer(),
+          const SizedBox(width: 12),
           _statusPill(clinic.status, clinic.isInvited),
         ],
       ),
@@ -201,10 +201,10 @@ class _ClinicDetailsViewState extends State<ClinicDetailsView> {
   Widget _heroBanner(BuildContext context, TenantClinicEntity clinic) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(22),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFF0D1627), Color(0xFF0A101D)],
+          colors: [Color(0xFF0F1A2E), Color(0xFF0A101D)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -220,138 +220,140 @@ class _ClinicDetailsViewState extends State<ClinicDetailsView> {
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
+          final isWide = constraints.maxWidth >= 1050;
+          final identity = Row(
+            children: [
+              Container(
+                width: 68,
+                height: 68,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF2563EB), Color(0xFF06B6D4)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(18),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF2563EB).withValues(alpha: 0.35),
+                      blurRadius: 18,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  clinic.name.isNotEmpty ? clinic.name.substring(0, 1).toUpperCase() : 'C',
+                  style: GoogleFonts.inter(fontSize: 30, fontWeight: FontWeight.w800, color: Colors.white),
+                ),
+              ),
+              const SizedBox(width: 18),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      clinic.name,
+                      style: GoogleFonts.inter(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                        letterSpacing: -0.4,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        _badge(
+                          icon: Icons.local_hospital_outlined,
+                          label: clinic.category,
+                          bg: const Color(0xFF064E3B).withValues(alpha: 0.6),
+                          fg: const Color(0xFF34D399),
+                        ),
+                        _badge(
+                          icon: Icons.location_on_outlined,
+                          label: '${clinic.city}, Kerala',
+                          bg: const Color(0xFF1E293B),
+                          fg: const Color(0xFF94A3B8),
+                        ),
+                        _badge(
+                          icon: Icons.star_rounded,
+                          label: '${clinic.rating} / 5.0 Rating',
+                          bg: const Color(0xFF78350F).withValues(alpha: 0.4),
+                          fg: const Color(0xFFFBBF24),
+                        ),
+                        _badge(
+                          icon: Icons.credit_card_rounded,
+                          label: clinic.planName,
+                          bg: const Color(0xFF0C4A6E).withValues(alpha: 0.5),
+                          fg: const Color(0xFF38BDF8),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+
+          final actions = Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            alignment: isWide ? WrapAlignment.end : WrapAlignment.start,
+            children: [
+              _headerActionButton(
+                icon: Icons.tune_rounded,
+                label: 'Manage Subscription',
+                bg: const Color(0xFF0C4A6E),
+                fg: const Color(0xFF38BDF8),
+                onTap: () => ManageSubscriptionModal.show(context, clinic),
+              ),
+              if (clinic.isInvited)
+                _headerActionButton(
+                  icon: Icons.send_rounded,
+                  label: 'Resend Invitation Email',
+                  bg: const Color(0xFF1E3A8A),
+                  fg: const Color(0xFF60A5FA),
+                  onTap: () => _resendInvite(context, clinic),
+                )
+              else
+                _headerActionButton(
+                  icon: clinic.isActive ? Icons.pause_circle_outline_rounded : Icons.play_circle_outline_rounded,
+                  label: clinic.isActive ? 'Pause Clinic Practice' : 'Activate Clinic Practice',
+                  bg: clinic.isActive ? const Color(0xFF78350F) : const Color(0xFF064E3B),
+                  fg: clinic.isActive ? const Color(0xFFFBBF24) : const Color(0xFF34D399),
+                  onTap: () => _toggleClinicStatus(context, clinic),
+                ),
+              _headerActionButton(
+                icon: Icons.delete_outline_rounded,
+                label: 'Delete Clinic Facility',
+                bg: const Color(0xFF450A0A),
+                fg: const Color(0xFFEF4444),
+                onTap: () => _confirmDeleteClinic(context, clinic),
+              ),
+            ],
+          );
+
+          if (isWide) {
+            return Row(
+              children: [
+                Expanded(child: identity),
+                const SizedBox(width: 24),
+                actions,
+              ],
+            );
+          }
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: 64,
-                    height: 64,
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF2563EB), Color(0xFF06B6D4)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(14),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFF2563EB).withValues(alpha: 0.35),
-                          blurRadius: 16,
-                          offset: const Offset(0, 6),
-                        ),
-                      ],
-                    ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      clinic.name.isNotEmpty ? clinic.name.substring(0, 1).toUpperCase() : 'C',
-                      style: GoogleFonts.inter(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Flexible(
-                              child: Text(
-                                clinic.name,
-                                style: GoogleFonts.inter(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                  letterSpacing: -0.3,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 6,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            _badge(
-                              icon: Icons.local_hospital_outlined,
-                              label: clinic.category,
-                              bg: const Color(0xFF064E3B).withValues(alpha: 0.6),
-                              fg: const Color(0xFF34D399),
-                            ),
-                            _badge(
-                              icon: Icons.location_on_outlined,
-                              label: '${clinic.city}, Kerala',
-                              bg: const Color(0xFF1E293B),
-                              fg: const Color(0xFF94A3B8),
-                            ),
-                            _badge(
-                              icon: Icons.star_rounded,
-                              label: '★ ${clinic.rating} / 5.0 Rating',
-                              bg: const Color(0xFF78350F).withValues(alpha: 0.4),
-                              fg: const Color(0xFFFBBF24),
-                            ),
-                            _badge(
-                              icon: Icons.credit_card_rounded,
-                              label: clinic.planName,
-                              bg: const Color(0xFF0C4A6E).withValues(alpha: 0.5),
-                              fg: const Color(0xFF38BDF8),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+              identity,
               const SizedBox(height: 18),
               const Divider(color: Color(0xFF1E293B), height: 1),
               const SizedBox(height: 16),
-              // Action buttons row
-              Wrap(
-                spacing: 10,
-                runSpacing: 10,
-                alignment: WrapAlignment.start,
-                children: [
-                  _headerActionButton(
-                    icon: Icons.tune_rounded,
-                    label: 'Manage Subscription',
-                    bg: const Color(0xFF0C4A6E),
-                    fg: const Color(0xFF38BDF8),
-                    onTap: () => ManageSubscriptionModal.show(context, clinic),
-                  ),
-                  if (clinic.isInvited)
-                    _headerActionButton(
-                      icon: Icons.send_rounded,
-                      label: 'Resend Invitation Email',
-                      bg: const Color(0xFF1E3A8A),
-                      fg: const Color(0xFF60A5FA),
-                      onTap: () => _resendInvite(context, clinic),
-                    )
-                  else
-                    _headerActionButton(
-                      icon: clinic.isActive ? Icons.pause_circle_outline_rounded : Icons.play_circle_outline_rounded,
-                      label: clinic.isActive ? 'Pause Clinic Practice' : 'Activate Clinic Practice',
-                      bg: clinic.isActive ? const Color(0xFF78350F) : const Color(0xFF064E3B),
-                      fg: clinic.isActive ? const Color(0xFFFBBF24) : const Color(0xFF34D399),
-                      onTap: () => _toggleClinicStatus(context, clinic),
-                    ),
-                  _headerActionButton(
-                    icon: Icons.delete_outline_rounded,
-                    label: 'Delete Clinic Facility',
-                    bg: const Color(0xFF450A0A),
-                    fg: const Color(0xFFEF4444),
-                    onTap: () => _confirmDeleteClinic(context, clinic),
-                  ),
-                ],
-              ),
+              actions,
             ],
           );
         },
@@ -395,7 +397,7 @@ class _ClinicDetailsViewState extends State<ClinicDetailsView> {
                 icon: Icons.medical_services_outlined,
                 color: const Color(0xFFA855F7),
                 title: 'DOCTORS ON ROSTER',
-                value: '${clinic.practicingDoctors} Active Doctor',
+                value: '${clinic.practicingDoctors} Active Doctor${clinic.practicingDoctors == 1 ? '' : 's'}',
                 subtitle: clinic.doctorLimitText,
               ),
             ),
@@ -405,7 +407,7 @@ class _ClinicDetailsViewState extends State<ClinicDetailsView> {
                 icon: Icons.stars_rounded,
                 color: const Color(0xFFF59E0B),
                 title: 'PATIENT VOLUME & RATING',
-                value: '★ ${clinic.rating} / 5.0',
+                value: '${clinic.rating} / 5.0',
                 subtitle: '${clinic.monthlyVisits} appointments this month',
               ),
             ),
@@ -423,11 +425,15 @@ class _ClinicDetailsViewState extends State<ClinicDetailsView> {
     required String subtitle,
   }) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: const Color(0xFF0F172A),
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFF1E293B)),
+        gradient: LinearGradient(
+          colors: [Color.alphaBlend(color.withValues(alpha: 0.07), const Color(0xFF0F172A)), const Color(0xFF0F172A)],
+          begin: Alignment.topLeft,
+          end: Alignment.center,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -435,10 +441,12 @@ class _ClinicDetailsViewState extends State<ClinicDetailsView> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
+                width: 36,
+                height: 36,
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(8),
+                  color: color.withValues(alpha: 0.14),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: color.withValues(alpha: 0.25)),
                 ),
                 child: Icon(icon, color: color, size: 18),
               ),
@@ -456,13 +464,13 @@ class _ClinicDetailsViewState extends State<ClinicDetailsView> {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           Text(
             value,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: GoogleFonts.inter(
-              fontSize: 15,
+              fontSize: 17,
               fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
@@ -508,7 +516,7 @@ class _ClinicDetailsViewState extends State<ClinicDetailsView> {
   Widget _facilityDetailsCard(BuildContext context, TenantClinicEntity clinic) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
         color: const Color(0xFF0F172A),
         borderRadius: BorderRadius.circular(16),
@@ -517,22 +525,11 @@ class _ClinicDetailsViewState extends State<ClinicDetailsView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              const Icon(Icons.business_rounded, color: Color(0xFF38BDF8), size: 20),
-              const SizedBox(width: 10),
-              Text(
-                'Facility & Location Profile',
-                style: GoogleFonts.inter(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-            ],
+          _sectionHeader(
+            icon: Icons.business_rounded,
+            color: const Color(0xFF38BDF8),
+            title: 'Facility & Location Profile',
           ),
-          const SizedBox(height: 16),
-          const Divider(color: Color(0xFF1E293B), height: 1),
           const SizedBox(height: 16),
           _detailRow(
             icon: Icons.location_on_outlined,
@@ -569,7 +566,7 @@ class _ClinicDetailsViewState extends State<ClinicDetailsView> {
   Widget _doctorsRosterCard(BuildContext context, TenantClinicEntity clinic) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
         color: const Color(0xFF0F172A),
         borderRadius: BorderRadius.circular(16),
@@ -578,38 +575,23 @@ class _ClinicDetailsViewState extends State<ClinicDetailsView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              const Icon(Icons.medical_services_outlined, color: Color(0xFFA855F7), size: 20),
-              const SizedBox(width: 10),
-              Text(
-                'Practicing Medical Team (${clinic.doctors.length})',
-                style: GoogleFonts.inter(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+          _sectionHeader(
+            icon: Icons.medical_services_outlined,
+            color: const Color(0xFFA855F7),
+            title: 'Practicing Medical Team (${clinic.doctors.isEmpty ? 1 : clinic.doctors.length})',
+            trailing: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: const Color(0xFFA855F7).withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: const Color(0xFFA855F7).withValues(alpha: 0.3)),
               ),
-              const Spacer(),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFA855F7).withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  clinic.doctorLimitText,
-                  style: GoogleFonts.inter(
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFFA855F7),
-                  ),
-                ),
+              child: Text(
+                clinic.doctorLimitText,
+                style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.bold, color: const Color(0xFFC084FC)),
               ),
-            ],
+            ),
           ),
-          const SizedBox(height: 16),
-          const Divider(color: Color(0xFF1E293B), height: 1),
           const SizedBox(height: 14),
           if (clinic.doctors.isEmpty)
             _doctorTile(
@@ -701,7 +683,7 @@ class _ClinicDetailsViewState extends State<ClinicDetailsView> {
   Widget _administratorProfileCard(BuildContext context, TenantClinicEntity clinic) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
         color: const Color(0xFF0F172A),
         borderRadius: BorderRadius.circular(16),
@@ -710,22 +692,11 @@ class _ClinicDetailsViewState extends State<ClinicDetailsView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              const Icon(Icons.admin_panel_settings_outlined, color: Color(0xFF38BDF8), size: 20),
-              const SizedBox(width: 10),
-              Text(
-                'Clinic Administrator Profile',
-                style: GoogleFonts.inter(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-            ],
+          _sectionHeader(
+            icon: Icons.admin_panel_settings_outlined,
+            color: const Color(0xFF38BDF8),
+            title: 'Clinic Administrator Profile',
           ),
-          const SizedBox(height: 16),
-          const Divider(color: Color(0xFF1E293B), height: 1),
           const SizedBox(height: 16),
           Row(
             children: [
@@ -769,10 +740,10 @@ class _ClinicDetailsViewState extends State<ClinicDetailsView> {
           ),
           const SizedBox(height: 16),
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.fromLTRB(14, 8, 8, 8),
             decoration: BoxDecoration(
               color: const Color(0xFF131D31),
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(12),
               border: Border.all(color: const Color(0xFF1E293B)),
             ),
             child: Row(
@@ -789,11 +760,7 @@ class _ClinicDetailsViewState extends State<ClinicDetailsView> {
                     ),
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.copy_rounded, size: 15, color: Color(0xFF94A3B8)),
-                  tooltip: 'Copy Email',
-                  onPressed: () => _copyToClipboard(context, clinic.adminEmail, 'Email Address'),
-                ),
+                _copyButton(() => _copyToClipboard(context, clinic.adminEmail, 'Email Address'), tooltip: 'Copy Email'),
               ],
             ),
           ),
@@ -886,7 +853,7 @@ class _ClinicDetailsViewState extends State<ClinicDetailsView> {
   Widget _platformGovernanceCard(BuildContext context, TenantClinicEntity clinic) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
         color: const Color(0xFF0F172A),
         borderRadius: BorderRadius.circular(16),
@@ -895,29 +862,59 @@ class _ClinicDetailsViewState extends State<ClinicDetailsView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              const Icon(Icons.shield_outlined, color: Color(0xFF10B981), size: 20),
-              const SizedBox(width: 10),
-              Text(
-                'Platform Governance',
-                style: GoogleFonts.inter(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-            ],
+          _sectionHeader(
+            icon: Icons.shield_outlined,
+            color: const Color(0xFF10B981),
+            title: 'Platform Governance',
           ),
-          const SizedBox(height: 16),
-          const Divider(color: Color(0xFF1E293B), height: 1),
-          const SizedBox(height: 14),
+          const SizedBox(height: 10),
           _metaRow('Clinic Unique ID:', clinic.id, onCopy: () => _copyToClipboard(context, clinic.id, 'Clinic ID')),
           _metaRow('Security Policy:', 'Firebase Multi-Tenant Firestore Isolated'),
           _metaRow('Billing Schedule:', '${clinic.planName} (${clinic.billingCadence})'),
           _metaRow('Registration Status:', clinic.status),
         ],
       ),
+    );
+  }
+
+  Widget _sectionHeader({required IconData icon, required Color color, required String title, Widget? trailing}) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Container(
+              width: 34,
+              height: 34,
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.14),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icon, color: color, size: 18),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                title,
+                style: GoogleFonts.inter(fontSize: 15.5, fontWeight: FontWeight.w700, color: Colors.white),
+              ),
+            ),
+            ?trailing,
+          ],
+        ),
+        const SizedBox(height: 16),
+        const Divider(color: Color(0xFF1E293B), height: 1),
+      ],
+    );
+  }
+
+  Widget _copyButton(VoidCallback onCopy, {String tooltip = 'Copy'}) {
+    return IconButton(
+      icon: const Icon(Icons.copy_rounded, size: 15, color: Color(0xFF64748B)),
+      tooltip: tooltip,
+      visualDensity: VisualDensity.compact,
+      padding: EdgeInsets.zero,
+      constraints: const BoxConstraints(minWidth: 30, minHeight: 30),
+      onPressed: onCopy,
     );
   }
 
@@ -928,19 +925,20 @@ class _ClinicDetailsViewState extends State<ClinicDetailsView> {
     VoidCallback? onCopy,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 7),
+      padding: const EdgeInsets.symmetric(vertical: 9),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: const EdgeInsets.all(6),
+            width: 34,
+            height: 34,
             decoration: BoxDecoration(
               color: const Color(0xFF131D31),
-              borderRadius: BorderRadius.circular(6),
+              borderRadius: BorderRadius.circular(9),
+              border: Border.all(color: const Color(0xFF1E293B)),
             ),
-            child: Icon(icon, size: 15, color: const Color(0xFF38BDF8)),
+            child: Icon(icon, size: 16, color: const Color(0xFF38BDF8)),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -957,7 +955,7 @@ class _ClinicDetailsViewState extends State<ClinicDetailsView> {
                 Text(
                   value,
                   style: GoogleFonts.inter(
-                    fontSize: 13,
+                    fontSize: 13.5,
                     color: const Color(0xFFF1F5F9),
                     fontWeight: FontWeight.w600,
                     height: 1.3,
@@ -966,12 +964,7 @@ class _ClinicDetailsViewState extends State<ClinicDetailsView> {
               ],
             ),
           ),
-          if (onCopy != null)
-            IconButton(
-              icon: const Icon(Icons.copy_rounded, size: 14, color: Color(0xFF64748B)),
-              tooltip: 'Copy',
-              onPressed: onCopy,
-            ),
+          if (onCopy != null) _copyButton(onCopy),
         ],
       ),
     );
@@ -979,29 +972,24 @@ class _ClinicDetailsViewState extends State<ClinicDetailsView> {
 
   Widget _metaRow(String label, String value, {VoidCallback? onCopy}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         children: [
           SizedBox(
-            width: 130,
+            width: 140,
             child: Text(
               label,
-              style: GoogleFonts.inter(fontSize: 11.5, color: const Color(0xFF64748B)),
+              style: GoogleFonts.inter(fontSize: 12, color: const Color(0xFF94A3B8)),
             ),
           ),
           Expanded(
             child: Text(
               value,
-              style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.white),
+              style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w600, color: Colors.white),
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          if (onCopy != null)
-            IconButton(
-              icon: const Icon(Icons.copy_rounded, size: 14, color: Color(0xFF64748B)),
-              tooltip: 'Copy',
-              onPressed: onCopy,
-            ),
+          if (onCopy != null) _copyButton(onCopy),
         ],
       ),
     );
@@ -1052,11 +1040,12 @@ class _ClinicDetailsViewState extends State<ClinicDetailsView> {
             : (isSusp ? const Color(0xFFF87171) : const Color(0xFF34D399)));
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
       decoration: BoxDecoration(
-        color: bg.withValues(alpha: 0.6),
+        color: bg.withValues(alpha: 0.45),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: fg.withValues(alpha: 0.3)),
+        border: Border.all(color: fg.withValues(alpha: 0.4)),
+        boxShadow: [BoxShadow(color: fg.withValues(alpha: 0.15), blurRadius: 12)],
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -1067,6 +1056,7 @@ class _ClinicDetailsViewState extends State<ClinicDetailsView> {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: fg,
+              boxShadow: [BoxShadow(color: fg.withValues(alpha: 0.7), blurRadius: 6)],
             ),
           ),
           const SizedBox(width: 6),
@@ -1093,13 +1083,14 @@ class _ClinicDetailsViewState extends State<ClinicDetailsView> {
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(10),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+        height: 40,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
-          color: bg.withValues(alpha: 0.6),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: fg.withValues(alpha: 0.3)),
+          color: bg.withValues(alpha: 0.45),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: fg.withValues(alpha: 0.35)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -1109,8 +1100,8 @@ class _ClinicDetailsViewState extends State<ClinicDetailsView> {
             Text(
               label,
               style: GoogleFonts.inter(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
+                fontSize: 12.5,
+                fontWeight: FontWeight.w700,
                 color: fg,
               ),
             ),
