@@ -7,10 +7,14 @@ class ClinicSidebar extends StatelessWidget {
   final String activeItem;
   final ValueChanged<String>? onItemTap;
 
+  /// Shows an icon-only rail instead of the full labelled sidebar.
+  final bool compact;
+
   const ClinicSidebar({
     super.key,
     this.activeItem = 'Dashboard',
     this.onItemTap,
+    this.compact = false,
   });
 
   static const List<Map<String, dynamic>> _navItems = [
@@ -28,18 +32,18 @@ class ClinicSidebar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 240,
+      width: compact ? 80 : 240,
       color: const Color(0xFF090E1A),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Branding Header
-          const ClinicSidebarLogo(),
+          ClinicSidebarLogo(compact: compact),
 
           // Navigation Links
           Expanded(
             child: ListView.separated(
-              padding: const EdgeInsets.symmetric(horizontal: 14),
+              padding: EdgeInsets.symmetric(horizontal: compact ? 12 : 14),
               itemCount: _navItems.length,
               separatorBuilder: (context, index) => const SizedBox(height: 4),
               itemBuilder: (context, index) {
@@ -51,6 +55,7 @@ class ClinicSidebar extends StatelessWidget {
                   title: title,
                   icon: icon,
                   isActive: activeItem == title,
+                  compact: compact,
                   onTap: () => onItemTap?.call(title),
                 );
               },

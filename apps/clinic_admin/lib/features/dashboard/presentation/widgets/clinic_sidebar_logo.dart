@@ -3,13 +3,20 @@ import 'package:google_fonts/google_fonts.dart';
 
 /// The logo widget displayed at the top of the clinic admin sidebar.
 class ClinicSidebarLogo extends StatelessWidget {
-  const ClinicSidebarLogo({super.key});
+  final bool compact;
+
+  const ClinicSidebarLogo({super.key, this.compact = false});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 28, 20, 28),
+      padding: compact
+          ? const EdgeInsets.symmetric(vertical: 28)
+          : const EdgeInsets.fromLTRB(24, 28, 20, 28),
       child: Row(
+        mainAxisAlignment: compact
+            ? MainAxisAlignment.center
+            : MainAxisAlignment.start,
         children: [
           // Logo Icon Container with gradient and shadow
           Container(
@@ -41,27 +48,35 @@ class ClinicSidebarLogo extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(width: 12),
-          // App Title "QueueFlow"
-          RichText(
-            text: TextSpan(
-              style: GoogleFonts.inter(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                letterSpacing: -0.4,
+          if (!compact) ...[
+            const SizedBox(width: 12),
+            // App Title "QueueFlow"
+            Flexible(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: RichText(
+                  text: TextSpan(
+                    style: GoogleFonts.inter(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: -0.4,
+                    ),
+                    children: const [
+                      TextSpan(
+                        text: 'Queue',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      TextSpan(
+                        text: 'Flow',
+                        style: TextStyle(color: Color(0xFF38BDF8)),
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              children: const [
-                TextSpan(
-                  text: 'Queue',
-                  style: TextStyle(color: Colors.white),
-                ),
-                TextSpan(
-                  text: 'Flow',
-                  style: TextStyle(color: Color(0xFF38BDF8)),
-                ),
-              ],
             ),
-          ),
+          ],
         ],
       ),
     );

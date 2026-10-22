@@ -5,10 +5,7 @@ class ServicePopularityItem {
   final String name;
   final int percentage;
 
-  const ServicePopularityItem({
-    required this.name,
-    required this.percentage,
-  });
+  const ServicePopularityItem({required this.name, required this.percentage});
 }
 
 class PopularServicesCard extends StatelessWidget {
@@ -57,14 +54,18 @@ class PopularServicesCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        service.name,
-                        style: GoogleFonts.inter(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: const Color(0xFFE2E8F0),
+                      Flexible(
+                        child: Text(
+                          service.name,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.inter(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: const Color(0xFFE2E8F0),
+                          ),
                         ),
                       ),
+                      const SizedBox(width: 8),
                       Text(
                         '${service.percentage}%',
                         style: GoogleFonts.inter(
@@ -90,15 +91,13 @@ class PopularServicesCard extends StatelessWidget {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(2),
                           gradient: const LinearGradient(
-                            colors: [
-                              Color(0xFF00C6FF),
-                              Color(0xFF0072FF),
-                            ],
+                            colors: [Color(0xFF00C6FF), Color(0xFF0072FF)],
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFF00C6FF)
-                                  .withValues(alpha: 0.4),
+                              color: const Color(
+                                0xFF00C6FF,
+                              ).withValues(alpha: 0.4),
                               blurRadius: 4,
                               offset: const Offset(0, 1),
                             ),

@@ -8,6 +8,7 @@ class ClinicSidebarNavItem extends StatelessWidget {
   final IconData icon;
   final bool isActive;
   final VoidCallback onTap;
+  final bool compact;
 
   const ClinicSidebarNavItem({
     super.key,
@@ -15,15 +16,19 @@ class ClinicSidebarNavItem extends StatelessWidget {
     required this.icon,
     required this.isActive,
     required this.onTap,
+    this.compact = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    final item = InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+        padding: EdgeInsets.symmetric(
+          horizontal: compact ? 0 : 16,
+          vertical: 11,
+        ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           gradient: isActive
@@ -44,24 +49,34 @@ class ClinicSidebarNavItem extends StatelessWidget {
               : null,
         ),
         child: Row(
+          mainAxisAlignment: compact
+              ? MainAxisAlignment.center
+              : MainAxisAlignment.start,
           children: [
             Icon(
               icon,
               size: 20,
               color: isActive ? Colors.white : const Color(0xFF8E9CAE),
             ),
-            const SizedBox(width: 14),
-            Text(
-              title,
-              style: GoogleFonts.inter(
-                fontSize: 13.5,
-                fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
-                color: isActive ? Colors.white : const Color(0xFF8E9CAE),
+            if (!compact) ...[
+              const SizedBox(width: 14),
+              Flexible(
+                child: Text(
+                  title,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.inter(
+                    fontSize: 13.5,
+                    fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+                    color: isActive ? Colors.white : const Color(0xFF8E9CAE),
+                  ),
+                ),
               ),
-            ),
+            ],
           ],
         ),
       ),
     );
+
+    return compact ? Tooltip(message: title, child: item) : item;
   }
 }
