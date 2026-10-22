@@ -5,12 +5,11 @@ import 'appointment_table_row.dart';
 
 /// Card showing the table of upcoming appointments in the clinic dashboard.
 class UpcomingAppointmentsCard extends StatelessWidget {
+  static const double _minTableWidth = 540;
+
   final VoidCallback? onViewAll;
 
-  const UpcomingAppointmentsCard({
-    super.key,
-    this.onViewAll,
-  });
+  const UpcomingAppointmentsCard({super.key, this.onViewAll});
 
   @override
   Widget build(BuildContext context) {
@@ -30,16 +29,20 @@ class UpcomingAppointmentsCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Upcoming appointments',
-                style: GoogleFonts.inter(
-                  fontSize: 15.5,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
+              Flexible(
+                child: Text(
+                  'Upcoming appointments',
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.inter(
+                    fontSize: 15.5,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
                 ),
               ),
               InkWell(
-                onTap: onViewAll ??
+                onTap:
+                    onViewAll ??
                     () {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
@@ -50,7 +53,10 @@ class UpcomingAppointmentsCard extends StatelessWidget {
                     },
                 borderRadius: BorderRadius.circular(4),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 4,
+                    vertical: 2,
+                  ),
                   child: Row(
                     children: [
                       Text(
@@ -76,23 +82,37 @@ class UpcomingAppointmentsCard extends StatelessWidget {
 
           const SizedBox(height: 18),
 
-          // Column Headers Row
-          const _AppointmentTableHeader(),
+          // The table keeps a minimum width and scrolls sideways on
+          // narrow screens instead of squashing its five columns.
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final table = Column(
+                children: [
+                  // Column Headers Row
+                  const _AppointmentTableHeader(),
 
-          const Divider(height: 1, color: Color(0xFF1E293B)),
+                  const Divider(height: 1, color: Color(0xFF1E293B)),
 
-          // Appointment Rows List
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: AppointmentItem.defaultList.length,
-            separatorBuilder: (context, index) => const Divider(
-              height: 1,
-              color: Color(0x331E293B),
-            ),
-            itemBuilder: (context, index) {
-              return AppointmentTableRow(
-                appointment: AppointmentItem.defaultList[index],
+                  // Appointment Rows List
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: AppointmentItem.defaultList.length,
+                    separatorBuilder: (context, index) =>
+                        const Divider(height: 1, color: Color(0x331E293B)),
+                    itemBuilder: (context, index) {
+                      return AppointmentTableRow(
+                        appointment: AppointmentItem.defaultList[index],
+                      );
+                    },
+                  ),
+                ],
+              );
+
+              if (constraints.maxWidth >= _minTableWidth) return table;
+              return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: SizedBox(width: _minTableWidth, child: table),
               );
             },
           ),
@@ -121,7 +141,11 @@ class _AppointmentTableHeader extends StatelessWidget {
     );
   }
 
-  Widget _headerText(String title, {required int flex, bool alignRight = false}) {
+  Widget _headerText(
+    String title, {
+    required int flex,
+    bool alignRight = false,
+  }) {
     final text = Text(
       title,
       style: GoogleFonts.inter(
@@ -133,7 +157,9 @@ class _AppointmentTableHeader extends StatelessWidget {
     );
     return Expanded(
       flex: flex,
-      child: alignRight ? Align(alignment: Alignment.centerRight, child: text) : text,
+      child: alignRight
+          ? Align(alignment: Alignment.centerRight, child: text)
+          : text,
     );
   }
 }

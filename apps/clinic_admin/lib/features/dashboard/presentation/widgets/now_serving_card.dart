@@ -18,7 +18,9 @@ class NowServingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final token = (currentToken.isEmpty || currentToken == '---') ? 'A-029' : currentToken;
+    final token = (currentToken.isEmpty || currentToken == '---')
+        ? 'A-029'
+        : currentToken;
 
     return Container(
       padding: const EdgeInsets.all(22),
@@ -52,11 +54,20 @@ class NowServingCard extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             token,
-            style: GoogleFonts.inter(fontSize: 44, fontWeight: FontWeight.w800, color: Colors.white, letterSpacing: -1),
+            style: GoogleFonts.inter(
+              fontSize: 44,
+              fontWeight: FontWeight.w800,
+              color: Colors.white,
+              letterSpacing: -1,
+            ),
           ),
           Text(
             'Ready for next patient',
-            style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w400, color: Colors.white.withValues(alpha: 0.88)),
+            style: GoogleFonts.inter(
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
+              color: Colors.white.withValues(alpha: 0.88),
+            ),
           ),
           const SizedBox(height: 16),
           _buildQueueStrip(),
@@ -68,7 +79,9 @@ class NowServingCard extends StatelessWidget {
   }
 
   Widget _buildQueueStrip() {
-    final queueText = waitingCount > 0 ? '$waitingCount waiting' : 'None waiting';
+    final queueText = waitingCount > 0
+        ? '$waitingCount waiting'
+        : 'None waiting';
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
@@ -78,8 +91,25 @@ class NowServingCard extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text('Next in queue', style: GoogleFonts.inter(fontSize: 11.5, color: Colors.white.withValues(alpha: 0.9))),
-          Text(queueText, style: GoogleFonts.inter(fontSize: 11.5, fontWeight: FontWeight.w500, color: Colors.white.withValues(alpha: 0.95))),
+          Flexible(
+            child: Text(
+              'Next in queue',
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.inter(
+                fontSize: 11.5,
+                color: Colors.white.withValues(alpha: 0.9),
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            queueText,
+            style: GoogleFonts.inter(
+              fontSize: 11.5,
+              fontWeight: FontWeight.w500,
+              color: Colors.white.withValues(alpha: 0.95),
+            ),
+          ),
         ],
       ),
     );
@@ -97,10 +127,18 @@ class NowServingCard extends StatelessWidget {
                 backgroundColor: Colors.white,
                 foregroundColor: const Color(0xFF1E58F5),
                 elevation: 0,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18),
+                ),
                 padding: EdgeInsets.zero,
               ),
-              child: Text('Call Next', style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.bold)),
+              child: Text(
+                'Call Next',
+                style: GoogleFonts.inter(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ),
         ),
@@ -114,10 +152,18 @@ class NowServingCard extends StatelessWidget {
                 backgroundColor: Colors.white.withValues(alpha: 0.22),
                 foregroundColor: Colors.white,
                 elevation: 0,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18),
+                ),
                 padding: EdgeInsets.zero,
               ),
-              child: Text('View Queue', style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w600)),
+              child: Text(
+                'View Queue',
+                style: GoogleFonts.inter(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
           ),
         ),

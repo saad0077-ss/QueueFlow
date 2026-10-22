@@ -32,14 +32,17 @@ class AppointmentTrendCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Appointment volume trend',
-                style: GoogleFonts.inter(
-                  fontSize: 15.5,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
+              Flexible(
+                child: Text(
+                  'Appointment volume trend',
+                  style: GoogleFonts.inter(
+                    fontSize: 15.5,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
                 ),
               ),
+              const SizedBox(width: 8),
               Text(
                 'Last 7 days',
                 style: GoogleFonts.inter(
@@ -87,8 +90,9 @@ class AppointmentTrendCard extends StatelessWidget {
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: const Color(0xFF00E5FF)
-                                        .withValues(alpha: 0.18),
+                                    color: const Color(
+                                      0xFF00E5FF,
+                                    ).withValues(alpha: 0.18),
                                     blurRadius: 8,
                                     offset: const Offset(0, -2),
                                   ),
