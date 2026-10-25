@@ -5,12 +5,16 @@ class ClinicsHeaderBar extends StatelessWidget {
   final VoidCallback onExportCsv;
   final VoidCallback onRefresh;
   final VoidCallback onOnboard;
+  final int activeCount;
+  final int totalCount;
 
   const ClinicsHeaderBar({
     super.key,
     required this.onExportCsv,
     required this.onRefresh,
     required this.onOnboard,
+    required this.activeCount,
+    required this.totalCount,
   });
 
   @override
@@ -29,9 +33,9 @@ class ClinicsHeaderBar extends StatelessWidget {
                 borderRadius: BorderRadius.circular(6),
                 border: Border.all(color: const Color(0xFF059669)),
               ),
-              child: const Text(
-                'NETWORK MANAGEMENT  4 of 6 Facilities Online',
-                style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w600, color: Color(0xFF34D399)),
+              child: Text(
+                'NETWORK MANAGEMENT  •  $activeCount of $totalCount Facilities Active',
+                style: const TextStyle(fontSize: 10.5, fontWeight: FontWeight.w600, color: Color(0xFF34D399)),
               ),
             ),
             const SizedBox(height: 8),

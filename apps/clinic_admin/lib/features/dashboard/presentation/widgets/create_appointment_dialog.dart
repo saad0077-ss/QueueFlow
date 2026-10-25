@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../core/widgets/app_snack_bar.dart';
+
 /// Modal dialog allowing clinic staff to create a new appointment.
 class CreateAppointmentDialog extends StatelessWidget {
   const CreateAppointmentDialog({super.key});
@@ -49,11 +51,9 @@ class CreateAppointmentDialog extends StatelessWidget {
           ),
           onPressed: () {
             Navigator.pop(context);
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Appointment scheduled successfully.'),
-                backgroundColor: Color(0xFF10B981),
-              ),
+            AppSnackBar.showSuccess(
+              context,
+              message: 'Appointment scheduled successfully.',
             );
           },
           child: const Text('Schedule'),

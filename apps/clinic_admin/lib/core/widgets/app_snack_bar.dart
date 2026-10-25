@@ -2,34 +2,37 @@ import 'package:flutter/material.dart';
 
 enum SnackBarType { success, error, warning, info }
 
-/// Compact bottom-right corner gradient toast for Clinic Admin Portal.
 class AppSnackBar {
   static void showSuccess(BuildContext context, {required String message}) {
-    _show(context, type: SnackBarType.success, message: message);
+    _show(context, SnackBarType.success, message);
   }
 
   static void showError(BuildContext context, {required String message}) {
     _show(
       context,
-      type: SnackBarType.error,
-      message: message.contains('] ') ? message.split('] ').last.trim() : message,
+      SnackBarType.error,  
+      message.contains('] ') ? message.split('] ').last.trim() : message,
     );
   }
 
+  static void showWarning(BuildContext context, {required String message}) {
+    _show(context, SnackBarType.warning, message);
+  }
+
   static void showInfo(BuildContext context, {required String message}) {
-    _show(context, type: SnackBarType.info, message: message);
+    _show(context, SnackBarType.info, message);
   }
 
   static void _show(
-    BuildContext context, {
-    required SnackBarType type,
-    required String message,
-  }) {
-    final messenger = ScaffoldMessenger.of(context);
-    messenger.hideCurrentSnackBar();
+    BuildContext context,
+    SnackBarType type,
+    String message,
+  ) {
+    final messenger = ScaffoldMessenger.of(context); 
+    messenger.hideCurrentSnackBar();   
 
-    final colors = _colorsFor(type);
-    final icon = _iconFor(type);
+    final colors = _colors(type);
+    final icon = _icon(type);
     final screenWidth = MediaQuery.sizeOf(context).width;
     final isDesktop = screenWidth >= 768;
 
@@ -101,7 +104,7 @@ class AppSnackBar {
     );
   }
 
-  static List<Color> _colorsFor(SnackBarType type) {
+  static List<Color> _colors(SnackBarType type) {
     switch (type) {
       case SnackBarType.success:
         return const [Color(0xFF2563EB), Color(0xFF2DD4BF)];
@@ -114,7 +117,7 @@ class AppSnackBar {
     }
   }
 
-  static IconData _iconFor(SnackBarType type) {
+  static IconData _icon(SnackBarType type) {
     switch (type) {
       case SnackBarType.success:
         return Icons.check_rounded;

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../core/widgets/app_snack_bar.dart';
 import '../../data/repositories/clinic_services_repository_impl.dart';
 import '../../domain/entities/clinic_service_entity.dart';
 import '../../domain/usecases/delete_clinic_service_usecase.dart';
@@ -47,15 +49,11 @@ class _ClinicServicesBody extends StatelessWidget {
     return BlocConsumer<ClinicServicesBloc, ClinicServicesState>(
       listener: (context, state) {
         if (state.toastMessage != null) {
-          final color = state.isErrorToast
-              ? Colors.red
-              : const Color(0xFF1E58F5);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.toastMessage!),
-              backgroundColor: color,
-            ),
-          );
+          if (state.isErrorToast) {
+            AppSnackBar.showError(context, message: state.toastMessage!);
+          } else {
+            AppSnackBar.showSuccess(context, message: state.toastMessage!);
+          }
           context.read<ClinicServicesBloc>().add(const ServicesClearToast());
         }
       },
@@ -118,13 +116,10 @@ class _ClinicServicesBody extends StatelessWidget {
     ClinicServiceEntity? service,
   ) {
     if (service == null && state.isLimitReached) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
+      AppSnackBar.showWarning(
+        context,
+        message:
             'Service limit reached (${state.services.length}/${state.plan.servicesLimit}). 1 doctor can only provide 1 active service. Upgrade plan to add more.',
-          ),
-          backgroundColor: const Color(0xFFF59E0B),
-        ),
       );
       return;
     }

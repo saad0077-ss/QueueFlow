@@ -24,6 +24,7 @@ import '../widgets/console_sidebar.dart';
 import '../widgets/console_top_bar.dart';
 import '../widgets/manage_subscription_modal.dart';
 import '../widgets/onboard_clinic_modal.dart';
+import '../widgets/edit_clinic_modal.dart';
 
 class PlatformClinicsPage extends StatelessWidget {
   const PlatformClinicsPage({super.key});
@@ -50,7 +51,14 @@ class _PlatformClinicsViewState extends State<_PlatformClinicsView> {
 
   final repo = TenantRepositoryImpl();
   final _departments$ = DepartmentRepositoryImpl().watchDepartments();
+  late final _appointments$ = repo.watchMonthlyAppointmentCounts();
   TenantClinicEntity? _selectedClinic;
+
+  @override
+  void initState() {
+    super.initState();
+    repo.purgeDummyClinics();
+  }
 
   void _showDetails(TenantClinicEntity c) {
     setState(() {
@@ -97,66 +105,80 @@ class _PlatformClinicsViewState extends State<_PlatformClinicsView> {
                         stream: repo.watchClinics(),
                         builder: (context, snapshot) {
                           if (snapshot.hasData && snapshot.data != null) {
-                            final list = snapshot.data!.docs.map((d) => TenantClinicModel.fromFirestore(d)).toList();
+                            final list = snapshot.data!.docs
+                                .map((d) => TenantClinicModel.fromFirestore(d))
+                                .where((c) => !TenantRepositoryImpl.isDummyClinic(c))
+                                .toList();
                             context.read<ClinicsDirectoryBloc>().add(ClinicsListUpdated(list));
-                            if (list.isEmpty) repo.seedSampleClinics();
                           }
                           return BlocBuilder<ClinicsDirectoryBloc, ClinicsDirectoryState>(
-                            builder: (context, state) => SingleChildScrollView(
-                              padding: EdgeInsets.symmetric(horizontal: isDesktop ? 24.0 : 14.0, vertical: 20.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  ClinicsHeaderBar(
-                                    onExportCsv: () => AppSnackBar.showInfo(context, message: 'Exported clinics to CSV.'),
-                                    onRefresh: () => AppSnackBar.showSuccess(context, message: 'Clinics refreshed.'),
-                                    onOnboard: () => OnboardClinicModal.show(context),
+                            builder: (context, state) => StreamBuilder<Map<String, int>>(
+                              stream: _appointments$,
+                              builder: (context, apptSnap) {
+                                final appointments = apptSnap.data ?? const <String, int>{};
+                                return SingleChildScrollView(
+                                  padding: EdgeInsets.symmetric(horizontal: isDesktop ? 24.0 : 14.0, vertical: 20.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      ClinicsHeaderBar(
+                                        onExportCsv: () => AppSnackBar.showInfo(context, message: 'Exported clinics to CSV.'),
+                                        onRefresh: () => AppSnackBar.showSuccess(context, message: 'Clinics refreshed.'),
+                                        onOnboard: () => OnboardClinicModal.show(context),
+                                        activeCount: state.activePractices,
+                                        totalCount: state.totalClinics,
+                                      ),
+                                      const SizedBox(height: 18),
+                                      ClinicsKpiCards(
+                                        totalClinics: state.totalClinics,
+                                        activePractices: state.activePractices,
+                                        invitedClinics: state.invitedClinics,
+                                        totalDoctors: state.totalDoctors,
+                                        appointmentsMonth: state.allClinics.fold(0, (total, c) => total + (appointments[c.id] ?? 0)),
+                                        totalMrr: state.totalMrr,
+                                      ),
+                                      const SizedBox(height: 18),
+                                      ClinicsFilterRow(
+                                        searchQuery: state.searchQuery,
+                                        selectedPlan: state.selectedPlanFilter,
+                                        selectedStatus: state.selectedStatusFilter,
+                                        count: state.filteredClinics.length,
+                                        total: state.totalClinics,
+                                        onSearch: (q) => context.read<ClinicsDirectoryBloc>().add(ClinicsSearchQueryChanged(q)),
+                                        onPlanChanged: (p) => context.read<ClinicsDirectoryBloc>().add(ClinicsPlanFilterChanged(p)),
+                                        onStatusChanged: (s) => context.read<ClinicsDirectoryBloc>().add(ClinicsStatusFilterChanged(s)),
+                                        onReset: () => context.read<ClinicsDirectoryBloc>().add(const ClinicsResetFilters()),
+                                      ),
+                                      const SizedBox(height: 18),
+                                      StreamBuilder<List<DepartmentEntity>>(
+                                        stream: _departments$,
+                                        builder: (context, deptSnap) => ClinicsDataTable(
+                                          departments: deptSnap.data ?? const [],
+                                          clinics: state.filteredClinics,
+                                          appointmentsByClinic: appointments,
+                                          onDetails: (c) => _showDetails(c),
+                                          onEdit: (c) => EditClinicModal.show(context, c),
+                                          onManagePlan: (c) => ManageSubscriptionModal.show(context, c),
+                                          onToggleStatus: (c) async {
+                                            try {
+                                              await repo.toggleStatus(c.id, c.isActive);
+                                              if (context.mounted) {
+                                                AppSnackBar.showSuccess(context, message: c.isActive ? 'Clinic paused.' : 'Clinic activated.');
+                                              }
+                                            } catch (e) {
+                                              if (context.mounted) {
+                                                AppSnackBar.showWarning(context, message: e.toString().replaceFirst('Exception: ', ''));
+                                              }
+                                            }
+                                          },
+                                          onResendInvite: (c) => _resendClinicInvite(context, c, repo),
+                                          onDelete: (c) => _confirmDeleteClinic(context, c, repo),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  const SizedBox(height: 18),
-                                  ClinicsKpiCards(
-                                    totalClinics: state.totalClinics,
-                                    activePractices: state.activePractices,
-                                    appointmentsMonth: state.totalAppointmentsMonth,
-                                    totalMrr: state.totalMrr,
-                                  ),
-                                  const SizedBox(height: 18),
-                                  ClinicsFilterRow(
-                                    searchQuery: state.searchQuery,
-                                    selectedPlan: state.selectedPlanFilter,
-                                    selectedStatus: state.selectedStatusFilter,
-                                    count: state.filteredClinics.length,
-                                    total: state.totalClinics,
-                                    onSearch: (q) => context.read<ClinicsDirectoryBloc>().add(ClinicsSearchQueryChanged(q)),
-                                    onPlanChanged: (p) => context.read<ClinicsDirectoryBloc>().add(ClinicsPlanFilterChanged(p)),
-                                    onStatusChanged: (s) => context.read<ClinicsDirectoryBloc>().add(ClinicsStatusFilterChanged(s)),
-                                    onReset: () => context.read<ClinicsDirectoryBloc>().add(const ClinicsResetFilters()),
-                                  ),
-                                  const SizedBox(height: 18),
-                                  StreamBuilder<List<DepartmentEntity>>(
-                                    stream: _departments$,
-                                    builder: (context, deptSnap) => ClinicsDataTable(
-                                      departments: deptSnap.data ?? const [],
-                                      clinics: state.filteredClinics,
-                                      onDetails: (c) => _showDetails(c),
-                                      onManagePlan: (c) => ManageSubscriptionModal.show(context, c),
-                                      onToggleStatus: (c) async {
-                                        try {
-                                          await repo.toggleStatus(c.id, c.isActive);
-                                          if (context.mounted) {
-                                            AppSnackBar.showSuccess(context, message: c.isActive ? 'Clinic paused.' : 'Clinic activated.');
-                                          }
-                                        } catch (e) {
-                                          if (context.mounted) {
-                                            AppSnackBar.showWarning(context, message: e.toString().replaceFirst('Exception: ', ''));
-                                          }
-                                        }
-                                      },
-                                      onResendInvite: (c) => _resendClinicInvite(context, c, repo),
-                                      onDelete: (c) => _confirmDeleteClinic(context, c, repo),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                );
+                              },
                             ),
                           );
                         },

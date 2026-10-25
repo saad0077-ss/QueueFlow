@@ -39,29 +39,33 @@ class TenantClinicEntity extends Equatable {
   final String adminEmail;
   final String status;
   final List<PracticingDoctorEntity> doctors;
+  final List<String> departmentIds;
+  final List<String> departments;
 
   const TenantClinicEntity({
     required this.id,
     required this.name,
-    this.rating = 4.8,
+    this.rating = 0,
     required this.category,
-    this.city = 'Kochi',
-    this.address = '2nd Floor, Panampilly Nagar, Kochi, Kerala',
-    this.phone = '+91 484 987 6543',
-    this.operatingHours = 'Mon–Sat, 9:00 AM – 8:00 PM',
-    this.monthlyVisits = 256,
-    this.practicingDoctors = 1,
+    this.city = '',
+    this.address = '',
+    this.phone = '',
+    this.operatingHours = '',
+    this.monthlyVisits = 0,
+    this.practicingDoctors = 0,
     this.doctorLimitText = '1 Doctor Limit',
     required this.planId,
     this.planName = 'Solo Doctor Plan',
     this.billingCadence = 'Monthly Auto-Debit',
-    this.queueStatus = 'Queue Open (4 in line)',
-    this.servingToken = 'A-021',
-    this.avgWaitTime = '18m wait',
+    this.queueStatus = '',
+    this.servingToken = '',
+    this.avgWaitTime = '',
     required this.adminName,
     required this.adminEmail,
     required this.status,
     this.doctors = const [],
+    this.departmentIds = const [],
+    this.departments = const [],
   });
 
   bool get isInvited => status.toUpperCase() == 'INVITED';
@@ -70,5 +74,5 @@ class TenantClinicEntity extends Equatable {
   bool get isSuspended => status.toUpperCase() == 'SUSPENDED';
 
   @override
-  List<Object?> get props => [id, name, planId, status, adminEmail];
+  List<Object?> get props => [id, name, planId, status, adminEmail, departmentIds, departments];
 }

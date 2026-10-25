@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/widgets/app_snack_bar.dart';
 
 /// Notification icon button in the clinic top bar.
 class ClinicNotificationButton extends StatelessWidget {
@@ -14,12 +15,7 @@ class ClinicNotificationButton extends StatelessWidget {
         size: 22,
       ),
       onPressed: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('No new notifications'),
-            duration: Duration(seconds: 2),
-          ),
-        );
+        AppSnackBar.showInfo(context, message: 'No new notifications');
       },
     );
   }

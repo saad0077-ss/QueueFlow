@@ -24,6 +24,8 @@ class TenantClinicModel extends TenantClinicEntity {
     required super.adminEmail,
     required super.status,
     super.doctors,
+    super.departmentIds,
+    super.departments,
   });
 
   factory TenantClinicModel.fromFirestore(DocumentSnapshot doc) {
@@ -34,48 +36,47 @@ class TenantClinicModel extends TenantClinicEntity {
     if (plan == 'multi') pName = 'Multi-Doctor Clinic Plan';
     if (plan == 'enterprise') pName = 'Unlimited Doctors Plan';
 
-    final rawDoctors = (d['doctors'] as List<dynamic>?) ?? [];
-    final doctorsList = rawDoctors.map((docData) {
-      final m = docData as Map<String, dynamic>;
-      return PracticingDoctorEntity(
-        name: m['name'] ?? 'Dr. Specialist',
-        specialty: m['specialty'] ?? 'General Medicine',
-        room: m['room'] ?? 'Consultation Suite',
-        isAvailable: m['isAvailable'] ?? true,
-      );
-    }).toList();
+    final doctorsList = ((d['doctors'] as List<dynamic>?) ?? [])
+        .whereType<Map<String, dynamic>>()
+        .map((m) => PracticingDoctorEntity(
+              name: m['name'] ?? '',
+              specialty: m['specialty'] ?? '',
+              room: m['room'] ?? '',
+              isAvailable: m['isAvailable'] ?? true,
+            ))
+        .toList();
+
+    final rawDeptIds = (d['departmentIds'] as List<dynamic>?) ?? [];
+    final deptIds = rawDeptIds.map((e) => e.toString()).toList();
+
+    final rawDepts = (d['departments'] as List<dynamic>?) ?? [];
+    final deptsList = rawDepts.map((e) => e.toString()).toList();
 
     return TenantClinicModel(
       id: doc.id,
-      name: d['name'] ?? 'Sunrise Health Clinic',
-      rating: (d['rating'] as num?)?.toDouble() ?? 4.8,
-      category: d['category'] ?? 'General & Family Clinic',
-      city: d['city'] ?? 'Kochi',
-      address: d['address'] ?? 'Panampilly Nagar, Kochi, Kerala',
-      phone: d['phone'] ?? '+91 484 987 6543',
-      operatingHours: d['operatingHours'] ?? 'Mon–Sat, 9:00 AM – 8:00 PM',
-      monthlyVisits: d['monthlyVisits'] ?? 256,
-      practicingDoctors: d['practicingDoctors'] ?? 1,
+      name: d['name'] ?? 'Unnamed Clinic',
+      rating: (d['rating'] as num?)?.toDouble() ?? 0,
+      category: d['category'] ?? '',
+      city: d['city'] ?? '',
+      address: d['address'] ?? '',
+      phone: d['phone'] ?? '',
+      operatingHours: d['operatingHours'] ?? '',
+      monthlyVisits: (d['monthlyVisits'] as num?)?.toInt() ?? 0,
+      // Count the real roster; the stored practicingDoctors field was a plan-based placeholder
+      practicingDoctors: doctorsList.length,
       doctorLimitText: d['doctorLimitText'] ?? '1 Doctor Limit',
       planId: plan,
       planName: d['planName'] ?? pName,
       billingCadence: d['billingCadence'] ?? 'Monthly Auto-Debit',
-      queueStatus: d['queueStatus'] ?? 'Queue Open (3 in line)',
-      servingToken: d['servingToken'] ?? 'A-021',
-      avgWaitTime: d['avgWaitTime'] ?? '15m wait',
-      adminName: d['adminName'] ?? 'Dr. Priya',
-      adminEmail: d['adminEmail'] ?? 'priya@sunrisehealth.com',
+      queueStatus: d['queueStatus'] ?? '',
+      servingToken: d['servingToken'] ?? '',
+      avgWaitTime: d['avgWaitTime'] ?? '',
+      adminName: d['adminName'] ?? '',
+      adminEmail: d['adminEmail'] ?? '',
       status: (d['status'] ?? 'active').toString().toUpperCase(),
-      doctors: doctorsList.isNotEmpty
-          ? doctorsList
-          : [
-              PracticingDoctorEntity(
-                name: d['adminName'] ?? 'Dr. Priya',
-                specialty: d['category'] ?? 'General & Family Medicine',
-                room: 'Room 1 (Consultation)',
-                isAvailable: true,
-              ),
-            ],
+      doctors: doctorsList,
+      departmentIds: deptIds,
+      departments: deptsList,
     );
   }
 }

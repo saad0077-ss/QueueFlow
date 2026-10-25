@@ -21,8 +21,9 @@ class ClinicsDirectoryState extends Equatable {
   int get totalClinics => allClinics.length;
   int get activePractices =>
       allClinics.where((c) => c.status == 'ACTIVE').length;
-  int get totalAppointmentsMonth =>
-      allClinics.fold(0, (sum, c) => sum + c.monthlyVisits);
+  int get invitedClinics => allClinics.where((c) => c.isInvited).length;
+  int get totalDoctors =>
+      allClinics.fold(0, (sum, c) => sum + c.doctors.length);
   int get totalMrr {
     return allClinics.where((c) => c.status == 'ACTIVE').fold(0, (sum, c) {
       if (c.planId == 'enterprise') return sum + 6999;

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/layout/clinic_breakpoints.dart';
+import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../services/presentation/pages/clinic_services_view.dart';
 import '../../data/repositories/clinic_dashboard_repository_impl.dart';
 import '../../domain/usecases/call_next_token_usecase.dart';
@@ -18,6 +19,7 @@ import '../widgets/create_appointment_dialog.dart';
 import '../widgets/dashboard_greeting_header.dart';
 import '../widgets/dashboard_main_columns.dart';
 import '../widgets/dashboard_stats_row.dart';
+import '../widgets/clinic_account_removal_guard.dart';
 
 /// Main Dashboard Page for Clinic Admin, driven entirely by pure BLoC state management.
 class ClinicDashboardPage extends StatelessWidget {
@@ -34,7 +36,9 @@ class ClinicDashboardPage extends StatelessWidget {
         issueWalkInTokenUseCase: IssueWalkInTokenUseCase(repository),
         togglePauseQueueUseCase: TogglePauseQueueUseCase(repository),
       )..add(const DashboardSubscriptionRequested()),
-      child: const _ClinicDashboardView(),
+      child: const ClinicAccountRemovalGuard(
+        child: _ClinicDashboardView(),
+      ),
     );
   }
 }
@@ -56,16 +60,11 @@ class _ClinicDashboardView extends StatelessWidget {
     return BlocConsumer<ClinicDashboardBloc, ClinicDashboardState>(
       listener: (context, state) {
         if (state.toastMessage != null) {
-          final color = state.isErrorToast
-              ? Colors.red
-              : const Color(0xFF1E58F5);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.toastMessage!),
-              backgroundColor: color,
-              duration: const Duration(seconds: 2),
-            ),
-          );
+          if (state.isErrorToast) {
+            AppSnackBar.showError(context, message: state.toastMessage!);
+          } else {
+            AppSnackBar.showSuccess(context, message: state.toastMessage!);
+          }
           context.read<ClinicDashboardBloc>().add(
             const DashboardClearFeedback(),
           );
@@ -81,6 +80,7 @@ class _ClinicDashboardView extends StatelessWidget {
               ? Drawer(
                   width: 260,
                   backgroundColor: const Color(0xFF090E1A),
+                  shape: const RoundedRectangleBorder(),
                   child: SafeArea(
                     child: Builder(
                       builder: (drawerContext) => ClinicSidebar(
@@ -106,12 +106,19 @@ class _ClinicDashboardView extends StatelessWidget {
                 Expanded(
                   child: Column(
                     children: [
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(
-                          hPad,
-                          isMobile ? 12 : 20,
-                          hPad,
-                          16,
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: hPad,
+                          vertical: isMobile ? 10 : 14,
+                        ),
+                        decoration: const BoxDecoration(
+                          color: Color(0xFF090E1A),
+                          border: Border(
+                            bottom: BorderSide(
+                              color: Color(0xFF131D31),
+                              width: 1,
+                            ),
+                          ),
                         ),
                         child: Builder(
                           builder: (scaffoldContext) => ClinicTopBar(
@@ -127,7 +134,12 @@ class _ClinicDashboardView extends StatelessWidget {
                       ),
                       Expanded(
                         child: SingleChildScrollView(
-                          padding: EdgeInsets.fromLTRB(hPad, 0, hPad, 32),
+                          padding: EdgeInsets.fromLTRB(
+                            hPad,
+                            isMobile ? 16 : 22,
+                            hPad,
+                            32,
+                          ),
                           child: state.activeNav == 'Services'
                               ? ClinicServicesView(
                                   onNavigateToBilling: () => bloc.add(
@@ -154,15 +166,9 @@ class _ClinicDashboardView extends StatelessWidget {
                                         const DashboardCallNextPressed(),
                                       ),
                                       onViewQueue: () {
-                                        ScaffoldMessenger.of(
+                                        AppSnackBar.showInfo(
                                           context,
-                                        ).showSnackBar(
-                                          const SnackBar(
-                                            content: Text(
-                                              'Opening live queue view...',
-                                            ),
-                                            duration: Duration(seconds: 2),
-                                          ),
+                                          message: 'Opening live queue view...',
                                         );
                                       },
                                       onAddWalkIn: () => bloc.add(

@@ -35,87 +35,102 @@ class _DepartmentDetailsPageState extends State<DepartmentDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          DeptDetailsTopBar(department: _dept, onBack: widget.onBack, onToggleStatus: _toggleStatus),
-          const SizedBox(height: 20),
-          DepartmentDetailsHeader(department: _dept),
-          const SizedBox(height: 20),
-          StreamBuilder<List<DeptServiceRequestEntity>>(
-            stream: widget.repository.watchServiceRequests(),
-            builder: (context, snap) {
-              final pending = (snap.data ?? []).where((r) => r.departmentId == _dept.id && r.isPending).length;
-              return DeptDetailsTabBar(
-                activeTab: _activeTab,
-                onTabChanged: (idx) => setState(() => _activeTab = idx),
-                catalogCount: _dept.standardServices.length,
-                pendingRequestsCount: pending,
-              );
-            },
-          ),
-          const SizedBox(height: 20),
-          if (_activeTab == 0)
-            DepartmentCatalogTab(
-              services: _dept.standardServices,
-              onAddService: (s) async {
-                await widget.repository.addStandardService(_dept.id, s);
-                setState(() => _dept = _dept.copyWith(standardServices: [..._dept.standardServices, s]));
-                if (context.mounted) AppSnackBar.showSuccess(context, message: 'Added "${s.name}" to catalog.');
-              },
-              onEditService: (s) => EditServiceDialog.show(
-                context,
-                service: s,
-                existingServices: _dept.standardServices,
-                onSave: (up) async {
-                  await widget.repository.updateStandardService(_dept.id, up);
-                  setState(() => _dept = _dept.copyWith(standardServices: _dept.standardServices.map((x) => x.id == up.id ? up : x).toList()));
-                  if (context.mounted) AppSnackBar.showSuccess(context, message: 'Updated "${up.name}".');
+    return StreamBuilder<List<DepartmentEntity>>(
+      stream: widget.repository.watchDepartments(),
+      builder: (context, deptSnap) {
+        if (deptSnap.hasData && deptSnap.data != null) {
+          final found = deptSnap.data!.where((d) => d.id == widget.department.id).firstOrNull;
+          if (found != null) {
+            _dept = found;
+          }
+        }
+
+        return SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              DeptDetailsTopBar(department: _dept, onBack: widget.onBack, onToggleStatus: _toggleStatus),
+              const SizedBox(height: 20),
+              DepartmentDetailsHeader(department: _dept),
+              const SizedBox(height: 20),
+              StreamBuilder<List<DeptServiceRequestEntity>>(
+                stream: widget.repository.watchServiceRequests(),
+                builder: (context, snap) {
+                  final pending = (snap.data ?? []).where((r) =>
+                      (r.departmentId == _dept.id ||
+                       r.departmentId == _dept.code ||
+                       r.departmentName.toLowerCase().trim() == _dept.name.toLowerCase().trim()) &&
+                      r.isPending).length;
+                  return DeptDetailsTabBar(
+                    activeTab: _activeTab,
+                    onTabChanged: (idx) => setState(() => _activeTab = idx),
+                    catalogCount: _dept.standardServices.length,
+                    pendingRequestsCount: pending,
+                  );
                 },
               ),
-              onRemoveService: (sid) async {
-                await widget.repository.removeStandardService(_dept.id, sid);
-                setState(() => _dept = _dept.copyWith(standardServices: _dept.standardServices.where((x) => x.id != sid).toList()));
-                if (context.mounted) AppSnackBar.showSuccess(context, message: 'Removed procedure.');
-              },
-            )
-          else if (_activeTab == 1)
-            StreamBuilder<List<DeptServiceRequestEntity>>(
-              stream: widget.repository.watchServiceRequests(),
-              builder: (context, snap) {
-                final list = (snap.data ?? []).where((r) => r.departmentId == _dept.id && r.isPending).toList();
-                return DepartmentRequestsTab(
-                  requests: list,
-                  onApprove: (r) async {
-                    await widget.repository.approveServiceRequest(r.id);
-                    if (context.mounted) AppSnackBar.showSuccess(context, message: 'Approved "${r.serviceName}".');
+              const SizedBox(height: 20),
+              if (_activeTab == 0)
+                DepartmentCatalogTab(
+                  services: _dept.standardServices,
+                  onAddService: (s) async {
+                    await widget.repository.addStandardService(_dept.id, s);
+                    if (context.mounted) AppSnackBar.showSuccess(context, message: 'Added "${s.name}" to catalog.');
                   },
-                  onReject: (r) async {
-                    await widget.repository.rejectServiceRequest(r.id, 'Standard catalog guidelines.');
-                    if (context.mounted) AppSnackBar.showWarning(context, message: 'Request rejected.');
+                  onEditService: (s) => EditServiceDialog.show(
+                    context,
+                    service: s,
+                    existingServices: _dept.standardServices,
+                    onSave: (up) async {
+                      await widget.repository.updateStandardService(_dept.id, up);
+                      if (context.mounted) AppSnackBar.showSuccess(context, message: 'Updated "${up.name}".');
+                    },
+                  ),
+                  onRemoveService: (sid) async {
+                    await widget.repository.removeStandardService(_dept.id, sid);
+                    if (context.mounted) AppSnackBar.showSuccess(context, message: 'Removed procedure.');
                   },
-                );
-              },
-            )
-          else
-            DepartmentSettingsTab(
-              department: _dept,
-              onSave: (up) async {
-                await widget.repository.updateDepartment(up);
-                setState(() => _dept = up);
-                if (context.mounted) AppSnackBar.showSuccess(context, message: 'Specialty rules updated.');
-              },
-            ),
-        ],
-      ),
+                )
+              else if (_activeTab == 1)
+                StreamBuilder<List<DeptServiceRequestEntity>>(
+                  stream: widget.repository.watchServiceRequests(),
+                  builder: (context, snap) {
+                    final list = (snap.data ?? []).where((r) =>
+                        (r.departmentId == _dept.id ||
+                         r.departmentId == _dept.code ||
+                         r.departmentName.toLowerCase().trim() == _dept.name.toLowerCase().trim()) &&
+                        r.isPending).toList();
+                    return DepartmentRequestsTab(
+                      requests: list,
+                      onApprove: (r) async {
+                        await widget.repository.approveServiceRequest(r.id);
+                        if (context.mounted) AppSnackBar.showSuccess(context, message: 'Approved "${r.serviceName}" and added to department catalog.');
+                      },
+                      onReject: (r) async {
+                        await widget.repository.rejectServiceRequest(r.id, 'Standard catalog guidelines.');
+                        if (context.mounted) AppSnackBar.showWarning(context, message: 'Request rejected.');
+                      },
+                    );
+                  },
+                )
+              else
+                DepartmentSettingsTab(   
+                  department: _dept,
+                  onSave: (up) async {
+                    await widget.repository.updateDepartment(up);
+                    if (context.mounted) AppSnackBar.showSuccess(context, message: 'Specialty rules updated.');
+                  },
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 
   void _toggleStatus() async {
     await widget.repository.toggleDepartmentStatus(_dept.id, _dept.isActive);
-    setState(() => _dept = _dept.copyWith(status: _dept.isActive ? 'inactive' : 'active'));
     if (mounted) AppSnackBar.showSuccess(context, message: 'Status updated.');
   }
 }
