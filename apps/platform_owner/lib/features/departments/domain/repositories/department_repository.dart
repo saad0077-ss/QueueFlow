@@ -9,6 +9,7 @@ abstract class DepartmentRepository {
   Stream<List<DeptServiceRequestEntity>> watchServiceRequests();
 
   Future<void> seedDepartmentsIfEmpty();
+  Future<void> purgeSampleRequests();
   Future<void> addDepartment(DepartmentEntity department);
   Future<void> updateDepartment(DepartmentEntity department);
   Future<void> toggleDepartmentStatus(String id, bool currentStatus);

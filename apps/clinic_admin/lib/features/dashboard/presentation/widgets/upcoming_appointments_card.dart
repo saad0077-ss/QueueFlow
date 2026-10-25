@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import '../../../../core/widgets/app_snack_bar.dart';
 import 'appointment_item_model.dart';
 import 'appointment_table_row.dart';
 
@@ -44,11 +46,9 @@ class UpcomingAppointmentsCard extends StatelessWidget {
                 onTap:
                     onViewAll ??
                     () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Viewing all appointments'),
-                          duration: Duration(seconds: 2),
-                        ),
+                      AppSnackBar.showInfo(
+                        context,
+                        message: 'Viewing all appointments',
                       );
                     },
                 borderRadius: BorderRadius.circular(4),

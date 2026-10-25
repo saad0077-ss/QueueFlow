@@ -35,6 +35,7 @@ class _PlatformDepartmentsViewState extends State<_PlatformDepartmentsView> {
   void initState() {
     super.initState();
     _repo.seedDepartmentsIfEmpty();
+    _repo.purgeSampleRequests();
   }
 
   void _onSidebarNav(int index) {

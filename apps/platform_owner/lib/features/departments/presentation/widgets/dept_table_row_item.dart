@@ -93,7 +93,7 @@ class DeptTableRowItem extends StatelessWidget {
                   ),
                   const SizedBox(width: 6),
                   Text(
-                    '${department.doctorCount} Doctor${department.doctorCount > 1 ? 's' : ''}',
+                    '${department.doctorCount} Doctor${department.doctorCount == 1 ? '' : 's'}',
                     style: GoogleFonts.inter(fontSize: 11, color: const Color(0xFF94A3B8)),
                   ),
                 ],

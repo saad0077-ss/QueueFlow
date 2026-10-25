@@ -33,7 +33,10 @@ class ClinicSidebar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: compact ? 80 : 240,
-      color: const Color(0xFF090E1A),
+      decoration: const BoxDecoration(
+        color: Color(0xFF090E1A),
+        border: Border(right: BorderSide(color: Color(0xFF131D31), width: 1)),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

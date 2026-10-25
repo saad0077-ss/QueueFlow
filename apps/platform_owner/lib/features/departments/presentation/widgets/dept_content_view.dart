@@ -62,7 +62,7 @@ class DeptContentView extends StatelessWidget {
                   },
                   onApproveService: (s) async {
                     await repository.approveServiceRequest(s.id);
-                    if (context.mounted) AppSnackBar.showSuccess(context, message: 'Approved "${s.serviceName}".');
+                    if (context.mounted) AppSnackBar.showSuccess(context, message: 'Approved "${s.serviceName}" and added to department catalog.');
                   },
                   onRejectService: (s) async {
                     await repository.rejectServiceRequest(s.id, 'Standard catalog guidelines.');

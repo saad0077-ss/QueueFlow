@@ -25,7 +25,7 @@ class ClinicAdminApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isInviteRoute = Uri.base.queryParameters['invite'] == 'true';
+    final isInviteRoute = Uri.base.queryParameters['invite'] == 'true'; 
 
     return MaterialApp(
       title: 'QueueFlow — Clinic Staff Portal',
@@ -34,30 +34,37 @@ class ClinicAdminApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF2563EB)),
         useMaterial3: true,
       ),
-      home: isInviteRoute
-          ? const ClinicAccountActivationPage()
-          : StreamBuilder<User?>(
-              stream: FirebaseAuth.instance.authStateChanges(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Scaffold(
-                    backgroundColor: Color(0xFF070B14),
-                    body: Center(
-                      child: CircularProgressIndicator(
-                        color: Color(0xFF38BDF8),
-                      ),
-                    ),
-                  );
-                }
+      home: StreamBuilder<User?>(
+        initialData: FirebaseAuth.instance.currentUser,
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting &&
+              snapshot.data == null) {
+            return const Scaffold(
+              backgroundColor: Color(0xFF070B14),
+              body: Center(
+                child: CircularProgressIndicator(
+                  color: Color(0xFF38BDF8),
+                ),
+              ),
+            );
+          }
 
-                if (snapshot.hasData && snapshot.data != null) {
-                  return const ClinicDashboardPage(); 
-                }
-                return snapshot.hasData && snapshot.data != null
-                    ? const ClinicDashboardPage()
-                    : const ClinicStaffLoginPage();
-              },
-            ),
+          // 1. If user is authenticated, ALWAYS show ClinicDashboardPage
+          if (snapshot.hasData && snapshot.data != null) {
+            return const ClinicDashboardPage();
+          }
+
+          // 2. If user is NOT authenticated:
+          // Check if this is an invite/activation link
+          if (isInviteRoute) { 
+            return const ClinicAccountActivationPage();
+          }
+
+          // Otherwise show standard staff login page
+          return const ClinicStaffLoginPage();
+        },
+      ),
     );
   }
 }

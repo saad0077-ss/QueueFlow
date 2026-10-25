@@ -28,6 +28,20 @@ class ClinicAuthRepositoryImpl implements ClinicAuthRepository {
         password: password,
       );
       if (credential.user == null) throw Exception('Sign-in failed.');
+
+      // Check if clinic was removed by platform owner
+      final removedSnap = await _firestore.collection('removed_clinics').doc(cleanEmail).get();
+      if (removedSnap.exists) {
+        await _auth.signOut();
+        throw Exception('The platform owner has removed this clinic facility and account.');
+      }
+
+      final clinicSnap = await _firestore.collection('clinics').where('adminEmail', isEqualTo: cleanEmail).get();
+      if (clinicSnap.docs.isEmpty) {
+        await _auth.signOut();
+        throw Exception('The platform owner has removed this clinic facility and account.');
+      }
+
       await _markClinicAsActive(cleanEmail);
       return ClinicStaffModel.fromFirebaseUser(credential.user!);
     } on FirebaseAuthException catch (e) {

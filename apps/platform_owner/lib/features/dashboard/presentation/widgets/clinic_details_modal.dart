@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../domain/entities/tenant_clinic_entity.dart';
 import 'clinic_details_actions.dart';
 import 'clinic_details_info_card.dart';
+import 'edit_clinic_modal.dart';
 
 class ClinicDetailsModal {
   static void show(
@@ -122,6 +123,19 @@ class ClinicDetailsModal {
           ],
         ),
       ),
+      InkWell(
+        onTap: () {
+          Navigator.pop(ctx);
+          EditClinicModal.show(ctx, c);
+        },
+        borderRadius: BorderRadius.circular(6),
+        child: Container(
+          padding: const EdgeInsets.all(5),
+          decoration: BoxDecoration(color: const Color(0xFF162238), borderRadius: BorderRadius.circular(6)),
+          child: const Icon(Icons.edit_note_rounded, size: 14, color: Color(0xFF38BDF8)),
+        ),
+      ),
+      const SizedBox(width: 8),
       if (onOpenFullScreen != null) ...[
         InkWell(
           onTap: () {
