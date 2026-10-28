@@ -14,8 +14,10 @@ class ClinicEntity extends Equatable {
   final String consultationFee;
   final String openingHours;
   final bool isOpen;
+  final bool isQueueOpen;
   final String currentToken;
   final int waitingCount;
+  final String? imageUrl;
 
   const ClinicEntity({
     required this.id,
@@ -31,9 +33,14 @@ class ClinicEntity extends Equatable {
     required this.consultationFee,
     required this.openingHours,
     this.isOpen = true,
-    this.currentToken = 'A-021',
-    this.waitingCount = 3,
+    this.isQueueOpen = false,
+    this.currentToken = 'A-001',
+    this.waitingCount = 0,
+    this.imageUrl,
   });
+
+  /// True ONLY if a live queue is open AND there is an active queue present
+  bool get hasLiveQueue => isQueueOpen && waitingCount > 0;
 
   @override
   List<Object?> get props => [
@@ -50,7 +57,9 @@ class ClinicEntity extends Equatable {
         consultationFee,
         openingHours,
         isOpen,
+        isQueueOpen,
         currentToken,
         waitingCount,
+        imageUrl,
       ];
 }

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/clinic_entity.dart';
@@ -14,6 +15,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final JoinQueueUseCase joinQueueUseCase;
   final CancelTicketUseCase cancelTicketUseCase;
   final FirebaseAuth _firebaseAuth;
+  StreamSubscription<List<ClinicEntity>>? _clinicsSubscription;
 
   HomeBloc({
     required this.getFeaturedClinicsUseCase,
@@ -24,6 +26,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   })  : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
         super(const HomeState()) {
     on<HomeInitialDataRequested>(_onInitialDataRequested);
+    on<HomeClinicsUpdated>(_onClinicsUpdated);
+    on<HomeRefreshRequested>(_onRefreshRequested);
     on<HomeCategorySelected>(_onCategorySelected);
     on<HomeSearchQueryChanged>(_onSearchQueryChanged);
     on<HomeNavTabChanged>(_onNavTabChanged);
@@ -40,27 +44,70 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     String initials = 'AR';
 
     if (user?.displayName != null && user!.displayName!.trim().isNotEmpty) {
-      final parts = user.displayName!.trim().split(' ');
+      final parts = user.displayName!.trim().split(RegExp(r'\s+'));
       name = parts[0];
-      if (parts.length >= 2) {
+      if (parts.length >= 2 && parts[1].isNotEmpty) {
         initials = '${parts[0][0]}${parts[1][0]}'.toUpperCase();
       } else {
-        initials = parts[0][0].toUpperCase();
+        initials = parts[0].substring(0, parts[0].length >= 2 ? 2 : 1).toUpperCase();
       }
+    } else if (user?.email != null && user!.email!.isNotEmpty) {
+      final handle = user.email!.split('@')[0];
+      name = handle[0].toUpperCase() + handle.substring(1);
+      initials = handle.substring(0, handle.length >= 2 ? 2 : 1).toUpperCase();
     }
+
+    // Cancel any previous stream
+    await _clinicsSubscription?.cancel();
+    _clinicsSubscription = getFeaturedClinicsUseCase.watch().listen((clinics) {
+      add(HomeClinicsUpdated(clinics));
+    });
 
     final clinics = await getFeaturedClinicsUseCase();
     final activeTicket = await getActiveTicketUseCase();
 
     emit(state.copyWith(
       allClinics: clinics,
-      filteredClinics: clinics,
+      filteredClinics: _filterClinics(clinics, state.selectedCategory, state.searchQuery),
       userName: name,
       userInitials: initials,
       activeTicket: activeTicket,
       currentTabIndex: 0,
       selectedCategory: 'all',
       searchQuery: '',
+    ));
+  }
+
+  void _onClinicsUpdated(
+    HomeClinicsUpdated event,
+    Emitter<HomeState> emit,
+  ) {
+    final filtered = _filterClinics(
+      event.clinics,
+      state.selectedCategory,
+      state.searchQuery,
+    );
+    emit(state.copyWith(
+      allClinics: event.clinics,
+      filteredClinics: filtered,
+    ));
+  }
+
+  Future<void> _onRefreshRequested(
+    HomeRefreshRequested event,
+    Emitter<HomeState> emit,
+  ) async {
+    final clinics = await getFeaturedClinicsUseCase();
+    final activeTicket = await getActiveTicketUseCase();
+    final filtered = _filterClinics(
+      clinics,
+      state.selectedCategory,
+      state.searchQuery,
+    );
+    emit(state.copyWith(
+      allClinics: clinics,
+      filteredClinics: filtered,
+      activeTicket: activeTicket,
     ));
   }
 
@@ -148,21 +195,28 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     String query,
   ) {
     var result = clinics;
-    if (category.toLowerCase() != 'all') {
-      result = result
-          .where((c) =>
-              c.category.toLowerCase().contains(category.toLowerCase()))
-          .toList();
+    final catLower = category.trim().toLowerCase();
+    if (catLower.isNotEmpty && catLower != 'all') {
+      result = result.where((c) {
+        final clinicCat = c.category.toLowerCase();
+        return clinicCat.contains(catLower);
+      }).toList();
     }
     if (query.trim().isNotEmpty) {
-      final q = query.toLowerCase();
-      result = result
-          .where((c) =>
-              c.name.toLowerCase().contains(q) ||
-              c.category.toLowerCase().contains(q) ||
-              c.address.toLowerCase().contains(q))
-          .toList();
+      final q = query.trim().toLowerCase();
+      result = result.where((c) {
+        return c.name.toLowerCase().contains(q) ||
+            c.category.toLowerCase().contains(q) ||
+            c.address.toLowerCase().contains(q) ||
+            c.city.toLowerCase().contains(q);
+      }).toList();
     }
     return result;
+  }
+
+  @override
+  Future<void> close() {
+    _clinicsSubscription?.cancel();
+    return super.close();
   }
 }

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../domain/entities/clinic_entity.dart';
 
 /// Clinic data model extending the domain entity ClinicEntity.
@@ -16,9 +17,94 @@ class ClinicModel extends ClinicEntity {
     required super.consultationFee,
     required super.openingHours,
     super.isOpen = true,
-    super.currentToken = 'A-021',
-    super.waitingCount = 3,
+    super.isQueueOpen = false,
+    super.currentToken = 'A-001',
+    super.waitingCount = 0,
+    super.imageUrl,
   });
+
+  /// Factory creating ClinicModel directly from a live Firestore DocumentSnapshot.
+  factory ClinicModel.fromFirestore(DocumentSnapshot doc) {
+    final map = (doc.data() as Map<String, dynamic>?) ?? {};
+    final name = (map['name'] ?? 'Clinic').toString().trim();
+
+    // Extract clean initials (up to 2 letters)
+    String initials = 'CL';
+    final parts = name.split(RegExp(r'\s+')).where((p) => p.isNotEmpty).toList();
+    if (parts.length >= 2) {
+      initials = '${parts[0][0]}${parts[1][0]}'.toUpperCase();
+    } else if (parts.isNotEmpty && parts[0].isNotEmpty) {
+      initials = parts[0].substring(0, parts[0].length >= 2 ? 2 : 1).toUpperCase();
+    }
+
+    final rawDepts = (map['departments'] as List<dynamic>?) ?? [];
+    final depts = rawDepts.map((e) => e.toString()).toList();
+
+    String category = (map['category'] ?? '').toString().trim();
+    if (category.isEmpty) {
+      if (depts.isNotEmpty) {
+        category = depts.join(', ');
+      } else {
+        category = 'General Medicine';
+      }
+    }
+
+    final statusStr = (map['status'] ?? 'ACTIVE').toString().toUpperCase();
+    final queueStatusStr = (map['queueStatus'] ?? '').toString();
+
+    // Check if clinic is open
+    final bool isOpen = (statusStr == 'ACTIVE' || statusStr == 'OPEN') &&
+        !statusStr.contains('CLOSED') &&
+        !statusStr.contains('SUSPENDED');
+
+    // Live queue is open ONLY if explicitly configured or queueStatus specifies it
+    bool isQueueOpen = false;
+    if (map['isQueueOpen'] is bool) {
+      isQueueOpen = map['isQueueOpen'] as bool;
+    } else if (map['hasLiveQueue'] is bool) {
+      isQueueOpen = map['hasLiveQueue'] as bool;
+    } else if (queueStatusStr.isNotEmpty) {
+      final qLower = queueStatusStr.toLowerCase();
+      isQueueOpen = qLower.contains('queue open') ||
+          (qLower.contains('open') && !qLower.contains('closed') && !qLower.contains('paused'));
+    }
+
+    // Waiting count from queueStatus (e.g. "Queue Open (2 in line)") or numeric field
+    int waiting = (map['waitingCount'] as num?)?.toInt() ?? 0;
+    if (waiting == 0 && queueStatusStr.isNotEmpty) {
+      final match = RegExp(r'(\d+)\s+in\s+line', caseSensitive: false).firstMatch(queueStatusStr);
+      if (match != null) {
+        waiting = int.tryParse(match.group(1) ?? '0') ?? 0;
+      }
+    }
+
+    final ratingVal = (map['rating'] as num?)?.toDouble() ?? 5.0;
+    final reviews = (map['reviewCount'] as num?)?.toInt() ??
+        (map['monthlyVisits'] as num?)?.toInt() ??
+        24;
+
+    return ClinicModel(
+      id: doc.id,
+      name: name,
+      initials: (map['initials'] != null && map['initials'].toString().isNotEmpty)
+          ? map['initials'].toString()
+          : initials,
+      category: category,
+      rating: ratingVal <= 0 ? 5.0 : ratingVal,
+      reviewCount: reviews <= 0 ? 12 : reviews,
+      distance: (map['distance'] ?? '1.2 km').toString(),
+      city: (map['city'] ?? 'Kochi').toString(),
+      address: (map['address'] ?? 'Main Road, Kerala').toString(),
+      phone: (map['phone'] ?? '+91 484 987 6543').toString(),
+      consultationFee: (map['consultationFee'] ?? '₹500').toString(),
+      openingHours: (map['operatingHours'] ?? map['openingHours'] ?? 'Mon–Sat, 09:00 AM – 08:00 PM').toString(),
+      isOpen: isOpen,
+      isQueueOpen: isQueueOpen,
+      currentToken: (map['servingToken'] ?? map['currentToken'] ?? 'A-001').toString(),
+      waitingCount: waiting,
+      imageUrl: map['imageUrl'] as String? ?? map['image'] as String?,
+    );
+  }
 
   /// Factory from Map / JSON representation
   factory ClinicModel.fromMap(Map<String, dynamic> map, {String? id}) {
@@ -36,8 +122,10 @@ class ClinicModel extends ClinicEntity {
       consultationFee: map['consultationFee'] ?? '₹500',
       openingHours: map['openingHours'] ?? 'Mon–Sat, 09:00 AM – 08:00 PM',
       isOpen: map['isOpen'] ?? true,
-      currentToken: map['currentToken'] ?? 'A-021',
-      waitingCount: (map['waitingCount'] as num?)?.toInt() ?? 3,
+      isQueueOpen: map['isQueueOpen'] ?? false,
+      currentToken: map['currentToken'] ?? 'A-001',
+      waitingCount: (map['waitingCount'] as num?)?.toInt() ?? 0,
+      imageUrl: map['imageUrl'] ?? map['image'],
     );
   }
 
@@ -56,114 +144,10 @@ class ClinicModel extends ClinicEntity {
       'consultationFee': consultationFee,
       'openingHours': openingHours,
       'isOpen': isOpen,
+      'isQueueOpen': isQueueOpen,
       'currentToken': currentToken,
       'waitingCount': waitingCount,
+      'imageUrl': imageUrl,
     };
   }
-
-  /// Initial verified clinics from the QueueFlow prototype specification.
-  static List<ClinicModel> get mockClinics => const [
-        ClinicModel(
-          id: 'sunrise-health',
-          name: 'Sunrise Health Clinic',
-          initials: 'SH',
-          category: 'General & Family Clinic',
-          rating: 4.9,
-          reviewCount: 342,
-          distance: '0.8 km',
-          city: 'Kochi',
-          address: 'Metro Health Plaza, 14 MG Road',
-          phone: '+91 484 234 5678',
-          consultationFee: '₹500',
-          openingHours: 'Mon–Sat, 09:00 AM – 08:00 PM',
-          isOpen: true,
-          currentToken: 'A-018',
-          waitingCount: 4,
-        ),
-        ClinicModel(
-          id: 'green-valley',
-          name: 'Green Valley',
-          initials: 'GV',
-          category: 'General Medicine',
-          rating: 5.0,
-          reviewCount: 100,
-          distance: '1.0 km',
-          city: 'Kottayam, Kerala',
-          address: 'Kottayam, Kerala',
-          phone: '+91 481 256 7890',
-          consultationFee: '₹500',
-          openingHours: 'Mon–Sat, 09:00 AM – 07:00 PM',
-          isOpen: true,
-          currentToken: 'G-005',
-          waitingCount: 2,
-        ),
-        ClinicModel(
-          id: 'citycare-clinic',
-          name: 'CityCare General Clinic',
-          initials: 'CC',
-          category: 'General Clinic',
-          rating: 4.6,
-          reviewCount: 100,
-          distance: '1.0 km',
-          city: 'MG Road, Kochi, Kerala',
-          address: 'MG Road, Kochi, Kerala',
-          phone: '+91 484 333 4455',
-          consultationFee: '₹500',
-          openingHours: 'Mon–Fri, 08:00 AM – 04:00 PM',
-          isOpen: true,
-          currentToken: 'C-010',
-          waitingCount: 1,
-        ),
-        ClinicModel(
-          id: 'wellness-skin',
-          name: 'Wellness Skin Studio',
-          initials: 'WS',
-          category: 'Dermatology',
-          rating: 4.7,
-          reviewCount: 100,
-          distance: '1.0 km',
-          city: 'Marine Drive, Kochi, Kerala',
-          address: 'Marine Drive, Kochi, Kerala',
-          phone: '+91 484 777 8899',
-          consultationFee: '₹750',
-          openingHours: 'Mon–Fri, 11:00 AM – 07:00 PM',
-          isOpen: true,
-          currentToken: 'W-004',
-          waitingCount: 2,
-        ),
-        ClinicModel(
-          id: 'smile-dental',
-          name: 'Smile Dental Clinic',
-          initials: 'SD',
-          category: 'Dental Clinic',
-          rating: 4.8,
-          reviewCount: 120,
-          distance: '1.2 km',
-          city: 'Kochi',
-          address: '15 Diamond Avenue, 2nd Floor',
-          phone: '+91 484 345 6789',
-          consultationFee: '₹600',
-          openingHours: 'Mon–Sat, 10:00 AM – 07:00 PM',
-          isOpen: true,
-          currentToken: 'A-021',
-          waitingCount: 3,
-        ),
-        ClinicModel(
-          id: 'apollo-diag',
-          name: 'Apollo Diagnostics & Lab',
-          initials: 'AD',
-          category: 'Diagnostics',
-          rating: 4.9,
-          reviewCount: 210,
-          distance: '3.1 km',
-          city: 'Kochi',
-          address: 'Central Medical Enclave, Palarivattom',
-          phone: '+91 484 567 8901',
-          consultationFee: '₹400',
-          openingHours: 'Mon–Sun, 07:00 AM – 09:00 PM',
-          isOpen: true,
-          currentToken: 'L-042',
-          waitingCount: 5,
-        ),
-      ];
 }
