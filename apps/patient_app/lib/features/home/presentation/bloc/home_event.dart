@@ -12,6 +12,19 @@ class HomeInitialDataRequested extends HomeEvent {
   const HomeInitialDataRequested();
 }
 
+class HomeClinicsUpdated extends HomeEvent {
+  final List<ClinicEntity> clinics;
+
+  const HomeClinicsUpdated(this.clinics);
+
+  @override
+  List<Object?> get props => [clinics];
+}
+
+class HomeRefreshRequested extends HomeEvent {
+  const HomeRefreshRequested();
+}
+
 class HomeCategorySelected extends HomeEvent {
   final String category;
 

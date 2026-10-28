@@ -24,36 +24,41 @@ class PatientBottomNavBar extends StatelessWidget {
           top: BorderSide(color: AppColors.darkBorder, width: 1),
         ),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildNavItem(
-            index: 0,
-            label: 'Home',
-            icon: Icons.home_outlined,
-            selectedIcon: Icons.home_rounded,
-          ),
-          _buildNavItem(
-            index: 1,
-            label: 'Live Queue',
-            assetIcon: 'assets/images/queue_nav_icon.png',
-            icon: Icons.people_outline_rounded,
-            selectedIcon: Icons.people_rounded,
-          ),
-          _buildNavItem(
-            index: 2,
-            label: 'Bookings',
-            assetIcon: 'assets/images/booking_nav_icon.png',
-            icon: Icons.confirmation_number_outlined,
-            selectedIcon: Icons.confirmation_number_rounded,
-          ),
-          _buildNavItem(
-            index: 3,
-            label: 'Profile',
-            icon: Icons.person_outline_rounded,
-            selectedIcon: Icons.person_rounded,
-          ),
-        ],
+      alignment: Alignment.center,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 640),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _buildNavItem(
+              index: 0,
+              label: 'Home',
+              icon: Icons.home_outlined,
+              selectedIcon: Icons.home_rounded,
+            ),
+            _buildNavItem(
+              index: 1,
+              label: 'Live Queue',
+              assetIcon: 'assets/images/queue_nav_icon.png',
+              icon: Icons.people_outline_rounded,
+              selectedIcon: Icons.people_rounded,
+              showBadge: hasActiveQueueTicket,
+            ),
+            _buildNavItem(
+              index: 2,
+              label: 'Bookings',
+              assetIcon: 'assets/images/booking_nav_icon.png',
+              icon: Icons.confirmation_number_outlined,
+              selectedIcon: Icons.confirmation_number_rounded,
+            ),
+            _buildNavItem(
+              index: 3,
+              label: 'Profile',
+              icon: Icons.person_outline_rounded,
+              selectedIcon: Icons.person_rounded,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -64,6 +69,7 @@ class PatientBottomNavBar extends StatelessWidget {
     IconData? icon,
     IconData? selectedIcon,
     String? assetIcon,
+    bool showBadge = false,
   }) {
     final isSelected = currentIndex == index;
     final color = isSelected ? const Color(0xFF38BDF8) : AppColors.darkInkFaint;
@@ -75,7 +81,7 @@ class PatientBottomNavBar extends StatelessWidget {
         key: ValueKey(isSelected),
         width: 50,
         height: 50,
-        fit: BoxFit.contain, 
+        fit: BoxFit.contain,
         color: color,
         errorBuilder: (_, _, _) => Icon(
           isSelected ? selectedIcon : icon,
@@ -114,6 +120,26 @@ class PatientBottomNavBar extends StatelessWidget {
                     ),
                   ),
                 ),
+                if (showBadge)
+                  Positioned(
+                    top: -2,
+                    right: -4,
+                    child: Container(
+                      width: 7,
+                      height: 7,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFF10B981),
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0x6610B981),
+                            blurRadius: 4,
+                            spreadRadius: 1,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
               ],
             ),
             const SizedBox(height: 4),

@@ -7,4 +7,6 @@ class GetFeaturedClinicsUseCase {
   GetFeaturedClinicsUseCase(this.repository);
 
   Future<List<ClinicEntity>> call() => repository.getFeaturedClinics();
+
+  Stream<List<ClinicEntity>> watch() => repository.watchFeaturedClinics();
 }

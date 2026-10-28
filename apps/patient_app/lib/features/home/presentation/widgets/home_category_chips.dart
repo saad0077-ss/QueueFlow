@@ -78,17 +78,17 @@ class HomeCategoryChips extends StatelessWidget {
       scrollDirection: Axis.horizontal,
       physics: const BouncingScrollPhysics(),
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 22),
+        padding: const EdgeInsets.only(bottom: 20),
         child: Row(
           children: categories.map((cat) {
             final isSelected = selectedCategory.toLowerCase() == cat.id.toLowerCase();
 
             return Padding(
-              padding: const EdgeInsets.only(right: 14),
+              padding: const EdgeInsets.only(right: 12),
               child: GestureDetector(
                 onTap: () => onCategorySelected(cat.id),
                 child: SizedBox(
-                  width: 72,
+                  width: 70,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -104,7 +104,7 @@ class HomeCategoryChips extends StatelessWidget {
                           border: Border.all(
                             color: isSelected
                                 ? cat.iconColor
-                                : AppColors.darkBorder.withValues(alpha: 0.5),
+                                : AppColors.darkBorder.withValues(alpha: 0.6),
                             width: isSelected ? 2 : 1,
                           ),
                           boxShadow: isSelected
@@ -130,9 +130,9 @@ class HomeCategoryChips extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 11, 
+                          fontSize: 11,
                           fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
-                          color: isSelected ? AppColors.textWhite : AppColors.darkInkMuted,
+                          color: isSelected ? AppColors.darkInk : AppColors.darkInkMuted,
                         ),
                       ),
                     ],

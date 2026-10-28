@@ -3,74 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../domain/entities/clinic_entity.dart';
 
-/// Stethoscope vector painter matching the QueueFlow design specification.
-class StethoscopeIcon extends StatelessWidget {
-  final double size;
-  final Color color;
-
-  const StethoscopeIcon({
-    super.key,
-    this.size = 24,
-    this.color = const Color(0xFF38BDF8),
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomPaint(
-      size: Size(size, size),
-      painter: _StethoscopePainter(color: color),
-    );
-  }
-}
-
-class _StethoscopePainter extends CustomPainter {
-  final Color color;
-
-  const _StethoscopePainter({required this.color});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final scale = size.width / 24.0;
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.7 * scale
-      ..strokeCap = StrokeCap.round
-      ..strokeJoin = StrokeJoin.round;
-
-    // Binaural tubes (U-shaped loop)
-    final path1 = Path()
-      ..moveTo(6 * scale, 3 * scale)
-      ..lineTo(6 * scale, 9 * scale)
-      ..arcToPoint(
-        Offset(14 * scale, 9 * scale),
-        radius: Radius.circular(4 * scale),
-        clockwise: false,
-      )
-      ..lineTo(14 * scale, 3 * scale);
-    canvas.drawPath(path1, paint);
-
-    // Flexible tube (lower connecting loop)
-    final path2 = Path()
-      ..moveTo(10 * scale, 13 * scale)
-      ..lineTo(10 * scale, 15 * scale)
-      ..arcToPoint(
-        Offset(20 * scale, 12.5 * scale),
-        radius: Radius.circular(5 * scale),
-        clockwise: false,
-      );
-    canvas.drawPath(path2, paint);
-
-    // Chest piece (bell/diaphragm circle)
-    canvas.drawCircle(Offset(20 * scale, 10 * scale), 1.8 * scale, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant _StethoscopePainter oldDelegate) =>
-      oldDelegate.color != color;
-}
-
-/// Clinic Card matching exact QueueFlow mobile design (Image 2).
 class HomeClinicCard extends StatelessWidget {
   final ClinicEntity clinic;
   final VoidCallback? onTap;
@@ -81,62 +13,124 @@ class HomeClinicCard extends StatelessWidget {
     this.onTap,
   });
 
-  Widget _buildCategoryIcon() {
+  Color get _categoryColor {
     final cat = clinic.category.toLowerCase();
-    if (cat.contains('dental')) {
-      return const Icon(
-        Icons.health_and_safety_outlined,
-        color: Color(0xFF2DD4BF),
-        size: 26,
-      );
-    } else if (cat.contains('derma')) {
-      return const Icon(
-        Icons.water_drop_outlined,
-        color: Color(0xFFF59E0B),
-        size: 26,
-      );
-    } else if (cat.contains('diag')) {
-      return const Icon(
-        Icons.biotech_outlined,
-        color: Color(0xFF8B5CF6),
-        size: 26,
+    if (cat.contains('dent')) return const Color(0xFF2DD4BF);
+    if (cat.contains('derm')) return const Color(0xFFF59E0B);
+    if (cat.contains('diag')) return const Color(0xFF8B5CF6);
+    if (cat.contains('pedi')) return const Color(0xFFF43F5E);
+    return const Color(0xFF38BDF8);
+  }
+
+  Color get _categoryBgColor {
+    final cat = clinic.category.toLowerCase();
+    if (cat.contains('dent')) return const Color(0xFF10302C);
+    if (cat.contains('derm')) return const Color(0xFF302410);
+    if (cat.contains('diag')) return const Color(0xFF251B3D);
+    if (cat.contains('pedi')) return const Color(0xFF351319);
+    return const Color(0xFF16233F);
+  }
+
+  IconData get _categoryIcon {
+    final cat = clinic.category.toLowerCase();
+    if (cat.contains('dent')) return Icons.health_and_safety_rounded;
+    if (cat.contains('derm')) return Icons.water_drop_rounded;
+    if (cat.contains('diag')) return Icons.biotech_rounded;
+    if (cat.contains('pedi')) return Icons.child_care_rounded;
+    return Icons.medical_services_rounded;
+  }
+
+  Widget _buildThumbnail() {
+    final startingLetter = clinic.name.trim().isNotEmpty
+        ? clinic.name.trim().substring(0, 1).toUpperCase()
+        : 'C';
+
+    if (clinic.imageUrl != null && clinic.imageUrl!.trim().isNotEmpty) {
+      return Container(
+        width: 66,
+        height: 66,
+        decoration: BoxDecoration(
+          color: _categoryBgColor,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: AppColors.darkBorder),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Image.network(
+          clinic.imageUrl!,
+          fit: BoxFit.cover,
+          errorBuilder: (_, _, _) => _buildFallbackThumbnail(startingLetter),
+        ),
       );
     }
-    return const StethoscopeIcon(size: 26, color: Color(0xFF38BDF8));
+
+    return _buildFallbackThumbnail(startingLetter);
+  }
+
+  Widget _buildFallbackThumbnail(String startingLetter) {
+    return Container(
+      width: 66,
+      height: 66,
+      decoration: BoxDecoration(
+        color: _categoryBgColor,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.darkBorder),
+      ),
+      alignment: Alignment.center,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            _categoryIcon,
+            color: _categoryColor,
+            size: 24,
+          ),
+          const SizedBox(height: 2),
+          Text(
+            startingLetter,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w800,
+              color: _categoryColor.withValues(alpha: 0.8),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildStatusPill() {
     final isOpen = clinic.isOpen;
-    final color = isOpen ? const Color(0xFF22C55E) : const Color(0xFF94A3B8);
+    final color = isOpen ? const Color(0xFF16A34A) : const Color(0xFFDC2626);
+    final bgColor = isOpen ? const Color(0xFF123022) : const Color(0xFF351319);
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
       decoration: BoxDecoration(
-        color: isOpen ? const Color(0x1F22C55E) : const Color(0x1A94A3B8),
-        borderRadius: BorderRadius.circular(999),
+        color: bgColor,
+        borderRadius: BorderRadius.circular(9999),
         border: Border.all(
-          color: isOpen ? const Color(0x4022C55E) : const Color(0x2694A3B8),
+          color: color.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 5.5,
-            height: 5.5,
+            width: 6,
+            height: 6,
             decoration: BoxDecoration(
               color: color,
               shape: BoxShape.circle,
             ),
           ),
-          const SizedBox(width: 4.5),
+          const SizedBox(width: 5),
           Text(
             isOpen ? 'OPEN' : 'CLOSED',
             style: TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w800,
+              fontSize: 10.5,
+              fontWeight: FontWeight.w700,
               color: color,
-              letterSpacing: 0.4,
+              letterSpacing: 0.2,
             ),
           ),
         ],
@@ -150,39 +144,36 @@ class HomeClinicCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 14),
       decoration: BoxDecoration(
         color: AppColors.darkSurface,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(color: AppColors.darkBorder),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x140F172A),
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(20),
           child: Padding(
             padding: const EdgeInsets.all(14),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // 1. Left Thumbnail
-                Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF101C30),
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: const Color(0xFF1E2E4A)),
-                  ),
-                  alignment: Alignment.center,
-                  child: _buildCategoryIcon(),
-                ),
+                // 1. Thumbnail (66x66)
+                _buildThumbnail(),
                 const SizedBox(width: 14),
 
-                // 2. Right Body
+                // 2. Body
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Clinic Name + Status Pill
+                      // Top Row: Name + Status Pill
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -193,10 +184,10 @@ class HomeClinicCard extends StatelessWidget {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
-                                fontSize: 15.5,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.white,
-                                letterSpacing: -0.2,
+                                fontSize: 14.5,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.darkInk,
+                                letterSpacing: -0.1,
                               ),
                             ),
                           ),
@@ -206,23 +197,21 @@ class HomeClinicCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 5),
 
-                      // Rating & Category
+                      // Meta Row: Star + Rating + (ReviewCount) · Category
                       Row(
                         children: [
-                          const Text(
-                            '★',
-                            style: TextStyle(
-                              fontSize: 12.5,
-                              color: Color(0xFF94A3B8),
-                            ),
+                          const Icon(
+                            Icons.star_rounded,
+                            size: 14,
+                            color: Color(0xFFF59E0B),
                           ),
-                          const SizedBox(width: 4),
+                          const SizedBox(width: 3),
                           Text(
-                            '${clinic.rating}',
+                            clinic.rating.toStringAsFixed(1),
                             style: GoogleFonts.jetBrainsMono(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w800,
-                              color: Colors.white,
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.darkInk,
                             ),
                           ),
                           const SizedBox(width: 5),
@@ -234,7 +223,7 @@ class HomeClinicCard extends StatelessWidget {
                               style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
-                                color: Color(0xFF94A3B8),
+                                color: AppColors.darkInkMuted,
                               ),
                             ),
                           ),
@@ -242,13 +231,13 @@ class HomeClinicCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
 
-                      // Location & City
+                      // Location: Pin + Distance · City
                       Row(
                         children: [
                           const Icon(
                             Icons.location_on_outlined,
-                            size: 13.5,
-                            color: Color(0xFF64748B),
+                            size: 13,
+                            color: AppColors.darkInkFaint,
                           ),
                           const SizedBox(width: 4),
                           Expanded(
@@ -257,34 +246,48 @@ class HomeClinicCard extends StatelessWidget {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
-                                fontSize: 12,
+                                fontSize: 11.5,
                                 fontWeight: FontWeight.w500,
-                                color: Color(0xFF64748B),
+                                color: AppColors.darkInkFaint,
                               ),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 7),
+                      const SizedBox(height: 6),
 
-                      // View Details CTA Link
+                      // CTA row: View details > and waiting count
                       Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: const [
-                          Text(
-                            'View details',
-                            style: TextStyle(
-                              fontSize: 12.5,
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFF2563EB),
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: const [
+                              Text(
+                                'View details',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xFF38BDF8),
+                                ),
+                              ),
+                              SizedBox(width: 3),
+                              Icon(
+                                Icons.chevron_right_rounded,
+                                size: 14,
+                                color: Color(0xFF38BDF8),
+                              ),
+                            ],
+                          ),
+                          if (clinic.hasLiveQueue)
+                            Text(
+                              '${clinic.waitingCount} in live queue',
+                              style: GoogleFonts.jetBrainsMono(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                                color: const Color(0xFF38BDF8),
+                              ),
                             ),
-                          ),
-                          SizedBox(width: 2),
-                          Icon(
-                            Icons.chevron_right_rounded,
-                            size: 15,
-                            color: Color(0xFF2563EB),
-                          ),
                         ],
                       ),
                     ],
