@@ -9,6 +9,7 @@ import '../../../../core/widgets/app_snack_bar.dart';
 import '../../data/models/tenant_clinic_model.dart';
 import '../../data/repositories/tenant_repository_impl.dart';
 import '../../domain/entities/tenant_clinic_entity.dart';
+import '../widgets/clinic_reviews_card.dart';
 import '../widgets/console_sidebar.dart';
 import '../widgets/manage_subscription_modal.dart';
 import '../widgets/edit_clinic_modal.dart';
@@ -453,7 +454,13 @@ class _ClinicDetailsViewState extends State<ClinicDetailsView> {
   Widget _leftColumn(BuildContext context, TenantClinicEntity clinic) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [_facilityDetailsCard(context, clinic), const SizedBox(height: 20), _doctorsRosterCard(context, clinic)],
+      children: [
+        _facilityDetailsCard(context, clinic),
+        const SizedBox(height: 20),
+        _doctorsRosterCard(context, clinic),
+        const SizedBox(height: 20),
+        ClinicReviewsCard(clinicId: clinic.id),
+      ],
     );
   }
 

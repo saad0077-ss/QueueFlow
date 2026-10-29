@@ -43,7 +43,7 @@ void main() async {
               body: Center( 
                 child: CircularProgressIndicator(color: Color(0xFF38BDF8)),
               ),
-            );
+            ); 
           }
           return snapshot.hasData && snapshot.data != null
               ? const PlatformClinicsPage()

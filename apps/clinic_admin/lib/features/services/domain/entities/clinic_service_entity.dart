@@ -16,7 +16,7 @@ class ClinicServiceEntity extends Equatable {
 
   const ClinicServiceEntity({
     required this.id,
-    this.clinicId = 'sunrise-health',
+    this.clinicId = '',
     required this.name,
     this.description = '',
     this.duration = 20,

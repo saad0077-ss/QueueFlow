@@ -26,7 +26,7 @@ class ClinicServiceModel extends ClinicServiceEntity {
   factory ClinicServiceModel.fromMap(Map<String, dynamic> map, String id) {
     return ClinicServiceModel(
       id: id,
-      clinicId: map['clinicId'] as String? ?? 'sunrise-health',
+      clinicId: map['clinicId'] as String? ?? '',
       name: map['name'] as String? ?? 'Unnamed Service',
       description: map['description'] as String? ?? '',
       duration: (map['duration'] as num?)?.toInt() ?? 20,

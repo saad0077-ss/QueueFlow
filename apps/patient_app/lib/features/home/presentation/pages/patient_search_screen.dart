@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../clinic_details/presentation/pages/clinic_details_screen.dart';
 import '../../data/repositories/home_repository_impl.dart';
 import '../../domain/entities/clinic_entity.dart';
 import '../../domain/repositories/home_repository.dart';
@@ -1197,116 +1198,10 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
   }
 
   void _showClinicDetailsModal(BuildContext context, ClinicEntity clinic) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: AppColors.darkSurface,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (ctx) => Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    clinic.name,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.darkInk,
-                    ),
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close_rounded, color: AppColors.darkInkFaint),
-                  onPressed: () => Navigator.of(ctx).pop(),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              clinic.category,
-              style: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF38BDF8),
-              ),
-            ),
-            const SizedBox(height: 14),
-            Row(
-              children: [
-                const Icon(Icons.location_on_outlined, size: 16, color: AppColors.darkInkFaint),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: Text(
-                    '${clinic.address}, ${clinic.city}',
-                    style: const TextStyle(fontSize: 13, color: AppColors.darkInkMuted),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                const Icon(Icons.phone_outlined, size: 16, color: AppColors.darkInkFaint),
-                const SizedBox(width: 6),
-                Text(
-                  clinic.phone,
-                  style: const TextStyle(fontSize: 13, color: AppColors.darkInkMuted),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                const Icon(Icons.schedule_outlined, size: 16, color: AppColors.darkInkFaint),
-                const SizedBox(width: 6),
-                Text(
-                  clinic.openingHours,
-                  style: const TextStyle(fontSize: 13, color: AppColors.darkInkMuted),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: clinic.isOpen ? const Color(0xFF123022) : const Color(0xFF351319),
-                    borderRadius: BorderRadius.circular(9999),
-                  ),
-                  child: Text(
-                    clinic.isOpen ? 'Open' : 'Closed',
-                    style: TextStyle(
-                      fontSize: 11.5,
-                      fontWeight: FontWeight.w700,
-                      color: clinic.isOpen ? const Color(0xFF16A34A) : const Color(0xFFDC2626),
-                    ),
-                  ),
-                ),
-                if (clinic.hasLiveQueue) ...[
-                  const SizedBox(width: 10),
-                  Text(
-                    '${clinic.waitingCount} in live queue',
-                    style: const TextStyle(
-                      fontSize: 12.5,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF38BDF8),
-                    ),
-                  ),
-                ],
-              ],
-            ),
-            const SizedBox(height: 24),
-          ],
-        ),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ClinicDetailsScreen(clinic: clinic),
       ),
     );
   }

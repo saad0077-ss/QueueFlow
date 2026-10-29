@@ -19,9 +19,7 @@ import '../widgets/services_catalog_section_header.dart';
 import '../widgets/services_view_header.dart';
 
 class ClinicServicesView extends StatelessWidget {
-  final VoidCallback onNavigateToBilling;
-
-  const ClinicServicesView({super.key, required this.onNavigateToBilling});
+  const ClinicServicesView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -34,15 +32,13 @@ class ClinicServicesView extends StatelessWidget {
         deleteServiceUseCase: DeleteClinicServiceUseCase(repo),
         repository: repo,
       )..add(const ServicesSubscriptionRequested()),
-      child: _ClinicServicesBody(onNavigateToBilling: onNavigateToBilling),
+      child: const _ClinicServicesBody(),
     );
   }
 }
 
 class _ClinicServicesBody extends StatelessWidget {
-  final VoidCallback onNavigateToBilling;
-
-  const _ClinicServicesBody({required this.onNavigateToBilling});
+  const _ClinicServicesBody();
 
   @override
   Widget build(BuildContext context) {
@@ -68,13 +64,7 @@ class _ClinicServicesBody extends StatelessWidget {
               planName: state.plan.planName,
             ),
             const SizedBox(height: 18),
-            ServiceCapacityQuotaCard(
-              currentCount: state.services.length,
-              limit: state.plan.servicesLimit,
-              isUnlimited: state.plan.isUnlimited,
-              planName: state.plan.planName,
-              onUpgrade: onNavigateToBilling,
-            ),
+            ServiceCapacityQuotaCard(currentCount: state.services.length),
             const SizedBox(height: 22),
             ServicesCatalogSectionHeader(count: state.services.length),
             const SizedBox(height: 14),
@@ -89,10 +79,6 @@ class _ClinicServicesBody extends StatelessWidget {
             else
               ServicesCardsGrid(
                 services: state.services,
-                isLimitReached: state.isLimitReached,
-                availableSlots: state.availableSlots,
-                planName: state.plan.planName,
-                isUnlimited: state.plan.isUnlimited,
                 onEdit: (s) => _openServiceModal(context, state, s),
                 onToggle: (s) =>
                     bloc.add(ServiceStatusTogglePressed(s.id, s.status)),
@@ -102,7 +88,6 @@ class _ClinicServicesBody extends StatelessWidget {
                   onConfirm: () => bloc.add(ServiceDeletePressed(s.id)),
                 ),
                 onAdd: () => _openServiceModal(context, state, null),
-                onUpgrade: onNavigateToBilling,
               ),
           ],
         );
@@ -115,14 +100,6 @@ class _ClinicServicesBody extends StatelessWidget {
     ClinicServicesState state,
     ClinicServiceEntity? service,
   ) {
-    if (service == null && state.isLimitReached) {
-      AppSnackBar.showWarning(
-        context,
-        message:
-            'Service limit reached (${state.services.length}/${state.plan.servicesLimit}). 1 doctor can only provide 1 active service. Upgrade plan to add more.',
-      );
-      return;
-    }
     ServiceEditDialog.show(
       context,
       service: service,

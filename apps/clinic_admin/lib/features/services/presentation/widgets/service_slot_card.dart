@@ -3,30 +3,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'service_ui_kit.dart';
 
 class ServiceSlotCard extends StatelessWidget {
-  final bool isLimitReached;
-  final bool isUnlimited;
-  final int availableSlots;
-  final String planName;
   final VoidCallback onAdd;
-  final VoidCallback onUpgrade;
 
-  const ServiceSlotCard({
-    super.key,
-    required this.isLimitReached,
-    required this.isUnlimited,
-    required this.availableSlots,
-    required this.planName,
-    required this.onAdd,
-    required this.onUpgrade,
-  });
+  const ServiceSlotCard({super.key, required this.onAdd});
 
   @override
   Widget build(BuildContext context) {
-    final message = isLimitReached
-        ? 'Your $planName has no open service slots. Upgrade to add more services.'
-        : (isUnlimited
-              ? 'Your plan supports unlimited clinical services.'
-              : 'You have $availableSlots open service slot${availableSlots == 1 ? '' : 's'} remaining on your plan.');
 
     return DashedBorderBox(
       child: Container(
@@ -45,19 +27,15 @@ class ServiceSlotCard extends StatelessWidget {
                 color: Color(0xFF1E293B),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                isLimitReached ? Icons.lock_outline_rounded : Icons.add_rounded,
-                color: isLimitReached
-                    ? ServiceColors.amber
-                    : ServiceColors.blue,
+              child: const Icon(
+                Icons.add_rounded,
+                color: ServiceColors.blue,
                 size: 22,
               ),
             ),
             const SizedBox(height: 16),
             Text(
-              isLimitReached
-                  ? 'Service Limit Reached'
-                  : 'Available Service Slot',
+              'Add a New Service',
               textAlign: TextAlign.center,
               style: GoogleFonts.inter(
                 fontSize: 16,
@@ -71,7 +49,7 @@ class ServiceSlotCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: Text(
-                message,
+                'Every plan includes unlimited clinical services. Add as many treatments as your clinic offers.',
                 textAlign: TextAlign.center,
                 style: GoogleFonts.inter(
                   fontSize: 12.5,
@@ -82,10 +60,8 @@ class ServiceSlotCard extends StatelessWidget {
             ),
             const SizedBox(height: 18),
             ServiceGradientButton(
-              label: isLimitReached
-                  ? 'Upgrade Plan for More Services →'
-                  : '+ Add Treatment Service',
-              onPressed: isLimitReached ? onUpgrade : onAdd,
+              label: '+ Add Treatment Service',
+              onPressed: onAdd,
               height: 36,
               fontSize: 13,
               padding: const EdgeInsets.symmetric(horizontal: 18),

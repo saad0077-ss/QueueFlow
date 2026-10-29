@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/clinic_dept_chip.dart';
+import '../../../../core/widgets/clinic_photo.dart';
 import '../../domain/entities/clinic_entity.dart';
 
 class HomeClinicCard extends StatelessWidget {
@@ -45,7 +47,7 @@ class HomeClinicCard extends StatelessWidget {
         ? clinic.name.trim().substring(0, 1).toUpperCase()
         : 'C';
 
-    if (clinic.imageUrl != null && clinic.imageUrl!.trim().isNotEmpty) {
+    if (clinic.imageVersion > 0 || (clinic.imageUrl?.trim().isNotEmpty ?? false)) {
       return Container(
         width: 66,
         height: 66,
@@ -55,10 +57,11 @@ class HomeClinicCard extends StatelessWidget {
           border: Border.all(color: AppColors.darkBorder),
         ),
         clipBehavior: Clip.antiAlias,
-        child: Image.network(
-          clinic.imageUrl!,
-          fit: BoxFit.cover,
-          errorBuilder: (_, _, _) => _buildFallbackThumbnail(startingLetter),
+        child: ClinicPhoto(
+          clinicId: clinic.id,
+          imageVersion: clinic.imageVersion,
+          imageUrl: clinic.imageUrl,
+          placeholder: _buildFallbackThumbnail(startingLetter),
         ),
       );
     }
@@ -207,7 +210,7 @@ class HomeClinicCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 3),
                           Text(
-                            clinic.rating.toStringAsFixed(1),
+                            clinic.hasRatings ? clinic.rating.toStringAsFixed(1) : 'New',
                             style: GoogleFonts.jetBrainsMono(
                               fontSize: 12.5,
                               fontWeight: FontWeight.w700,
@@ -216,15 +219,24 @@ class HomeClinicCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 5),
                           Expanded(
-                            child: Text(
-                              '(${clinic.reviewCount}) · ${clinic.category}',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.darkInkMuted,
-                              ),
+                            child: Row(
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    clinic.hasRatings
+                                        ? '(${clinic.reviewCount}) · ${clinic.primaryCategory}'
+                                        : clinic.primaryCategory,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColors.darkInkMuted,
+                                    ),
+                                  ),
+                                ),
+                                ClinicDeptChip(clinic: clinic),
+                              ],
                             ),
                           ),
                         ],

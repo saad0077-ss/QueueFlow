@@ -20,10 +20,10 @@ class AccountActivationState extends Equatable {
   final ClinicStaffEntity? activatedStaff;
 
   const AccountActivationState({
-    this.inviteEmail = 'priya@sunrisehealth.com',
+    this.inviteEmail = '',
     this.doctorName = 'Dr. Priya',
     this.role = 'Clinic Admin',
-    this.clinicName = 'Sunrise Health Clinic',
+    this.clinicName = '',
     this.password = '',
     this.confirmPassword = '',
     this.isPasswordObscured = true,

@@ -2,34 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'service_ui_kit.dart';
 
+/// Services are unlimited on every plan, so this only reports how many are active.
 class ServiceCapacityQuotaCard extends StatelessWidget {
   final int currentCount;
-  final int limit;
-  final bool isUnlimited;
-  final String planName;
-  final VoidCallback onUpgrade;
 
-  const ServiceCapacityQuotaCard({
-    super.key,
-    required this.currentCount,
-    required this.limit,
-    required this.isUnlimited,
-    required this.planName,
-    required this.onUpgrade,
-  });
+  const ServiceCapacityQuotaCard({super.key, required this.currentCount});
 
   @override
   Widget build(BuildContext context) {
-    final isLimit = !isUnlimited && currentCount >= limit;
-    final summary = isUnlimited
-        ? '$currentCount Services Active ($planName)'
-        : '$currentCount of $limit Services Active ($planName)';
-    final subText = isUnlimited
-        ? 'Enterprise tier with unlimited clinical services and specialized consultation offerings.'
-        : (limit == 1
-              ? 'Solo practice plan covers 1 clinical service (1 service per practicing doctor).'
-              : 'Multi-doctor plan covers up to $limit clinical services (1 service per doctor limit).');
-    final pillColor = isLimit ? ServiceColors.amber : ServiceColors.green;
+    final summary = '$currentCount Service${currentCount == 1 ? '' : 's'} Active (Unlimited Services)';
+    const subText = 'All plans include unlimited clinical services.';
+    const pillColor = ServiceColors.green;
 
     final info = Row(
       children: [
@@ -87,22 +70,13 @@ class ServiceCapacityQuotaCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
-        isUnlimited
-            ? '$currentCount / ∞ ACTIVE'
-            : '$currentCount / $limit ACTIVE',
+        '$currentCount / ∞ ACTIVE',
         style: GoogleFonts.inter(
           fontSize: 11.5,
           fontWeight: FontWeight.w700,
           color: pillColor,
         ),
       ),
-    );
-
-    final upgradeButton = ServiceOutlinedPill(
-      label: 'Upgrade Service Limit →',
-      onPressed: onUpgrade,
-      height: 42,
-      fontSize: 13,
     );
 
     // The blue accent strip follows the card's rounded left edge.
@@ -125,12 +99,7 @@ class ServiceCapacityQuotaCard extends StatelessWidget {
                     children: [
                       info,
                       const SizedBox(height: 12),
-                      Wrap(
-                        spacing: 10,
-                        runSpacing: 8,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: [pill, upgradeButton],
-                      ),
+                      pill,
                     ],
                   );
                 }
@@ -139,8 +108,6 @@ class ServiceCapacityQuotaCard extends StatelessWidget {
                     Expanded(child: info),
                     const SizedBox(width: 12),
                     pill,
-                    const SizedBox(width: 14),
-                    upgradeButton,
                   ],
                 );
               },

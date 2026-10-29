@@ -12,7 +12,7 @@ class ClinicStaffEntity extends Equatable {
     required this.email,
     required this.name,
     this.role = 'Clinic Admin',
-    this.clinicName = 'Sunrise Health Clinic',
+    this.clinicName = '',
   });
 
   @override

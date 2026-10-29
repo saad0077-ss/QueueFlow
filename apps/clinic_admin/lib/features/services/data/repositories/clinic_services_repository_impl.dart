@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../../../../core/services/current_clinic_resolver.dart';
 import '../../domain/entities/clinic_doctor_entity.dart';
 import '../../domain/entities/clinic_service_entity.dart';
 import '../../domain/entities/service_department_entity.dart';
@@ -10,9 +11,6 @@ import '../models/clinic_service_model.dart';
 import '../models/service_department_model.dart';
 
 class ClinicServicesRepositoryImpl implements ClinicServicesRepository {
-  /// Clinic key used by seed data when no clinic record matches the admin.
-  static const _legacyClinicId = 'sunrise-health';
-
   static const _months = [
     'Jan',
     'Feb',
@@ -30,7 +28,7 @@ class ClinicServicesRepositoryImpl implements ClinicServicesRepository {
 
   final FirebaseFirestore _firestore;
   final FirebaseAuth _auth;
-  Future<DocumentSnapshot<Map<String, dynamic>>?>? _clinicFuture;
+  Future<DocumentSnapshot<Map<String, dynamic>>>? _clinicFuture;
 
   ClinicServicesRepositoryImpl({
     FirebaseFirestore? firestore,
@@ -42,22 +40,17 @@ class ClinicServicesRepositoryImpl implements ClinicServicesRepository {
       _firestore.collection('services');
 
   /// The clinic managed by the signed-in admin, looked up once per repository.
-  Future<DocumentSnapshot<Map<String, dynamic>>?> _clinicDoc() =>
-      _clinicFuture ??= _loadClinicDoc();
+  Future<DocumentSnapshot<Map<String, dynamic>>> _clinicDoc() =>
+      _clinicFuture ??= CurrentClinicResolver.require(
+        auth: _auth,
+        firestore: _firestore,
+      ).catchError((Object e) {
+        // Allow a retry instead of caching the failure.
+        _clinicFuture = null;
+        throw e;
+      });
 
-  Future<DocumentSnapshot<Map<String, dynamic>>?> _loadClinicDoc() async {
-    final email = _auth.currentUser?.email?.trim().toLowerCase();
-    if (email == null || email.isEmpty) return null;
-    final snap = await _firestore
-        .collection('clinics')
-        .where('adminEmail', isEqualTo: email)
-        .limit(1)
-        .get();
-    return snap.docs.firstOrNull;
-  }
-
-  Future<String> _clinicId() async =>
-      (await _clinicDoc())?.id ?? _legacyClinicId;
+  Future<String> _clinicId() async => (await _clinicDoc()).id;
 
   @override
   Stream<List<ClinicServiceEntity>> watchServices() {
@@ -76,8 +69,8 @@ class ClinicServicesRepositoryImpl implements ClinicServicesRepository {
   @override
   Future<List<ServiceDepartmentEntity>> getDepartments() async {
     final clinic = await _clinicDoc();
-    final clinicId = clinic?.id ?? _legacyClinicId;
-    final slug = _slug(clinic?.data()?['name'] as String? ?? '');
+    final clinicId = clinic.id;
+    final slug = _slug(clinic.data()?['name'] as String? ?? '');
 
     final snap = await _firestore.collection('departments').get();
     return snap.docs
@@ -98,12 +91,12 @@ class ClinicServicesRepositoryImpl implements ClinicServicesRepository {
         .map(ServiceDepartmentModel.fromFirestore)
         .toList()
       ..sort((a, b) => a.name.compareTo(b.name));
-  }
-
+  }       
+  
   @override
   Future<ServicePlanEntity> getServicePlan() async {
-    final data = (await _clinicDoc())?.data() ?? const <String, dynamic>{};
-    final clinicName = data['name'] as String? ?? 'Sunrise Health Clinic';
+    final data = (await _clinicDoc()).data() ?? const <String, dynamic>{};
+    final clinicName = data['name'] as String? ?? '';  
 
     // Derived from planId because the platform admin only updates planId
     // when a subscription changes.
@@ -112,24 +105,18 @@ class ClinicServicesRepositoryImpl implements ClinicServicesRepository {
         return ServicePlanEntity(
           planName: 'Unlimited Doctors Plan',
           planPill: 'UNLIMITED DOCTORS PLAN',
-          servicesLimit: 0,
-          isUnlimited: true,
           clinicName: clinicName,
         );
       case 'multi': 
         return ServicePlanEntity(
           planName: 'Multi-Doctor Clinic Plan',
           planPill: 'MULTI-DOCTOR PRACTICE',
-          servicesLimit: 10,
-          isUnlimited: false,
           clinicName: clinicName,
         );
       default:
         return ServicePlanEntity(
           planName: 'Solo Doctor Plan',
           planPill: 'SOLO DOCTOR PRACTICE',
-          servicesLimit: 1,
-          isUnlimited: false,
           clinicName: clinicName,
         );
     }
@@ -137,7 +124,7 @@ class ClinicServicesRepositoryImpl implements ClinicServicesRepository {
 
   @override
   Future<List<ClinicDoctorEntity>> getDoctors() async {
-    final data = (await _clinicDoc())?.data() ?? const <String, dynamic>{};
+    final data = (await _clinicDoc()).data() ?? const <String, dynamic>{};
     final doctors = (data['doctors'] as List<dynamic>? ?? [])
         .whereType<Map<String, dynamic>>()
         .map(
@@ -161,7 +148,7 @@ class ClinicServicesRepositoryImpl implements ClinicServicesRepository {
   @override
   Future<void> saveService(ClinicServiceEntity service) async {
     final clinic = await _clinicDoc();
-    final clinicId = clinic?.id ?? _legacyClinicId;
+    final clinicId = clinic.id;
     final docId = service.id.isEmpty
         ? 'svc-${DateTime.now().millisecondsSinceEpoch}'
         : service.id;
@@ -187,7 +174,7 @@ class ClinicServicesRepositoryImpl implements ClinicServicesRepository {
         'serviceId': docId,
         'clinicId': clinicId,
         'clinicName':
-            clinic?.data()?['name'] as String? ?? 'Sunrise Health Clinic',
+            clinic.data()?['name'] as String? ?? '',
         'departmentId': service.departmentId,
         'departmentName': service.departmentName,
         'serviceName': service.name,

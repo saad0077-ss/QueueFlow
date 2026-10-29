@@ -1,0 +1,70 @@
+import '../../domain/entities/billing_plan_tier_entity.dart';
+import 'billing_plan_tier_model.dart';
+
+class BillingSampleData {
+  static const List<BillingPlanTierEntity> defaultTiers = [
+    BillingPlanTierModel(
+      id: 'solo',
+      name: 'Solo Doctor Plan',
+      tagline: 'For small clinics & solo doctors (1 Doctor · Unlimited Services)',
+      monthlyPrice: 999,
+      annualPrice: 799,
+      badge: 'Solo Doctor',
+      isPopular: false,
+      doctorLimit: 1,
+      serviceLimit: 1,
+      staffLimit: 1,
+      description: 'Designed for small home clinics and single-practitioner practices. Full live queue management for 1 doctor with unlimited clinical services.',
+      features: [
+        '1 Doctor queue management',
+        'Unlimited Clinical Services catalog',
+        'Live queue & token calling (Call Next)',
+        'Patient walk-ins & appointments',
+        'Waiting room live queue display',
+        'Daily patient summary reports',
+      ],
+    ),
+    BillingPlanTierModel(
+      id: 'multi',
+      name: 'Multi-Doctor Clinic Plan',
+      tagline: 'For polyclinics & group practices (Up to 10 Doctors · Unlimited Services)',
+      monthlyPrice: 2999,
+      annualPrice: 2399,
+      badge: 'Most Popular',
+      isPopular: true,
+      doctorLimit: 10,
+      serviceLimit: 10,
+      staffLimit: 5,
+      description: 'Built for polyclinics and medium clinics with multiple doctors managing separate consultation rooms and unlimited treatment services.',
+      features: [
+        'Up to 10 Doctors queue management',
+        'Unlimited Clinical Services catalog',
+        'Multi-room queue distribution',
+        'Live queue calling for each doctor room',
+        'Patient appointments & walk-in triage',
+        'Doctor-wise patient analytics',
+      ],
+    ),
+    BillingPlanTierModel(
+      id: 'unlimited',
+      name: 'Unlimited Doctors Plan',
+      tagline: 'For hospitals & large networks (Unlimited Doctors & Services)',
+      monthlyPrice: 6999,
+      annualPrice: 5599,
+      badge: 'Enterprise',
+      isPopular: false,
+      doctorLimit: 999,
+      serviceLimit: 999,
+      staffLimit: 20,
+      description: 'Comprehensive queue infrastructure with unlimited doctors, unlimited clinical services, multi-department triage, and priority platform support.',
+      features: [
+        'Unlimited Doctors queue management',
+        'Unlimited Clinical Services catalog',
+        'Unlimited consultation rooms',
+        'Multi-department queue routing',
+        'Advanced patient triage & analytics',
+        'Priority 24/7 platform support',
+      ],
+    ),
+  ];
+}

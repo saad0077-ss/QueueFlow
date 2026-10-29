@@ -14,7 +14,7 @@ class ClinicStaffModel extends ClinicStaffEntity {
     User user, {
     String? fallbackName,
     String role = 'Clinic Admin',
-    String clinicName = 'Sunrise Health Clinic',
+    String clinicName = '',
   }) {
     return ClinicStaffModel(
       uid: user.uid,
