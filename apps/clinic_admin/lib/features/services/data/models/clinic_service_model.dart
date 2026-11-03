@@ -35,10 +35,10 @@ class ClinicServiceModel extends ClinicServiceEntity {
           (map['assignedStaff'] as List<dynamic>?)
               ?.map((e) => e.toString())
               .toList() ??
-          ['Dr. Priya'],
+          const <String>[],
       status: map['status'] as String? ?? 'active',
-      departmentId: map['departmentId'] as String? ?? 'dept-gen',
-      departmentName: map['departmentName'] as String? ?? 'General Medicine',
+      departmentId: map['departmentId'] as String? ?? '',
+      departmentName: map['departmentName'] as String? ?? '',
       justification: map['justification'] as String? ?? '',
     );
   }

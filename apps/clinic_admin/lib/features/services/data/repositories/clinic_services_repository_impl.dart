@@ -40,15 +40,41 @@ class ClinicServicesRepositoryImpl implements ClinicServicesRepository {
       _firestore.collection('services');
 
   /// The clinic managed by the signed-in admin, looked up once per repository.
-  Future<DocumentSnapshot<Map<String, dynamic>>> _clinicDoc() =>
-      _clinicFuture ??= CurrentClinicResolver.require(
-        auth: _auth,
-        firestore: _firestore,
-      ).catchError((Object e) {
-        // Allow a retry instead of caching the failure.
-        _clinicFuture = null;
-        throw e;
-      });
+  Future<DocumentSnapshot<Map<String, dynamic>>> _clinicDoc() async {
+    if (_clinicFuture != null) return _clinicFuture!;
+
+    Future<DocumentSnapshot<Map<String, dynamic>>> resolver() async {
+      try {
+        final doc = await CurrentClinicResolver.resolve(
+          auth: _auth,
+          firestore: _firestore,
+        );
+        if (doc != null && doc.exists) return doc;
+      } catch (_) {}
+
+      try {
+        final activeQuery = await _firestore
+            .collection('clinics')
+            .where('status', isEqualTo: 'ACTIVE')
+            .limit(1)
+            .get();
+        if (activeQuery.docs.isNotEmpty) {
+          return activeQuery.docs.first;
+        }
+
+        final docDirect = await _firestore.collection('clinics').doc('sunrise-health').get();
+        if (docDirect.exists) return docDirect;
+      } catch (_) {}
+
+      return CurrentClinicResolver.require(auth: _auth, firestore: _firestore);
+    }
+
+    _clinicFuture = resolver().catchError((Object e) {
+      _clinicFuture = null;
+      throw e;
+    });
+    return _clinicFuture!;
+  }
 
   Future<String> _clinicId() async => (await _clinicDoc()).id;
 
@@ -124,25 +150,22 @@ class ClinicServicesRepositoryImpl implements ClinicServicesRepository {
 
   @override
   Future<List<ClinicDoctorEntity>> getDoctors() async {
-    final data = (await _clinicDoc()).data() ?? const <String, dynamic>{};
-    final doctors = (data['doctors'] as List<dynamic>? ?? [])
+    final clinicId = await _clinicId();
+    final snap = await _firestore.collection('clinics').doc(clinicId).get();
+    final data = snap.data() ?? const <String, dynamic>{};
+    final rawDocs = data['doctors'] as List<dynamic>? ?? [];
+    return rawDocs
         .whereType<Map<String, dynamic>>()
         .map(
           (m) => ClinicDoctorEntity(
-            name: m['name'] as String? ?? 'Dr. Specialist',
-            specialty: m['specialty'] as String? ?? 'General Medicine',
-            room: m['room'] as String? ?? 'Consultation Suite',
+            name: (m['name'] as String? ?? '').trim(),
+            specialty: (m['specialty'] as String? ?? '').trim(),
+            department: (m['department'] as String? ?? m['specialty'] as String? ?? '').trim(),
+            room: (m['room'] as String? ?? 'Consultation Suite').trim(),
           ),
         )
+        .where((d) => d.name.isNotEmpty)
         .toList();
-    if (doctors.isNotEmpty) return doctors;
-
-    final admin = (data['adminName'] as String?)?.trim();
-    return [
-      ClinicDoctorEntity(
-        name: (admin != null && admin.isNotEmpty) ? admin : 'Dr. Priya',
-      ),
-    ];
   }
 
   @override

@@ -53,12 +53,20 @@ class _ServiceEditFormState extends State<ServiceEditForm> {
     _deptId = hasDept
         ? s!.departmentId
         : (widget.departments.firstOrNull?.id ?? '');
-    _assignedStaff = [if (widget.doctors.isNotEmpty) widget.doctors.first.name];
+
+    _assignedStaff = s != null && s.assignedStaff.isNotEmpty
+        ? List.from(s.assignedStaff)
+        : [];
 
     if (s == null) {
       _durationCtrl.text = '20';
       _priceCtrl.text = '500';
       _selectStandard(_templates.firstOrNull?.name ?? _customValue);
+      // Auto-assign first matching doctor if available for this department
+      final matching = _filteredDoctors;
+      if (matching.isNotEmpty) {
+        _assignedStaff = [matching.first.name];
+      }
       return;
     }
 
@@ -72,9 +80,6 @@ class _ServiceEditFormState extends State<ServiceEditForm> {
     _descCtrl.text = s.description;
     _durationCtrl.text = s.duration.toString();
     _priceCtrl.text = s.price.toString();
-    if (s.assignedStaff.isNotEmpty) {
-      _assignedStaff = List.from(s.assignedStaff);
-    }
   }
 
   @override
@@ -99,14 +104,68 @@ class _ServiceEditFormState extends State<ServiceEditForm> {
 
   bool get _isCustom => _selectedStandard == _customValue;
 
-  /// Doctors on the clinic plus any previously assigned names that are no
-  /// longer listed, so editing never silently drops an assignment.
-  List<ClinicDoctorEntity> get _doctorOptions => [
-    ...widget.doctors,
-    for (final name in _assignedStaff)
-      if (!widget.doctors.any((d) => d.name == name))
-        ClinicDoctorEntity(name: name),
-  ];
+  bool _doctorMatchesDept(ClinicDoctorEntity doc, ServiceDepartmentEntity dept) {
+    final deptName = dept.name.trim().toLowerCase();
+    final deptId = dept.id.trim().toLowerCase();
+    final deptCode = dept.code.trim().toLowerCase();
+
+    final docDept = doc.department.trim().toLowerCase();
+    final docSpec = doc.specialty.trim().toLowerCase();
+
+    // Direct match against department name, ID, or code
+    if (docDept.isNotEmpty) {
+      if (docDept == deptName || docDept == deptId || docDept == deptCode) return true;
+      if (deptName.contains(docDept) || docDept.contains(deptName)) return true;
+    }
+
+    if (docSpec.isNotEmpty) {
+      if (docSpec == deptName || docSpec == deptId || docSpec == deptCode) return true;
+      if (deptName.contains(docSpec) || docSpec.contains(deptName)) return true;
+    }
+
+    // Token / keyword matching (e.g. "dental", "medicine", "cardiology", "pediatrics")
+    const stopWords = {'and', 'the', 'for', 'with', 'care', 'room', 'suite'};
+    final deptTokens = deptName
+        .split(RegExp(r'[^a-z0-9]+'))
+        .where((t) => t.length >= 3 && !stopWords.contains(t))
+        .toSet();
+
+    final docTokens = '$docDept $docSpec'
+        .split(RegExp(r'[^a-z0-9]+'))
+        .where((t) => t.length >= 3 && !stopWords.contains(t))
+        .toSet();
+
+    for (final token in docTokens) {
+      if (deptTokens.contains(token)) return true;
+    }
+
+    return false;
+  }
+
+  List<ClinicDoctorEntity> get _filteredDoctors {
+    final dept = _currentDept;
+    if (dept == null) return const [];
+    return widget.doctors.where((d) => _doctorMatchesDept(d, dept)).toList();
+  }
+
+  List<ClinicDoctorEntity> get _doctorOptions {
+    final matching = _filteredDoctors;
+    if (widget.initialService == null) {
+      // When adding a new service, strictly show only doctors assigned to this department
+      return matching;
+    }
+
+    final result = <ClinicDoctorEntity>[...matching];
+    // If editing an existing service, preserve any previously assigned doctors
+    // so they remain visible/toggleable.
+    for (final name in _assignedStaff) {
+      if (!result.any((d) => d.name == name)) {
+        final existing = widget.doctors.where((d) => d.name == name).firstOrNull;
+        result.add(existing ?? ClinicDoctorEntity(name: name));
+      }
+    }
+    return result;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -204,6 +263,10 @@ class _ServiceEditFormState extends State<ServiceEditForm> {
     setState(() {
       _deptId = val;
       _selectStandard(_templates.firstOrNull?.name ?? _customValue);
+      if (widget.initialService == null) {
+        final matching = _filteredDoctors;
+        _assignedStaff = matching.isNotEmpty ? [matching.first.name] : [];
+      }
     });
   }
 
@@ -226,9 +289,6 @@ class _ServiceEditFormState extends State<ServiceEditForm> {
       return;
     }
     final previousStatus = widget.initialService?.status;
-    final fallbackDoctor = widget.doctors.isNotEmpty
-        ? widget.doctors.first.name
-        : 'Dr. Priya';
     widget.onSave(
       ClinicServiceEntity(
         id: widget.initialService?.id ?? '',
@@ -238,9 +298,7 @@ class _ServiceEditFormState extends State<ServiceEditForm> {
         description: _descCtrl.text.trim(),
         duration: int.tryParse(_durationCtrl.text.trim()) ?? 20,
         price: int.tryParse(_priceCtrl.text.trim()) ?? 500,
-        assignedStaff: _assignedStaff.isEmpty
-            ? [fallbackDoctor]
-            : _assignedStaff,
+        assignedStaff: _assignedStaff,
         // Catalog services never need review; keep a deliberate deactivation.
         status: _isCustom
             ? 'pending_approval'

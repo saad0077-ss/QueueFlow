@@ -27,9 +27,9 @@ class ServicesCardsGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final columns = constraints.maxWidth >= 960
+        final columns = constraints.maxWidth >= 1200
             ? 3
-            : (constraints.maxWidth >= 600 ? 2 : 1);
+            : (constraints.maxWidth >= 640 ? 2 : 1);
 
         final cards = <Widget>[
           for (final service in services)

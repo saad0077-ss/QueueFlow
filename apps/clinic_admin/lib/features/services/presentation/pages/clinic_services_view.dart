@@ -95,16 +95,20 @@ class _ClinicServicesBody extends StatelessWidget {
     );
   }
 
-  void _openServiceModal(  
+  Future<void> _openServiceModal(  
     BuildContext context,
     ClinicServicesState state,
     ClinicServiceEntity? service,
-  ) {
+  ) async {
+    final repo = ClinicServicesRepositoryImpl();
+    final freshDoctors = await repo.getDoctors().catchError((_) => state.doctors);
+    if (!context.mounted) return;
+
     ServiceEditDialog.show(
       context,
       service: service,
       departments: state.departments,
-      doctors: state.doctors,
+      doctors: freshDoctors.isNotEmpty ? freshDoctors : state.doctors,
       onSave: (svc) =>
           context.read<ClinicServicesBloc>().add(ServiceSaveSubmitted(svc)),
     );

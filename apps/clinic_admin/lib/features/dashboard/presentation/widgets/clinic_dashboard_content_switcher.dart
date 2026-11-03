@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../billing/presentation/pages/clinic_billing_view.dart';
+import '../../../doctors/presentation/pages/clinic_doctors_view.dart';
 import '../../../services/presentation/pages/clinic_services_view.dart';
 import '../../../settings/presentation/pages/clinic_settings_view.dart';
 import '../bloc/clinic_dashboard_bloc.dart';
@@ -10,7 +11,7 @@ import 'create_appointment_dialog.dart';
 import 'dashboard_greeting_header.dart';
 import 'dashboard_main_columns.dart';
 import 'dashboard_stats_row.dart';
-
+     
 class ClinicDashboardContentSwitcher extends StatelessWidget {
   final ClinicDashboardState state;
   final ClinicDashboardBloc bloc;
@@ -27,6 +28,15 @@ class ClinicDashboardContentSwitcher extends StatelessWidget {
   Widget build(BuildContext context) {
     if (state.activeNav == 'Services') {
       return const ClinicServicesView();
+    }
+
+    if (state.activeNav == 'Doctors') {
+      return ClinicDoctorsView(
+        onNavigateToBilling: () =>
+            bloc.add(const DashboardNavTabChanged('Plan & Billing')),
+        onNavigateToQueue: () =>
+            bloc.add(const DashboardNavTabChanged('Live Queue')),
+      );
     }
 
     if (state.activeNav == 'Plan & Billing') {

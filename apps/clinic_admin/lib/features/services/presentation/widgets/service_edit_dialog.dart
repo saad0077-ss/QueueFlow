@@ -5,7 +5,6 @@ import '../../domain/entities/clinic_service_entity.dart';
 import '../../domain/entities/service_department_entity.dart';
 import 'service_dialog_header.dart';
 import 'service_edit_form.dart';
-import 'service_ui_kit.dart';
 
 class ServiceEditDialog extends StatelessWidget {
   final ClinicServiceEntity? initialService;
@@ -43,45 +42,62 @@ class ServiceEditDialog extends StatelessWidget {
     final isMobile = ClinicBreakpoints.isMobile(context);
 
     return Dialog(
-      backgroundColor: ServiceColors.surface,
+      backgroundColor: const Color(0xFF0F172A),
       surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(24),
-        side: const BorderSide(color: Color(0xFF2A3754)),
+        borderRadius: BorderRadius.circular(20),
+        side: const BorderSide(color: Color(0xFF1E293B), width: 1.2),
       ),
+      clipBehavior: Clip.antiAlias,
       insetPadding: isMobile
           ? const EdgeInsets.symmetric(horizontal: 12, vertical: 20)
           : const EdgeInsets.symmetric(horizontal: 40, vertical: 24),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 540, maxHeight: 760),
-        child: SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(
-            isMobile ? 18 : 26,
-            isMobile ? 18 : 24,
-            isMobile ? 18 : 26,
-            isMobile ? 18 : 26,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ServiceDialogHeader(
-                isEdit: initialService != null,
-                onClose: () => Navigator.pop(context),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              height: 3,
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFF0284C7), Color(0xFF06B6D4), Color(0xFF38BDF8)],
+                ),
               ),
-              const SizedBox(height: 20),
-              ServiceEditForm(
-                initialService: initialService,
-                departments: departments,
-                doctors: doctors,
-                onCancel: () => Navigator.pop(context),
-                onSave: (service) {
-                  onSave(service);
-                  Navigator.pop(context);
-                },
+            ),
+            Flexible(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.fromLTRB(
+                  isMobile ? 18 : 26,
+                  isMobile ? 18 : 24,
+                  isMobile ? 18 : 26,
+                  isMobile ? 18 : 26,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ServiceDialogHeader(
+                      isEdit: initialService != null,
+                      onClose: () => Navigator.pop(context),
+                    ),
+                    const SizedBox(height: 20),
+                    ServiceEditForm(
+                      initialService: initialService,
+                      departments: departments,
+                      doctors: doctors,
+                      onCancel: () => Navigator.pop(context),
+                      onSave: (service) {
+                        onSave(service);
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
