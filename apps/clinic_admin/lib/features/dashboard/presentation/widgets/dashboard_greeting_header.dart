@@ -9,16 +9,24 @@ class DashboardGreetingHeader extends StatelessWidget {
   const DashboardGreetingHeader({
     super.key,
     this.doctorName = 'Dr. Priya',
-    this.clinicName = 'Sunrise Health Clinic',
+    this.clinicName = '',
   });
+
+  static const _weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  static const _months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
   @override
   Widget build(BuildContext context) {
+    final now = DateTime.now();
+    final greeting = now.hour < 12 ? 'Good morning' : (now.hour < 17 ? 'Good afternoon' : 'Good evening');
+    final date = '${_weekdays[now.weekday - 1]}, ${now.day} ${_months[now.month - 1]} ${now.year}';
+    final subtitle = clinicName.trim().isEmpty ? date : '$date • $clinicName';
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Good morning, $doctorName',
+          '$greeting, $doctorName',
           style: GoogleFonts.inter(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -28,7 +36,7 @@ class DashboardGreetingHeader extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         Text(
-          'Friday, 12 June 2026 • $clinicName',
+          subtitle,
           style: GoogleFonts.inter(
             fontSize: 12.5,
             fontWeight: FontWeight.w400,

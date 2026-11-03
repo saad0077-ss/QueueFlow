@@ -152,6 +152,8 @@ class TenantRepositoryImpl implements TenantRepository {
       'rating': 5.0,
       'monthlyVisits': 0,
       'doctorLimitText': doctorLimitText,
+      'practicingDoctors': 0,
+      'doctors': const [],
       'queueStatus': 'Queue Open (0 in line)',
       'servingToken': 'A-001',
       'avgWaitTime': '0m wait',

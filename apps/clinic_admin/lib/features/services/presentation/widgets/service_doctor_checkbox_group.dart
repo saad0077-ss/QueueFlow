@@ -47,18 +47,45 @@ class ServiceDoctorCheckboxGroup extends StatelessWidget {
         const SizedBox(height: 8),
         Container(
           width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+          padding: availableDoctors.isEmpty
+              ? const EdgeInsets.symmetric(horizontal: 14, vertical: 14)
+              : const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
           decoration: BoxDecoration(
             color: ServiceColors.field,
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: ServiceColors.fieldBorder),
-          ),
-          child: Material(
-            type: MaterialType.transparency,
-            child: Column(
-              children: availableDoctors.map(_buildDoctorRow).toList(),
+            border: Border.all(
+              color: availableDoctors.isEmpty
+                  ? const Color(0xFF334155)
+                  : ServiceColors.fieldBorder,
             ),
           ),
+          child: availableDoctors.isEmpty
+              ? Row(
+                  children: [
+                    const Icon(
+                      Icons.info_outline_rounded,
+                      size: 16,
+                      color: Color(0xFF94A3B8),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        'No doctors available for this department or service',
+                        style: GoogleFonts.inter(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w500,
+                          color: const Color(0xFF94A3B8),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              : Material(
+                  type: MaterialType.transparency,
+                  child: Column(
+                    children: availableDoctors.map(_buildDoctorRow).toList(),
+                  ),
+                ),
         ),
         const SizedBox(height: 8),
         Text(
@@ -71,6 +98,7 @@ class ServiceDoctorCheckboxGroup extends StatelessWidget {
 
   Widget _buildDoctorRow(ClinicDoctorEntity doctor) {
     final isChecked = selectedDoctors.contains(doctor.name);
+    final detailText = doctor.detail;
     return InkWell(
       onTap: () => onToggleDoctor(doctor.name),
       borderRadius: BorderRadius.circular(8),
@@ -104,14 +132,15 @@ class ServiceDoctorCheckboxGroup extends StatelessWidget {
                         color: Colors.white,
                       ),
                     ),
-                    TextSpan(
-                      text: '  (${doctor.detail})',
-                      style: GoogleFonts.inter(
-                        fontSize: 11.5,
-                        fontWeight: FontWeight.w500,
-                        color: const Color(0xFFCBD5E1),
+                    if (detailText.isNotEmpty)
+                      TextSpan(
+                        text: '  ($detailText)',
+                        style: GoogleFonts.inter(
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.w500,
+                          color: const Color(0xFFCBD5E1),
+                        ),
                       ),
-                    ),
                   ],
                 ),
               ),

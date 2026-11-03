@@ -25,12 +25,6 @@ class ClinicServicesState extends Equatable {
     this.isErrorToast = false,
   });
 
-  bool get isLimitReached =>
-      !plan.isUnlimited && services.length >= plan.servicesLimit;
-
-  int get availableSlots =>
-      plan.isUnlimited ? 999 : (plan.servicesLimit - services.length);
-
   ClinicServicesState copyWith({
     ServicesStatus? status,
     List<ClinicServiceEntity>? services,

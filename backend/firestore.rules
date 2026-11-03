@@ -12,6 +12,13 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isAuthenticated();
     }
+    // Clinic photos stored as Base64 (kept apart from /clinics so list queries stay small).
+    match /clinic_images/{clinicId} {
+      allow read: if true;
+      allow write: if isAuthenticated()
+        && request.resource.data.data is string
+        && request.resource.data.data.size() < 1000000;
+    }
     match /services/{serviceId} {
       allow read: if true;
       allow write: if isAuthenticated();
@@ -43,7 +50,21 @@ service cloud.firestore {
       allow write: if isAuthenticated();
     }
 
-    // 5. Rate limit tracking for emails (Cloud Functions access only)
+    // 5. Clinic reviews (public; patients post their own, others can only mark helpful)
+    match /reviews/{reviewId} {
+      allow read: if true;
+      allow create: if isAuthenticated()
+        && request.resource.data.patientId == request.auth.uid
+        && request.resource.data.clinicId is string
+        && request.resource.data.rating is int
+        && request.resource.data.rating >= 1
+        && request.resource.data.rating <= 5;
+      allow update: if isAuthenticated()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['helpfulCount']);
+      allow delete: if false;
+    }
+
+    // 6. Rate limit tracking for emails (Cloud Functions access only)
     match /email_send_log/{uid} {
       allow read, write: if false; 
     }

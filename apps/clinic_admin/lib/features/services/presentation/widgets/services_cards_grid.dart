@@ -9,37 +9,27 @@ class ServicesCardsGrid extends StatelessWidget {
   static const double _spacing = 16;
 
   final List<ClinicServiceEntity> services;
-  final bool isLimitReached;
-  final int availableSlots;
-  final String planName;
-  final bool isUnlimited;
   final ValueChanged<ClinicServiceEntity> onEdit;
   final ValueChanged<ClinicServiceEntity> onToggle;
   final ValueChanged<ClinicServiceEntity> onDelete;
   final VoidCallback onAdd;
-  final VoidCallback onUpgrade;
 
   const ServicesCardsGrid({
     super.key,
     required this.services,
-    required this.isLimitReached,
-    required this.availableSlots,
-    required this.planName,
-    this.isUnlimited = false,
     required this.onEdit,
     required this.onToggle,
     required this.onDelete,
     required this.onAdd,
-    required this.onUpgrade,
   });
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final columns = constraints.maxWidth >= 960
+        final columns = constraints.maxWidth >= 1200
             ? 3
-            : (constraints.maxWidth >= 600 ? 2 : 1);
+            : (constraints.maxWidth >= 640 ? 2 : 1);
 
         final cards = <Widget>[
           for (final service in services)
@@ -49,14 +39,7 @@ class ServicesCardsGrid extends StatelessWidget {
               onToggle: () => onToggle(service),
               onDelete: () => onDelete(service),
             ),
-          ServiceSlotCard(
-            isLimitReached: isLimitReached,
-            isUnlimited: isUnlimited,
-            availableSlots: availableSlots,
-            planName: planName,
-            onAdd: onAdd,
-            onUpgrade: onUpgrade,
-          ),
+          ServiceSlotCard(onAdd: onAdd),
         ];
 
         // Rows size to their tallest card instead of a fixed extent, so

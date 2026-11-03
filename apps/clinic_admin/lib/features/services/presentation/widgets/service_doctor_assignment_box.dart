@@ -30,30 +30,40 @@ class ServiceDoctorAssignmentBox extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          Wrap(
-            spacing: 6,
-            runSpacing: 6,
-            children: assignedStaff.map((doc) {
-              return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: ServiceColors.blue.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(6),
-                  border: Border.all(
-                    color: ServiceColors.blue.withValues(alpha: 0.35),
+          if (assignedStaff.isEmpty)
+            Text(
+              'No doctors assigned yet',
+              style: GoogleFonts.inter(
+                fontSize: 11.5,
+                fontWeight: FontWeight.w500,
+                color: ServiceColors.subtle,
+              ),
+            )
+          else
+            Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: assignedStaff.map((doc) {
+                return Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: ServiceColors.blue.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(
+                      color: ServiceColors.blue.withValues(alpha: 0.35),
+                    ),
                   ),
-                ),
-                child: Text(
-                  '✓ $doc',
-                  style: GoogleFonts.inter(
-                    fontSize: 11.5,
-                    fontWeight: FontWeight.w700,
-                    color: ServiceColors.blue,
+                  child: Text(
+                    '✓ $doc',
+                    style: GoogleFonts.inter(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w700,
+                      color: ServiceColors.blue,
+                    ),
                   ),
-                ),
-              );
-            }).toList(),
-          ),
+                );
+              }).toList(),
+            ),
         ],
       ),
     );

@@ -30,7 +30,7 @@ class TenantClinicModel extends TenantClinicEntity {
 
   factory TenantClinicModel.fromFirestore(DocumentSnapshot doc) {
     final d = (doc.data() as Map<String, dynamic>?) ?? {};
-    final plan = d['planId'] ?? 'solo';
+    final plan = (d['planId'] ?? 'solo').toString();
 
     String pName = 'Solo Doctor Plan';
     if (plan == 'multi') pName = 'Multi-Doctor Clinic Plan';
@@ -39,10 +39,10 @@ class TenantClinicModel extends TenantClinicEntity {
     final doctorsList = ((d['doctors'] as List<dynamic>?) ?? [])
         .whereType<Map<String, dynamic>>()
         .map((m) => PracticingDoctorEntity(
-              name: m['name'] ?? '',
-              specialty: m['specialty'] ?? '',
-              room: m['room'] ?? '',
-              isAvailable: m['isAvailable'] ?? true,
+              name: (m['name'] ?? '').toString(),
+              specialty: (m['specialty'] ?? '').toString(),
+              room: (m['room'] ?? '').toString(),
+              isAvailable: m['isAvailable'] == true,
             ))
         .toList();
 
@@ -54,29 +54,66 @@ class TenantClinicModel extends TenantClinicEntity {
 
     return TenantClinicModel(
       id: doc.id,
-      name: d['name'] ?? 'Unnamed Clinic',
+      name: (d['name'] ?? 'Unnamed Clinic').toString(),
       rating: (d['rating'] as num?)?.toDouble() ?? 0,
-      category: d['category'] ?? '',
-      city: d['city'] ?? '',
-      address: d['address'] ?? '',
-      phone: d['phone'] ?? '',
-      operatingHours: d['operatingHours'] ?? '',
+      category: (d['category'] ?? '').toString(),
+      city: (d['city'] ?? '').toString(),
+      address: _parseAddress(d),
+      phone: (d['phone'] ?? '').toString(),
+      operatingHours: _parseHours(d),
       monthlyVisits: (d['monthlyVisits'] as num?)?.toInt() ?? 0,
-      // Count the real roster; the stored practicingDoctors field was a plan-based placeholder
       practicingDoctors: doctorsList.length,
-      doctorLimitText: d['doctorLimitText'] ?? '1 Doctor Limit',
+      doctorLimitText: (d['doctorLimitText'] ?? '1 Doctor Limit').toString(),
       planId: plan,
-      planName: d['planName'] ?? pName,
-      billingCadence: d['billingCadence'] ?? 'Monthly Auto-Debit',
-      queueStatus: d['queueStatus'] ?? '',
-      servingToken: d['servingToken'] ?? '',
-      avgWaitTime: d['avgWaitTime'] ?? '',
-      adminName: d['adminName'] ?? '',
-      adminEmail: d['adminEmail'] ?? '',
+      planName: (d['planName'] ?? pName).toString(),
+      billingCadence: (d['billingCadence'] ?? 'Monthly Auto-Debit').toString(),
+      queueStatus: (d['queueStatus'] ?? '').toString(),
+      servingToken: (d['servingToken'] ?? '').toString(),
+      avgWaitTime: (d['avgWaitTime'] ?? '').toString(),
+      adminName: (d['adminName'] ?? '').toString(),
+      adminEmail: (d['adminEmail'] ?? '').toString(),
       status: (d['status'] ?? 'active').toString().toUpperCase(),
       doctors: doctorsList,
       departmentIds: deptIds,
       departments: deptsList,
     );
+  }
+
+  static String _parseAddress(Map<String, dynamic> d) {
+    final addr = d['address'];
+    if (addr is String && addr.isNotEmpty) return addr;
+    if (d['location'] is Map) {
+      final loc = d['location'] as Map;
+      final parts = [loc['building'], loc['street'], loc['city']]
+          .whereType<String>()
+          .where((s) => s.trim().isNotEmpty)
+          .toList();
+      if (parts.isNotEmpty) return parts.join(', ');
+    }
+    return addr?.toString() ?? '';
+  }
+
+  static String _parseHours(Map<String, dynamic> d) {
+    if (d['scheduleSummary'] is String && (d['scheduleSummary'] as String).isNotEmpty) {
+      return d['scheduleSummary'] as String;
+    }
+    if (d['openingHours'] is String && (d['openingHours'] as String).isNotEmpty) {
+      return d['openingHours'] as String;
+    }
+    final raw = d['operatingHours'];
+    if (raw is String && raw.isNotEmpty) return raw;
+    if (raw is Map) {
+      final mon = raw['monday'];
+      final sat = raw['saturday'];
+      final sun = raw['sunday'];
+      final monOpen = mon is Map && mon['isOpen'] == true;
+      final satOpen = sat is Map && sat['isOpen'] == true;
+      final sunOpen = sun is Map && sun['isOpen'] == true;
+      final monStr = monOpen ? '${mon['openTime']} – ${mon['closeTime']}' : 'Closed';
+      if (monOpen && satOpen && !sunOpen) return 'Mon–Sat: $monStr · Sun: Closed';
+      if (monOpen && !satOpen && !sunOpen) return 'Mon–Fri: $monStr · Sun: Closed';
+      return 'Standard OPD Schedule';
+    }
+    return 'Mon–Sat: 9:00 AM – 8:00 PM';
   }
 }

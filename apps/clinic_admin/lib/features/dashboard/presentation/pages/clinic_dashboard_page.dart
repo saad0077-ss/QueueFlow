@@ -1,10 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../../core/layout/clinic_breakpoints.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
-import '../../../services/presentation/pages/clinic_services_view.dart';
 import '../../data/repositories/clinic_dashboard_repository_impl.dart';
 import '../../domain/usecases/call_next_token_usecase.dart';
 import '../../domain/usecases/issue_walk_in_token_usecase.dart';
@@ -13,15 +11,11 @@ import '../../domain/usecases/watch_queue_usecase.dart';
 import '../bloc/clinic_dashboard_bloc.dart';
 import '../bloc/clinic_dashboard_event.dart';
 import '../bloc/clinic_dashboard_state.dart';
+import '../widgets/clinic_account_removal_guard.dart';
+import '../widgets/clinic_dashboard_content_switcher.dart';
 import '../widgets/clinic_sidebar.dart';
 import '../widgets/clinic_top_bar.dart';
-import '../widgets/create_appointment_dialog.dart';
-import '../widgets/dashboard_greeting_header.dart';
-import '../widgets/dashboard_main_columns.dart';
-import '../widgets/dashboard_stats_row.dart';
-import '../widgets/clinic_account_removal_guard.dart';
 
-/// Main Dashboard Page for Clinic Admin, driven entirely by pure BLoC state management.
 class ClinicDashboardPage extends StatelessWidget {
   const ClinicDashboardPage({super.key});
 
@@ -36,9 +30,7 @@ class ClinicDashboardPage extends StatelessWidget {
         issueWalkInTokenUseCase: IssueWalkInTokenUseCase(repository),
         togglePauseQueueUseCase: TogglePauseQueueUseCase(repository),
       )..add(const DashboardSubscriptionRequested()),
-      child: const ClinicAccountRemovalGuard(
-        child: _ClinicDashboardView(),
-      ),
+      child: const ClinicAccountRemovalGuard(child: _ClinicDashboardView()),
     );
   }
 }
@@ -65,9 +57,7 @@ class _ClinicDashboardView extends StatelessWidget {
           } else {
             AppSnackBar.showSuccess(context, message: state.toastMessage!);
           }
-          context.read<ClinicDashboardBloc>().add(
-            const DashboardClearFeedback(),
-          );
+          context.read<ClinicDashboardBloc>().add(const DashboardClearFeedback());
         }
       },
       builder: (context, state) {
@@ -75,7 +65,6 @@ class _ClinicDashboardView extends StatelessWidget {
 
         return Scaffold(
           backgroundColor: const Color(0xFF080D1A),
-          // Phones get the full sidebar as a drawer instead of a fixed rail.
           drawer: isMobile
               ? Drawer(
                   width: 260,
@@ -107,82 +96,23 @@ class _ClinicDashboardView extends StatelessWidget {
                   child: Column(
                     children: [
                       Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: hPad,
-                          vertical: isMobile ? 10 : 14,
-                        ),
+                        padding: EdgeInsets.symmetric(horizontal: hPad, vertical: isMobile ? 10 : 14),
                         decoration: const BoxDecoration(
                           color: Color(0xFF090E1A),
-                          border: Border(
-                            bottom: BorderSide(
-                              color: Color(0xFF131D31),
-                              width: 1,
-                            ),
-                          ),
+                          border: Border(bottom: BorderSide(color: Color(0xFF131D31), width: 1)),
                         ),
                         child: Builder(
                           builder: (scaffoldContext) => ClinicTopBar(
                             compact: isMobile,
-                            onMenuTap: isMobile
-                                ? () =>
-                                      Scaffold.of(scaffoldContext).openDrawer()
-                                : null,
-                            onSearchChanged: (query) =>
-                                bloc.add(DashboardSearchQueryChanged(query)),
+                            onMenuTap: isMobile ? () => Scaffold.of(scaffoldContext).openDrawer() : null,
+                            onSearchChanged: (q) => bloc.add(DashboardSearchQueryChanged(q)),
                           ),
                         ),
                       ),
                       Expanded(
                         child: SingleChildScrollView(
-                          padding: EdgeInsets.fromLTRB(
-                            hPad,
-                            isMobile ? 16 : 22,
-                            hPad,
-                            32,
-                          ),
-                          child: state.activeNav == 'Services'
-                              ? ClinicServicesView(
-                                  onNavigateToBilling: () => bloc.add(
-                                    const DashboardNavTabChanged(
-                                      'Plan & Billing',
-                                    ),
-                                  ),
-                                )
-                              : Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    DashboardGreetingHeader(
-                                      doctorName: doctorName,
-                                    ),
-                                    const SizedBox(height: 22),
-                                    DashboardStatsRow(
-                                      waitingCount: state.queue.waitingCount,
-                                    ),
-                                    const SizedBox(height: 22),
-                                    DashboardMainColumns(
-                                      currentToken: state.queue.currentToken,
-                                      waitingCount: state.queue.waitingCount,
-                                      onCallNext: () => bloc.add(
-                                        const DashboardCallNextPressed(),
-                                      ),
-                                      onViewQueue: () {
-                                        AppSnackBar.showInfo(
-                                          context,
-                                          message: 'Opening live queue view...',
-                                        );
-                                      },
-                                      onAddWalkIn: () => bloc.add(
-                                        const DashboardIssueWalkInPressed(),
-                                      ),
-                                      onCreateAppointment: () =>
-                                          CreateAppointmentDialog.show(context),
-                                      onTogglePauseQueue: () => bloc.add(
-                                        const DashboardTogglePausePressed(),
-                                      ),
-                                      isQueuePaused: state.queue.isPaused,
-                                    ),
-                                  ],
-                                ),
+                          padding: EdgeInsets.fromLTRB(hPad, isMobile ? 16 : 22, hPad, 32),
+                          child: ClinicDashboardContentSwitcher(state: state, bloc: bloc, doctorName: doctorName),
                         ),
                       ),
                     ],

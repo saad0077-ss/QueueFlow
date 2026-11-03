@@ -18,7 +18,7 @@ class ServiceDeptDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ServiceLabeledField(
-      label: 'Medical Specialty / Department (Super Admin)',
+      label: 'Department',
       child: DropdownButtonFormField<String>(
         initialValue: selectedDeptId,
         isExpanded: true,

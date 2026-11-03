@@ -1,27 +1,18 @@
 import 'package:equatable/equatable.dart';
 
-/// Represents the clinic's subscription plan details regarding service quota.
+/// The clinic's subscription plan as shown on the Services page.
+/// Clinical services are unlimited on every plan, so there is no quota here.
 class ServicePlanEntity extends Equatable {
   final String planName;
   final String planPill;
-  final int servicesLimit;
-  final bool isUnlimited;
   final String clinicName;
 
   const ServicePlanEntity({
     this.planName = 'Solo Doctor Plan',
     this.planPill = 'SOLO DOCTOR PRACTICE',
-    this.servicesLimit = 1,
-    this.isUnlimited = false,
-    this.clinicName = 'Sunrise Health Clinic',
+    this.clinicName = '',
   });
 
   @override
-  List<Object?> get props => [
-    planName,
-    planPill,
-    servicesLimit,
-    isUnlimited,
-    clinicName,
-  ];
+  List<Object?> get props => [planName, planPill, clinicName];
 }
