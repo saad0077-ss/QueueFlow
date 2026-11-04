@@ -146,14 +146,21 @@ class HomeClinicCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
       decoration: BoxDecoration(
-        color: AppColors.darkSurface,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.darkSurface,
+            AppColors.darkSurface,
+          ],
+        ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: AppColors.darkBorder),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: Color(0x140F172A),
-            blurRadius: 8,
-            offset: Offset(0, 2),
+            color: Colors.black.withValues(alpha: 0.15),
+            blurRadius: 12,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
@@ -198,26 +205,42 @@ class HomeClinicCard extends StatelessWidget {
                           _buildStatusPill(),
                         ],
                       ),
-                      const SizedBox(height: 5),
+                      const SizedBox(height: 7),
 
                       // Meta Row: Star + Rating + (ReviewCount) · Category
                       Row(
                         children: [
-                          const Icon(
-                            Icons.star_rounded,
-                            size: 14,
-                            color: Color(0xFFF59E0B),
-                          ),
-                          const SizedBox(width: 3),
-                          Text(
-                            clinic.hasRatings ? clinic.rating.toStringAsFixed(1) : 'New',
-                            style: GoogleFonts.jetBrainsMono(
-                              fontSize: 12.5,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.darkInk,
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF59E0B)
+                                  .withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(
+                                  Icons.star_rounded,
+                                  size: 13,
+                                  color: Color(0xFFF59E0B),
+                                ),
+                                const SizedBox(width: 2),
+                                Text(
+                                  clinic.hasRatings
+                                      ? clinic.rating.toStringAsFixed(1)
+                                      : 'New',
+                                  style: GoogleFonts.jetBrainsMono(
+                                    fontSize: 11.5,
+                                    fontWeight: FontWeight.w800,
+                                    color: const Color(0xFFFBBF24),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          const SizedBox(width: 5),
+                          const SizedBox(width: 6),
                           Expanded(
                             child: Row(
                               children: [
@@ -241,7 +264,7 @@ class HomeClinicCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 6),
 
                       // Location: Pin + Distance · City
                       Row(
@@ -266,40 +289,58 @@ class HomeClinicCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 10),
 
-                      // CTA row: View details > and waiting count
+                      // CTA row: live queue + View details pill
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: const [
-                              Text(
-                                'View details',
-                                style: TextStyle(
-                                  fontSize: 12,
+                          if (clinic.hasLiveQueue)
+                            Flexible(
+                              child: Text(
+                                '${clinic.waitingCount} in live queue',
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.jetBrainsMono(
+                                  fontSize: 10.5,
                                   fontWeight: FontWeight.w700,
-                                  color: Color(0xFF38BDF8),
+                                  color: const Color(0xFF38BDF8),
                                 ),
                               ),
-                              SizedBox(width: 3),
-                              Icon(
-                                Icons.chevron_right_rounded,
-                                size: 14,
-                                color: Color(0xFF38BDF8),
-                              ),
-                            ],
-                          ),
-                          if (clinic.hasLiveQueue)
-                            Text(
-                              '${clinic.waitingCount} in live queue',
-                              style: GoogleFonts.jetBrainsMono(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w700,
-                                color: const Color(0xFF38BDF8),
+                            )
+                          else
+                            const SizedBox.shrink(),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF38BDF8)
+                                  .withValues(alpha: 0.14),
+                              borderRadius: BorderRadius.circular(9999),
+                              border: Border.all(
+                                color: const Color(0xFF38BDF8)
+                                    .withValues(alpha: 0.35),
                               ),
                             ),
+                            child: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'View details',
+                                  style: TextStyle(
+                                    fontSize: 11.5,
+                                    fontWeight: FontWeight.w700,
+                                    color: Color(0xFF38BDF8),
+                                  ),
+                                ),
+                                SizedBox(width: 2),
+                                Icon(
+                                  Icons.chevron_right_rounded,
+                                  size: 14,
+                                  color: Color(0xFF38BDF8),
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ],

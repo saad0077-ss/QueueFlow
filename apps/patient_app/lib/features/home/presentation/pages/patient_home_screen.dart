@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
+import '../../../booking/presentation/widgets/my_bookings_tab_view.dart';
 import '../../data/repositories/home_repository_impl.dart';
 import '../../domain/repositories/home_repository.dart';
 import '../../domain/usecases/cancel_ticket_usecase.dart';
@@ -68,17 +69,16 @@ class _PatientHomeView extends StatelessWidget {
             top: state.currentTabIndex != 0,
             child: IndexedStack(
               index: state.currentTabIndex,
-              children: const [
-                HomeTabView(),
-                EmptyTabView(
+              children: [
+                const HomeTabView(),
+                const EmptyTabView(
                   title: 'Live Queue Tracker',
                   subtitle: 'Real-time queue tracking & token status will appear here.',
                 ),
-                EmptyTabView(
-                  title: 'My Bookings',
-                  subtitle: 'Upcoming and concluded clinic appointments.',
+                MyBookingsTabView(
+                  onExploreClinics: () => bloc.add(const HomeNavTabChanged(0)),
                 ),
-                EmptyTabView(
+                const EmptyTabView(
                   title: 'Patient Profile',
                   subtitle: 'Health ID, patient vitals, allergies & preferences.',
                 ),
