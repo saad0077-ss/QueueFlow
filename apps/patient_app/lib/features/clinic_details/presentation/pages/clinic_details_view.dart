@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../booking/presentation/pages/booking_wizard_screen.dart';
+import '../../domain/entities/clinic_doctor_item.dart';
+import '../../domain/entities/clinic_service_item.dart';
+import '../../../home/domain/entities/clinic_entity.dart';
 import '../bloc/clinic_details_bloc.dart';
 import '../bloc/clinic_details_event.dart';
 import '../bloc/clinic_details_state.dart';
@@ -13,9 +17,26 @@ import '../widgets/clinic_rate_sheet.dart';
 import '../widgets/clinic_reviews_tab.dart';
 import '../widgets/clinic_segmented_tabs.dart';
 import '../widgets/clinic_services_tab.dart';
- 
+
 class ClinicDetailsView extends StatelessWidget {
   const ClinicDetailsView({super.key});
+
+  void _startBooking(
+    BuildContext context, {
+    required ClinicEntity clinic,
+    ClinicServiceItem? initialService,
+    ClinicDoctorItem? initialDoctor,
+  }) async {
+    final result = await BookingWizardScreen.push(
+      context,
+      clinic: clinic,
+      initialService: initialService,
+      initialDoctor: initialDoctor,
+    );
+    if (result == true && context.mounted) {
+      Navigator.of(context).pop(true);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,11 +90,11 @@ class ClinicDetailsView extends StatelessWidget {
                   context.read<ClinicDetailsBloc>().add(SelectClinicTab(idx));
                 },
               ),
-              _buildActiveTab(context, state),
+              _buildActiveTab(context, state, clinic),
               const SizedBox(height: 8),
               ClinicBottomActions(
                 isQueueOpen: clinic.isQueueOpen,
-                onBookAppointment: () => _showActionSnack(context, 'Starting booking for ${clinic.name}...'),
+                onBookAppointment: () => _startBooking(context, clinic: clinic),
                 onJoinQueue: () => _showActionSnack(context, 'Joining live queue at ${clinic.name}...'),
               ),
             ],
@@ -83,15 +104,33 @@ class ClinicDetailsView extends StatelessWidget {
     );
   }
 
-  Widget _buildActiveTab(BuildContext context, ClinicDetailsState state) {
+  Widget _buildActiveTab(
+    BuildContext context,
+    ClinicDetailsState state,
+    ClinicEntity clinic,
+  ) {
     final d = state.details!;
     switch (state.selectedTabIndex) {
       case 0:
         return ClinicOverviewTab(description: d.description, features: d.features);
       case 1:
-        return ClinicServicesTab(services: d.services);
+        return ClinicServicesTab(
+          services: d.services,
+          onServiceSelected: (service) => _startBooking(
+            context,
+            clinic: clinic,
+            initialService: service,
+          ),
+        );
       case 2:
-        return ClinicDoctorsTab(doctors: d.doctors);
+        return ClinicDoctorsTab(
+          doctors: d.doctors,
+          onDoctorSelected: (doctor) => _startBooking(
+            context,
+            clinic: clinic,
+            initialDoctor: doctor,
+          ),
+        );
       case 3:
         return ClinicReviewsTab(
           rating: d.clinic.rating,

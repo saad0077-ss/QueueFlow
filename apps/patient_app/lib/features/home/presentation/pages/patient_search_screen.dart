@@ -1197,12 +1197,15 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
     );
   }
 
-  void _showClinicDetailsModal(BuildContext context, ClinicEntity clinic) {
-    Navigator.push(
+  void _showClinicDetailsModal(BuildContext context, ClinicEntity clinic) async {
+    final result = await Navigator.push<bool>(
       context,
       MaterialPageRoute(
         builder: (_) => ClinicDetailsScreen(clinic: clinic),
       ),
     );
+    if (result == true && context.mounted) {
+      Navigator.pop(context, true);
+    }
   }
 }

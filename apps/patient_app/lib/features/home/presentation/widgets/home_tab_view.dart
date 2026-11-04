@@ -27,8 +27,8 @@ class _HomeTabViewState extends State<HomeTabView> {
     super.dispose();
   }
 
-  void _openSearchScreen(BuildContext context, HomeState state) {
-    Navigator.of(context).push(
+  void _openSearchScreen(BuildContext context, HomeState state) async {
+    final result = await Navigator.of(context).push<bool>(
       MaterialPageRoute(
         builder: (_) => PatientSearchScreen(
           allClinics: state.allClinics,
@@ -37,6 +37,9 @@ class _HomeTabViewState extends State<HomeTabView> {
         ),
       ),
     );
+    if (result == true && context.mounted) {
+      context.read<HomeBloc>().add(const HomeNavTabChanged(2));
+    }
   }
 
   @override
@@ -124,17 +127,6 @@ class _HomeTabViewState extends State<HomeTabView> {
                                         fontWeight: FontWeight.w800,
                                         color: AppColors.darkInk,
                                         letterSpacing: -0.2,
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () => _openSearchScreen(context, state),
-                                      child: Text(
-                                        'See all (${state.allClinics.length})',
-                                        style: const TextStyle(
-                                          fontSize: 12.5,
-                                          fontWeight: FontWeight.w700,
-                                          color: Color(0xFF38BDF8),
-                                        ),
                                       ),
                                     ),
                                   ],
@@ -244,14 +236,17 @@ class _HomeTabViewState extends State<HomeTabView> {
     );
   }
 
-  void _showClinicDetailsModal(BuildContext context, dynamic clinic) {
+  void _showClinicDetailsModal(BuildContext context, dynamic clinic) async {
     if (clinic is ClinicEntity) {
-      Navigator.push(
+      final result = await Navigator.push<bool>(
         context,
         MaterialPageRoute(
           builder: (_) => ClinicDetailsScreen(clinic: clinic),
         ),
       );
+      if (result == true && context.mounted) {
+        context.read<HomeBloc>().add(const HomeNavTabChanged(2));
+      }
     }
   }
 }
