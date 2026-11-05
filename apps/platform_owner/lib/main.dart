@@ -37,6 +37,9 @@ class PlatformOwnerApp extends StatelessWidget {
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             themeMode: themeState.themeMode,
+            themeAnimationDuration: Duration.zero,
+            builder: (context, child) =>
+                ThemeWaveScope(child: child ?? const SizedBox.shrink()),
             home: StreamBuilder<User?>(
               stream: FirebaseAuth.instance.authStateChanges(),
               builder: (context, snapshot) {

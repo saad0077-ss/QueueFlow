@@ -125,14 +125,14 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
   static const light = AppColorsExtension(
     background: Color(0xFFF8FAFC),       // Clean slate light background
     surface: Color(0xFFFFFFFF),          // Pure white card surfaces
-    surfaceSecondary: Color(0xFFF1F5F9), // Slate 100 for secondary containers/inputs
+    surfaceSecondary: Color(0xFFEEF2F7), // Slightly deeper for secondary containers/inputs
     surfaceElevated: Color(0xFFFFFFFF),  // White for sheets & dialogs
     headerBg: Color(0xFFFFFFFF),         // White header bar in light mode
     navBarBg: Color(0xFFFFFFFF),         // White bottom navigation bar
 
-    border: Color(0xFFE2E8F0),          // Slate 200 crisp light borders
-    borderSubtle: Color(0xFFF1F5F9),    // Slate 100 dividers
-    navBarBorder: Color(0xFFE2E8F0),    // Slate 200
+    border: Color(0xFFCBD5E1),          // Slate 300 clearly visible borders
+    borderSubtle: Color(0xFFE2E8F0),    // Slate 200 dividers
+    navBarBorder: Color(0xFFCBD5E1),    // Slate 300
 
     textPrimary: Color(0xFF0F172A),     // Slate 900 strong dark text
     textMuted: Color(0xFF64748B),       // Slate 500 readable secondary text
@@ -140,22 +140,22 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
 
     primary: Color(0xFF2563EB),
     primaryLight: Color(0xFF3B82F6),
-    primaryTint: Color(0xFFEFF6FF),     // Blue 50 light tint
+    primaryTint: Color(0xFFDBEAFE),     // Blue 100 tint
     accent: Color(0xFF0D9488),          // Accessible teal for light surfaces
     accentLight: Color(0xFF14B8A6),
-    accentTint: Color(0xFFF0FDFA),      // Teal 50 light tint
+    accentTint: Color(0xFFCCFBF1),      // Teal 100 tint
 
-    badgeOpenBg: Color(0xFFDCFCE7),     // Green 100 soft chip
-    badgeOpenText: Color(0xFF15803D),   // Green 700 accessible text
-    ratingGold: Color(0xFFD97706),      // Amber 600 high-contrast rating
-    success: Color(0xFF16A34A),
-    successTint: Color(0xFFDCFCE7),
-    warning: Color(0xFFD97706),
-    warningTint: Color(0xFFFEF3C7),
-    error: Color(0xFFDC2626),
-    errorTint: Color(0xFFFEE2E2),
-    info: Color(0xFF0284C7),
-    infoTint: Color(0xFFE0F2FE),
+    badgeOpenBg: Color(0xFFBBF7D0),     // Green 200 visible chip
+    badgeOpenText: Color(0xFF166534),   // Green 800 accessible text
+    ratingGold: Color(0xFFB45309),      // Amber 700 high-contrast rating
+    success: Color(0xFF15803D),
+    successTint: Color(0xFFBBF7D0),
+    warning: Color(0xFFB45309),
+    warningTint: Color(0xFFFDE68A),
+    error: Color(0xFFB91C1C),
+    errorTint: Color(0xFFFECACA),
+    info: Color(0xFF0369A1),
+    infoTint: Color(0xFFBAE6FD),
 
     isDark: false,
   );
@@ -227,42 +227,10 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
     );
   }
 
+  // The wave reveal replaces color interpolation, so just switch instantly.
   @override
-  AppColorsExtension lerp(ThemeExtension<AppColorsExtension>? other, double t) {
-    if (other is! AppColorsExtension) return this;
-    return AppColorsExtension(
-      background: Color.lerp(background, other.background, t)!,
-      surface: Color.lerp(surface, other.surface, t)!,
-      surfaceSecondary: Color.lerp(surfaceSecondary, other.surfaceSecondary, t)!,
-      surfaceElevated: Color.lerp(surfaceElevated, other.surfaceElevated, t)!,
-      headerBg: Color.lerp(headerBg, other.headerBg, t)!,
-      navBarBg: Color.lerp(navBarBg, other.navBarBg, t)!,
-      border: Color.lerp(border, other.border, t)!,
-      borderSubtle: Color.lerp(borderSubtle, other.borderSubtle, t)!,
-      navBarBorder: Color.lerp(navBarBorder, other.navBarBorder, t)!,
-      textPrimary: Color.lerp(textPrimary, other.textPrimary, t)!,
-      textMuted: Color.lerp(textMuted, other.textMuted, t)!,
-      textSubtle: Color.lerp(textSubtle, other.textSubtle, t)!,
-      primary: Color.lerp(primary, other.primary, t)!,
-      primaryLight: Color.lerp(primaryLight, other.primaryLight, t)!,
-      primaryTint: Color.lerp(primaryTint, other.primaryTint, t)!,
-      accent: Color.lerp(accent, other.accent, t)!,
-      accentLight: Color.lerp(accentLight, other.accentLight, t)!,
-      accentTint: Color.lerp(accentTint, other.accentTint, t)!,
-      badgeOpenBg: Color.lerp(badgeOpenBg, other.badgeOpenBg, t)!,
-      badgeOpenText: Color.lerp(badgeOpenText, other.badgeOpenText, t)!,
-      ratingGold: Color.lerp(ratingGold, other.ratingGold, t)!,
-      success: Color.lerp(success, other.success, t)!,
-      successTint: Color.lerp(successTint, other.successTint, t)!,
-      warning: Color.lerp(warning, other.warning, t)!,
-      warningTint: Color.lerp(warningTint, other.warningTint, t)!,
-      error: Color.lerp(error, other.error, t)!,
-      errorTint: Color.lerp(errorTint, other.errorTint, t)!,
-      info: Color.lerp(info, other.info, t)!,
-      infoTint: Color.lerp(infoTint, other.infoTint, t)!,
-      isDark: t < 0.5 ? isDark : other.isDark,
-    );
-  }
+  AppColorsExtension lerp(ThemeExtension<AppColorsExtension>? other, double t) =>
+      other is AppColorsExtension && t >= 0.5 ? other : this;
 }
 
 /// Convenience extensions on [BuildContext] to access semantic tokens easily.
