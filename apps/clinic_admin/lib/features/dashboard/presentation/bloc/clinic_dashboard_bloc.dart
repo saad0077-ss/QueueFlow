@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/usecases/call_next_token_usecase.dart';
 import '../../domain/usecases/issue_walk_in_token_usecase.dart';

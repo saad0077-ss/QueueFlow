@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../domain/entities/active_ticket_entity.dart';
 
 /// Active Live Queue Banner matching the prototype exact layout & styling.
@@ -24,20 +24,21 @@ class HomeActiveQueueBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final isCalled = ticket.status.toLowerCase() == 'called';
     final double progress = ticket.position <= 0 ? 1.0 : (isCalled ? 0.90 : 0.55);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
       decoration: BoxDecoration(
-        color: AppColors.darkSurface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.darkBorder),
-        boxShadow: const [
+        border: Border.all(color: colors.border),
+        boxShadow: [
           BoxShadow(
-            color: Color(0x1F000000),
+            color: Colors.black.withValues(alpha: context.isDarkMode ? 0.18 : 0.06),
             blurRadius: 16,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -121,7 +122,7 @@ class HomeActiveQueueBanner extends StatelessWidget {
                           style: GoogleFonts.jetBrainsMono(
                             fontSize: 26,
                             fontWeight: FontWeight.w800,
-                            color: const Color(0xFF38BDF8),
+                            color: colors.primary,
                             letterSpacing: -0.5,
                           ),
                         ),
@@ -129,10 +130,10 @@ class HomeActiveQueueBanner extends StatelessWidget {
                           ticket.position > 0
                               ? '${ticket.position} people ahead'
                               : 'It is your turn!',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
-                            color: AppColors.darkInkMuted,
+                            color: colors.textMuted,
                           ),
                         ),
                       ],
@@ -143,7 +144,7 @@ class HomeActiveQueueBanner extends StatelessWidget {
                     Container(
                       height: 6,
                       decoration: BoxDecoration(
-                        color: AppColors.darkBorder,
+                        color: colors.border,
                         borderRadius: BorderRadius.circular(4),
                       ),
                       clipBehavior: Clip.antiAlias,
@@ -151,8 +152,8 @@ class HomeActiveQueueBanner extends StatelessWidget {
                         alignment: Alignment.centerLeft,
                         widthFactor: progress,
                         child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4),
+                          decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(4)),
                             gradient: AppColors.primaryGradient,
                           ),
                         ),
@@ -163,20 +164,20 @@ class HomeActiveQueueBanner extends StatelessWidget {
                     // Banner Footer (.banner-foot)
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
-                      children: const [
+                      children: [
                         Text(
                           'View live tracker',
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
-                            color: Color(0xFF38BDF8),
+                            color: colors.primary,
                           ),
                         ),
-                        SizedBox(width: 4),
+                        const SizedBox(width: 4),
                         Icon(
                           Icons.chevron_right_rounded,
                           size: 16,
-                          color: Color(0xFF38BDF8),
+                          color: colors.primary,
                         ),
                       ],
                     ),

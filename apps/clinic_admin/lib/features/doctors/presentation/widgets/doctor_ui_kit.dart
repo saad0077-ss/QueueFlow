@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 /// Shared colors and building blocks for the Doctors & Availability screen.
 class DoctorColors {
@@ -31,13 +32,21 @@ class DoctorColors {
   );
 }
 
-/// Dark input decoration for dialog input fields.
+/// Dynamic input decoration for dialog input fields.
 InputDecoration doctorInputDecoration({
+  BuildContext? context,
   String? hint,
   String? errorText,
   IconData? prefixIcon,
   String? suffixText,
 }) {
+  final colors = context?.colors;
+  final fillColor = colors?.surfaceSecondary ?? DoctorColors.field;
+  final borderColor = colors?.border ?? DoctorColors.fieldBorder;
+  final hintColor = colors?.textMuted ?? DoctorColors.subtle;
+  final focusColor = colors?.primary ?? DoctorColors.focus;
+  final errorColor = colors?.error ?? DoctorColors.red;
+
   OutlineInputBorder border(Color color, [double width = 1]) =>
       OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
@@ -46,24 +55,24 @@ InputDecoration doctorInputDecoration({
 
   return InputDecoration(
     hintText: hint,
-    hintStyle: GoogleFonts.inter(fontSize: 13, color: DoctorColors.subtle),
+    hintStyle: GoogleFonts.inter(fontSize: 13, color: hintColor),
     errorText: errorText,
-    errorStyle: GoogleFonts.inter(fontSize: 11, color: DoctorColors.red),
+    errorStyle: GoogleFonts.inter(fontSize: 11, color: errorColor),
     prefixIcon: prefixIcon == null
         ? null
-        : Icon(prefixIcon, size: 17, color: DoctorColors.subtle),
+        : Icon(prefixIcon, size: 17, color: hintColor),
     prefixIconConstraints: const BoxConstraints(minWidth: 40, minHeight: 20),
     suffixText: suffixText,
-    suffixStyle: GoogleFonts.inter(fontSize: 12, color: DoctorColors.subtle),
+    suffixStyle: GoogleFonts.inter(fontSize: 12, color: hintColor),
     filled: true,
-    fillColor: DoctorColors.field,
+    fillColor: fillColor,
     isDense: true,
     contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-    enabledBorder: border(DoctorColors.fieldBorder),
-    focusedBorder: border(DoctorColors.focus, 1.5),
-    errorBorder: border(DoctorColors.red),
-    focusedErrorBorder: border(DoctorColors.red, 1.5),
-    border: border(DoctorColors.fieldBorder),
+    enabledBorder: border(borderColor),
+    focusedBorder: border(focusColor, 1.5),
+    errorBorder: border(errorColor),
+    focusedErrorBorder: border(errorColor, 1.5),
+    border: border(borderColor),
   );
 }
 
@@ -119,12 +128,13 @@ class _DoctorAvatarState extends State<DoctorAvatar> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final initials = Text(
       widget.initials,
       style: GoogleFonts.inter(
         fontSize: widget.fontSize,
         fontWeight: FontWeight.w800,
-        color: DoctorColors.cyan,
+        color: colors.primary,
       ),
     );
 
@@ -154,13 +164,9 @@ class _DoctorAvatarState extends State<DoctorAvatar> {
       alignment: Alignment.center,
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF1E293B), Color(0xFF334155)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: colors.surfaceSecondary,
         borderRadius: BorderRadius.circular(widget.radius),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+        border: Border.all(color: colors.border),
       ),
       child: photo ?? initials,
     );
@@ -180,6 +186,7 @@ class DoctorLabeledField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -189,7 +196,7 @@ class DoctorLabeledField extends StatelessWidget {
           style: GoogleFonts.inter(
             fontSize: 13,
             fontWeight: FontWeight.w600,
-            color: const Color(0xFFE2E8F0),
+            color: colors.textPrimary,
           ),
         ),
         const SizedBox(height: 8),

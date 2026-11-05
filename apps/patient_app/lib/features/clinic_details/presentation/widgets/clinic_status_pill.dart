@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class ClinicStatusPill extends StatelessWidget {
   final bool isOpen;
@@ -9,11 +9,14 @@ class ClinicStatusPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = isOpen ? AppColors.success : AppColors.error;
+    final colors = context.colors;
+    final color = isOpen ? colors.badgeOpenText : colors.error;
+    final bgColor = isOpen ? colors.badgeOpenBg : colors.errorTint;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.15),
+        color: bgColor,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: color.withValues(alpha: 0.3)),
       ),

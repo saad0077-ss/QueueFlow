@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class ClinicDetailsActionButtons extends StatelessWidget {
   final VoidCallback onToggleSuspension;
@@ -19,6 +20,8 @@ class ClinicDetailsActionButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Row( 
       children: [
         Expanded(
@@ -27,9 +30,9 @@ class ClinicDetailsActionButtons extends StatelessWidget {
             child: OutlinedButton(
               onPressed: isInvited ? null : onToggleSuspension,
               style: OutlinedButton.styleFrom(
-                backgroundColor: isInvited ? const Color(0xFF0F172A) : const Color(0xFF1A253C),
-                foregroundColor: isInvited ? const Color(0xFF64748B) : const Color(0xFFE2E8F0),
-                side: BorderSide(color: isInvited ? const Color(0xFF1E293B) : const Color(0xFF2A3B59)),
+                backgroundColor: isInvited ? colors.surface : colors.surfaceSecondary,
+                foregroundColor: isInvited ? colors.textMuted : colors.textPrimary,
+                side: BorderSide(color: colors.border),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                 padding: EdgeInsets.zero,
               ),
@@ -50,9 +53,9 @@ class ClinicDetailsActionButtons extends StatelessWidget {
             child: OutlinedButton(
               onPressed: onChangeSubscription,
               style: OutlinedButton.styleFrom(
-                backgroundColor: const Color(0xFF1A253C),
-                foregroundColor: const Color(0xFFE2E8F0),
-                side: const BorderSide(color: Color(0xFF2A3B59)),
+                backgroundColor: colors.surfaceSecondary,
+                foregroundColor: colors.textPrimary,
+                side: BorderSide(color: colors.border),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                 padding: EdgeInsets.zero,
               ),

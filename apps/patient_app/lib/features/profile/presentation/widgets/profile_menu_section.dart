@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class ProfileMenuItem {
   final Widget icon;
@@ -33,6 +33,8 @@ class ProfileMenuSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -41,11 +43,11 @@ class ProfileMenuSection extends StatelessWidget {
             padding: const EdgeInsets.only(left: 4, bottom: 8),
             child: Text(
               title!.toUpperCase(),
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 0.6,
-                color: AppColors.darkInkFaint,
+                color: colors.textSubtle,
               ),
             ),
           ),
@@ -53,9 +55,9 @@ class ProfileMenuSection extends StatelessWidget {
         Container(
           margin: EdgeInsets.only(bottom: bottomMargin),
           decoration: BoxDecoration(
-            color: AppColors.darkSurface,
+            color: colors.surface,
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: AppColors.darkBorder, width: 1),
+            border: Border.all(color: colors.border, width: 1),
           ),
           clipBehavior: Clip.antiAlias,
           child: Column(
@@ -93,7 +95,7 @@ class ProfileMenuSection extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 13.5,
                                   fontWeight: FontWeight.w600,
-                                  color: item.titleColor ?? AppColors.darkInk,
+                                  color: item.titleColor ?? colors.textPrimary,
                                 ),
                               ),
                             ),
@@ -105,7 +107,7 @@ class ProfileMenuSection extends StatelessWidget {
                               Icon(
                                 Icons.chevron_right_rounded,
                                 size: 18,
-                                color: item.titleColor ?? AppColors.darkInkFaint,
+                                color: item.titleColor ?? colors.textSubtle,
                               ),
                             ],
                           ],
@@ -114,8 +116,8 @@ class ProfileMenuSection extends StatelessWidget {
                     ),
                   ),
                   if (!isLast)
-                    const Divider(
-                      color: AppColors.darkBorder,
+                    Divider(
+                      color: colors.border,
                       height: 1,
                       thickness: 1,
                       indent: 62,

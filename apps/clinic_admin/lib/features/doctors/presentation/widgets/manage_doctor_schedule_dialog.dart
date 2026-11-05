@@ -1,9 +1,9 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../domain/entities/clinic_doctor_profile_entity.dart';
 import '../../domain/entities/doctor_daily_schedule.dart';
-import 'doctor_ui_kit.dart';
 
 class ManageDoctorScheduleDialog extends StatefulWidget {
   final ClinicDoctorProfileEntity doctor;
@@ -116,6 +116,7 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
   }
 
   Future<void> _pickTime(String dayKey, String fieldType, String currentTime) async {
+    final colors = context.colors;
     final parts = currentTime.split(':');
     final initialHour = parts.isNotEmpty ? int.tryParse(parts[0]) ?? 9 : 9;
     final initialMinute = parts.length > 1 ? int.tryParse(parts[1]) ?? 0 : 0;
@@ -123,13 +124,12 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
     final picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay(hour: initialHour, minute: initialMinute),
-      builder: (context, child) {
+      builder: (pickerCtx, child) {
         return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.dark(
-              primary: DoctorColors.primary,
-              surface: DoctorColors.surface,
-              onSurface: Colors.white,
+          data: Theme.of(pickerCtx).copyWith(
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: colors.primary,
+              brightness: colors.isDark ? Brightness.dark : Brightness.light,
             ),
           ),
           child: child ?? const SizedBox.shrink(),
@@ -209,15 +209,17 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Dialog(
       backgroundColor: Colors.transparent,
       insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
       child: Container(
         constraints: const BoxConstraints(maxWidth: 680, maxHeight: 760),
         decoration: BoxDecoration(
-          color: DoctorColors.surface,
+          color: colors.surfaceElevated,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: DoctorColors.border),
+          border: Border.all(color: colors.border),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.5),
@@ -245,7 +247,7 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
                         style: GoogleFonts.inter(
                           fontSize: 18,
                           fontWeight: FontWeight.w800,
-                          color: Colors.white,
+                          color: colors.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -253,14 +255,14 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
                         'Weekly consultation hours for ${widget.doctor.name}',
                         style: GoogleFonts.inter(
                           fontSize: 12,
-                          color: DoctorColors.muted,
+                          color: colors.textMuted,
                         ),
                       ),
                     ],
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.close_rounded, size: 20, color: DoctorColors.muted),
+                  icon: Icon(Icons.close_rounded, size: 20, color: colors.textMuted),
                   onPressed: () => Navigator.of(context).pop(),
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
@@ -268,7 +270,7 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
               ],
             ),
             const SizedBox(height: 18),
-            const Divider(color: DoctorColors.border, height: 1),
+            Divider(color: colors.border, height: 1),
             const SizedBox(height: 16),
 
             // Top settings: slot duration and copy button
@@ -290,24 +292,24 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 0.6,
-                          color: DoctorColors.muted,
+                          color: colors.textMuted,
                         ),
                       ),
                       const SizedBox(height: 6),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         decoration: BoxDecoration(
-                          color: DoctorColors.surfaceElevated,
+                          color: colors.surfaceSecondary,
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: DoctorColors.border),
+                          border: Border.all(color: colors.border),
                         ),
                         child: DropdownButtonHideUnderline(
                           child: DropdownButton<int>(
                             value: _slotDuration,
                             isExpanded: true,
-                            dropdownColor: DoctorColors.surfaceElevated,
-                            style: GoogleFonts.inter(fontSize: 13, color: Colors.white),
-                            icon: const Icon(Icons.keyboard_arrow_down_rounded, size: 18, color: DoctorColors.muted),
+                            dropdownColor: colors.surfaceSecondary,
+                            style: GoogleFonts.inter(fontSize: 13, color: colors.textPrimary),
+                            icon: Icon(Icons.keyboard_arrow_down_rounded, size: 18, color: colors.textMuted),
                             items: const [
                               DropdownMenuItem(value: 10, child: Text('10 minutes')),
                               DropdownMenuItem(value: 15, child: Text('15 minutes')),
@@ -332,13 +334,13 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
                   child: OutlinedButton.icon(
                     onPressed: _copyFirstWorkingDayToAll,
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      side: const BorderSide(color: DoctorColors.border),
-                      backgroundColor: DoctorColors.surfaceElevated,
+                      foregroundColor: colors.textPrimary,
+                      side: BorderSide(color: colors.border),
+                      backgroundColor: colors.surfaceSecondary,
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     ),
-                    icon: const Icon(Icons.copy_rounded, size: 14, color: DoctorColors.muted),
+                    icon: Icon(Icons.copy_rounded, size: 14, color: colors.textMuted),
                     label: Text(
                       'Copy first working day to all',
                       style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600),
@@ -354,13 +356,13 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
-                  color: DoctorColors.danger.withValues(alpha: 0.12),
+                  color: colors.errorTint,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: DoctorColors.danger.withValues(alpha: 0.4)),
+                  border: Border.all(color: colors.error.withValues(alpha: 0.4)),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.error_outline_rounded, size: 16, color: DoctorColors.danger),
+                    Icon(Icons.error_outline_rounded, size: 16, color: colors.error),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -368,7 +370,7 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
                         style: GoogleFonts.inter(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
-                          color: DoctorColors.danger,
+                          color: colors.error,
                         ),
                       ),
                     ),
@@ -383,9 +385,9 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
-                  color: DoctorColors.surfaceElevated.withValues(alpha: 0.4),
+                  color: colors.surfaceSecondary.withValues(alpha: 0.4),
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: DoctorColors.border),
+                  border: Border.all(color: colors.border),
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
@@ -399,7 +401,7 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
                             // Header Row
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                              color: DoctorColors.surfaceElevated,
+                              color: colors.surfaceSecondary,
                               child: Row(
                                 children: [
                                   SizedBox(
@@ -410,7 +412,7 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
                                         fontSize: 10,
                                         fontWeight: FontWeight.w700,
                                         letterSpacing: 0.6,
-                                        color: DoctorColors.muted,
+                                        color: colors.textMuted,
                                       ),
                                     ),
                                   ),
@@ -422,7 +424,7 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
                                         fontSize: 10,
                                         fontWeight: FontWeight.w700,
                                         letterSpacing: 0.6,
-                                        color: DoctorColors.muted,
+                                        color: colors.textMuted,
                                       ),
                                     ),
                                   ),
@@ -434,7 +436,7 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
                                         fontSize: 10,
                                         fontWeight: FontWeight.w700,
                                         letterSpacing: 0.6,
-                                        color: DoctorColors.muted,
+                                        color: colors.textMuted,
                                       ),
                                     ),
                                   ),
@@ -446,11 +448,11 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
                                         fontSize: 10,
                                         fontWeight: FontWeight.w700,
                                         letterSpacing: 0.6,
-                                        color: DoctorColors.muted,
+                                        color: colors.textMuted,
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(
+                                  SizedBox(
                                     width: 125,
                                     child: Text(
                                       'BREAK TO',
@@ -458,20 +460,20 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
                                         fontSize: 10,
                                         fontWeight: FontWeight.w700,
                                         letterSpacing: 0.6,
-                                        color: DoctorColors.muted,
+                                        color: colors.textMuted,
                                       ),
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                            const Divider(color: DoctorColors.border, height: 1),
+                            Divider(color: colors.border, height: 1),
 
                             // Day rows
                             for (var i = 0; i < _dayDefs.length; i++) ...[
-                              _buildDayRow(_dayDefs[i].$1, _dayDefs[i].$2),
+                              _buildDayRow(context, _dayDefs[i].$1, _dayDefs[i].$2),
                               if (i < _dayDefs.length - 1)
-                                const Divider(color: DoctorColors.border, height: 1),
+                                Divider(color: colors.border, height: 1),
                             ],
                           ],
                         ),
@@ -483,7 +485,7 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
             ),
 
             const SizedBox(height: 20),
-            const Divider(color: DoctorColors.border, height: 1),
+            Divider(color: colors.border, height: 1),
             const SizedBox(height: 14),
 
             // Modal Foot Buttons
@@ -493,8 +495,8 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
                 OutlinedButton(
                   onPressed: () => Navigator.of(context).pop(),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: DoctorColors.muted,
-                    side: const BorderSide(color: DoctorColors.border),
+                    foregroundColor: colors.textMuted,
+                    side: BorderSide(color: colors.border),
                     padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   ),
@@ -507,7 +509,7 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
                 ElevatedButton(
                   onPressed: _submit,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: DoctorColors.primary,
+                    backgroundColor: colors.primary,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -526,13 +528,14 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
     );
   }
 
-  Widget _buildDayRow(String key, String dayName) {
+  Widget _buildDayRow(BuildContext context, String key, String dayName) {
+    final colors = context.colors;
     final slot = _schedule[key]!;
     final isEnabled = slot.enabled;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      color: isEnabled ? Colors.transparent : Colors.black.withValues(alpha: 0.2),
+      color: isEnabled ? Colors.transparent : Colors.black.withValues(alpha: 0.05),
       child: Row(
         children: [
           // Day Checkbox + Label
@@ -545,8 +548,8 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
                   height: 22,
                   child: Checkbox(
                     value: isEnabled,
-                    activeColor: DoctorColors.primary,
-                    side: const BorderSide(color: DoctorColors.border, width: 1.5),
+                    activeColor: colors.primary,
+                    side: BorderSide(color: colors.border, width: 1.5),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                     onChanged: (val) {
                       setState(() {
@@ -562,7 +565,7 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
                     style: GoogleFonts.inter(
                       fontSize: 13,
                       fontWeight: isEnabled ? FontWeight.w600 : FontWeight.w400,
-                      color: isEnabled ? Colors.white : DoctorColors.muted,
+                      color: isEnabled ? colors.textPrimary : colors.textMuted,
                     ),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -575,6 +578,7 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
           SizedBox(
             width: 95,
             child: _buildTimePickerCell(
+              context: context,
               key: key,
               field: 'start',
               value: slot.start,
@@ -586,6 +590,7 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
           SizedBox(
             width: 95,
             child: _buildTimePickerCell(
+              context: context,
               key: key,
               field: 'end',
               value: slot.end,
@@ -597,6 +602,7 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
           SizedBox(
             width: 95,
             child: _buildTimePickerCell(
+              context: context,
               key: key,
               field: 'breakStart',
               value: slot.breakStart,
@@ -612,6 +618,7 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
               children: [
                 Expanded(
                   child: _buildTimePickerCell(
+                    context: context,
                     key: key,
                     field: 'breakEnd',
                     value: slot.breakEnd,
@@ -621,7 +628,7 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
                 ),
                 if (isEnabled && (slot.breakStart.isNotEmpty || slot.breakEnd.isNotEmpty))
                   IconButton(
-                    icon: const Icon(Icons.clear_rounded, size: 14, color: DoctorColors.muted),
+                    icon: Icon(Icons.clear_rounded, size: 14, color: colors.textMuted),
                     tooltip: 'Clear break',
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(minWidth: 20, minHeight: 20),
@@ -636,12 +643,14 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
   }
 
   Widget _buildTimePickerCell({
+    required BuildContext context,
     required String key,
     required String field,
     required String value,
     required bool enabled,
     bool isOptional = false,
   }) {
+    final colors = context.colors;
     final displayText = value.isNotEmpty ? value : (isOptional ? 'None' : '--:--');
 
     return Opacity(
@@ -653,10 +662,10 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
           margin: const EdgeInsets.only(right: 4),
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
           decoration: BoxDecoration(
-            color: DoctorColors.surfaceElevated,
+            color: colors.surface,
             borderRadius: BorderRadius.circular(6),
             border: Border.all(
-              color: value.isNotEmpty ? DoctorColors.border : DoctorColors.border.withValues(alpha: 0.5),
+              color: value.isNotEmpty ? colors.border : colors.border.withValues(alpha: 0.5),
             ),
           ),
           child: Row(
@@ -669,15 +678,15 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: value.isNotEmpty
-                        ? Colors.white
-                        : (isOptional ? DoctorColors.muted : DoctorColors.danger),
+                        ? colors.textPrimary
+                        : (isOptional ? colors.textMuted : colors.error),
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
               const SizedBox(width: 2),
-              const Icon(Icons.access_time_rounded, size: 12, color: DoctorColors.muted),
+              Icon(Icons.access_time_rounded, size: 12, color: colors.textMuted),
             ],
           ),
         ),

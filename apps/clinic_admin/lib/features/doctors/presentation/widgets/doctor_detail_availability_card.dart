@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../domain/entities/clinic_doctor_profile_entity.dart';
 import '../../domain/entities/doctor_daily_schedule.dart';
-import 'doctor_ui_kit.dart';
 
 class DoctorDetailAvailabilityCard extends StatefulWidget {
   final ClinicDoctorProfileEntity doctor;
@@ -41,15 +41,16 @@ class _DoctorDetailAvailabilityCardState
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final schedule = widget.doctor.weeklySchedule.isNotEmpty
         ? widget.doctor.weeklySchedule
         : DoctorDailySchedule.defaultWeekly();
 
     return Container(
       decoration: BoxDecoration(
-        color: DoctorColors.surface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: DoctorColors.border),
+        border: Border.all(color: colors.border),
       ),
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -64,7 +65,7 @@ class _DoctorDetailAvailabilityCardState
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.calendar_today_rounded, size: 16, color: DoctorColors.cyan),
+                  Icon(Icons.calendar_today_rounded, size: 16, color: colors.primaryLight),
                   const SizedBox(width: 8),
                   Flexible(
                     child: Text(
@@ -72,7 +73,7 @@ class _DoctorDetailAvailabilityCardState
                       style: GoogleFonts.inter(
                         fontSize: 14,
                         fontWeight: FontWeight.w800,
-                        color: Colors.white,
+                        color: colors.textPrimary,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -89,7 +90,7 @@ class _DoctorDetailAvailabilityCardState
                     style: GoogleFonts.inter(
                       fontSize: 12.5,
                       fontWeight: FontWeight.w700,
-                      color: DoctorColors.cyan,
+                      color: colors.primary,
                     ),
                   ),
                 ),
@@ -97,7 +98,7 @@ class _DoctorDetailAvailabilityCardState
             ],
           ),
           const SizedBox(height: 14),
-          const Divider(color: DoctorColors.border, height: 1),
+          Divider(color: colors.border, height: 1),
           const SizedBox(height: 16),
           LayoutBuilder(
             builder: (context, constraints) {
@@ -112,6 +113,7 @@ class _DoctorDetailAvailabilityCardState
                 children: [
                   for (final (key, short) in _days)
                     _buildDayBox(
+                      colors: colors,
                       colWidth: colWidth,
                       dayKey: key,
                       short: short,
@@ -128,6 +130,7 @@ class _DoctorDetailAvailabilityCardState
   }
 
   Widget _buildDayBox({
+    required AppColorsExtension colors,
     required double colWidth,
     required String dayKey,
     required String short,
@@ -160,13 +163,11 @@ class _DoctorDetailAvailabilityCardState
         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 12),
         decoration: BoxDecoration(
           color: isSelected
-              ? const Color(0xFF2563EB).withValues(alpha: 0.16)
-              : (isOn ? const Color(0xFF1E293B).withValues(alpha: 0.35) : DoctorColors.field),
+              ? colors.primaryTint
+              : (isOn ? colors.surfaceSecondary : colors.background),
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: isSelected
-                ? const Color(0xFF2563EB)
-                : (isOn ? const Color(0xFF334155) : DoctorColors.border),
+            color: isSelected ? colors.primary : colors.border,
             width: isSelected ? 1.5 : 1.0,
           ),
         ),
@@ -178,7 +179,7 @@ class _DoctorDetailAvailabilityCardState
               style: GoogleFonts.inter(
                 fontSize: 12,
                 fontWeight: FontWeight.w800,
-                color: isOn ? Colors.white : DoctorColors.muted,
+                color: isOn ? colors.textPrimary : colors.textMuted,
               ),
             ),
             const SizedBox(height: 5),
@@ -187,7 +188,7 @@ class _DoctorDetailAvailabilityCardState
               style: GoogleFonts.inter(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
-                color: isOn ? const Color(0xFFF1F5F9) : DoctorColors.subtle,
+                color: isOn ? colors.textPrimary : colors.textMuted,
               ),
               textAlign: TextAlign.center,
             ),
@@ -198,7 +199,7 @@ class _DoctorDetailAvailabilityCardState
                 style: GoogleFonts.inter(
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
-                  color: const Color(0xFFF1F5F9),
+                  color: colors.textMuted,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -210,7 +211,7 @@ class _DoctorDetailAvailabilityCardState
                 style: GoogleFonts.inter(
                   fontSize: 9,
                   fontWeight: FontWeight.w500,
-                  color: DoctorColors.muted,
+                  color: colors.textMuted,
                 ),
                 textAlign: TextAlign.center,
                 maxLines: 1,

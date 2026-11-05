@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../booking/presentation/pages/booking_wizard_screen.dart';
 import '../../domain/entities/clinic_doctor_item.dart';
 import '../../domain/entities/clinic_service_item.dart';
@@ -40,13 +40,15 @@ class ClinicDetailsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return BlocConsumer<ClinicDetailsBloc, ClinicDetailsState>(
       listener: (context, state) {
         if (state.reviewSubmittedSuccessfully) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Thank you! Your review has been submitted.'),
-              backgroundColor: AppColors.success,
+            SnackBar(
+              content: const Text('Thank you! Your review has been submitted.'),
+              backgroundColor: colors.success,
             ),
           );
         }
@@ -59,8 +61,8 @@ class ClinicDetailsView extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
         if (clinic == null) {
-          return const Center(
-            child: Text('Clinic details unavailable.', style: TextStyle(color: Colors.white)),
+          return Center(
+            child: Text('Clinic details unavailable.', style: TextStyle(color: colors.textPrimary)),
           );
         }
 
@@ -159,8 +161,9 @@ class ClinicDetailsView extends StatelessWidget {
   }
 
   void _showActionSnack(BuildContext context, String message) {
+    final colors = context.colors;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: AppColors.primary),
+      SnackBar(content: Text(message), backgroundColor: colors.primary),
     );
   }
 }

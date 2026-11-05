@@ -1,4 +1,4 @@
-const sampleClinicsSeed = [
+﻿const sampleClinicsSeed = [
   {
     'name': 'Sunrise Health Clinic',
     'rating': 4.9,

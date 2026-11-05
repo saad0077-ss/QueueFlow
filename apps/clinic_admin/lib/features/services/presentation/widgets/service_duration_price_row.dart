@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'service_form_text_field.dart';
 
 class ServiceDurationPriceRow extends StatelessWidget {

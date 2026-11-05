@@ -1,4 +1,4 @@
-import '../../domain/entities/standard_service_entity.dart';
+﻿import '../../domain/entities/standard_service_entity.dart';
 
 class StandardServiceModel extends StandardServiceEntity {
   const StandardServiceModel({required super.id, required super.name, required super.duration, required super.suggestedPrice, required super.description});

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class ClinicDepartmentItemData {
   final String name;
@@ -69,81 +69,81 @@ class ClinicDepartmentCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Non-uniform border colors can't take a borderRadius, so the outer box
-    // owns the rounded uniform border and clips an inner box carrying the accent stripe.
+    final colors = context.colors;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: AppColors.darkBgApp,
+        color: colors.surfaceSecondary,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.darkBorder),
+        border: Border.all(color: colors.border),
       ),
       child: Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        border: Border(left: BorderSide(color: data.color, width: 3.5)),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 42,
-            height: 42,
-            decoration: BoxDecoration(
-              color: data.color.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(12),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          border: Border(left: BorderSide(color: data.color, width: 3.5)),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                color: data.color.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              alignment: Alignment.center,
+              child: Text(data.icon, style: const TextStyle(fontSize: 20)),
             ),
-            alignment: Alignment.center,
-            child: Text(data.icon, style: const TextStyle(fontSize: 20)),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        data.name,
-                        style: GoogleFonts.inter(fontSize: 13.5, fontWeight: FontWeight.w700, color: AppColors.darkInk),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          data.name,
+                          style: GoogleFonts.inter(fontSize: 13.5, fontWeight: FontWeight.w700, color: colors.textPrimary),
+                        ),
                       ),
-                    ),
-                    if (data.code.isNotEmpty) ...[
-                      const SizedBox(width: 6),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                        decoration: BoxDecoration(color: data.color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(6)),
-                        child: Text(data.code, style: GoogleFonts.robotoMono(fontSize: 9.5, fontWeight: FontWeight.w800, color: data.color)),
-                      ),
+                      if (data.code.isNotEmpty) ...[
+                        const SizedBox(width: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(color: data.color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(6)),
+                          child: Text(data.code, style: GoogleFonts.robotoMono(fontSize: 9.5, fontWeight: FontWeight.w800, color: data.color)),
+                        ),
+                      ],
                     ],
+                  ),
+                  if (data.description.isNotEmpty) ...[
+                    const SizedBox(height: 3),
+                    Text(data.description, style: GoogleFonts.inter(fontSize: 11.5, color: colors.textMuted, height: 1.45)),
                   ],
-                ),
-                if (data.description.isNotEmpty) ...[
-                  const SizedBox(height: 3),
-                  Text(data.description, style: GoogleFonts.inter(fontSize: 11.5, color: AppColors.darkInkMuted, height: 1.45)),
-                ],
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    if (data.avgTime.isNotEmpty) ...[
-                      const Icon(Icons.access_time_rounded, size: 12, color: AppColors.darkInkFaint),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      if (data.avgTime.isNotEmpty) ...[
+                        Icon(Icons.access_time_rounded, size: 12, color: colors.textSubtle),
+                        const SizedBox(width: 4),
+                        Text('~${data.avgTime}', style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w600, color: colors.textSubtle)),
+                        const SizedBox(width: 12),
+                      ],
+                      Icon(Icons.person_outline_rounded, size: 13, color: colors.textSubtle),
                       const SizedBox(width: 4),
-                      Text('~${data.avgTime}', style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.darkInkFaint)),
-                      const SizedBox(width: 12),
+                      Text('${data.doctorCount} doctor${data.doctorCount > 1 ? "s" : ""}', style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w600, color: colors.textSubtle)),
                     ],
-                    const Icon(Icons.person_outline_rounded, size: 13, color: AppColors.darkInkFaint),
-                    const SizedBox(width: 4),
-                    Text('${data.doctorCount} doctor${data.doctorCount > 1 ? "s" : ""}', style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.darkInkFaint)),
-                  ],
-                ),
-              ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
       ),
     );
   }

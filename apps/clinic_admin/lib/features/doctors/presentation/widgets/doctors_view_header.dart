@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'doctor_ui_kit.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class DoctorsViewHeader extends StatelessWidget {
   final String planPill;
@@ -16,6 +16,8 @@ class DoctorsViewHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final isNarrow = constraints.maxWidth < 640;
@@ -32,10 +34,10 @@ class DoctorsViewHeader extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: DoctorColors.green.withValues(alpha: 0.15),
+                    color: colors.badgeOpenBg,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: DoctorColors.green.withValues(alpha: 0.3),
+                      color: colors.badgeOpenText.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Text(
@@ -43,7 +45,7 @@ class DoctorsViewHeader extends StatelessWidget {
                     style: GoogleFonts.inter(
                       fontSize: 10.5,
                       fontWeight: FontWeight.w800,
-                      color: DoctorColors.green,
+                      color: colors.badgeOpenText,
                       letterSpacing: 0.3,
                     ),
                   ),
@@ -53,7 +55,7 @@ class DoctorsViewHeader extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 12.5,
                     fontWeight: FontWeight.w500,
-                    color: const Color(0xFFCBD5E1),
+                    color: colors.textMuted,
                   ),
                 ),
               ],
@@ -64,7 +66,7 @@ class DoctorsViewHeader extends StatelessWidget {
               style: GoogleFonts.inter(
                 fontSize: titleSize,
                 fontWeight: FontWeight.w800,
-                color: Colors.white,
+                color: colors.textPrimary,
                 letterSpacing: -0.5,
               ),
             ),
@@ -73,7 +75,7 @@ class DoctorsViewHeader extends StatelessWidget {
               'Manage clinic doctors, room assignments, and live consultation availability for queue triage',
               style: GoogleFonts.inter(
                 fontSize: 13.5,
-                color: const Color(0xFFCBD5E1),
+                color: colors.textMuted,
               ),
             ),
           ],

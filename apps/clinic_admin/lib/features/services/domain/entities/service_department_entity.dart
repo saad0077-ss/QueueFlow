@@ -1,4 +1,4 @@
-import 'package:equatable/equatable.dart';
+﻿import 'package:equatable/equatable.dart';
 
 /// Represents a standard service template inside a department.
 class StandardServiceTemplate extends Equatable {

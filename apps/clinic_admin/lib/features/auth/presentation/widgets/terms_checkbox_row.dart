@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class TermsCheckboxRow extends StatelessWidget {
   final bool agreed;
@@ -13,6 +14,8 @@ class TermsCheckboxRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -22,8 +25,8 @@ class TermsCheckboxRow extends StatelessWidget {
           child: Checkbox(
             value: agreed,
             onChanged: (val) => onChanged(val ?? false),
-            activeColor: const Color(0xFF2563EB),
-            side: const BorderSide(color: Color(0xFF334155), width: 1.3),
+            activeColor: colors.primary,
+            side: BorderSide(color: colors.border, width: 1.3),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(4),
             ),
@@ -37,27 +40,27 @@ class TermsCheckboxRow extends StatelessWidget {
               text: TextSpan(
                 style: GoogleFonts.inter(
                   fontSize: 12,
-                  color: const Color(0xFF94A3B8),
+                  color: colors.textMuted,
                   height: 1.4,
                 ),
-                children: const [
-                  TextSpan(text: "I agree to QueueFlow's "),
+                children: [
+                  const TextSpan(text: "I agree to QueueFlow's "),
                   TextSpan(
                     text: 'Terms of Service',
                     style: TextStyle(
-                      color: Color(0xFF3B82F6),
+                      color: colors.primaryLight,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  TextSpan(text: ' and '),
+                  const TextSpan(text: ' and '),
                   TextSpan(
                     text: 'Privacy\nPolicy',
                     style: TextStyle(
-                      color: Color(0xFF3B82F6),
+                      color: colors.primaryLight,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  TextSpan(text: '.'),
+                  const TextSpan(text: '.'),
                 ],
               ),
             ),

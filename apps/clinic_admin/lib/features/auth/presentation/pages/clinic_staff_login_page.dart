@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../dashboard/presentation/pages/clinic_dashboard_page.dart';
@@ -34,43 +35,53 @@ class _ClinicStaffLoginView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDesktop = MediaQuery.sizeOf(context).width >= 900;
+    final colors = context.colors;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF070B14),
-      body: BlocConsumer<ClinicSignInBloc, ClinicSignInState>(
-        listener: (context, state) {
-          if (state.staff != null) {
-            AppSnackBar.showSuccess(context, message: 'Signed in.');
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (_) => const ClinicDashboardPage()),
-            );
-          }
-          if (state.errorMessage != null) {
-            AppSnackBar.showError(context, message: state.errorMessage!);
-          }
-          if (state.infoMessage != null) {
-            AppSnackBar.showInfo(context, message: state.infoMessage!);
-          }
-        },
-        builder: (context, state) {
-          return Row(
-            children: [
-              if (isDesktop) const Expanded(flex: 5, child: ClinicHeroBanner()),
-              Expanded(
-                flex: isDesktop ? 6 : 1,
-                child: Center(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: isDesktop ? 64 : 24,
-                      vertical: 36,
+      backgroundColor: colors.background,
+      body: Stack(
+        children: [
+          BlocConsumer<ClinicSignInBloc, ClinicSignInState>(
+            listener: (context, state) {
+              if (state.staff != null) {
+                AppSnackBar.showSuccess(context, message: 'Signed in.');
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (_) => const ClinicDashboardPage()),
+                );
+              }
+              if (state.errorMessage != null) {
+                AppSnackBar.showError(context, message: state.errorMessage!);
+              }
+              if (state.infoMessage != null) {
+                AppSnackBar.showInfo(context, message: state.infoMessage!);
+              }
+            },
+            builder: (context, state) {
+              return Row(
+                children: [
+                  if (isDesktop) const Expanded(flex: 5, child: ClinicHeroBanner()),
+                  Expanded(
+                    flex: isDesktop ? 6 : 1,
+                    child: Center(
+                      child: SingleChildScrollView(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: isDesktop ? 64 : 24,
+                          vertical: 36,
+                        ),
+                        child: ClinicStaffLoginForm(state: state),
+                      ),
                     ),
-                    child: ClinicStaffLoginForm(state: state),
                   ),
-                ),
-              ),
-            ],
-          );
-        },
+                ],
+              );
+            },
+          ),
+          const Positioned(
+            top: 20,
+            right: 20,
+            child: ThemeModeToggleButton(),
+          ),
+        ],
       ),
     );
   }

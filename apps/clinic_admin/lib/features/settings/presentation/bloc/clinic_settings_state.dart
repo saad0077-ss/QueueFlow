@@ -1,4 +1,4 @@
-import 'package:equatable/equatable.dart';
+﻿import 'package:equatable/equatable.dart';
 import '../../domain/entities/clinic_settings_entity.dart';
 
 enum ClinicSettingsStatus { initial, loading, success, failure }

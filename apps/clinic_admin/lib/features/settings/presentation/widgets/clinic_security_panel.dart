@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../domain/entities/clinic_queue_rules_entity.dart';
 
 class ClinicSecurityPanel extends StatefulWidget {
@@ -42,19 +43,21 @@ class _ClinicSecurityPanelState extends State<ClinicSecurityPanel> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _field('Current password', _currentPassCtrl, 'Enter current password'),
+        _field(context, 'Current password', _currentPassCtrl, 'Enter current password'),
         const SizedBox(height: 14),
-        _field('New password', _newPassCtrl, 'Enter new password'),
+        _field(context, 'New password', _newPassCtrl, 'Enter new password'),
         const SizedBox(height: 18),
         Container(
           padding: const EdgeInsets.symmetric(vertical: 12),
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             border: Border(
-              top: BorderSide(color: Color(0xFF1E293B)),
-              bottom: BorderSide(color: Color(0xFF1E293B)),
+              top: BorderSide(color: colors.border),
+              bottom: BorderSide(color: colors.border),
             ),
           ),
           child: Row(
@@ -63,14 +66,14 @@ class _ClinicSecurityPanelState extends State<ClinicSecurityPanel> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Require Two-Factor Authentication', style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.white)),
+                  Text('Require Two-Factor Authentication', style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.bold, color: colors.textPrimary)),
                   const SizedBox(height: 2),
-                  Text('Adds phone verification at staff login', style: GoogleFonts.inter(fontSize: 11.5, color: const Color(0xFF94A3B8))),
+                  Text('Adds phone verification at staff login', style: GoogleFonts.inter(fontSize: 11.5, color: colors.textMuted)),
                 ],
               ),
               Switch(
                 value: _requireTwoFactor,
-                activeTrackColor: const Color(0xFF2563EB),
+                activeTrackColor: colors.primary,
                 onChanged: (val) => setState(() => _requireTwoFactor = val),
               ),
             ],
@@ -88,7 +91,7 @@ class _ClinicSecurityPanelState extends State<ClinicSecurityPanel> {
             _newPassCtrl.clear();
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF2563EB),
+            backgroundColor: colors.primary,
             foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -99,24 +102,27 @@ class _ClinicSecurityPanelState extends State<ClinicSecurityPanel> {
     );
   }
 
-  Widget _field(String label, TextEditingController ctrl, String hint) {
+  Widget _field(BuildContext context, String label, TextEditingController ctrl, String hint) {
+    final colors = context.colors;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: const Color(0xFF94A3B8))),
+        Text(label, style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: colors.textMuted)),
         const SizedBox(height: 6),
         TextField(
           controller: ctrl,
           obscureText: true,
-          style: GoogleFonts.inter(fontSize: 13, color: Colors.white),
+          style: GoogleFonts.inter(fontSize: 13, color: colors.textPrimary),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: const TextStyle(color: Color(0xFF64748B), fontSize: 12),
+            hintStyle: TextStyle(color: colors.textMuted, fontSize: 12),
             filled: true,
-            fillColor: const Color(0xFF162238),
+            fillColor: colors.surfaceSecondary,
             contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
-            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Color(0xFF2563EB))),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: colors.border)),
+            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: colors.border)),
+            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: colors.primary)),
           ),
         ),
       ],

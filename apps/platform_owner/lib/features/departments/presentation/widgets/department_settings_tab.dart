@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 import '../../domain/entities/department_entity.dart';
 import 'specialty_form_inputs.dart';
@@ -50,6 +51,8 @@ class _DepartmentSettingsTabState extends State<DepartmentSettingsTab> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Align(
       alignment: Alignment.topLeft,
       child: ConstrainedBox(
@@ -57,9 +60,9 @@ class _DepartmentSettingsTabState extends State<DepartmentSettingsTab> {
         child: Container(
           padding: const EdgeInsets.fromLTRB(26, 24, 26, 26),
           decoration: BoxDecoration(
-            color: const Color(0xFF111A2E),
+            color: colors.surface,
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: const Color(0xFF1E293B)),
+            border: Border.all(color: colors.border),
           ),
           child: LayoutBuilder(
             builder: (context, constraints) {
@@ -70,7 +73,7 @@ class _DepartmentSettingsTabState extends State<DepartmentSettingsTab> {
                 children: [
                   Text(
                     'Specialty Configuration & Triage Rules',
-                    style: GoogleFonts.inter(fontSize: 16.5, fontWeight: FontWeight.w800, color: Colors.white),
+                    style: GoogleFonts.inter(fontSize: 16.5, fontWeight: FontWeight.w800, color: colors.textPrimary),
                   ),
                   const SizedBox(height: 16),
                   _pair(
@@ -125,7 +128,7 @@ class _DepartmentSettingsTabState extends State<DepartmentSettingsTab> {
                         child: SpecialtyTextInput(
                           controller: _doctorsCtrl,
                           readOnly: true,
-                          suffix: const Icon(Icons.lock_outline_rounded, size: 16, color: Color(0xFF64748B)),
+                          suffix: Icon(Icons.lock_outline_rounded, size: 16, color: colors.textMuted),
                         ),
                       ),
                     ),

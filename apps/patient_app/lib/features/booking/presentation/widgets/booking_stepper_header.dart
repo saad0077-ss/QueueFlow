@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:patient_app/core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class BookingStepperHeader extends StatelessWidget {
   final int currentStep;
@@ -22,6 +22,7 @@ class BookingStepperHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (currentStep > 4) return const SizedBox.shrink();
+    final colors = context.colors;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
@@ -29,15 +30,15 @@ class BookingStepperHeader extends StatelessWidget {
       child: Row(
         children: [
           for (int i = 0; i < _stepTitles.length; i++) ...[
-            _buildStepItem(i + 1, _stepTitles[i]),
-            if (i < _stepTitles.length - 1) _buildStepLine(i + 1),
+            _buildStepItem(i + 1, _stepTitles[i], colors),
+            if (i < _stepTitles.length - 1) _buildStepLine(i + 1, colors),
           ],
         ],
       ),
     );
   }
 
-  Widget _buildStepItem(int stepNumber, String title) {
+  Widget _buildStepItem(int stepNumber, String title, AppColorsExtension colors) {
     final bool isDone = stepNumber < currentStep;
     final bool isActive = stepNumber == currentStep;
 
@@ -55,18 +56,18 @@ class BookingStepperHeader extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: isActive ? AppColors.primaryGradient : null,
               color: isDone
-                  ? AppColors.accent
-                  : (!isActive ? AppColors.darkSurface : null),
+                  ? colors.accent
+                  : (!isActive ? colors.surfaceSecondary : null),
               border: Border.all(
                 color: isDone
-                    ? AppColors.accent
-                    : (isActive ? Colors.transparent : AppColors.darkBorder),
+                    ? colors.accent
+                    : (isActive ? Colors.transparent : colors.border),
                 width: 1.5,
               ),
               boxShadow: isActive
                   ? [
                       BoxShadow(
-                        color: AppColors.primary.withValues(alpha: 0.35),
+                        color: colors.primary.withValues(alpha: 0.35),
                         blurRadius: 10,
                         spreadRadius: 2,
                       ),
@@ -85,7 +86,7 @@ class BookingStepperHeader extends StatelessWidget {
                       style: GoogleFonts.inter(
                         fontSize: 12.5,
                         fontWeight: FontWeight.w800,
-                        color: isActive ? Colors.white : AppColors.darkInkFaint,
+                        color: isActive ? Colors.white : colors.textSubtle,
                       ),
                     ),
             ),
@@ -97,8 +98,8 @@ class BookingStepperHeader extends StatelessWidget {
               fontSize: 11,
               fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
               color: isActive
-                  ? AppColors.darkInk
-                  : (isDone ? AppColors.darkInkMuted : AppColors.darkInkFaint),
+                  ? colors.textPrimary
+                  : (isDone ? colors.textMuted : colors.textSubtle),
             ),
           ),
         ],
@@ -106,7 +107,7 @@ class BookingStepperHeader extends StatelessWidget {
     );
   }
 
-  Widget _buildStepLine(int stepNumber) {
+  Widget _buildStepLine(int stepNumber, AppColorsExtension colors) {
     final bool isDone = stepNumber < currentStep;
 
     return Expanded(
@@ -114,7 +115,7 @@ class BookingStepperHeader extends StatelessWidget {
         height: 2.5,
         margin: const EdgeInsets.only(bottom: 18, left: 6, right: 6),
         decoration: BoxDecoration(
-          color: isDone ? AppColors.accent : AppColors.darkBorder,
+          color: isDone ? colors.accent : colors.border,
           borderRadius: BorderRadius.circular(2),
         ),
       ),

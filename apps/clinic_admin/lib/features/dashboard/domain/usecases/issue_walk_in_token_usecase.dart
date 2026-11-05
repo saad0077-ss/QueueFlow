@@ -1,4 +1,4 @@
-import '../repositories/clinic_dashboard_repository.dart';
+﻿import '../repositories/clinic_dashboard_repository.dart';
 
 /// Use case to issue a new walk-in patient token.
 class IssueWalkInTokenUseCase {

@@ -1,4 +1,4 @@
-import 'package:equatable/equatable.dart';
+﻿import 'package:equatable/equatable.dart';
 
 /// Represents a clinical service offered by the clinic.
 class ClinicServiceEntity extends Equatable {

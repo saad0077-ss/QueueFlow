@@ -1,4 +1,4 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
+﻿import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../domain/usecases/activate_clinic_account_usecase.dart';
 import 'account_activation_event.dart';
 import 'account_activation_state.dart';

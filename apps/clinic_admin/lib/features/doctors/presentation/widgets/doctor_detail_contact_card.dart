@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../domain/entities/clinic_doctor_profile_entity.dart';
-import 'doctor_ui_kit.dart';
 
 class DoctorDetailContactCard extends StatelessWidget {
   final ClinicDoctorProfileEntity doctor;
@@ -10,6 +10,7 @@ class DoctorDetailContactCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final rows = [
       ('EMAIL', doctor.email.isNotEmpty ? doctor.email : '—', true),
       ('PHONE', doctor.phone.isNotEmpty ? doctor.phone : '—', true),
@@ -18,9 +19,9 @@ class DoctorDetailContactCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: DoctorColors.surface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: DoctorColors.border),
+        border: Border.all(color: colors.border),
       ),
       padding: const EdgeInsets.all(22),
       child: Column(
@@ -28,7 +29,7 @@ class DoctorDetailContactCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.mail_outline_rounded, size: 16, color: DoctorColors.cyan),
+              Icon(Icons.mail_outline_rounded, size: 16, color: colors.primary),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -36,14 +37,14 @@ class DoctorDetailContactCard extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 15,
                     fontWeight: FontWeight.w800,
-                    color: Colors.white,
+                    color: colors.textPrimary,
                   ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 14),
-          const Divider(color: DoctorColors.border, height: 1),
+          Divider(color: colors.border, height: 1),
           const SizedBox(height: 10),
           for (var i = 0; i < rows.length; i++) ...[
             Padding(
@@ -56,7 +57,7 @@ class DoctorDetailContactCard extends StatelessWidget {
                     style: GoogleFonts.inter(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color: DoctorColors.muted,
+                      color: colors.textMuted,
                     ),
                   ),
                   Flexible(
@@ -65,7 +66,7 @@ class DoctorDetailContactCard extends StatelessWidget {
                       style: GoogleFonts.inter(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
-                        color: rows[i].$3 ? DoctorColors.cyan : Colors.white,
+                        color: rows[i].$3 ? colors.primary : colors.textPrimary,
                       ),
                       textAlign: TextAlign.right,
                       overflow: TextOverflow.ellipsis,
@@ -75,7 +76,7 @@ class DoctorDetailContactCard extends StatelessWidget {
               ),
             ),
             if (i < rows.length - 1)
-              const Divider(color: DoctorColors.border, height: 1),
+              Divider(color: colors.border, height: 1),
           ],
         ],
       ),

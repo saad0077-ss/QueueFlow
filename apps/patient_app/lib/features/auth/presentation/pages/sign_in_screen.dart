@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../../core/widgets/auth_back_header.dart';
 import '../../../../main.dart';
@@ -38,8 +38,10 @@ class _SignInView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: colors.background,
       body: SafeArea(
         child: BlocConsumer<SignInBloc, SignInState>(
           listener: (context, state) {

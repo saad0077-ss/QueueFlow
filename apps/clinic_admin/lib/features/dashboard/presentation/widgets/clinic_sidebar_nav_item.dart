@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 /// A single navigation item inside the clinic sidebar.
 /// Shows an active gradient background when selected.
@@ -21,6 +22,8 @@ class ClinicSidebarNavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     final item = InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
@@ -56,7 +59,7 @@ class ClinicSidebarNavItem extends StatelessWidget {
             Icon(
               icon,
               size: 20,
-              color: isActive ? Colors.white : const Color(0xFF8E9CAE),
+              color: isActive ? Colors.white : colors.textMuted,
             ),
             if (!compact) ...[
               const SizedBox(width: 14),
@@ -67,7 +70,7 @@ class ClinicSidebarNavItem extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 13.5,
                     fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
-                    color: isActive ? Colors.white : const Color(0xFF8E9CAE),
+                    color: isActive ? Colors.white : colors.textMuted,
                   ),
                 ),
               ),

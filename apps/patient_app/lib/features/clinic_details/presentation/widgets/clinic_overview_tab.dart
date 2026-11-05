@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class ClinicOverviewTab extends StatelessWidget {
   final String description;
@@ -14,6 +14,8 @@ class ClinicOverviewTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -22,25 +24,25 @@ class ClinicOverviewTab extends StatelessWidget {
           style: GoogleFonts.inter(
             fontSize: 13,
             height: 1.6,
-            color: AppColors.darkInkMuted,
+            color: colors.textMuted,
           ),
         ),
         const SizedBox(height: 14),
         Wrap(
           spacing: 8,
           runSpacing: 8,
-          children: features.map(_buildChip).toList(),
+          children: features.map((f) => _buildChip(f, colors)).toList(),
         ),
       ],
     );
   }
 
-  Widget _buildChip(String label) {
+  Widget _buildChip(String label, AppColorsExtension colors) {
     final isEmergency = label.contains('24/7') || label.contains('Emergency');
-    final color = isEmergency ? AppColors.accent : AppColors.darkInkMuted;
+    final color = isEmergency ? colors.accent : colors.textMuted;
     final bg = isEmergency
-        ? AppColors.accent.withValues(alpha: 0.12)
-        : AppColors.darkSurface;
+        ? colors.accentTint
+        : colors.surfaceSecondary;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -49,8 +51,8 @@ class ClinicOverviewTab extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: isEmergency
-              ? AppColors.accent.withValues(alpha: 0.4)
-              : AppColors.darkBorder,
+              ? colors.accent.withValues(alpha: 0.4)
+              : colors.border,
         ),
       ),
       child: Text(

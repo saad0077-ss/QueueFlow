@@ -1,4 +1,4 @@
-import 'package:equatable/equatable.dart';
+﻿import 'package:equatable/equatable.dart';
 import '../../domain/entities/tenant_clinic_entity.dart';
 
 abstract class ClinicsDirectoryEvent extends Equatable {

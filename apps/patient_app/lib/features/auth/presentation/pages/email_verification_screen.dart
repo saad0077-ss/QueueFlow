@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../../main.dart';
 import '../widgets/email_verification_actions.dart';
@@ -104,6 +104,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final effectiveEmail = widget.email.isNotEmpty
         ? widget.email
         : (FirebaseAuth.instance.currentUser?.email ?? 'your email address');
@@ -115,7 +116,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
         AppSnackBar.showError(context, title: 'Verification Required', message: 'Please verify your email address to access your account.');
       },
       child: Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: colors.background,
         body: SafeArea(
           child: Center(
             child: SingleChildScrollView(

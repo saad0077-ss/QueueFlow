@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../../core/widgets/gradient_button.dart';
 
 class EmailVerificationActions extends StatelessWidget {
@@ -22,6 +22,8 @@ class EmailVerificationActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Column(
       children: [
         // Primary Button: "I've Verified My Email"
@@ -36,20 +38,20 @@ class EmailVerificationActions extends StatelessWidget {
         TextButton.icon(
           onPressed: (resendCooldown > 0 || isResending) ? null : onResend,
           icon: isResending
-              ? const SizedBox(
+              ? SizedBox(
                   width: 14,
                   height: 14,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: AppColors.primaryLight,
+                    color: colors.primary,
                   ),
                 )
               : Icon(
                   Icons.refresh_rounded,
                   size: 18,
                   color: resendCooldown > 0
-                      ? const Color(0xFF64748B)
-                      : AppColors.primaryLight,
+                      ? colors.textSubtle
+                      : colors.primary,
                 ),
           label: Text(
             resendCooldown > 0
@@ -57,8 +59,8 @@ class EmailVerificationActions extends StatelessWidget {
                 : 'Resend Verification Email',
             style: TextStyle(
               color: resendCooldown > 0
-                  ? const Color(0xFF64748B)
-                  : AppColors.primaryLight,
+                  ? colors.textSubtle
+                  : colors.primary,
               fontWeight: FontWeight.w600,
               fontSize: 14,
             ),
@@ -73,16 +75,16 @@ class EmailVerificationActions extends StatelessWidget {
             Text(
               'Wrong email? ',
               style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.6),
+                color: colors.textMuted,
                 fontSize: 13.5,
               ),
             ),
             GestureDetector(
               onTap: onSignOutAndSwitch,
-              child: const Text(
+              child: Text(
                 'Sign in with another account',
                 style: TextStyle(
-                  color: AppColors.primaryLight,
+                  color: colors.accent,
                   fontSize: 13.5,
                   fontWeight: FontWeight.w700,
                 ),

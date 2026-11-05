@@ -1,4 +1,4 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
+﻿import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entities/tenant_clinic_entity.dart';
 import 'clinics_directory_event.dart';
 import 'clinics_directory_state.dart';

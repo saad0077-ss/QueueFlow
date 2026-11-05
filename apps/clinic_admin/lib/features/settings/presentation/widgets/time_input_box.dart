@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class TimeInputBox extends StatelessWidget {
   final String value;
@@ -20,28 +21,30 @@ class TimeInputBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final effectiveValue = timeSlots.contains(value) ? value : timeSlots.first;
+
     return Container(
       height: 34,
       padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
-        color: const Color(0xFF162238),
+        color: colors.surface,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFF1E293B)),
+        border: Border.all(color: colors.border),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
           value: effectiveValue,
-          icon: const Padding(
-            padding: EdgeInsets.only(left: 6),
-            child: Icon(Icons.access_time_rounded, size: 14, color: Color(0xFF94A3B8)),
+          icon: Padding(
+            padding: const EdgeInsets.only(left: 6),
+            child: Icon(Icons.access_time_rounded, size: 14, color: colors.textMuted),
           ),
-          dropdownColor: const Color(0xFF0F172A),
-          style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w600, color: Colors.white),
+          dropdownColor: colors.surfaceElevated,
+          style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w600, color: colors.textPrimary),
           items: timeSlots.map((t) {
             return DropdownMenuItem<String>(
               value: t,
-              child: Text(t, style: GoogleFonts.inter(fontSize: 12.5, color: Colors.white)),
+              child: Text(t, style: GoogleFonts.inter(fontSize: 12.5, color: colors.textPrimary)),
             );
           }).toList(),
           onChanged: (v) {

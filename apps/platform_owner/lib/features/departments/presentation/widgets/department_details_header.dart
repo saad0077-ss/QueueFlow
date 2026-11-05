@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 import '../../domain/entities/department_entity.dart';
 
@@ -10,12 +11,14 @@ class DepartmentDetailsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Container(
       padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
-        color: const Color(0xFF0D1526),
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFF1E293B)),
+        border: Border.all(color: colors.border),
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -27,7 +30,7 @@ class DepartmentDetailsHeader extends StatelessWidget {
               Container(
                 width: 60,
                 height: 60,
-                decoration: BoxDecoration(color: const Color(0xFF2563EB).withValues(alpha: 0.15), borderRadius: BorderRadius.circular(14)),
+                decoration: BoxDecoration(color: colors.primary.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(14)),
                 alignment: Alignment.center,
                 child: Text(department.icon, style: const TextStyle(fontSize: 28)),
               ),
@@ -43,23 +46,23 @@ class DepartmentDetailsHeader extends StatelessWidget {
                       children: [
                         Text(
                           department.name,
-                          style: GoogleFonts.inter(fontSize: 24, fontWeight: FontWeight.w800, color: Colors.white),
+                          style: GoogleFonts.inter(fontSize: 24, fontWeight: FontWeight.w800, color: colors.textPrimary),
                         ),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                          decoration: BoxDecoration(color: const Color(0xFF2563EB).withValues(alpha: 0.15), borderRadius: BorderRadius.circular(6)),
+                          decoration: BoxDecoration(color: colors.primary.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(6)),
                           child: Text(
                             department.code,
-                            style: GoogleFonts.jetBrainsMono(fontSize: 11.5, fontWeight: FontWeight.w800, color: const Color(0xFF3B82F6)),
+                            style: GoogleFonts.jetBrainsMono(fontSize: 11.5, fontWeight: FontWeight.w800, color: colors.primary),
                           ),
                         ),
-                        _statusPill(department.isActive),
+                        _statusPill(context, department.isActive),
                       ],
                     ),
                     const SizedBox(height: 6),
                     ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 620),
-                      child: Text(department.description, style: GoogleFonts.inter(fontSize: 13.5, color: const Color(0xFFCBD5E1), height: 1.45)),
+                      child: Text(department.description, style: GoogleFonts.inter(fontSize: 13.5, color: colors.textMuted, height: 1.45)),
                     ),
                   ],
                 ),
@@ -71,10 +74,10 @@ class DepartmentDetailsHeader extends StatelessWidget {
             spacing: 10,
             runSpacing: 10,
             children: [
-              _metric('LICENSED CLINICS', department.assignedClinics.length.toString()),
-              _metric('ACTIVE DOCTORS', department.doctorCount.toString()),
-              _metric('AVG CONSULT', department.avgConsultationTime),
-              _metric('MONTHLY TRIAGE', _formatNum(department.totalVisits)),
+              _metric(context, 'LICENSED CLINICS', department.assignedClinics.length.toString()),
+              _metric(context, 'ACTIVE DOCTORS', department.doctorCount.toString()),
+              _metric(context, 'AVG CONSULT', department.avgConsultationTime),
+              _metric(context, 'MONTHLY TRIAGE', _formatNum(department.totalVisits)),
             ],
           );
 
@@ -94,8 +97,9 @@ class DepartmentDetailsHeader extends StatelessWidget {
     );
   }
 
-  Widget _statusPill(bool active) {
-    final color = active ? const Color(0xFF10B981) : const Color(0xFF94A3B8);
+  Widget _statusPill(BuildContext context, bool active) {
+    final colors = context.colors;
+    final color = active ? colors.success : colors.textMuted;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(color: color.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(6)),
@@ -106,14 +110,15 @@ class DepartmentDetailsHeader extends StatelessWidget {
     );
   }
 
-  Widget _metric(String label, String value) {
+  Widget _metric(BuildContext context, String label, String value) {
+    final colors = context.colors;
     return Container(
       constraints: const BoxConstraints(minWidth: 112),
       padding: const EdgeInsets.symmetric(vertical: 11, horizontal: 15),
       decoration: BoxDecoration(
-        color: const Color(0xFF0A1120),
+        color: colors.surfaceSecondary,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFF1E293B)),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -121,12 +126,12 @@ class DepartmentDetailsHeader extends StatelessWidget {
           Text(
             label,
             maxLines: 1,
-            style: GoogleFonts.inter(fontSize: 10.5, fontWeight: FontWeight.w700, color: const Color(0xFFCBD5E1)),
+            style: GoogleFonts.inter(fontSize: 10.5, fontWeight: FontWeight.w700, color: colors.textMuted),
           ),
           const SizedBox(height: 2),
           Text(
             value,
-            style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w800, color: Colors.white),
+            style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w800, color: colors.textPrimary),
           ),
         ],
       ),

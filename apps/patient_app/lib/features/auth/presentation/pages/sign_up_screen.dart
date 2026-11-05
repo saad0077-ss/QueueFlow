@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../../core/widgets/auth_back_header.dart';
 import '../../data/repositories/auth_repository_impl.dart';
@@ -34,8 +34,10 @@ class _SignUpView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: colors.background,
       body: SafeArea(
         child: BlocConsumer<SignUpBloc, SignUpState>(
           listener: (context, state) {
@@ -99,7 +101,7 @@ class _SignUpView extends StatelessWidget {
                                 const SizedBox(height: 16),
                                 const Spacer(),
                                 const SignUpFooter(),
-                                const SizedBox(height: 24),
+                                const SizedBox(height: 20),
                               ],
                             ),
                           ),

@@ -1,4 +1,4 @@
-import 'package:equatable/equatable.dart';
+﻿import 'package:equatable/equatable.dart';
 import '../../domain/entities/billing_plan_tier_entity.dart';
 import '../../domain/entities/clinic_subscription_entity.dart';
 

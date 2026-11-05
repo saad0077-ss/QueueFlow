@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 /// Live patient rating summary and review list for one clinic (`reviews` where clinicId matches).
 class ClinicReviewsCard extends StatefulWidget {
@@ -24,13 +25,15 @@ class _ClinicReviewsCardState extends State<ClinicReviewsCard> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
-        color: const Color(0xFF0F172A),
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFF1E293B)),
+        border: Border.all(color: colors.border),
       ),
       child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
         stream: _reviews$,
@@ -49,27 +52,27 @@ class _ClinicReviewsCardState extends State<ClinicReviewsCard> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _header(ratings.length),
+              _header(colors, ratings.length),
               const SizedBox(height: 16),
-              const Divider(color: Color(0xFF1E293B), height: 1),
+              Divider(color: colors.border, height: 1),
               const SizedBox(height: 16),
               if (snap.hasError)
-                _message('Unable to load reviews. Check the Firestore rules for the reviews collection.')
+                _message(colors, 'Unable to load reviews. Check the Firestore rules for the reviews collection.')
               else if (!snap.hasData)
                 const Center(child: Padding(padding: EdgeInsets.all(12), child: CircularProgressIndicator(strokeWidth: 2)))
               else if (docs.isEmpty)
-                _message('No patient has rated this clinic yet.')
+                _message(colors, 'No patient has rated this clinic yet.')
               else ...[
-                _summary(average, ratings),
+                _summary(colors, average, ratings),
                 const SizedBox(height: 18),
-                for (final d in visible) _reviewTile(d.data()),
+                for (final d in visible) _reviewTile(colors, d.data()),
                 if (docs.length > _collapsedCount)
                   Center(
                     child: TextButton(
                       onPressed: () => setState(() => _showAll = !_showAll),
                       child: Text(
                         _showAll ? 'Show fewer reviews' : 'Show all ${docs.length} reviews',
-                        style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w600, color: const Color(0xFF38BDF8)),
+                        style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w600, color: colors.primaryLight),
                       ),
                     ),
                   ),
@@ -81,7 +84,7 @@ class _ClinicReviewsCardState extends State<ClinicReviewsCard> {
     );
   }
 
-  Widget _header(int count) {
+  Widget _header(AppColorsExtension colors, int count) {
     return Row(
       children: [
         Container(
@@ -92,18 +95,18 @@ class _ClinicReviewsCardState extends State<ClinicReviewsCard> {
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: Text('Patient Ratings & Reviews', style: GoogleFonts.inter(fontSize: 15.5, fontWeight: FontWeight.w700, color: Colors.white)),
+          child: Text('Patient Ratings & Reviews', style: GoogleFonts.inter(fontSize: 15.5, fontWeight: FontWeight.w700, color: colors.textPrimary)),
         ),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-          decoration: BoxDecoration(color: const Color(0xFF1E293B), borderRadius: BorderRadius.circular(20)),
-          child: Text('$count review${count == 1 ? '' : 's'}', style: GoogleFonts.inter(fontSize: 11.5, fontWeight: FontWeight.w600, color: const Color(0xFF94A3B8))),
+          decoration: BoxDecoration(color: colors.surfaceSecondary, borderRadius: BorderRadius.circular(20), border: Border.all(color: colors.border)),
+          child: Text('$count review${count == 1 ? '' : 's'}', style: GoogleFonts.inter(fontSize: 11.5, fontWeight: FontWeight.w600, color: colors.textMuted)),
         ),
       ],
     );
   }
 
-  Widget _summary(double average, List<int> ratings) {
+  Widget _summary(AppColorsExtension colors, double average, List<int> ratings) {
     final counts = List<int>.filled(5, 0);
     for (final r in ratings) {
       counts[5 - r]++;
@@ -111,10 +114,10 @@ class _ClinicReviewsCardState extends State<ClinicReviewsCard> {
 
     final score = Column(
       children: [
-        Text(average.toStringAsFixed(1), style: GoogleFonts.inter(fontSize: 36, fontWeight: FontWeight.w800, color: Colors.white)),
+        Text(average.toStringAsFixed(1), style: GoogleFonts.inter(fontSize: 36, fontWeight: FontWeight.w800, color: colors.textPrimary)),
         _stars(average, size: 16),
         const SizedBox(height: 4),
-        Text('out of 5', style: GoogleFonts.inter(fontSize: 11, color: const Color(0xFF64748B))),
+        Text('out of 5', style: GoogleFonts.inter(fontSize: 11, color: colors.textMuted)),
       ],
     );
 
@@ -125,21 +128,21 @@ class _ClinicReviewsCardState extends State<ClinicReviewsCard> {
             padding: const EdgeInsets.symmetric(vertical: 2.5),
             child: Row(
               children: [
-                SizedBox(width: 28, child: Text('${5 - i} ★', style: GoogleFonts.inter(fontSize: 11, color: const Color(0xFF94A3B8)))),
+                SizedBox(width: 28, child: Text('${5 - i} ★', style: GoogleFonts.inter(fontSize: 11, color: colors.textMuted))),
                 Expanded(
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(999),
                     child: LinearProgressIndicator(
                       value: counts[i] / ratings.length,
                       minHeight: 6,
-                      backgroundColor: const Color(0xFF1E293B),
+                      backgroundColor: colors.surfaceSecondary,
                       valueColor: const AlwaysStoppedAnimation(Color(0xFFF59E0B)),
                     ),
                   ),
                 ),
                 SizedBox(
                   width: 34,
-                  child: Text('${counts[i]}', textAlign: TextAlign.right, style: GoogleFonts.inter(fontSize: 11, color: const Color(0xFF94A3B8))),
+                  child: Text('${counts[i]}', textAlign: TextAlign.right, style: GoogleFonts.inter(fontSize: 11, color: colors.textMuted)),
                 ),
               ],
             ),
@@ -153,7 +156,7 @@ class _ClinicReviewsCardState extends State<ClinicReviewsCard> {
     );
   }
 
-  Widget _reviewTile(Map<String, dynamic> r) {
+  Widget _reviewTile(AppColorsExtension colors, Map<String, dynamic> r) {
     final name = (r['patientName'] ?? 'Patient').toString();
     final rating = ((r['rating'] as num?)?.toInt() ?? 0).clamp(1, 5);
     final comment = (r['comment'] ?? '').toString().trim();
@@ -164,9 +167,9 @@ class _ClinicReviewsCardState extends State<ClinicReviewsCard> {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFF111C30),
+        color: colors.surfaceSecondary,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFF1E293B)),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -175,9 +178,9 @@ class _ClinicReviewsCardState extends State<ClinicReviewsCard> {
             children: [
               CircleAvatar(
                 radius: 15,
-                backgroundColor: const Color(0xFF1E3A5F),
+                backgroundColor: colors.primaryTint,
                 child: Text(name.isNotEmpty ? name[0].toUpperCase() : 'P',
-                    style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w700, color: const Color(0xFF38BDF8))),
+                    style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w700, color: colors.primaryLight)),
               ),
               const SizedBox(width: 10),
               Expanded(
@@ -185,8 +188,8 @@ class _ClinicReviewsCardState extends State<ClinicReviewsCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(name, maxLines: 1, overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.white)),
-                    Text(_formatDate(r['createdAt']), style: GoogleFonts.inter(fontSize: 11, color: const Color(0xFF64748B))),
+                        style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w600, color: colors.textPrimary)),
+                    Text(_formatDate(r['createdAt']), style: GoogleFonts.inter(fontSize: 11, color: colors.textMuted)),
                   ],
                 ),
               ),
@@ -195,7 +198,7 @@ class _ClinicReviewsCardState extends State<ClinicReviewsCard> {
           ),
           if (comment.isNotEmpty) ...[
             const SizedBox(height: 10),
-            Text(comment, style: GoogleFonts.inter(fontSize: 12.5, color: const Color(0xFFCBD5E1), height: 1.45)),
+            Text(comment, style: GoogleFonts.inter(fontSize: 12.5, color: colors.textPrimary, height: 1.45)),
           ],
           if (tags.isNotEmpty || helpful > 0) ...[
             const SizedBox(height: 10),
@@ -207,11 +210,11 @@ class _ClinicReviewsCardState extends State<ClinicReviewsCard> {
                 for (final t in tags)
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                    decoration: BoxDecoration(color: const Color(0xFF1E293B), borderRadius: BorderRadius.circular(6)),
-                    child: Text(t, style: GoogleFonts.inter(fontSize: 10.5, color: const Color(0xFF94A3B8))),
+                    decoration: BoxDecoration(color: colors.surface, borderRadius: BorderRadius.circular(6), border: Border.all(color: colors.border)),
+                    child: Text(t, style: GoogleFonts.inter(fontSize: 10.5, color: colors.textMuted)),
                   ),
                 if (helpful > 0)
-                  Text('👍 $helpful found helpful', style: GoogleFonts.inter(fontSize: 10.5, color: const Color(0xFF64748B))),
+                  Text('👍 $helpful found helpful', style: GoogleFonts.inter(fontSize: 10.5, color: colors.textMuted)),
               ],
             ),
           ],
@@ -232,10 +235,10 @@ class _ClinicReviewsCardState extends State<ClinicReviewsCard> {
     );
   }
 
-  Widget _message(String text) {
+  Widget _message(AppColorsExtension colors, String text) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Text(text, style: GoogleFonts.inter(fontSize: 12.5, color: const Color(0xFF64748B))),
+      child: Text(text, style: GoogleFonts.inter(fontSize: 12.5, color: colors.textMuted)),
     );
   }
 

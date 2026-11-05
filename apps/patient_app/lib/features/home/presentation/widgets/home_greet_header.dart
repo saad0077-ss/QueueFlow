@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
+import '../../../profile/presentation/widgets/profile_avatar.dart';
 
 /// Top Header showing patient avatar with gradient, dynamic greeting salute,
 /// username, and rounded notification bell with unread dot.
 class HomeGreetHeader extends StatelessWidget implements PreferredSizeWidget {
   final String userName;
   final String userInitials;
+  final String? photoBase64;
   final int unreadNotifications;
   final VoidCallback? onNotificationTap;
   final VoidCallback? onAvatarTap;
@@ -14,6 +16,7 @@ class HomeGreetHeader extends StatelessWidget implements PreferredSizeWidget {
     super.key,
     required this.userName,
     required this.userInitials,
+    this.photoBase64,
     this.unreadNotifications = 1,
     this.onNotificationTap,
     this.onAvatarTap,
@@ -30,9 +33,10 @@ class HomeGreetHeader extends StatelessWidget implements PreferredSizeWidget {
   }
 
   void _showNotificationsSheet(BuildContext context) {
+    final colors = context.colors;
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppColors.darkSurface,
+      backgroundColor: colors.surfaceElevated,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -45,26 +49,26 @@ class HomeGreetHeader extends StatelessWidget implements PreferredSizeWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   'Notifications',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
-                    color: AppColors.darkInk,
+                    color: colors.textPrimary,
                   ),
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.15),
+                    color: colors.primaryTint,
                     borderRadius: BorderRadius.circular(999),
                   ),
-                  child: const Text(
+                  child: Text(
                     '1 new',
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
-                      color: AppColors.primaryLight,
+                      color: colors.primary,
                     ),
                   ),
                 ),
@@ -74,9 +78,9 @@ class HomeGreetHeader extends StatelessWidget implements PreferredSizeWidget {
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: AppColors.darkBgApp,
+                color: colors.surfaceSecondary,
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: AppColors.darkBorder),
+                border: Border.all(color: colors.border),
               ),
               child: Row(
                 children: [
@@ -84,18 +88,18 @@ class HomeGreetHeader extends StatelessWidget implements PreferredSizeWidget {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.15),
+                      color: colors.primaryTint,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     alignment: Alignment.center,
-                    child: const Icon(
+                    child: Icon(
                       Icons.confirmation_number_outlined,
-                      color: Color(0xFF38BDF8),
+                      color: colors.primary,
                       size: 20,
                     ),
                   ),
                   const SizedBox(width: 12),
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -104,15 +108,15 @@ class HomeGreetHeader extends StatelessWidget implements PreferredSizeWidget {
                           style: TextStyle(
                             fontWeight: FontWeight.w700,
                             fontSize: 13.5,
-                            color: AppColors.darkInk,
+                            color: colors.textPrimary,
                           ),
                         ),
-                        SizedBox(height: 2),
+                        const SizedBox(height: 2),
                         Text(
                           'Your token is progressing smoothly.',
                           style: TextStyle(
                             fontSize: 12,
-                            color: AppColors.darkInkMuted,
+                            color: colors.textMuted,
                           ),
                         ),
                       ],
@@ -129,8 +133,10 @@ class HomeGreetHeader extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return AppBar(
-      backgroundColor: AppColors.darkBgApp,
+      backgroundColor: colors.headerBg,
       elevation: 0,
       scrolledUnderElevation: 0,
       automaticallyImplyLeading: false,
@@ -154,33 +160,23 @@ class HomeGreetHeader extends StatelessWidget implements PreferredSizeWidget {
                       child: Row(
                         children: [
                           // Avatar Circle with Gradient & White Initials
-                          Container(
-                            width: 44,
-                            height: 44,
-                            decoration: BoxDecoration(
-                              gradient: AppColors.primaryGradient,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: AppColors.darkSurface,
-                                width: 1.5,
-                              ),
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Color(0x332563EB),
-                                  blurRadius: 10,
-                                  offset: Offset(0, 3),
-                                ),
-                              ],
+                          ProfileAvatar(
+                            name: userName,
+                            fallbackText: userInitials,
+                            photoBase64: photoBase64,
+                            size: 44,
+                            fontSize: 15,
+                            border: Border.all(
+                              color: colors.surface,
+                              width: 1.5,
                             ),
-                            alignment: Alignment.center,
-                            child: Text(
-                              userInitials,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w800,
-                                fontSize: 15,
+                            boxShadow: [
+                              BoxShadow(
+                                color: colors.primary.withValues(alpha: 0.25),
+                                blurRadius: 10,
+                                offset: const Offset(0, 3),
                               ),
-                            ),
+                            ],
                           ),
                           const SizedBox(width: 12),
                           Column(
@@ -189,19 +185,19 @@ class HomeGreetHeader extends StatelessWidget implements PreferredSizeWidget {
                             children: [
                               Text(
                                 _greeting,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 12,
-                                  color: AppColors.darkInkMuted,
+                                  color: colors.textMuted,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
                               const SizedBox(height: 1),
                               Text(
                                 userName,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w800,
-                                  color: AppColors.darkInk,
+                                  color: colors.textPrimary,
                                   letterSpacing: -0.2,
                                 ),
                               ),
@@ -218,26 +214,26 @@ class HomeGreetHeader extends StatelessWidget implements PreferredSizeWidget {
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(
-                          color: AppColors.darkSurface,
+                          color: colors.surfaceSecondary,
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(
-                            color: AppColors.darkBorder,
+                            color: colors.border,
                             width: 1.5,
                           ),
-                          boxShadow: const [
+                          boxShadow: [
                             BoxShadow(
-                              color: Color(0x140F172A),
+                              color: Colors.black.withValues(alpha: context.isDarkMode ? 0.15 : 0.05),
                               blurRadius: 4,
-                              offset: Offset(0, 1),
+                              offset: const Offset(0, 1),
                             ),
                           ],
                         ),
                         child: Stack(
                           alignment: Alignment.center,
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.notifications_none_rounded,
-                              color: AppColors.darkInk,
+                              color: colors.textPrimary,
                               size: 20,
                             ),
                             if (unreadNotifications > 0)
@@ -248,10 +244,10 @@ class HomeGreetHeader extends StatelessWidget implements PreferredSizeWidget {
                                   width: 8,
                                   height: 8,
                                   decoration: BoxDecoration(
-                                    color: AppColors.error,
+                                    color: colors.error,
                                     shape: BoxShape.circle,
                                     border: Border.all(
-                                      color: AppColors.darkSurface,
+                                      color: colors.surfaceSecondary,
                                       width: 1.5,
                                     ),
                                   ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../features/home/domain/entities/clinic_entity.dart';
-import '../theme/app_colors.dart';
 import 'clinic_departments_dialog.dart';
 
 class ClinicDeptChip extends StatelessWidget {
@@ -15,6 +15,7 @@ class ClinicDeptChip extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
+    final colors = context.colors;
     final count = clinic.departmentCount;
 
     return GestureDetector(
@@ -26,10 +27,10 @@ class ClinicDeptChip extends StatelessWidget {
         margin: const EdgeInsets.only(left: 4),
         padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
         decoration: BoxDecoration(
-          color: AppColors.primary.withValues(alpha: 0.16),
+          color: colors.primaryTint,
           borderRadius: BorderRadius.circular(9999),
           border: Border.all(
-            color: AppColors.primary.withValues(alpha: 0.35),
+            color: colors.primary.withValues(alpha: 0.35),
             width: 1,
           ),
         ),
@@ -42,15 +43,15 @@ class ClinicDeptChip extends StatelessWidget {
               style: GoogleFonts.inter(
                 fontSize: 10.5,
                 fontWeight: FontWeight.w700,
-                color: AppColors.primaryLight,
+                color: colors.primary,
                 height: 1.2,
               ),
             ),
             const SizedBox(width: 2),
-            const Icon(
+            Icon(
               Icons.chevron_right_rounded,
               size: 11,
-              color: AppColors.primaryLight,
+              color: colors.primary,
             ),
           ],
         ),

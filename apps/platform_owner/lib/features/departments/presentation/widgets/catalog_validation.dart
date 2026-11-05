@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 /// Case- and whitespace-insensitive key used to detect duplicate names/codes.
 String catalogKey(String value) => value.trim().replaceAll(RegExp(r'\s+'), ' ').toLowerCase();
@@ -21,20 +22,22 @@ class FormErrorText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: const Color(0xFFEF4444).withValues(alpha: 0.12),
+        color: colors.error.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFFEF4444).withValues(alpha: 0.4)),
+        border: Border.all(color: colors.error.withValues(alpha: 0.4)),
       ),
       child: Row(
         children: [
-          const Icon(Icons.error_outline_rounded, size: 16, color: Color(0xFFF87171)),
+          Icon(Icons.error_outline_rounded, size: 16, color: colors.error),
           const SizedBox(width: 8),
           Expanded(
-            child: Text(message, style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w600, color: const Color(0xFFFCA5A5))),
+            child: Text(message, style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w600, color: colors.error)),
           ),
         ],
       ),

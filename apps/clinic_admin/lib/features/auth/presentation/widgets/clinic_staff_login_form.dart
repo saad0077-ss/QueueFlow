@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 import '../../../../core/widgets/gradient_submit_button.dart';
 import '../bloc/sign_in/clinic_sign_in_bloc.dart';
@@ -20,6 +21,7 @@ class ClinicStaffLoginForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<ClinicSignInBloc>();
+    final colors = context.colors;
 
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 420),
@@ -32,13 +34,13 @@ class ClinicStaffLoginForm extends StatelessWidget {
             style: GoogleFonts.inter(
               fontSize: 28,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: colors.textPrimary,
             ),
           ),
           const SizedBox(height: 6),
           Text(
             'Access your clinic appointments and live queue.',
-            style: GoogleFonts.inter(fontSize: 13.5, color: const Color(0xFF94A3B8)),
+            style: GoogleFonts.inter(fontSize: 13.5, color: colors.textMuted),
           ),
           const SizedBox(height: 26),
 
@@ -79,7 +81,7 @@ class ClinicStaffLoginForm extends StatelessWidget {
                 style: GoogleFonts.inter(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
-                  color: const Color(0xFF3B82F6),
+                  color: colors.primaryLight,
                 ),
               ),
             ),
@@ -87,7 +89,7 @@ class ClinicStaffLoginForm extends StatelessWidget {
 
           // Inline Error Message Banner
           if (state.errorMessage != null) ...[
-            _buildErrorMessage(state.errorMessage!),
+            _buildErrorMessage(context, state.errorMessage!),
             const SizedBox(height: 14),
           ],
 
@@ -108,7 +110,7 @@ class ClinicStaffLoginForm extends StatelessWidget {
               textAlign: TextAlign.center,
               style: GoogleFonts.inter(
                 fontSize: 11.5,
-                color: const Color(0xFF64748B),
+                color: colors.textSubtle,
                 height: 1.5,
               ),
             ),
@@ -118,22 +120,23 @@ class ClinicStaffLoginForm extends StatelessWidget {
     );
   }
 
-  Widget _buildErrorMessage(String message) {
+  Widget _buildErrorMessage(BuildContext context, String message) {
+    final colors = context.colors;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: const Color(0xFF451A1A),
+        color: colors.errorTint,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFFEF4444).withValues(alpha: 0.5)),
+        border: Border.all(color: colors.error.withValues(alpha: 0.5)),
       ),
       child: Row(
         children: [
-          const Icon(Icons.error_outline_rounded, color: Color(0xFFEF4444), size: 18),
+          Icon(Icons.error_outline_rounded, color: colors.error, size: 18),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
               message,
-              style: GoogleFonts.inter(fontSize: 12, color: const Color(0xFFFCA5A5)),
+              style: GoogleFonts.inter(fontSize: 12, color: colors.error),
             ),
           ),
         ],

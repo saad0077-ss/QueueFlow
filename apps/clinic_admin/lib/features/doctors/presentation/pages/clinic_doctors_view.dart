@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../data/repositories/clinic_doctors_repository_impl.dart';
 import '../../domain/entities/clinic_doctor_profile_entity.dart';
@@ -81,26 +82,27 @@ class _ClinicDoctorsBody extends StatelessWidget {
     BuildContext context,
     ClinicDoctorProfileEntity doctor,
   ) {
+    final colors = context.colors;
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF111A2E),
+        backgroundColor: colors.surfaceElevated,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(14),
-          side: const BorderSide(color: Color(0xFF1E293B)),
+          side: BorderSide(color: colors.border),
         ),
         title: Text(
           'Remove Doctor',
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+          style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w700),
         ),
         content: Text(
           'Are you sure you want to remove ${doctor.name} from the practicing roster?',
-          style: const TextStyle(color: Color(0xFFCBD5E1), fontSize: 13.5),
+          style: TextStyle(color: colors.textMuted, fontSize: 13.5),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Cancel', style: TextStyle(color: Color(0xFF94A3B8))),
+            child: Text('Cancel', style: TextStyle(color: colors.textMuted)),
           ),
           ElevatedButton(
             onPressed: () {
@@ -113,7 +115,7 @@ class _ClinicDoctorsBody extends StatelessWidget {
                   );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFEF4444),
+              backgroundColor: colors.error,
               foregroundColor: Colors.white,
             ),
             child: const Text('Remove'),

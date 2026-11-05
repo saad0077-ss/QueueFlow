@@ -1,4 +1,4 @@
-import '../../domain/entities/clinic_location_entity.dart';
+﻿import '../../domain/entities/clinic_location_entity.dart';
 import '../../domain/entities/clinic_operating_schedule_entity.dart';
 import '../../domain/entities/clinic_profile_entity.dart';
 import '../../domain/entities/clinic_queue_rules_entity.dart';

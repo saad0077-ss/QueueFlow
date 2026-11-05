@@ -1,4 +1,4 @@
-import 'package:equatable/equatable.dart';
+﻿import 'package:equatable/equatable.dart';
 
 /// Represents a subscription plan tier available for clinics.
 class BillingPlanTierEntity extends Equatable {

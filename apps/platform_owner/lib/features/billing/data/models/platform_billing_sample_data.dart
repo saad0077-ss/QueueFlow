@@ -1,4 +1,4 @@
-import '../../domain/entities/platform_invoice_entity.dart';
+﻿import '../../domain/entities/platform_invoice_entity.dart';
 import '../../domain/entities/platform_plan_tier_entity.dart';
 
 class PlatformBillingSampleData {

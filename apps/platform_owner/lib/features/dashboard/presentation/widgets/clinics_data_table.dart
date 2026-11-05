@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 import '../../../departments/domain/entities/department_entity.dart';
 import '../../domain/entities/tenant_clinic_entity.dart';
@@ -23,8 +24,6 @@ class ClinicsDataTable extends StatelessWidget {
     [Color(0xFF475569), Color(0xFF94A3B8)],
   ];
 
-  static const _headerStyle = TextStyle(color: Color(0xFF94A3B8), fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 0.5);
-
   const ClinicsDataTable({
     super.key,
     required this.clinics,
@@ -40,24 +39,26 @@ class ClinicsDataTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     if (clinics.isEmpty) {
       return Container(
         height: 200,
         width: double.infinity,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: const Color(0xFF0F172A),
+          color: colors.surface,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: const Color(0xFF1E293B)),
+          border: Border.all(color: colors.border),
         ),
-        child: const Column(
+        child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.domain_disabled_outlined, color: Color(0xFF334155), size: 36),
-            SizedBox(height: 10),
-            Text('No clinics found', style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600)),
-            SizedBox(height: 4),
-            Text('Onboard a clinic or adjust your filters.', style: TextStyle(color: Color(0xFF64748B), fontSize: 12)),
+            Icon(Icons.domain_disabled_outlined, color: colors.textMuted, size: 36),
+            const SizedBox(height: 10),
+            Text('No clinics found', style: TextStyle(color: colors.textPrimary, fontSize: 14, fontWeight: FontWeight.w600)),
+            const SizedBox(height: 4),
+            Text('Onboard a clinic or adjust your filters.', style: TextStyle(color: colors.textMuted, fontSize: 12)),
           ],
         ),
       );
@@ -69,9 +70,9 @@ class ClinicsDataTable extends StatelessWidget {
         return Container(
           width: double.infinity,
           decoration: BoxDecoration(
-            color: const Color(0xFF0F172A),
+            color: colors.surface,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: const Color(0xFF1E293B)),
+            border: Border.all(color: colors.border),
           ),
           clipBehavior: Clip.antiAlias,
           child: SingleChildScrollView(
@@ -80,7 +81,7 @@ class ClinicsDataTable extends StatelessWidget {
               width: tableWidth,
               child: Column(
                 children: [
-                  _header(),
+                  _header(colors),
                   for (var i = 0; i < clinics.length; i++)
                     _ClinicRow(
                       clinic: clinics[i],
@@ -99,27 +100,30 @@ class ClinicsDataTable extends StatelessWidget {
     );
   }
 
-  Widget _header() => Container(
-    height: 44,
-    padding: const EdgeInsets.symmetric(horizontal: 20),
-    decoration: const BoxDecoration(
-      color: Color(0xFF131D31),
-      border: Border(bottom: BorderSide(color: Color(0xFF1E293B))),
-    ),
-    child: const Row(
-      children: [
-        Expanded(flex: 28, child: Text('CLINIC FACILITY', style: _headerStyle)),
-        Expanded(flex: 15, child: Text('SUBSCRIPTION', style: _headerStyle)),
-        Expanded(flex: 20, child: Text('ADMIN CONTACT', style: _headerStyle)),
-        Expanded(flex: 13, child: Text('ACTIVITY', style: _headerStyle)),
-        Expanded(flex: 11, child: Text('STATUS', style: _headerStyle)),
-        Expanded(
-          flex: 17,
-          child: Align(alignment: Alignment.centerRight, child: Text('ACTIONS', style: _headerStyle)),
-        ),
-      ],
-    ),
-  );
+  Widget _header(AppColorsExtension colors) {
+    final headerStyle = TextStyle(color: colors.textMuted, fontSize: 11, fontWeight: FontWeight.bold, letterSpacing: 0.5);
+    return Container(
+      height: 44,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      decoration: BoxDecoration(
+        color: colors.surfaceSecondary,
+        border: Border(bottom: BorderSide(color: colors.border)),
+      ),
+      child: Row(
+        children: [
+          Expanded(flex: 28, child: Text('CLINIC FACILITY', style: headerStyle)),
+          Expanded(flex: 15, child: Text('SUBSCRIPTION', style: headerStyle)),
+          Expanded(flex: 20, child: Text('ADMIN CONTACT', style: headerStyle)),
+          Expanded(flex: 13, child: Text('ACTIVITY', style: headerStyle)),
+          Expanded(flex: 11, child: Text('STATUS', style: headerStyle)),
+          Expanded(
+            flex: 17,
+            child: Align(alignment: Alignment.centerRight, child: Text('ACTIONS', style: headerStyle)),
+          ),
+        ],
+      ),
+    );
+  }
 
   /// Departments linked to [c], matched by clinic departmentIds, Firestore id or legacy name slug
   List<DepartmentEntity> _departmentsFor(TenantClinicEntity c) {
@@ -157,6 +161,7 @@ class _ClinicRowState extends State<_ClinicRow> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final c = widget.clinic;
     final t = widget.table;
 
@@ -170,23 +175,23 @@ class _ClinicRowState extends State<_ClinicRow> {
           constraints: const BoxConstraints(minHeight: 76),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
           decoration: BoxDecoration(
-            color: _hovered ? const Color(0xFF131D31) : Colors.transparent,
+            color: _hovered ? colors.surfaceSecondary : Colors.transparent,
             border: Border(
               left: BorderSide(color: _hovered ? widget.gradient.last : Colors.transparent, width: 3),
-              bottom: widget.isLast ? BorderSide.none : const BorderSide(color: Color(0xFF1E293B)),
+              bottom: widget.isLast ? BorderSide.none : BorderSide(color: colors.border),
             ),
           ),
           child: Row(
             children: [
-              Expanded(flex: 28, child: _facilityCell(c)),
-              Expanded(flex: 15, child: _planCell(c)),
-              Expanded(flex: 20, child: _adminCell(c)),
-              Expanded(flex: 13, child: _activityCell(c)),
+              Expanded(flex: 28, child: _facilityCell(colors, c)),
+              Expanded(flex: 15, child: _planCell(colors, c)),
+              Expanded(flex: 20, child: _adminCell(colors, c)),
+              Expanded(flex: 13, child: _activityCell(colors, c)),
               Expanded(
                 flex: 11,
                 child: Align(alignment: Alignment.centerLeft, child: _statusChip(c)),
               ),
-              Expanded(flex: 17, child: _actionsCell(c, t)),
+              Expanded(flex: 17, child: _actionsCell(colors, c, t)),
             ],
           ),
         ),
@@ -194,7 +199,7 @@ class _ClinicRowState extends State<_ClinicRow> {
     );
   }
 
-  Widget _facilityCell(TenantClinicEntity c) {
+  Widget _facilityCell(AppColorsExtension colors, TenantClinicEntity c) {
     final initials = c.name.trim().split(RegExp(r'\s+')).where((w) => w.isNotEmpty).take(2).map((w) => w[0].toUpperCase()).join();
     final location = [c.address, c.city].where((s) => s.trim().isNotEmpty).join(', ');
 
@@ -223,19 +228,19 @@ class _ClinicRowState extends State<_ClinicRow> {
                 c.name,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontWeight: FontWeight.w700, color: Colors.white, fontSize: 13.5),
+                style: TextStyle(fontWeight: FontWeight.w700, color: colors.textPrimary, fontSize: 13.5),
               ),
               const SizedBox(height: 3),
               Row(
                 children: [
-                  const Icon(Icons.location_on_outlined, size: 12, color: Color(0xFF64748B)),
+                  Icon(Icons.location_on_outlined, size: 12, color: colors.textMuted),
                   const SizedBox(width: 3),
                   Expanded(
                     child: Text(
                       location.isEmpty ? 'Location not set' : location,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(color: Color(0xFF64748B), fontSize: 11),
+                      style: TextStyle(color: colors.textMuted, fontSize: 11),
                     ),
                   ),
                 ],
@@ -252,7 +257,7 @@ class _ClinicRowState extends State<_ClinicRow> {
     );
   }
 
-  Widget _planCell(TenantClinicEntity c) {
+  Widget _planCell(AppColorsExtension colors, TenantClinicEntity c) {
     return Align(
       alignment: Alignment.centerLeft,
       child: Column(
@@ -262,15 +267,15 @@ class _ClinicRowState extends State<_ClinicRow> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
             decoration: BoxDecoration(
-              color: const Color(0xFF0C4A6E).withValues(alpha: 0.35),
+              color: colors.primaryTint,
               borderRadius: BorderRadius.circular(6),
-              border: Border.all(color: const Color(0xFF38BDF8).withValues(alpha: 0.3)),
+              border: Border.all(color: colors.primary.withValues(alpha: 0.3)),
             ),
             child: Text(
               c.planName,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(color: Color(0xFF38BDF8), fontSize: 11, fontWeight: FontWeight.w600),
+              style: TextStyle(color: colors.primaryLight, fontSize: 11, fontWeight: FontWeight.w600),
             ),
           ),
           const SizedBox(height: 4),
@@ -278,23 +283,23 @@ class _ClinicRowState extends State<_ClinicRow> {
             c.doctorLimitText,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(color: Color(0xFF64748B), fontSize: 10.5),
+            style: TextStyle(color: colors.textMuted, fontSize: 10.5),
           ),
         ],
       ),
     );
   }
 
-  Widget _adminCell(TenantClinicEntity c) {
+  Widget _adminCell(AppColorsExtension colors, TenantClinicEntity c) {
     final hasName = c.adminName.trim().isNotEmpty;
     return Row(
       children: [
         CircleAvatar(
           radius: 14,
-          backgroundColor: const Color(0xFF1E293B),
+          backgroundColor: colors.surfaceSecondary,
           child: Text(
             hasName ? c.adminName.trim()[0].toUpperCase() : '?',
-            style: const TextStyle(fontSize: 11, color: Color(0xFFE2E8F0), fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 11, color: colors.textPrimary, fontWeight: FontWeight.bold),
           ),
         ),
         const SizedBox(width: 10),
@@ -307,14 +312,14 @@ class _ClinicRowState extends State<_ClinicRow> {
                 hasName ? c.adminName : 'Not assigned',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(color: hasName ? Colors.white : const Color(0xFF64748B), fontSize: 12, fontWeight: FontWeight.w600),
+                style: TextStyle(color: hasName ? colors.textPrimary : colors.textMuted, fontSize: 12, fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 2),
               Text(
                 c.adminEmail,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(color: Color(0xFF64748B), fontSize: 11),
+                style: TextStyle(color: colors.textMuted, fontSize: 11),
               ),
             ],
           ),
@@ -324,30 +329,30 @@ class _ClinicRowState extends State<_ClinicRow> {
     );
   }
 
-  Widget _activityCell(TenantClinicEntity c) {
+  Widget _activityCell(AppColorsExtension colors, TenantClinicEntity c) {
     final doctors = c.doctors.length;
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _metric(Icons.medical_services_outlined, '$doctors doctor${doctors == 1 ? '' : 's'}'),
+        _metric(colors, Icons.medical_services_outlined, '$doctors doctor${doctors == 1 ? '' : 's'}'),
         const SizedBox(height: 4),
-        _metric(Icons.calendar_today_rounded, '${widget.appointments} this month'),
+        _metric(colors, Icons.calendar_today_rounded, '${widget.appointments} this month'),
       ],
     );
   }
 
-  Widget _metric(IconData icon, String label) {
+  Widget _metric(AppColorsExtension colors, IconData icon, String label) {
     return Row(
       children: [
-        Icon(icon, size: 12, color: const Color(0xFF64748B)),
+        Icon(icon, size: 12, color: colors.textMuted),
         const SizedBox(width: 5),
         Expanded(
           child: Text(
             label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(color: Color(0xFFCBD5E1), fontSize: 11.5),
+            style: TextStyle(color: colors.textPrimary, fontSize: 11.5),
           ),
         ),
       ],
@@ -401,7 +406,7 @@ class _ClinicRowState extends State<_ClinicRow> {
     );
   }
 
-  Widget _actionsCell(TenantClinicEntity c, ClinicsDataTable t) {
+  Widget _actionsCell(AppColorsExtension colors, TenantClinicEntity c, ClinicsDataTable t) {
     return Wrap(
       alignment: WrapAlignment.end,
       crossAxisAlignment: WrapCrossAlignment.center,
@@ -420,7 +425,7 @@ class _ClinicRowState extends State<_ClinicRow> {
             () => t.onToggleStatus(c),
           ),
         _iconBtn(Icons.delete_outline_rounded, const Color(0xFFEF4444), 'Delete clinic & admin', () => t.onDelete(c)),
-        _iconBtn(Icons.chevron_right_rounded, const Color(0xFFE2E8F0), 'View details', () => t.onDetails(c)),
+        _iconBtn(Icons.chevron_right_rounded, colors.textMuted, 'View details', () => t.onDetails(c)),
       ],
     );
   }

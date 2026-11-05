@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../domain/entities/service_department_entity.dart';
 import 'service_ui_kit.dart';
 
@@ -17,19 +18,21 @@ class ServiceDeptDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return ServiceLabeledField(
       label: 'Department',
       child: DropdownButtonFormField<String>(
         initialValue: selectedDeptId,
         isExpanded: true,
-        dropdownColor: const Color(0xFF16213A),
+        dropdownColor: colors.surfaceElevated,
         borderRadius: BorderRadius.circular(10),
-        icon: const Icon(
+        icon: Icon(
           Icons.keyboard_arrow_down_rounded,
-          color: Colors.white,
+          color: colors.textMuted,
           size: 20,
         ),
-        decoration: serviceInputDecoration(),
+        decoration: serviceInputDecoration(context: context),
         items: departments
             .map(
               (d) => DropdownMenuItem(
@@ -40,7 +43,7 @@ class ServiceDeptDropdown extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 13.5,
                     fontWeight: FontWeight.w600,
-                    color: Colors.white,
+                    color: colors.textPrimary,
                   ),
                 ),
               ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../widgets/profile_tab_view.dart';
 
 class PatientProfileScreen extends StatelessWidget {
@@ -8,27 +8,29 @@ class PatientProfileScreen extends StatelessWidget {
   const PatientProfileScreen({
     super.key,
     this.onVisitsTap,
-  }); 
- 
+  });
+
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Scaffold(
-      backgroundColor: AppColors.darkBgApp,
+      backgroundColor: colors.background,
       appBar: AppBar(
-        backgroundColor: AppColors.darkSurface,
+        backgroundColor: colors.surface,
         elevation: 0,
         centerTitle: false,
-        title: const Text(
+        title: Text(
           'Profile & Settings',
           style: TextStyle(
-            color: AppColors.darkInk,
+            color: colors.textPrimary,
             fontSize: 18,
             fontWeight: FontWeight.w800,
           ),
         ),
-        bottom: const PreferredSize(
-          preferredSize: Size.fromHeight(1),
-          child: Divider(color: AppColors.darkBorder, height: 1, thickness: 1),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1),
+          child: Divider(color: colors.border, height: 1, thickness: 1),
         ),
       ),
       body: SafeArea(

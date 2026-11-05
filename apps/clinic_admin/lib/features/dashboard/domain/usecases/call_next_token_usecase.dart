@@ -1,4 +1,4 @@
-import '../repositories/clinic_dashboard_repository.dart';
+﻿import '../repositories/clinic_dashboard_repository.dart';
 
 /// Use case to call the next patient token in queue.
 class CallNextTokenUseCase {

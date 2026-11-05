@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
 
 /// Notification icon button in the clinic top bar.
@@ -7,11 +8,13 @@ class ClinicNotificationButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return IconButton(
       tooltip: 'Notifications',
-      icon: const Icon(
+      icon: Icon(
         Icons.notifications_none_rounded,
-        color: Color(0xFFCBD5E1),
+        color: colors.textMuted,
         size: 22,
       ),
       onPressed: () {

@@ -1,6 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
+﻿import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../../core/layout/clinic_breakpoints.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../data/repositories/clinic_dashboard_repository_impl.dart';
@@ -62,13 +63,14 @@ class _ClinicDashboardView extends StatelessWidget {
       },
       builder: (context, state) {
         final bloc = context.read<ClinicDashboardBloc>();
+        final colors = context.colors;
 
         return Scaffold(
-          backgroundColor: const Color(0xFF080D1A),
+          backgroundColor: colors.background,
           drawer: isMobile
               ? Drawer(
                   width: 260,
-                  backgroundColor: const Color(0xFF090E1A),
+                  backgroundColor: colors.surface,
                   shape: const RoundedRectangleBorder(),
                   child: SafeArea(
                     child: Builder(
@@ -97,9 +99,9 @@ class _ClinicDashboardView extends StatelessWidget {
                     children: [
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: hPad, vertical: isMobile ? 10 : 14),
-                        decoration: const BoxDecoration(
-                          color: Color(0xFF090E1A),
-                          border: Border(bottom: BorderSide(color: Color(0xFF131D31), width: 1)),
+                        decoration: BoxDecoration(
+                          color: colors.surface,
+                          border: Border(bottom: BorderSide(color: colors.border, width: 1)),
                         ),
                         child: Builder(
                           builder: (scaffoldContext) => ClinicTopBar(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class GradientButton extends StatelessWidget {
   final String text;
@@ -15,12 +15,14 @@ class GradientButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Container(
       width: double.infinity,
       height: 52,
       decoration: BoxDecoration(
         gradient: onPressed == null ? null : AppColors.primaryGradient,
-        color: onPressed == null ? AppColors.cardBorder : null,
+        color: onPressed == null ? colors.border : null,
         borderRadius: BorderRadius.circular(26),
       ),
       child: Material(

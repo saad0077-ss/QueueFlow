@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class PlatformBillingKpiCard extends StatelessWidget {
   final String tag;
@@ -23,12 +24,14 @@ class PlatformBillingKpiCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: const Color(0xFF0F172A),
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFF1E293B)),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,7 +54,7 @@ class PlatformBillingKpiCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 6),
-                  Text(label, style: GoogleFonts.inter(fontSize: 12, color: const Color(0xFF94A3B8))),
+                  Text(label, style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted)),
                 ],
               ),
               Container(
@@ -66,7 +69,7 @@ class PlatformBillingKpiCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 14),
-          Text(value, style: GoogleFonts.inter(fontSize: 26, fontWeight: FontWeight.w800, color: Colors.white)),
+          Text(value, style: GoogleFonts.inter(fontSize: 26, fontWeight: FontWeight.w800, color: colors.textPrimary)),
           const SizedBox(height: 6),
           Row(
             children: [
@@ -80,7 +83,7 @@ class PlatformBillingKpiCard extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Expanded(
-                child: Text(subtext, style: GoogleFonts.inter(fontSize: 11, color: const Color(0xFF64748B)), overflow: TextOverflow.ellipsis),
+                child: Text(subtext, style: GoogleFonts.inter(fontSize: 11, color: colors.textSubtle), overflow: TextOverflow.ellipsis),
               ),
             ],
           ),

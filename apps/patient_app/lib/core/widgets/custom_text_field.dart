@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class CustomTextField extends StatelessWidget {
   final String label;
@@ -49,6 +49,7 @@ class CustomTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final bool hasError = errorText != null && errorText!.isNotEmpty;
 
     Widget content = Column(
@@ -59,7 +60,7 @@ class CustomTextField extends StatelessWidget {
         Text(
           label,
           style: TextStyle(
-            color: Colors.white,
+            color: colors.textPrimary,
             fontSize: labelFontSize ?? 13.5,
             fontWeight: FontWeight.w600,
             letterSpacing: 0.1,
@@ -80,17 +81,17 @@ class CustomTextField extends StatelessWidget {
           validator: validator,
           onFieldSubmitted: onFieldSubmitted,
           style: TextStyle(
-            color: Colors.white,
+            color: colors.textPrimary,
             fontSize: fontSize ?? 14,
           ),
-          cursorColor: Colors.white,
+          cursorColor: colors.primary,
           decoration: InputDecoration(
             isDense: true,
             filled: true,
-            fillColor: const Color(0xFF0B132B),
+            fillColor: colors.surfaceSecondary,
             hintText: hintText,
             hintStyle: TextStyle(
-              color: const Color(0xFF94A3B8),
+              color: colors.textMuted,
               fontSize: fontSize ?? 14,
               fontWeight: FontWeight.w400,
             ),
@@ -102,7 +103,7 @@ class CustomTextField extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 14),
               child: Icon(
                 prefixIcon,
-                color: const Color(0xFF94A3B8),
+                color: colors.textSubtle,
                 size: 20,
               ),
             ),
@@ -118,35 +119,35 @@ class CustomTextField extends StatelessWidget {
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(
-                color: hasError ? AppColors.errorRed : const Color(0xFF1E2D4A),
+                color: hasError ? colors.error : colors.border,
                 width: 1.2,
               ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(
-                color: hasError ? AppColors.errorRed : AppColors.primary,
+                color: hasError ? colors.error : colors.primary,
                 width: 1.4,
               ),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(
-                color: AppColors.errorRed,
+              borderSide: BorderSide(
+                color: colors.error,
                 width: 1.2,
               ),
             ),
             focusedErrorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(
-                color: AppColors.errorRed,
+              borderSide: BorderSide(
+                color: colors.error,
                 width: 1.4,
               ),
             ),
             disabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(
-                color: Color(0xFF162035),
+              borderSide: BorderSide(
+                color: colors.border.withValues(alpha: 0.5),
                 width: 1.0,
               ),
             ),
@@ -160,7 +161,7 @@ class CustomTextField extends StatelessWidget {
             hasError ? errorText! : helperText!,
             style: TextStyle(
               fontSize: helperFontSize ?? 12,
-              color: hasError ? AppColors.errorRed : const Color(0xFF94A3B8),
+              color: hasError ? colors.error : colors.textMuted,
               fontWeight: FontWeight.w400,
             ),
           ),

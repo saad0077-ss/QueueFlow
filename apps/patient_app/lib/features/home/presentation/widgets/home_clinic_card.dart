@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../../core/widgets/clinic_dept_chip.dart';
 import '../../../../core/widgets/clinic_photo.dart';
 import '../../domain/entities/clinic_entity.dart';
@@ -24,7 +24,10 @@ class HomeClinicCard extends StatelessWidget {
     return const Color(0xFF38BDF8);
   }
 
-  Color get _categoryBgColor {
+  Color _resolveCategoryBg(BuildContext context) {
+    if (!context.isDarkMode) {
+      return _categoryColor.withValues(alpha: 0.12);
+    }
     final cat = clinic.category.toLowerCase();
     if (cat.contains('dent')) return const Color(0xFF10302C);
     if (cat.contains('derm')) return const Color(0xFF302410);
@@ -42,7 +45,7 @@ class HomeClinicCard extends StatelessWidget {
     return Icons.medical_services_rounded;
   }
 
-  Widget _buildThumbnail() {
+  Widget _buildThumbnail(BuildContext context, AppColorsExtension colors) {
     final startingLetter = clinic.name.trim().isNotEmpty
         ? clinic.name.trim().substring(0, 1).toUpperCase()
         : 'C';
@@ -52,31 +55,31 @@ class HomeClinicCard extends StatelessWidget {
         width: 66,
         height: 66,
         decoration: BoxDecoration(
-          color: _categoryBgColor,
+          color: _resolveCategoryBg(context),
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: AppColors.darkBorder),
+          border: Border.all(color: colors.border),
         ),
         clipBehavior: Clip.antiAlias,
         child: ClinicPhoto(
           clinicId: clinic.id,
           imageVersion: clinic.imageVersion,
           imageUrl: clinic.imageUrl,
-          placeholder: _buildFallbackThumbnail(startingLetter),
+          placeholder: _buildFallbackThumbnail(context, startingLetter, colors),
         ),
       );
     }
 
-    return _buildFallbackThumbnail(startingLetter);
+    return _buildFallbackThumbnail(context, startingLetter, colors);
   }
 
-  Widget _buildFallbackThumbnail(String startingLetter) {
+  Widget _buildFallbackThumbnail(BuildContext context, String startingLetter, AppColorsExtension colors) {
     return Container(
       width: 66,
       height: 66,
       decoration: BoxDecoration(
-        color: _categoryBgColor,
+        color: _resolveCategoryBg(context),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.darkBorder),
+        border: Border.all(color: colors.border),
       ),
       alignment: Alignment.center,
       child: Column(
@@ -101,10 +104,10 @@ class HomeClinicCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusPill() {
+  Widget _buildStatusPill(AppColorsExtension colors) {
     final isOpen = clinic.isOpen;
-    final color = isOpen ? const Color(0xFF16A34A) : const Color(0xFFDC2626);
-    final bgColor = isOpen ? const Color(0xFF123022) : const Color(0xFF351319);
+    final color = isOpen ? colors.badgeOpenText : colors.error;
+    final bgColor = isOpen ? colors.badgeOpenBg : colors.errorTint;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
@@ -143,24 +146,19 @@ class HomeClinicCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            AppColors.darkSurface,
-            AppColors.darkSurface,
-          ],
-        ),
+        color: colors.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.darkBorder),
+        border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.15),
+            color: Colors.black.withValues(alpha: context.isDarkMode ? 0.15 : 0.05),
             blurRadius: 12,
-            offset: const Offset(0, 6),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -175,7 +173,7 @@ class HomeClinicCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // 1. Thumbnail (66x66)
-                _buildThumbnail(),
+                _buildThumbnail(context, colors),
                 const SizedBox(width: 14),
 
                 // 2. Body
@@ -193,16 +191,16 @@ class HomeClinicCard extends StatelessWidget {
                               clinic.name,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 14.5,
                                 fontWeight: FontWeight.w700,
-                                color: AppColors.darkInk,
+                                color: colors.textPrimary,
                                 letterSpacing: -0.1,
                               ),
                             ),
                           ),
                           const SizedBox(width: 8),
-                          _buildStatusPill(),
+                          _buildStatusPill(colors),
                         ],
                       ),
                       const SizedBox(height: 7),
@@ -214,17 +212,16 @@ class HomeClinicCard extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 6, vertical: 2),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFF59E0B)
-                                  .withValues(alpha: 0.15),
+                              color: colors.warningTint,
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Icon(
+                                Icon(
                                   Icons.star_rounded,
                                   size: 13,
-                                  color: Color(0xFFF59E0B),
+                                  color: colors.ratingGold,
                                 ),
                                 const SizedBox(width: 2),
                                 Text(
@@ -234,7 +231,7 @@ class HomeClinicCard extends StatelessWidget {
                                   style: GoogleFonts.jetBrainsMono(
                                     fontSize: 11.5,
                                     fontWeight: FontWeight.w800,
-                                    color: const Color(0xFFFBBF24),
+                                    color: colors.ratingGold,
                                   ),
                                 ),
                               ],
@@ -251,10 +248,10 @@ class HomeClinicCard extends StatelessWidget {
                                         : clinic.primaryCategory,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w500,
-                                      color: AppColors.darkInkMuted,
+                                      color: colors.textMuted,
                                     ),
                                   ),
                                 ),
@@ -269,10 +266,10 @@ class HomeClinicCard extends StatelessWidget {
                       // Location: Pin + Distance · City
                       Row(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.location_on_outlined,
                             size: 13,
-                            color: AppColors.darkInkFaint,
+                            color: colors.textSubtle,
                           ),
                           const SizedBox(width: 4),
                           Expanded(
@@ -280,10 +277,10 @@ class HomeClinicCard extends StatelessWidget {
                               '${clinic.distance} · ${clinic.city}',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 11.5,
                                 fontWeight: FontWeight.w500,
-                                color: AppColors.darkInkFaint,
+                                color: colors.textSubtle,
                               ),
                             ),
                           ),
@@ -303,7 +300,7 @@ class HomeClinicCard extends StatelessWidget {
                                 style: GoogleFonts.jetBrainsMono(
                                   fontSize: 10.5,
                                   fontWeight: FontWeight.w700,
-                                  color: const Color(0xFF38BDF8),
+                                  color: colors.primary,
                                 ),
                               ),
                             )
@@ -313,15 +310,13 @@ class HomeClinicCard extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 5),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF38BDF8)
-                                  .withValues(alpha: 0.14),
+                              color: colors.primaryTint,
                               borderRadius: BorderRadius.circular(9999),
                               border: Border.all(
-                                color: const Color(0xFF38BDF8)
-                                    .withValues(alpha: 0.35),
+                                color: colors.primary.withValues(alpha: 0.35),
                               ),
                             ),
-                            child: const Row(
+                            child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
@@ -329,14 +324,14 @@ class HomeClinicCard extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 11.5,
                                     fontWeight: FontWeight.w700,
-                                    color: Color(0xFF38BDF8),
+                                    color: colors.primary,
                                   ),
                                 ),
-                                SizedBox(width: 2),
+                                const SizedBox(width: 2),
                                 Icon(
                                   Icons.chevron_right_rounded,
                                   size: 14,
-                                  color: Color(0xFF38BDF8),
+                                  color: colors.primary,
                                 ),
                               ],
                             ),

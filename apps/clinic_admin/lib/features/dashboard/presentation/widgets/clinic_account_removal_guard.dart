@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 /// Monitors in real-time whether the current clinic facility has been deleted
 /// or removed by the platform owner. If removed while the clinic staff/admin is
@@ -108,6 +109,7 @@ class _ClinicAccountRemovalGuardState extends State<ClinicAccountRemovalGuard> {
       context: context,
       barrierDismissible: false,
       builder: (dialogCtx) {
+        final colors = dialogCtx.colors;
         return PopScope(
           canPop: false,
           child: BackdropFilter(
@@ -119,20 +121,20 @@ class _ClinicAccountRemovalGuardState extends State<ClinicAccountRemovalGuard> {
                 width: 440,
                 padding: const EdgeInsets.fromLTRB(26, 26, 26, 24),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF0D1527),
+                  color: colors.surfaceElevated,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: const Color(0xFFDC2626).withValues(alpha: 0.6),
+                    color: colors.error.withValues(alpha: 0.6),
                     width: 1.5,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFFDC2626).withValues(alpha: 0.25),
+                      color: colors.error.withValues(alpha: 0.25),
                       blurRadius: 40,
                       offset: const Offset(0, 10),
                     ),
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.8),
+                      color: Colors.black.withValues(alpha: 0.4),
                       blurRadius: 50,
                       offset: const Offset(0, 20),
                     ),
@@ -145,16 +147,16 @@ class _ClinicAccountRemovalGuardState extends State<ClinicAccountRemovalGuard> {
                       width: 64,
                       height: 64,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFDC2626).withValues(alpha: 0.15),
+                        color: colors.errorTint,
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: const Color(0xFFDC2626).withValues(alpha: 0.4),
+                          color: colors.error.withValues(alpha: 0.4),
                           width: 1.5,
                         ),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.domain_disabled_rounded,
-                        color: Color(0xFFEF4444),
+                        color: colors.error,
                         size: 32,
                       ),
                     ),
@@ -165,7 +167,7 @@ class _ClinicAccountRemovalGuardState extends State<ClinicAccountRemovalGuard> {
                       style: GoogleFonts.inter(
                         fontSize: 18.5,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: colors.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -174,7 +176,7 @@ class _ClinicAccountRemovalGuardState extends State<ClinicAccountRemovalGuard> {
                       textAlign: TextAlign.center,
                       style: GoogleFonts.inter(
                         fontSize: 13.5,
-                        color: const Color(0xFF94A3B8),
+                        color: colors.textMuted,
                         height: 1.5,
                       ),
                     ),

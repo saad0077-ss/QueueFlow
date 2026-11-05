@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../clinic_details/presentation/pages/clinic_details_screen.dart';
 import '../../domain/entities/clinic_entity.dart';
 import '../bloc/home_bloc.dart';
@@ -44,6 +44,8 @@ class _HomeTabViewState extends State<HomeTabView> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return BlocBuilder<HomeBloc, HomeState>(
       builder: (context, state) {
         final bloc = context.read<HomeBloc>();
@@ -85,8 +87,8 @@ class _HomeTabViewState extends State<HomeTabView> {
                 // 2. SCROLLABLE REST OF THE CONTENT (PULL TO REFRESH)
                 Expanded(
                   child: RefreshIndicator(
-                    color: AppColors.primaryLight,
-                    backgroundColor: AppColors.darkSurface,
+                    color: colors.primary,
+                    backgroundColor: colors.surface,
                     onRefresh: () async {
                       bloc.add(const HomeRefreshRequested());
                       await Future.delayed(const Duration(milliseconds: 600));
@@ -120,12 +122,12 @@ class _HomeTabViewState extends State<HomeTabView> {
                                   crossAxisAlignment: CrossAxisAlignment.baseline,
                                   textBaseline: TextBaseline.alphabetic,
                                   children: [
-                                    const Text(
+                                    Text(
                                       'Featured clinics near you',
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w800,
-                                        color: AppColors.darkInk,
+                                        color: colors.textPrimary,
                                         letterSpacing: -0.2,
                                       ),
                                     ),
@@ -135,7 +137,7 @@ class _HomeTabViewState extends State<HomeTabView> {
 
                                 // Responsive Clinics List or Grid
                                 if (state.allClinics.isEmpty)
-                                  _buildEmptyState()
+                                  _buildEmptyState(colors)
                                 else if (useGrid)
                                   GridView.builder(
                                     shrinkWrap: true,
@@ -190,7 +192,7 @@ class _HomeTabViewState extends State<HomeTabView> {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(AppColorsExtension colors) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 20),
@@ -201,33 +203,33 @@ class _HomeTabViewState extends State<HomeTabView> {
               width: 64,
               height: 64,
               decoration: BoxDecoration(
-                color: AppColors.darkSurface,
+                color: colors.surfaceSecondary,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: AppColors.darkBorder),
+                border: Border.all(color: colors.border),
               ),
               alignment: Alignment.center,
-              child: const Icon(
+              child: Icon(
                 Icons.local_hospital_outlined,
-                color: AppColors.darkInkFaint,
+                color: colors.textSubtle,
                 size: 32,
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               'No clinics available',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w800,
-                color: AppColors.darkInk,
+                color: colors.textPrimary,
               ),
             ),
             const SizedBox(height: 6),
-            const Text(
+            Text(
               'No active clinics registered in the database at the moment.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 13,
-                color: AppColors.darkInkMuted,
+                color: colors.textMuted,
               ),
             ),
           ],

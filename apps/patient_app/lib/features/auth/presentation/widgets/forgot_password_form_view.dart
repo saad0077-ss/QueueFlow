@@ -1,31 +1,51 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../../core/widgets/auth_back_header.dart';
 import '../../../../core/widgets/custom_text_field.dart';
 import '../../../../core/widgets/gradient_button.dart';
 
 class ForgotPasswordFormView extends StatelessWidget {
-  final double titleSize;
-  final double subtitleSize;
-  final TextEditingController emailController;
+  final double? titleSize;
+  final double? subtitleSize;
+  final double? scale;
+  final TextEditingController? controller;
+  final TextEditingController? emailController;
+  final String? errorText;
   final String? emailError;
   final bool isLoading;
-  final VoidCallback onSendResetLink;
+  final VoidCallback? onSubmit;
+  final VoidCallback? onSendResetLink;
   final ValueChanged<String>? onEmailChanged;
 
   const ForgotPasswordFormView({
     super.key,
-    required this.titleSize,
-    required this.subtitleSize,
-    required this.emailController,
-    required this.emailError,
-    required this.isLoading,
-    required this.onSendResetLink,
+    this.titleSize,
+    this.subtitleSize,
+    this.scale,
+    this.controller,
+    this.emailController,
+    this.errorText,
+    this.emailError,
+    this.isLoading = false,
+    this.onSubmit,
+    this.onSendResetLink,
     this.onEmailChanged,
   });
 
+  TextEditingController get _effectiveController =>
+      controller ?? emailController ?? TextEditingController();
+
+  String? get _effectiveError => errorText ?? emailError;
+
+  VoidCallback? get _effectiveSubmit => onSubmit ?? onSendResetLink;
+
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+    final sc = scale ?? 1.0;
+    final tSize = titleSize ?? (26.0 * sc).clamp(22.0, 30.0);
+    final sSize = subtitleSize ?? (13.5 * sc).clamp(12.0, 15.0);
+
     return IntrinsicHeight(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -37,8 +57,8 @@ class ForgotPasswordFormView extends StatelessWidget {
           Text(
             'Forgot password?',
             style: TextStyle(
-              color: AppColors.textWhite,
-              fontSize: titleSize,
+              color: colors.textPrimary,
+              fontSize: tSize,
               fontWeight: FontWeight.bold,
               letterSpacing: -0.5,
             ),
@@ -49,8 +69,8 @@ class ForgotPasswordFormView extends StatelessWidget {
           Text(
             'Enter your registered email address and we will send you a link to reset your password.',
             style: TextStyle(
-              color: AppColors.textMuted,
-              fontSize: subtitleSize,
+              color: colors.textMuted,
+              fontSize: sSize,
               height: 1.45,
             ),
           ),
@@ -60,15 +80,15 @@ class ForgotPasswordFormView extends StatelessWidget {
           CustomTextField(
             label: 'Email address',
             hintText: 'you@example.com',
-            controller: emailController,
+            controller: _effectiveController,
             prefixIcon: Icons.mail_outline_rounded,
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.done,
             autofillHints: const [AutofillHints.email],
             helperText: 'We will send a password reset link to this address.',
-            errorText: emailError,
+            errorText: _effectiveError,
             onChanged: onEmailChanged,
-            onFieldSubmitted: (_) => onSendResetLink(),
+            onFieldSubmitted: (_) => _effectiveSubmit?.call(),
           ),
 
           const Spacer(),
@@ -77,7 +97,7 @@ class ForgotPasswordFormView extends StatelessWidget {
           GradientButton(
             text: 'Send Reset Link',
             isLoading: isLoading,
-            onPressed: onSendResetLink,
+            onPressed: _effectiveSubmit,
           ),
           const SizedBox(height: 18),
 
@@ -85,17 +105,17 @@ class ForgotPasswordFormView extends StatelessWidget {
             child: GestureDetector(
               onTap: () => Navigator.of(context).pop(),
               child: RichText(
-                text: const TextSpan(
+                text: TextSpan(
                   text: 'Remember your password? ',
                   style: TextStyle(
-                    color: Color(0xFF94A3B8),
+                    color: colors.textMuted,
                     fontSize: 13.5,
                   ),
                   children: [
                     TextSpan(
                       text: 'Sign in',
                       style: TextStyle(
-                        color: Color(0xFF38BDF8),
+                        color: colors.accent,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -104,7 +124,7 @@ class ForgotPasswordFormView extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
         ],
       ),
     );

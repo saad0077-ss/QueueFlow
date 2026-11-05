@@ -1,4 +1,4 @@
-import 'package:equatable/equatable.dart';
+﻿import 'package:equatable/equatable.dart';
 
 /// Patient review entity for doctor feedback.
 class DoctorReviewEntity extends Equatable {

@@ -1,4 +1,4 @@
-import 'package:equatable/equatable.dart';
+﻿import 'package:equatable/equatable.dart';
 import 'operating_hours_day_entity.dart';
 
 class ClinicOperatingScheduleEntity extends Equatable {

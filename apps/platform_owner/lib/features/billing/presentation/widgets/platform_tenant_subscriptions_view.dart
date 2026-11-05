@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 import '../../domain/entities/platform_tenant_subscription_entity.dart';
 
@@ -28,12 +29,14 @@ class PlatformTenantSubscriptionsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Container(
       padding: const EdgeInsets.fromLTRB(26, 24, 26, 26),
       decoration: BoxDecoration(
-        color: const Color(0xFF0F172A),
+        color: colors.surface,
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: const Color(0xFF1E293B)),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -49,7 +52,7 @@ class PlatformTenantSubscriptionsView extends StatelessWidget {
                       style: GoogleFonts.inter(
                         fontSize: 16,
                         fontWeight: FontWeight.w800,
-                        color: Colors.white,
+                        color: colors.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -57,7 +60,7 @@ class PlatformTenantSubscriptionsView extends StatelessWidget {
                       'Manage plan tiers, billing cycles, quotas, and renewal states per practice',
                       style: GoogleFonts.inter(
                         fontSize: 12.5,
-                        color: const Color(0xFF94A3B8),
+                        color: colors.textMuted,
                       ),
                     ),
                   ],
@@ -73,34 +76,34 @@ class PlatformTenantSubscriptionsView extends StatelessWidget {
                       onChanged: onSearchChanged,
                       style: GoogleFonts.inter(
                         fontSize: 13,
-                        color: Colors.white,
+                        color: colors.textPrimary,
                       ),
                       decoration: InputDecoration(
                         hintText: 'Search clinic, plan, admin...',
                         hintStyle: GoogleFonts.inter(
-                          color: const Color(0xFF94A3B8),
+                          color: colors.textMuted,
                           fontSize: 13,
                         ),
-                        prefixIcon: const Icon(
+                        prefixIcon: Icon(
                           Icons.search_rounded,
                           size: 18,
-                          color: Color(0xFF94A3B8),
+                          color: colors.textMuted,
                         ),
                         filled: true,
-                        fillColor: const Color(0xFF162238),
+                        fillColor: colors.surfaceSecondary,
                         contentPadding: const EdgeInsets.symmetric(
                           vertical: 12,
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(
-                            color: Color(0xFF334E7A),
+                          borderSide: BorderSide(
+                            color: colors.border,
                           ),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(
-                            color: Color(0xFF3B82F6),
+                          borderSide: BorderSide(
+                            color: colors.primary,
                           ),
                         ),
                       ),
@@ -120,8 +123,8 @@ class PlatformTenantSubscriptionsView extends StatelessWidget {
                     : constraints.maxWidth,
                 child: Column(
                   children: [
-                    _headerRow(),
-                    const Divider(color: Color(0xFF1E293B), height: 1),
+                    _headerRow(colors),
+                    Divider(color: colors.border, height: 1),
                     if (subscriptions.isEmpty)
                       Padding(
                         padding: const EdgeInsets.all(28),
@@ -129,12 +132,12 @@ class PlatformTenantSubscriptionsView extends StatelessWidget {
                           'No clinics match your search.',
                           style: GoogleFonts.inter(
                             fontSize: 12.5,
-                            color: const Color(0xFF64748B),
+                            color: colors.textMuted,
                           ),
                         ),
                       ),
                     ...subscriptions.asMap().entries.map(
-                      (e) => _dataRow(e.key, e.value),
+                      (e) => _dataRow(colors, e.key, e.value),
                     ),
                   ],
                 ),
@@ -146,14 +149,14 @@ class PlatformTenantSubscriptionsView extends StatelessWidget {
     );
   }
 
-  Widget _headerRow() {
+  Widget _headerRow(AppColorsExtension colors) {
     Widget h(String t, {TextAlign align = TextAlign.left}) => Text(
       t.toUpperCase(),
       textAlign: align,
       style: GoogleFonts.inter(
         fontSize: 11.5,
         fontWeight: FontWeight.w700,
-        color: const Color(0xFF94A3B8),
+        color: colors.textMuted,
         letterSpacing: 0.8,
       ),
     );
@@ -173,13 +176,13 @@ class PlatformTenantSubscriptionsView extends StatelessWidget {
     );
   }
 
-  Widget _dataRow(int index, PlatformTenantSubscriptionEntity s) {
+  Widget _dataRow(AppColorsExtension colors, int index, PlatformTenantSubscriptionEntity s) {
     final cycle = s.billingCadence.toLowerCase().contains('annual')
         ? 'Annual'
         : 'Monthly';
     return Container(
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: Color(0xFF1E293B))),
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: colors.border)),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 14),
       child: Row(
@@ -216,14 +219,14 @@ class PlatformTenantSubscriptionsView extends StatelessWidget {
                         style: GoogleFonts.inter(
                           fontSize: 13.5,
                           fontWeight: FontWeight.w700,
-                          color: Colors.white,
+                          color: colors.textPrimary,
                         ),
                       ),
                       Text(
                         s.city,
                         style: GoogleFonts.inter(
                           fontSize: 11.5,
-                          color: const Color(0xFF94A3B8),
+                          color: colors.textMuted,
                         ),
                       ),
                     ],
@@ -240,14 +243,14 @@ class PlatformTenantSubscriptionsView extends StatelessWidget {
                 Text(
                   s.adminName,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.inter(fontSize: 13, color: Colors.white),
+                  style: GoogleFonts.inter(fontSize: 13, color: colors.textPrimary),
                 ),
                 Text(
                   s.adminEmail,
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.inter(
                     fontSize: 11.5,
-                    color: const Color(0xFF94A3B8),
+                    color: colors.textMuted,
                   ),
                 ),
               ],
@@ -257,14 +260,14 @@ class PlatformTenantSubscriptionsView extends StatelessWidget {
             flex: 23,
             child: Align(
               alignment: Alignment.centerLeft,
-              child: _planBadge(s.planName),
+              child: _planBadge(colors, s.planName),
             ),
           ),
           Expanded(
             flex: 15,
             child: Text(
               cycle,
-              style: GoogleFonts.inter(fontSize: 13, color: Colors.white),
+              style: GoogleFonts.inter(fontSize: 13, color: colors.textPrimary),
             ),
           ),
           Expanded(
@@ -274,7 +277,7 @@ class PlatformTenantSubscriptionsView extends StatelessWidget {
               style: GoogleFonts.jetBrainsMono(
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
-                color: Colors.white,
+                color: colors.textPrimary,
               ),
             ),
           ),
@@ -282,7 +285,7 @@ class PlatformTenantSubscriptionsView extends StatelessWidget {
             flex: 14,
             child: Align(
               alignment: Alignment.centerLeft,
-              child: _statusPill(s.status),
+              child: _statusPill(colors, s.status),
             ),
           ),
           Expanded(
@@ -290,9 +293,9 @@ class PlatformTenantSubscriptionsView extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                _actionButton('Change Plan', () => onManageSubscription(s)),
+                _actionButton(colors, 'Change Plan', () => onManageSubscription(s)),
                 const SizedBox(width: 8),
-                _actionButton('+ Invoice', () => onIssueInvoice(s)),
+                _actionButton(colors, '+ Invoice', () => onIssueInvoice(s)),
               ],
             ),
           ),
@@ -312,12 +315,12 @@ class PlatformTenantSubscriptionsView extends StatelessWidget {
     return (parts[0][0] + parts[1][0]).toUpperCase();
   }
 
-  Widget _actionButton(String label, VoidCallback onTap) {
+  Widget _actionButton(AppColorsExtension colors, String label, VoidCallback onTap) {
     return OutlinedButton(
       onPressed: onTap,
       style: OutlinedButton.styleFrom(
-        foregroundColor: Colors.white,
-        side: const BorderSide(color: Color(0xFF334155)),
+        foregroundColor: colors.textPrimary,
+        side: BorderSide(color: colors.border),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
       ),
@@ -328,11 +331,11 @@ class PlatformTenantSubscriptionsView extends StatelessWidget {
     );
   }
 
-  Widget _planBadge(String planName) {
+  Widget _planBadge(AppColorsExtension colors, String planName) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E3A8A).withAlpha(110),
+        color: colors.primaryTint,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
@@ -340,21 +343,21 @@ class PlatformTenantSubscriptionsView extends StatelessWidget {
         style: GoogleFonts.inter(
           fontSize: 11.5,
           fontWeight: FontWeight.w600,
-          color: const Color(0xFF3B82F6),
+          color: colors.primaryLight,
         ),
       ),
     );
   }
 
-  Widget _statusPill(String status) {
+  Widget _statusPill(AppColorsExtension colors, String status) {
     final upper = status.toUpperCase();
     final color = upper == 'ACTIVE'
-        ? const Color(0xFF22C55E)
+        ? colors.success
         : upper == 'TRIAL'
-        ? const Color(0xFF3B82F6)
+        ? colors.primaryLight
         : upper == 'SUSPENDED'
-        ? const Color(0xFF6366F1)
-        : const Color(0xFFEF4444);
+        ? colors.accent
+        : colors.error;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
       decoration: BoxDecoration(

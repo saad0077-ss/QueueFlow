@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:patient_app/core/theme/app_colors.dart';
 import 'package:patient_app/core/widgets/gradient_button.dart';
 import 'package:patient_app/features/clinic_details/domain/entities/clinic_doctor_item.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class BookingStep2Doctor extends StatelessWidget {
   final List<ClinicDoctorItem> doctors;
@@ -22,6 +22,8 @@ class BookingStep2Doctor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -30,7 +32,7 @@ class BookingStep2Doctor extends StatelessWidget {
           style: GoogleFonts.inter(
             fontSize: 18,
             fontWeight: FontWeight.w800,
-            color: AppColors.darkInk,
+            color: colors.textPrimary,
           ),
         ),
         const SizedBox(height: 4),
@@ -38,7 +40,7 @@ class BookingStep2Doctor extends StatelessWidget {
           'Select your preferred medical practitioner for consultation.',
           style: GoogleFonts.inter(
             fontSize: 12.5,
-            color: AppColors.darkInkMuted,
+            color: colors.textMuted,
           ),
         ),
         const SizedBox(height: 16),
@@ -49,7 +51,7 @@ class BookingStep2Doctor extends StatelessWidget {
               child: Text(
                 'No doctors currently available for this service.',
                 style: GoogleFonts.inter(
-                  color: AppColors.darkInkMuted,
+                  color: colors.textMuted,
                   fontSize: 13,
                 ),
               ),
@@ -76,18 +78,18 @@ class BookingStep2Doctor extends StatelessWidget {
               height: 52,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppColors.darkSurface,
-                border: Border.all(color: AppColors.darkBorder, width: 1.5),
+                color: colors.surface,
+                border: Border.all(color: colors.border, width: 1.5),
               ),
               child: Material(
                 color: Colors.transparent,
                 child: InkWell(
                   customBorder: const CircleBorder(),
                   onTap: onBack,
-                  child: const Center(
+                  child: Center(
                     child: Icon(
                       Icons.chevron_left_rounded,
-                      color: AppColors.darkInk,
+                      color: colors.textPrimary,
                       size: 26,
                     ),
                   ),
@@ -113,19 +115,21 @@ class BookingStep2Doctor extends StatelessWidget {
     ClinicDoctorItem doctor,
     bool isSelected,
   ) {
+    final colors = context.colors;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: AppColors.darkSurface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isSelected ? AppColors.primary : AppColors.darkBorder,
+          color: isSelected ? colors.primary : colors.border,
           width: isSelected ? 1.8 : 1.2,
         ),
         boxShadow: isSelected
             ? [
                 BoxShadow(
-                  color: AppColors.primary.withValues(alpha: 0.16),
+                  color: colors.primary.withValues(alpha: 0.16),
                   blurRadius: 14,
                   offset: const Offset(0, 4),
                 ),
@@ -144,14 +148,14 @@ class BookingStep2Doctor extends StatelessWidget {
                 CircleAvatar(
                   radius: 24,
                   backgroundColor: isSelected
-                      ? AppColors.primary.withValues(alpha: 0.25)
-                      : AppColors.primary.withValues(alpha: 0.12),
+                      ? colors.primary.withValues(alpha: 0.25)
+                      : colors.primary.withValues(alpha: 0.12),
                   child: Text(
                     doctor.initials,
                     style: GoogleFonts.inter(
                       fontSize: 14,
                       fontWeight: FontWeight.w800,
-                      color: isSelected ? Colors.white : AppColors.primaryLight,
+                      color: isSelected ? Colors.white : colors.primary,
                     ),
                   ),
                 ),
@@ -165,7 +169,7 @@ class BookingStep2Doctor extends StatelessWidget {
                         style: GoogleFonts.inter(
                           fontSize: 14.5,
                           fontWeight: FontWeight.w700,
-                          color: AppColors.darkInk,
+                          color: colors.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 3),
@@ -173,7 +177,7 @@ class BookingStep2Doctor extends StatelessWidget {
                         doctor.title.isNotEmpty ? doctor.title : doctor.specialty,
                         style: GoogleFonts.inter(
                           fontSize: 12,
-                          color: AppColors.darkInkMuted,
+                          color: colors.textMuted,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -182,7 +186,7 @@ class BookingStep2Doctor extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
-                          color: AppColors.success.withValues(alpha: 0.12),
+                          color: colors.success.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Row(
@@ -191,8 +195,8 @@ class BookingStep2Doctor extends StatelessWidget {
                             Container(
                               width: 6,
                               height: 6,
-                              decoration: const BoxDecoration(
-                                color: AppColors.success,
+                              decoration: BoxDecoration(
+                                color: colors.success,
                                 shape: BoxShape.circle,
                               ),
                             ),
@@ -202,7 +206,7 @@ class BookingStep2Doctor extends StatelessWidget {
                               style: GoogleFonts.inter(
                                 fontSize: 10.5,
                                 fontWeight: FontWeight.w700,
-                                color: AppColors.success,
+                                color: colors.success,
                               ),
                             ),
                           ],
@@ -221,7 +225,7 @@ class BookingStep2Doctor extends StatelessWidget {
                     gradient: isSelected ? AppColors.primaryGradient : null,
                     color: isSelected ? null : Colors.transparent,
                     border: Border.all(
-                      color: isSelected ? Colors.transparent : AppColors.darkBorder,
+                      color: isSelected ? Colors.transparent : colors.border,
                       width: 1.5,
                     ),
                   ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class ClinicsKpiCards extends StatelessWidget {
   final int totalClinics;
@@ -21,6 +22,8 @@ class ClinicsKpiCards extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final w = constraints.maxWidth;
@@ -28,15 +31,15 @@ class ClinicsKpiCards extends StatelessWidget {
         final cardWidth = (w - 14 * (perRow - 1)) / perRow;
 
         final cards = [
-          _card(Icons.domain_rounded, const Color(0xFF38BDF8), _fmt(totalClinics), 'Total Clinics',
+          _card(colors, Icons.domain_rounded, const Color(0xFF38BDF8), _fmt(totalClinics), 'Total Clinics',
               invitedClinics > 0 ? '$invitedClinics awaiting activation' : 'All onboarded'),
-          _card(Icons.check_circle_outline_rounded, const Color(0xFF10B981), _fmt(activePractices), 'Active Clinics',
+          _card(colors, Icons.check_circle_outline_rounded, const Color(0xFF10B981), _fmt(activePractices), 'Active Clinics',
               totalClinics == 0 ? 'No clinics yet' : '${(activePractices * 100 / totalClinics).round()}% of network'),
-          _card(Icons.medical_services_outlined, const Color(0xFFA855F7), _fmt(totalDoctors), 'Doctors on Roster',
+          _card(colors, Icons.medical_services_outlined, const Color(0xFFA855F7), _fmt(totalDoctors), 'Doctors on Roster',
               'Across all clinics'),
-          _card(Icons.calendar_today_rounded, const Color(0xFFF59E0B), _fmt(appointmentsMonth), 'Appointments This Month',
+          _card(colors, Icons.calendar_today_rounded, const Color(0xFFF59E0B), _fmt(appointmentsMonth), 'Appointments This Month',
               'Queue tickets since the 1st'),
-          _card(Icons.credit_card_rounded, const Color(0xFF14B8A6), '₹${_fmt(totalMrr)}', 'Monthly Recurring Revenue',
+          _card(colors, Icons.credit_card_rounded, const Color(0xFF14B8A6), '₹${_fmt(totalMrr)}', 'Monthly Recurring Revenue',
               'From active subscriptions'),
         ];
 
@@ -49,13 +52,13 @@ class ClinicsKpiCards extends StatelessWidget {
     );
   }
 
-  Widget _card(IconData icon, Color iconColor, String value, String label, String caption) {
+  Widget _card(AppColorsExtension colors, IconData icon, Color iconColor, String value, String label, String caption) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF0F172A),
+        color: colors.surface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFF1E293B)),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,11 +72,11 @@ class ClinicsKpiCards extends StatelessWidget {
             child: Icon(icon, color: iconColor, size: 19),
           ),
           const SizedBox(height: 14),
-          Text(value, style: GoogleFonts.inter(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
+          Text(value, style: GoogleFonts.inter(fontSize: 22, fontWeight: FontWeight.bold, color: colors.textPrimary)),
           const SizedBox(height: 4),
-          Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.inter(fontSize: 12, color: const Color(0xFF94A3B8), fontWeight: FontWeight.w500)),
+          Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted, fontWeight: FontWeight.w500)),
           const SizedBox(height: 2),
-          Text(caption, maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.inter(fontSize: 10.5, color: const Color(0xFF64748B))),
+          Text(caption, maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.inter(fontSize: 10.5, color: colors.textSubtle)),
         ],
       ),
     );

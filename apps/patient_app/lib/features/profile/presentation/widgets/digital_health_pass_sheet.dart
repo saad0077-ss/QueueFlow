@@ -1,7 +1,7 @@
 import 'profile_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../domain/entities/patient_profile_entity.dart';
 
@@ -33,14 +33,16 @@ class DigitalHealthPassSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Container(
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height * 0.9,
       ),
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
-      decoration: const BoxDecoration(
-        color: AppColors.darkSurface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      decoration: BoxDecoration(
+        color: colors.surfaceElevated,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: SingleChildScrollView(
         child: Column(
@@ -56,21 +58,21 @@ class DigitalHealthPassSheet extends StatelessWidget {
                     const SizedBox(width: 10),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         Text(
                           'Digital Health ID Pass',
                           style: TextStyle(
                             fontSize: 17,
                             fontWeight: FontWeight.w800,
-                            color: AppColors.darkInk,
+                            color: colors.textPrimary,
                           ),
                         ),
-                        SizedBox(height: 2),
+                        const SizedBox(height: 2),
                         Text(
                           'QueueFlow Universal Patient Pass',
                           style: TextStyle(
                             fontSize: 11.5,
-                            color: AppColors.darkInkMuted,
+                            color: colors.textMuted,
                           ),
                         ),
                       ],
@@ -78,10 +80,10 @@ class DigitalHealthPassSheet extends StatelessWidget {
                   ],
                 ),
                 IconButton(
-                  icon: const Icon(Icons.close_rounded, color: AppColors.darkInkMuted, size: 20),
+                  icon: Icon(Icons.close_rounded, color: colors.textMuted, size: 20),
                   onPressed: () => Navigator.of(context).pop(),
                   style: IconButton.styleFrom(
-                    backgroundColor: AppColors.darkBorder.withValues(alpha: 0.5),
+                    backgroundColor: colors.surfaceSecondary,
                     shape: const CircleBorder(),
                   ),
                 ),
@@ -338,21 +340,21 @@ class DigitalHealthPassSheet extends StatelessWidget {
                   child: OutlinedButton(
                     onPressed: () => _sharePass(context),
                     style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: AppColors.darkBorder, width: 1.5),
+                      side: BorderSide(color: colors.border, width: 1.5),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                       padding: const EdgeInsets.symmetric(vertical: 13),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.share_outlined, size: 16, color: AppColors.darkInk),
-                        SizedBox(width: 8),
+                        Icon(Icons.share_outlined, size: 16, color: colors.textPrimary),
+                        const SizedBox(width: 8),
                         Text(
                           'Share Pass',
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w700,
-                            color: AppColors.darkInk,
+                            color: colors.textPrimary,
                           ),
                         ),
                       ],
@@ -364,7 +366,7 @@ class DigitalHealthPassSheet extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () => Navigator.of(context).pop(),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
+                      backgroundColor: colors.primary,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                       padding: const EdgeInsets.symmetric(vertical: 13),
                       elevation: 0,
@@ -396,14 +398,11 @@ class _QrCodePainter extends CustomPainter {
 
     // Draw standard QR finder patterns in top-left, top-right, bottom-left
     void drawFinder(double x, double y) {
-      // 7x7 outer square
       canvas.drawRect(Rect.fromLTWH(x * unit, y * unit, 7 * unit, 7 * unit), paintWhite);
-      // 5x5 black inner
       canvas.drawRect(
         Rect.fromLTWH((x + 1) * unit, (y + 1) * unit, 5 * unit, 5 * unit),
         Paint()..color = Colors.black,
       );
-      // 3x3 white center
       canvas.drawRect(
         Rect.fromLTWH((x + 2) * unit, (y + 2) * unit, 3 * unit, 3 * unit),
         paintWhite,
@@ -414,7 +413,6 @@ class _QrCodePainter extends CustomPainter {
     drawFinder(14, 0);
     drawFinder(0, 14);
 
-    // Some simulated QR data module blocks for aesthetic parity
     const points = [
       [8, 2], [10, 2], [12, 2],
       [8, 4], [10, 4],

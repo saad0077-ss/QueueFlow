@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 import '../../../../core/widgets/app_snack_bar.dart';
 
@@ -16,23 +17,25 @@ class CreateAppointmentDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return AlertDialog(
-      backgroundColor: const Color(0xFF10192D),
+      backgroundColor: colors.surfaceElevated,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: const BorderSide(color: Color(0xFF1E293B)),
+        side: BorderSide(color: colors.border),
       ),
       title: Text(
         'Create Appointment',
         style: GoogleFonts.inter(
-          color: Colors.white,
+          color: colors.textPrimary,
           fontWeight: FontWeight.bold,
         ),
       ),
       content: Text(
         'Quickly schedule a new consultation or appointment for a patient.',
         style: GoogleFonts.inter(
-          color: const Color(0xFF94A3B8),
+          color: colors.textMuted,
           fontSize: 13,
         ),
       ),
@@ -41,12 +44,12 @@ class CreateAppointmentDialog extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
           child: Text(
             'Cancel',
-            style: GoogleFonts.inter(color: const Color(0xFF94A3B8)),
+            style: GoogleFonts.inter(color: colors.textMuted),
           ),
         ),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF2563EB),
+            backgroundColor: colors.primary,
             foregroundColor: Colors.white,
           ),
           onPressed: () {

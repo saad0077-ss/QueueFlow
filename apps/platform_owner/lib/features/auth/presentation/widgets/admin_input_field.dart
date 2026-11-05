@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class AdminInputField extends StatelessWidget {
   final String label;
@@ -31,7 +32,7 @@ class AdminInputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const greenColor = Color(0xFF10B981);
+    final colors = context.colors;
     final showValid = isValid && errorText == null;
 
     return Column(
@@ -43,7 +44,7 @@ class AdminInputField extends StatelessWidget {
           style: GoogleFonts.inter(
             fontSize: 13,
             fontWeight: FontWeight.w500,
-            color: const Color(0xFFE2E8F0),
+            color: colors.textPrimary,
           ),
         ),
         const SizedBox(height: 8),
@@ -52,65 +53,45 @@ class AdminInputField extends StatelessWidget {
           onFieldSubmitted: onFieldSubmitted,
           obscureText: obscureText,
           keyboardType: keyboardType,
-          style: GoogleFonts.inter(color: Colors.white, fontSize: 14),
+          style: GoogleFonts.inter(color: colors.textPrimary, fontSize: 14),
           decoration: InputDecoration(
             filled: true,
-            fillColor: const Color(0xFF0B132B).withValues(alpha: 0.6),
+            fillColor: colors.surfaceSecondary,
             hintText: hintText,
-            hintStyle: GoogleFonts.inter(
-              color: const Color(0xFF475569),
-              fontSize: 14,
-            ),
+            hintStyle: GoogleFonts.inter(color: colors.textMuted, fontSize: 14),
             errorText: errorText,
-            errorStyle: GoogleFonts.inter(
-              color: const Color(0xFFEF4444),
-              fontSize: 12,
-            ),
+            errorStyle: GoogleFonts.inter(color: colors.error, fontSize: 11.5),
             prefixIcon: Icon(
               prefixIcon,
-              color: showValid ? greenColor : const Color(0xFF64748B),
-              size: 19,
+              color: showValid ? colors.success : colors.textMuted,
+              size: 20,
             ),
             suffixIcon: suffixIcon ??
                 (showValid
-                    ? const Icon(
-                        Icons.check_circle_rounded,
-                        color: greenColor,
-                        size: 20,
-                      )
+                    ? Icon(Icons.check_circle_rounded, color: colors.success, size: 20)
                     : null),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 14,
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(
-                color: showValid ? greenColor : const Color(0xFF1E293B),
-                width: showValid ? 1.5 : 1.0,
-              ),
-            ),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide(
-                color: showValid ? greenColor : const Color(0xFF1E293B),
+                color: showValid ? colors.success : colors.border,
                 width: showValid ? 1.5 : 1.0,
               ),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide(
-                color: showValid ? greenColor : const Color(0xFF06B6D4),
+                color: showValid ? colors.success : colors.primary,
                 width: 1.5,
               ),
             ),
             errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFFEF4444)),
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: colors.error, width: 1.2),
             ),
             focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFFEF4444), width: 1.5),
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: colors.error, width: 1.4),
             ),
           ),
         ),
@@ -118,16 +99,12 @@ class AdminInputField extends StatelessWidget {
           const SizedBox(height: 6),
           Row(
             children: [
-              const Icon(
-                Icons.check_rounded,
-                color: greenColor,
-                size: 14,
-              ),
+              Icon(Icons.check_rounded, color: colors.success, size: 14),
               const SizedBox(width: 4),
               Text(
                 validText!,
                 style: GoogleFonts.inter(
-                  color: greenColor,
+                  color: colors.success,
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
                 ),

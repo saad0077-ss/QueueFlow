@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class ServiceSlotCard extends StatelessWidget {
   final VoidCallback onAdd;
@@ -8,9 +9,11 @@ class ServiceSlotCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return CustomPaint(
-      painter: const _DashedRRectPainter(
-        color: Color(0xFF334155),
+      painter: _DashedRRectPainter(
+        color: colors.border,
         strokeWidth: 1.5,
         radius: 14,
         dashLength: 7,
@@ -19,7 +22,7 @@ class ServiceSlotCard extends StatelessWidget {
       child: Container(
         constraints: const BoxConstraints(minHeight: 310),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.015),
+          color: colors.surfaceSecondary.withValues(alpha: 0.3),
           borderRadius: BorderRadius.circular(14),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 28),
@@ -31,14 +34,14 @@ class ServiceSlotCard extends StatelessWidget {
               width: 44,
               height: 44,
               alignment: Alignment.center,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Color(0xFF1E293B),
+                color: colors.surfaceSecondary,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.add,
                 size: 22,
-                color: Color(0xFF00B4D8),
+                color: colors.info,
               ),
             ),
             const SizedBox(height: 14),
@@ -48,7 +51,7 @@ class ServiceSlotCard extends StatelessWidget {
               style: GoogleFonts.inter(
                 fontSize: 15,
                 fontWeight: FontWeight.w800,
-                color: Colors.white,
+                color: colors.textPrimary,
               ),
             ),
             const SizedBox(height: 8),
@@ -59,7 +62,7 @@ class ServiceSlotCard extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: GoogleFonts.inter(
                   fontSize: 12,
-                  color: const Color(0xFF94A3B8),
+                  color: colors.textMuted,
                   height: 1.4,
                 ),
               ),
@@ -68,7 +71,7 @@ class ServiceSlotCard extends StatelessWidget {
             ElevatedButton(
               onPressed: onAdd,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF0284C7),
+                backgroundColor: colors.primary,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 11),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),

@@ -1,4 +1,4 @@
-import '../entities/clinic_staff_entity.dart';
+﻿import '../entities/clinic_staff_entity.dart';
 
 abstract class ClinicAuthRepository {
   Future<ClinicStaffEntity> signIn({

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class ConsoleSidebar extends StatelessWidget {
   final int activeIndex;
@@ -9,6 +10,8 @@ class ConsoleSidebar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     const items = [
       {'icon': Icons.grid_view_rounded, 'label': 'Clinics'},
       {'icon': Icons.layers_outlined, 'label': 'Departments'},
@@ -22,9 +25,9 @@ class ConsoleSidebar extends StatelessWidget {
 
     return Container(
       width: 230,
-      decoration: const BoxDecoration(
-        color: Color(0xFF070B14),
-        border: Border(right: BorderSide(color: Color(0xFF131D31), width: 1)),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        border: Border(right: BorderSide(color: colors.border, width: 1)),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 20),
       child: Column(
@@ -39,7 +42,7 @@ class ConsoleSidebar extends StatelessWidget {
                 child: Image.asset('assets/icons/app_icon_128.png', fit: BoxFit.contain),
               ),
               const SizedBox(width: 10),
-              Text('QueueFlow', style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+              Text('QueueFlow', style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.bold, color: colors.textPrimary)),
             ],
           ),
           const SizedBox(height: 28),
@@ -61,11 +64,11 @@ class ConsoleSidebar extends StatelessWidget {
                     ),
                     child: Row(
                       children: [
-                        Icon(it['icon'] as IconData, size: 18, color: sel ? Colors.white : const Color(0xFF94A3B8)),
+                        Icon(it['icon'] as IconData, size: 18, color: sel ? Colors.white : colors.textMuted),
                         const SizedBox(width: 10),
                         Text(
                           it['label'] as String,
-                          style: GoogleFonts.inter(fontSize: 13, fontWeight: sel ? FontWeight.w600 : FontWeight.w500, color: sel ? Colors.white : const Color(0xFF94A3B8)),
+                          style: GoogleFonts.inter(fontSize: 13, fontWeight: sel ? FontWeight.w600 : FontWeight.w500, color: sel ? Colors.white : colors.textMuted),
                         ),
                       ],
                     ),
@@ -76,15 +79,23 @@ class ConsoleSidebar extends StatelessWidget {
           ),
           Container(
             padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(color: const Color(0xFF0F172A), borderRadius: BorderRadius.circular(10), border: Border.all(color: const Color(0xFF1E293B))),
+            decoration: BoxDecoration(
+              color: colors.surfaceSecondary,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: colors.border),
+            ),
             child: Row(
               children: [
-                const CircleAvatar(radius: 14, backgroundColor: Color(0xFF0284C7), child: Text('MS', style: TextStyle(fontSize: 11, color: Colors.white, fontWeight: FontWeight.bold))),
+                CircleAvatar(
+                  radius: 14,
+                  backgroundColor: colors.primary,
+                  child: const Text('MS', style: TextStyle(fontSize: 11, color: Colors.white, fontWeight: FontWeight.bold)),
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Text('Muhammed Saad', style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.white), overflow: TextOverflow.ellipsis),
-                    Text('Platform Owner', style: GoogleFonts.inter(fontSize: 10, color: const Color(0xFF64748B))),
+                    Text('Muhammed Saad', style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: colors.textPrimary), overflow: TextOverflow.ellipsis),
+                    Text('Platform Owner', style: GoogleFonts.inter(fontSize: 10, color: colors.textMuted)),
                   ]),
                 ),
               ],

@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 import '../../domain/entities/clinic_doctor_profile_entity.dart';
 import '../bloc/clinic_doctors_bloc.dart';
@@ -16,7 +17,6 @@ import 'doctor_detail_notice_banner.dart';
 import 'doctor_detail_professional_card.dart';
 import 'doctor_detail_reviews_card.dart';
 import 'doctor_detail_stats_row.dart';
-import 'doctor_ui_kit.dart';
 import 'edit_doctor_profile_dialog.dart';
 import 'manage_doctor_schedule_dialog.dart';
 
@@ -33,6 +33,7 @@ class DoctorDetailView extends StatelessWidget {
   });
 
   void _showRemoveConfirmationDialog(BuildContext context) {
+    final colors = context.colors;
     showDialog<void>(
       context: context,
       barrierColor: Colors.black.withValues(alpha: 0.65),
@@ -44,9 +45,9 @@ class DoctorDetailView extends StatelessWidget {
           child: Container(
             constraints: const BoxConstraints(maxWidth: 420),
             decoration: BoxDecoration(
-              color: DoctorColors.surface,
+              color: colors.surfaceElevated,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: DoctorColors.border),
+              border: Border.all(color: colors.border),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.5),
@@ -64,15 +65,15 @@ class DoctorDetailView extends StatelessWidget {
                   width: 52,
                   height: 52,
                   decoration: BoxDecoration(
-                    color: DoctorColors.danger.withValues(alpha: 0.14),
+                    color: colors.error.withValues(alpha: 0.14),
                     shape: BoxShape.circle,
-                    border: Border.all(color: DoctorColors.danger.withValues(alpha: 0.3)),
+                    border: Border.all(color: colors.error.withValues(alpha: 0.3)),
                   ),
                   alignment: Alignment.center,
-                  child: const Icon(
+                  child: Icon(
                     Icons.delete_outline_rounded,
                     size: 26,
-                    color: DoctorColors.danger,
+                    color: colors.error,
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -82,7 +83,7 @@ class DoctorDetailView extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
-                    color: Colors.white,
+                    color: colors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -92,7 +93,7 @@ class DoctorDetailView extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 13,
                     height: 1.45,
-                    color: DoctorColors.muted,
+                    color: colors.textMuted,
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -103,8 +104,8 @@ class DoctorDetailView extends StatelessWidget {
                       child: OutlinedButton(
                         onPressed: () => Navigator.of(dialogCtx).pop(),
                         style: OutlinedButton.styleFrom(
-                          foregroundColor: DoctorColors.muted,
-                          side: const BorderSide(color: DoctorColors.border),
+                          foregroundColor: colors.textMuted,
+                          side: BorderSide(color: colors.border),
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                         ),
@@ -127,7 +128,7 @@ class DoctorDetailView extends StatelessWidget {
                               );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: DoctorColors.danger,
+                          backgroundColor: colors.error,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),

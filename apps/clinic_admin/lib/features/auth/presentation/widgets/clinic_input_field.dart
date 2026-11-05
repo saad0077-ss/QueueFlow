@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class ClinicInputField extends StatelessWidget {
   final String label;
@@ -33,7 +34,7 @@ class ClinicInputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const green = Color(0xFF10B981);
+    final colors = context.colors;
     final showValid = isValid && errorText == null;
 
     return Column(
@@ -45,7 +46,7 @@ class ClinicInputField extends StatelessWidget {
           style: GoogleFonts.inter(
             fontSize: 12.5,
             fontWeight: FontWeight.w600,
-            color: const Color(0xFFE2E8F0),
+            color: colors.textPrimary,
           ),
         ),
         const SizedBox(height: 8),
@@ -54,41 +55,51 @@ class ClinicInputField extends StatelessWidget {
           onFieldSubmitted: onFieldSubmitted,
           obscureText: obscureText,
           keyboardType: keyboardType,
-          style: GoogleFonts.inter(color: Colors.white, fontSize: 14),
+          style: GoogleFonts.inter(color: colors.textPrimary, fontSize: 14),
           decoration: InputDecoration(
             filled: true,
-            fillColor: const Color(0xFF0B132B).withValues(alpha: 0.7),
+            fillColor: colors.surfaceSecondary,
             hintText: hintText,
-            hintStyle: GoogleFonts.inter(color: const Color(0xFF64748B), fontSize: 13.5),
+            hintStyle: GoogleFonts.inter(color: colors.textMuted, fontSize: 13.5),
             errorText: errorText,
-            errorStyle: GoogleFonts.inter(color: const Color(0xFFEF4444), fontSize: 11.5),
-            prefixIcon: Icon(prefixIcon, color: showValid ? green : const Color(0xFF64748B), size: 18),
+            errorStyle: GoogleFonts.inter(color: colors.error, fontSize: 11.5),
+            prefixIcon: Icon(
+              prefixIcon,
+              color: showValid ? colors.success : colors.textMuted,
+              size: 18,
+            ),
             suffixIcon: onToggleObscure != null
                 ? IconButton(
                     icon: Icon(
                       obscureText ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-                      color: const Color(0xFF64748B),
+                      color: colors.textMuted,
                       size: 18,
                     ),
                     onPressed: onToggleObscure,
                   )
-                : (showValid ? const Icon(Icons.check_circle_rounded, color: green, size: 19) : null),
+                : (showValid ? Icon(Icons.check_circle_rounded, color: colors.success, size: 19) : null),
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: showValid ? green : const Color(0xFF1E293B), width: showValid ? 1.5 : 1.0),
+              borderSide: BorderSide(
+                color: showValid ? colors.success : colors.border,
+                width: showValid ? 1.5 : 1.0,
+              ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: showValid ? green : const Color(0xFF2563EB), width: 1.5),
+              borderSide: BorderSide(
+                color: showValid ? colors.success : colors.primary,
+                width: 1.5,
+              ),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: Color(0xFFEF4444), width: 1.2),
+              borderSide: BorderSide(color: colors.error, width: 1.2),
             ),
             focusedErrorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: Color(0xFFEF4444), width: 1.3),
+              borderSide: BorderSide(color: colors.error, width: 1.3),
             ),
           ),
         ),
@@ -96,14 +107,24 @@ class ClinicInputField extends StatelessWidget {
           const SizedBox(height: 6),
           Row(
             children: [
-              const Icon(Icons.check_rounded, color: green, size: 13),
+              Icon(Icons.check_rounded, color: colors.success, size: 13),
               const SizedBox(width: 4),
-              Text(validText!, style: GoogleFonts.inter(color: green, fontSize: 11.5, fontWeight: FontWeight.w500)),
+              Text(
+                validText!,
+                style: GoogleFonts.inter(
+                  color: colors.success,
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ],
           ),
         ] else if (errorText == null && helperText != null) ...[
           const SizedBox(height: 6),
-          Text(helperText!, style: GoogleFonts.inter(color: const Color(0xFF94A3B8), fontSize: 11.5)),
+          Text(
+            helperText!,
+            style: GoogleFonts.inter(color: colors.textSubtle, fontSize: 11.5),
+          ),
         ],
       ],
     );

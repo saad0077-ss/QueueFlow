@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../domain/entities/clinic_doctor_profile_entity.dart';
-import 'doctor_ui_kit.dart';
 
 class DoctorDetailDangerCard extends StatelessWidget {
   final ClinicDoctorProfileEntity doctor;
@@ -15,11 +15,13 @@ class DoctorDetailDangerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Container(
       decoration: BoxDecoration(
-        color: DoctorColors.surface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: DoctorColors.red.withValues(alpha: 0.35)),
+        border: Border.all(color: colors.error.withValues(alpha: 0.35)),
       ),
       padding: const EdgeInsets.all(22),
       child: Column(
@@ -27,7 +29,7 @@ class DoctorDetailDangerCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.warning_amber_rounded, size: 16, color: DoctorColors.red),
+              Icon(Icons.warning_amber_rounded, size: 16, color: colors.error),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -35,20 +37,20 @@ class DoctorDetailDangerCard extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 15,
                     fontWeight: FontWeight.w800,
-                    color: DoctorColors.red,
+                    color: colors.error,
                   ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 14),
-          const Divider(color: DoctorColors.border, height: 1),
+          Divider(color: colors.border, height: 1),
           const SizedBox(height: 12),
           Text(
             'Removing a doctor deletes them from the clinic roster, booking and live queue. This cannot be undone.',
             style: GoogleFonts.inter(
               fontSize: 12.5,
-              color: DoctorColors.muted,
+              color: colors.textMuted,
               height: 1.45,
             ),
           ),
@@ -58,23 +60,22 @@ class DoctorDetailDangerCard extends StatelessWidget {
             child: OutlinedButton(
               onPressed: onRemoveDoctor,
               style: OutlinedButton.styleFrom(
-                foregroundColor: const Color(0xFFEF4444),
-                side: BorderSide(color: const Color(0xFFEF4444).withValues(alpha: 0.45)),
-                backgroundColor: const Color(0xFFEF4444).withValues(alpha: 0.06),
+                foregroundColor: colors.error,
+                side: BorderSide(color: colors.error.withValues(alpha: 0.45)),
+                backgroundColor: colors.errorTint,
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.delete_outline_rounded, size: 14, color: Color(0xFFEF4444)),
+                  Icon(Icons.delete_outline_rounded, size: 14, color: colors.error),
                   const SizedBox(width: 6),
                   Text(
                     'Remove Doctor',
                     style: GoogleFonts.inter(
                       fontSize: 12.5,
                       fontWeight: FontWeight.w700,
-                      color: const Color(0xFFEF4444),
                     ),
                   ),
                 ],

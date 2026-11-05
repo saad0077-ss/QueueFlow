@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class OnboardingSlide extends StatelessWidget {
   final Widget card;
@@ -16,6 +17,8 @@ class OnboardingSlide extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 26),
       child: Center(
@@ -33,8 +36,8 @@ class OnboardingSlide extends StatelessWidget {
                 Text(
                   title!,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: colors.textPrimary,
                     fontSize: 34,
                     fontWeight: FontWeight.w800,
                     height: 1.2,
@@ -47,8 +50,8 @@ class OnboardingSlide extends StatelessWidget {
                 child: Text(
                   subtitle,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Color(0xFF94A3B8),
+                  style: TextStyle(
+                    color: colors.textMuted,
                     fontSize: 14,
                     height: 1.45,
                     fontWeight: FontWeight.w400,

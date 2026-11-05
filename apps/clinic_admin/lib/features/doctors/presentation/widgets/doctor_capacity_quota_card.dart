@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../domain/entities/doctor_plan_entity.dart';
-import 'doctor_ui_kit.dart';
 
 class DoctorCapacityQuotaCard extends StatelessWidget {
   final int currentCount;
@@ -17,6 +17,7 @@ class DoctorCapacityQuotaCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final isUnlimited = plan.isUnlimited;
     final docLimit = plan.doctorsLimit;
     final isAtLimit = !isUnlimited && currentCount >= docLimit;
@@ -38,7 +39,7 @@ class DoctorCapacityQuotaCard extends StatelessWidget {
         ? '$currentCount / ∞ ACTIVE'
         : '$currentCount / $docLimit ACTIVE';
 
-    final pillColor = isAtLimit ? DoctorColors.amber : DoctorColors.green;
+    final pillColor = isAtLimit ? colors.warning : colors.success;
 
     final infoWidget = Row(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -48,14 +49,14 @@ class DoctorCapacityQuotaCard extends StatelessWidget {
           height: 44,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: const Color(0xFF1E293B),
+            color: colors.surfaceSecondary,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: const Color(0xFF334155)),
+            border: Border.all(color: colors.border),
           ),
-          child: const Icon(
+          child: Icon(
             Icons.medical_services_outlined,
             size: 20,
-            color: Color(0xFF38BDF8),
+            color: colors.primaryLight,
           ),
         ),
         const SizedBox(width: 14),
@@ -68,7 +69,7 @@ class DoctorCapacityQuotaCard extends StatelessWidget {
                 style: GoogleFonts.inter(
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
-                  color: DoctorColors.muted,
+                  color: colors.textMuted,
                   letterSpacing: 0.5,
                 ),
               ),
@@ -78,7 +79,7 @@ class DoctorCapacityQuotaCard extends StatelessWidget {
                 style: GoogleFonts.inter(
                   fontSize: 15,
                   fontWeight: FontWeight.w800,
-                  color: Colors.white,
+                  color: colors.textPrimary,
                 ),
               ),
               const SizedBox(height: 2),
@@ -86,7 +87,7 @@ class DoctorCapacityQuotaCard extends StatelessWidget {
                 subText,
                 style: GoogleFonts.inter(
                   fontSize: 12,
-                  color: const Color(0xFFCBD5E1),
+                  color: colors.textMuted,
                 ),
               ),
             ],
@@ -119,9 +120,9 @@ class DoctorCapacityQuotaCard extends StatelessWidget {
         OutlinedButton(
           onPressed: onUpgrade,
           style: OutlinedButton.styleFrom(
-            foregroundColor: Colors.white,
-            side: const BorderSide(color: Color(0xFF334155)),
-            backgroundColor: const Color(0xFF1E293B).withValues(alpha: 0.6),
+            foregroundColor: colors.textPrimary,
+            side: BorderSide(color: colors.border),
+            backgroundColor: colors.surfaceSecondary,
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
@@ -144,16 +145,16 @@ class DoctorCapacityQuotaCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: DoctorColors.surface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: DoctorColors.border),
+        border: Border.all(color: colors.border),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(14),
         child: Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             border: Border(
-              left: BorderSide(color: Color(0xFF2563EB), width: 4),
+              left: BorderSide(color: colors.primary, width: 4),
             ),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),

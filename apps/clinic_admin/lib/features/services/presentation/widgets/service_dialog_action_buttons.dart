@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import 'service_ui_kit.dart';
 
 class ServiceDialogActionButtons extends StatelessWidget {
@@ -13,13 +14,15 @@ class ServiceDialogActionButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Row(
       children: [
         Expanded(
           child: ServiceOutlinedPill(
             label: 'Cancel',
             onPressed: onCancel,
-            fill: const Color(0xFF1E293B),
+            fill: colors.surfaceSecondary,
             height: 46,
             fontSize: 14,
           ),

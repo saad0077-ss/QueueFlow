@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
 
 /// Helper box shown when an email is already registered during account activation.
@@ -14,13 +15,15 @@ class ExistingAccountNotice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E293B),
+        color: colors.infoTint,
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
-          color: const Color(0xFF38BDF8).withValues(alpha: 0.3),
+          color: colors.info.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -28,10 +31,10 @@ class ExistingAccountNotice extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.info_outline_rounded,
                 size: 16,
-                color: Color(0xFF38BDF8),
+                color: colors.info,
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -40,7 +43,7 @@ class ExistingAccountNotice extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: colors.textPrimary,
                   ),
                 ),
               ),
@@ -51,7 +54,7 @@ class ExistingAccountNotice extends StatelessWidget {
             'This email already has a password. Enter your existing password above, or click below to receive a password reset link.',
             style: GoogleFonts.inter(
               fontSize: 11,
-              color: const Color(0xFF94A3B8),
+              color: colors.textMuted,
               height: 1.35,
             ),
           ),
@@ -62,16 +65,16 @@ class ExistingAccountNotice extends StatelessWidget {
               minimumSize: const Size(50, 30),
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
-            icon: const Icon(
+            icon: Icon(
               Icons.mail_lock_rounded,
               size: 15,
-              color: Color(0xFF38BDF8),
+              color: colors.info,
             ),
             label: Text(
               'Send Password Reset Email',
               style: GoogleFonts.inter(
                 fontSize: 11.5,
-                color: const Color(0xFF38BDF8),
+                color: colors.info,
                 fontWeight: FontWeight.w600,
               ),
             ),

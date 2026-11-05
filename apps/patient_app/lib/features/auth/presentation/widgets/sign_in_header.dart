@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class SignInHeader extends StatelessWidget {
   final double titleSize;
@@ -13,13 +13,15 @@ class SignInHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Welcome back',
           style: TextStyle(
-            color: AppColors.textWhite,
+            color: colors.textPrimary,
             fontSize: titleSize,
             fontWeight: FontWeight.bold,
             letterSpacing: -0.5,
@@ -29,7 +31,7 @@ class SignInHeader extends StatelessWidget {
         Text(
           'Sign in to manage your bookings and\nkeep an eye on live queue status.',
           style: TextStyle(
-            color: AppColors.textMuted,
+            color: colors.textMuted,
             fontSize: subtitleSize,
             height: 1.45,
           ),

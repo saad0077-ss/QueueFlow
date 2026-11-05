@@ -1,4 +1,4 @@
-const sampleExpansionRequestsSeed = [
+﻿const sampleExpansionRequestsSeed = [
   {
     'clinicId': 'sunrise-health',
     'clinicName': 'Sunrise Health Clinic',

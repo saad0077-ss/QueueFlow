@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'service_ui_kit.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class ServiceDoctorAssignmentBox extends StatelessWidget {
   final List<String> assignedStaff;
@@ -9,13 +9,15 @@ class ServiceDoctorAssignmentBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: ServiceColors.field,
+        color: colors.surfaceSecondary,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: ServiceColors.border),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -25,7 +27,7 @@ class ServiceDoctorAssignmentBox extends StatelessWidget {
             style: GoogleFonts.inter(
               fontSize: 10.5,
               fontWeight: FontWeight.w800,
-              color: ServiceColors.muted,
+              color: colors.textMuted,
               letterSpacing: 0.4,
             ),
           ),
@@ -36,7 +38,7 @@ class ServiceDoctorAssignmentBox extends StatelessWidget {
               style: GoogleFonts.inter(
                 fontSize: 11.5,
                 fontWeight: FontWeight.w500,
-                color: ServiceColors.subtle,
+                color: colors.textSubtle,
               ),
             )
           else
@@ -47,10 +49,10 @@ class ServiceDoctorAssignmentBox extends StatelessWidget {
                 return Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: ServiceColors.blue.withValues(alpha: 0.12),
+                    color: colors.primaryTint,
                     borderRadius: BorderRadius.circular(6),
                     border: Border.all(
-                      color: ServiceColors.blue.withValues(alpha: 0.35),
+                      color: colors.primary.withValues(alpha: 0.35),
                     ),
                   ),
                   child: Text(
@@ -58,7 +60,7 @@ class ServiceDoctorAssignmentBox extends StatelessWidget {
                     style: GoogleFonts.inter(
                       fontSize: 11.5,
                       fontWeight: FontWeight.w700,
-                      color: ServiceColors.blue,
+                      color: colors.primary,
                     ),
                   ),
                 );

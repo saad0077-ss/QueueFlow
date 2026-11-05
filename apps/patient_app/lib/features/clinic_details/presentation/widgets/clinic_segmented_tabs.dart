@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class ClinicSegmentedTabs extends StatelessWidget {
   final int selectedIndex;
@@ -16,13 +16,15 @@ class ClinicSegmentedTabs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 16),
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: AppColors.darkSurface,
+        color: colors.surfaceSecondary,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.darkBorder, width: 1.5),
+        border: Border.all(color: colors.border, width: 1.5),
       ),
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -61,7 +63,7 @@ class ClinicSegmentedTabs extends StatelessWidget {
                             fontWeight: FontWeight.w700,
                             color: isActive
                                 ? Colors.white
-                                : AppColors.darkInkMuted,
+                                : colors.textMuted,
                           ),
                         ),
                       ),

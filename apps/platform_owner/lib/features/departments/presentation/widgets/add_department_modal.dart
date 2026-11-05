@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 import '../../domain/entities/department_entity.dart';
 import '../../domain/entities/standard_service_entity.dart';
@@ -58,6 +59,8 @@ class _AddDepartmentModalState extends State<AddDepartmentModal> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return BackdropFilter(
       filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
       child: Dialog(
@@ -66,17 +69,17 @@ class _AddDepartmentModalState extends State<AddDepartmentModal> {
           width: 560,
           padding: const EdgeInsets.fromLTRB(26, 24, 26, 28),
           decoration: BoxDecoration(
-            color: const Color(0xFF111A2E),
+            color: colors.surfaceElevated,
             borderRadius: BorderRadius.circular(22),
-            border: Border.all(color: const Color(0xFF334155)),
-            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.5), blurRadius: 40, offset: const Offset(0, 16))],
+            border: Border.all(color: colors.border),
+            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.35), blurRadius: 40, offset: const Offset(0, 16))],
           ),
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildHeader(),
+                _buildHeader(colors),
                 const SizedBox(height: 16),
                 AddDepartmentFormFields(
                   nameController: _nameCtrl,
@@ -101,20 +104,20 @@ class _AddDepartmentModalState extends State<AddDepartmentModal> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(AppColorsExtension colors) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
           _isEdit ? 'Edit Medical Department' : 'Add Medical Department',
-          style: GoogleFonts.inter(fontSize: 17.5, fontWeight: FontWeight.w800, color: Colors.white),
+          style: GoogleFonts.inter(fontSize: 17.5, fontWeight: FontWeight.w800, color: colors.textPrimary),
         ),
         InkWell(
           onTap: () => Navigator.pop(context),
           borderRadius: BorderRadius.circular(6),
-          child: const Padding(
-            padding: EdgeInsets.all(4),
-            child: Icon(Icons.close_rounded, size: 16, color: Colors.white),
+          child: Padding(
+            padding: const EdgeInsets.all(4),
+            child: Icon(Icons.close_rounded, size: 16, color: colors.textMuted),
           ),
         ),
       ],

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:patient_app/core/theme/app_colors.dart';
 import 'package:patient_app/core/utils/booking_date_formatter.dart';
 import 'package:patient_app/core/widgets/gradient_button.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class BookingStep3Schedule extends StatefulWidget {
   final DateTime selectedDate;
@@ -55,6 +55,8 @@ class _BookingStep3ScheduleState extends State<BookingStep3Schedule> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -63,7 +65,7 @@ class _BookingStep3ScheduleState extends State<BookingStep3Schedule> {
           style: GoogleFonts.inter(
             fontSize: 18,
             fontWeight: FontWeight.w800,
-            color: AppColors.darkInk,
+            color: colors.textPrimary,
           ),
         ),
         const SizedBox(height: 4),
@@ -71,7 +73,7 @@ class _BookingStep3ScheduleState extends State<BookingStep3Schedule> {
           'Choose your preferred consultation day and appointment slot.',
           style: GoogleFonts.inter(
             fontSize: 12.5,
-            color: AppColors.darkInkMuted,
+            color: colors.textMuted,
           ),
         ),
         const SizedBox(height: 16),
@@ -82,7 +84,7 @@ class _BookingStep3ScheduleState extends State<BookingStep3Schedule> {
           style: GoogleFonts.inter(
             fontSize: 13,
             fontWeight: FontWeight.w700,
-            color: AppColors.darkInk,
+            color: colors.textPrimary,
           ),
         ),
         const SizedBox(height: 10),
@@ -97,18 +99,18 @@ class _BookingStep3ScheduleState extends State<BookingStep3Schedule> {
               height: 52,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppColors.darkSurface,
-                border: Border.all(color: AppColors.darkBorder, width: 1.5),
+                color: colors.surface,
+                border: Border.all(color: colors.border, width: 1.5),
               ),
               child: Material(
                 color: Colors.transparent,
                 child: InkWell(
                   customBorder: const CircleBorder(),
                   onTap: widget.onBack,
-                  child: const Center(
+                  child: Center(
                     child: Icon(
                       Icons.chevron_left_rounded,
-                      color: AppColors.darkInk,
+                      color: colors.textPrimary,
                       size: 26,
                     ),
                   ),
@@ -130,6 +132,7 @@ class _BookingStep3ScheduleState extends State<BookingStep3Schedule> {
   }
 
   Widget _buildCalendarCard() {
+    final colors = context.colors;
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final daysInMonth = DateUtils.getDaysInMonth(_displayedMonth.year, _displayedMonth.month);
@@ -137,9 +140,9 @@ class _BookingStep3ScheduleState extends State<BookingStep3Schedule> {
 
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.darkSurface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.darkBorder, width: 1.2),
+        border: Border.all(color: colors.border, width: 1.2),
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -209,7 +212,7 @@ class _BookingStep3ScheduleState extends State<BookingStep3Schedule> {
             padding: const EdgeInsets.only(top: 12, left: 10, right: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: const ['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day) {
+              children: ['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day) {
                 return SizedBox(
                   width: 36,
                   child: Center(
@@ -218,7 +221,7 @@ class _BookingStep3ScheduleState extends State<BookingStep3Schedule> {
                       style: GoogleFonts.inter(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
-                        color: AppColors.darkInkFaint,
+                        color: colors.textSubtle,
                       ),
                     ),
                   ),
@@ -258,14 +261,14 @@ class _BookingStep3ScheduleState extends State<BookingStep3Schedule> {
                       gradient: isSelected ? AppColors.primaryGradient : null,
                       color: isSelected
                           ? null
-                          : (isToday ? AppColors.primary.withValues(alpha: 0.12) : Colors.transparent),
+                          : (isToday ? colors.primaryTint : Colors.transparent),
                       border: isToday && !isSelected
-                          ? Border.all(color: AppColors.primary.withValues(alpha: 0.5))
+                          ? Border.all(color: colors.primary.withValues(alpha: 0.5))
                           : null,
                       boxShadow: isSelected
                           ? [
                               BoxShadow(
-                                color: AppColors.primary.withValues(alpha: 0.4),
+                                color: colors.primary.withValues(alpha: 0.4),
                                 blurRadius: 8,
                                 offset: const Offset(0, 2),
                               ),
@@ -281,8 +284,8 @@ class _BookingStep3ScheduleState extends State<BookingStep3Schedule> {
                         color: isSelected
                             ? Colors.white
                             : (isPast
-                                ? AppColors.darkInkFaint.withValues(alpha: 0.4)
-                                : AppColors.darkInk),
+                                ? colors.textSubtle.withValues(alpha: 0.4)
+                                : colors.textPrimary),
                       ),
                     ),
                   ),
@@ -296,6 +299,8 @@ class _BookingStep3ScheduleState extends State<BookingStep3Schedule> {
   }
 
   Widget _buildTimeSlotsWrap() {
+    final colors = context.colors;
+
     return Wrap(
       spacing: 8,
       runSpacing: 8,
@@ -309,16 +314,16 @@ class _BookingStep3ScheduleState extends State<BookingStep3Schedule> {
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
             decoration: BoxDecoration(
               gradient: isSelected ? AppColors.primaryGradient : null,
-              color: isSelected ? null : AppColors.darkSurface,
+              color: isSelected ? null : colors.surface,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: isSelected ? Colors.transparent : AppColors.darkBorder,
+                color: isSelected ? Colors.transparent : colors.border,
                 width: 1.2,
               ),
               boxShadow: isSelected
                   ? [
                       BoxShadow(
-                        color: AppColors.primary.withValues(alpha: 0.3),
+                        color: colors.primary.withValues(alpha: 0.3),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
@@ -330,7 +335,7 @@ class _BookingStep3ScheduleState extends State<BookingStep3Schedule> {
               style: GoogleFonts.inter(
                 fontSize: 12,
                 fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-                color: isSelected ? Colors.white : AppColors.darkInk,
+                color: isSelected ? Colors.white : colors.textPrimary,
               ),
             ),
           ),
@@ -340,12 +345,14 @@ class _BookingStep3ScheduleState extends State<BookingStep3Schedule> {
   }
 
   Widget _buildFeePreviewCard() {
+    final colors = context.colors;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: AppColors.darkSurface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.darkBorder, width: 1.2),
+        border: Border.all(color: colors.border, width: 1.2),
       ),
       child: Column(
         children: [
@@ -356,7 +363,7 @@ class _BookingStep3ScheduleState extends State<BookingStep3Schedule> {
                 'Consultation Service Fee',
                 style: GoogleFonts.inter(
                   fontSize: 12.5,
-                  color: AppColors.darkInkMuted,
+                  color: colors.textMuted,
                 ),
               ),
               Text(
@@ -364,7 +371,7 @@ class _BookingStep3ScheduleState extends State<BookingStep3Schedule> {
                 style: GoogleFonts.robotoMono(
                   fontSize: 13.5,
                   fontWeight: FontWeight.w700,
-                  color: AppColors.darkInk,
+                  color: colors.textPrimary,
                 ),
               ),
             ],
@@ -377,15 +384,15 @@ class _BookingStep3ScheduleState extends State<BookingStep3Schedule> {
                 'Payment Gateway',
                 style: GoogleFonts.inter(
                   fontSize: 12,
-                  color: AppColors.darkInkMuted,
+                  color: colors.textMuted,
                 ),
               ),
               Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.bolt_rounded,
                     size: 15,
-                    color: Color(0xFF38BDF8),
+                    color: colors.accent,
                   ),
                   const SizedBox(width: 4),
                   Text(
@@ -393,7 +400,7 @@ class _BookingStep3ScheduleState extends State<BookingStep3Schedule> {
                     style: GoogleFonts.inter(
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
-                      color: const Color(0xFF38BDF8),
+                      color: colors.accent,
                     ),
                   ),
                 ],
@@ -401,7 +408,7 @@ class _BookingStep3ScheduleState extends State<BookingStep3Schedule> {
             ],
           ),
           const SizedBox(height: 8),
-          const Divider(color: AppColors.darkBorder, height: 1),
+          Divider(color: colors.border, height: 1),
           const SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -411,7 +418,7 @@ class _BookingStep3ScheduleState extends State<BookingStep3Schedule> {
                 style: GoogleFonts.inter(
                   fontSize: 13,
                   fontWeight: FontWeight.w800,
-                  color: AppColors.darkInk,
+                  color: colors.textPrimary,
                 ),
               ),
               Text(
@@ -419,7 +426,7 @@ class _BookingStep3ScheduleState extends State<BookingStep3Schedule> {
                 style: GoogleFonts.robotoMono(
                   fontSize: 15,
                   fontWeight: FontWeight.w800,
-                  color: AppColors.primaryLight,
+                  color: colors.primary,
                 ),
               ),
             ],

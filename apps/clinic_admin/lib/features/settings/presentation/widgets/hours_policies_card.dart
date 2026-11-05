@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import 'hours_policy_dropdown.dart';
 
 class HoursPoliciesCard extends StatelessWidget {
@@ -26,17 +27,19 @@ class HoursPoliciesCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: const Color(0xFF090E1A),
+        color: colors.surfaceSecondary,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFF1E293B)),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Queue & Slot Policies', style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white)),
+          Text('Queue & Slot Policies', style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.bold, color: colors.textPrimary)),
           const SizedBox(height: 16),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,17 +87,18 @@ class HoursPoliciesCard extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('24/7 Emergency On-Call Duty', style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.white)),
+                  Text('24/7 Emergency On-Call Duty', style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.bold, color: colors.textPrimary)),
                   const SizedBox(height: 2),
-                  Text('Mark clinic as available for urgent triage during off-hours', style: GoogleFonts.inter(fontSize: 11, color: const Color(0xFF64748B))),
+                  Text('Mark clinic as available for urgent triage during off-hours', style: GoogleFonts.inter(fontSize: 11, color: colors.textMuted)),
                 ],
               ),
-              Switch(value: emergencyOnCall, activeTrackColor: const Color(0xFF10B981), onChanged: onEmergencyToggled),
+              Switch(value: emergencyOnCall, activeTrackColor: colors.success, onChanged: onEmergencyToggled),
             ],
           ),
           if (emergencyOnCall) ...[
             const SizedBox(height: 12),
             _inputField(
+              context: context,
               title: 'Emergency Hotline Number (Displayed to patients when clinic is closed)',
               controller: emergencyPhoneCtrl,
               icon: Icons.phone_in_talk_rounded,
@@ -102,6 +106,7 @@ class HoursPoliciesCard extends StatelessWidget {
           ],
           const SizedBox(height: 16),
           _inputField(
+            context: context,
             title: 'Holiday / Special Notice for Patients (Optional banner)',
             subtitle: 'Visible at the top of the clinic profile in the Patient Mobile App',
             controller: holidayNoticeCtrl,
@@ -112,27 +117,37 @@ class HoursPoliciesCard extends StatelessWidget {
     );
   }
 
-  Widget _inputField({required String title, String? subtitle, required TextEditingController controller, IconData? icon, int maxLines = 1}) {
+  Widget _inputField({
+    required BuildContext context,
+    required String title,
+    String? subtitle,
+    required TextEditingController controller,
+    IconData? icon,
+    int maxLines = 1,
+  }) {
+    final colors = context.colors;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: const Color(0xFF94A3B8))),
+        Text(title, style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: colors.textMuted)),
         if (subtitle != null) ...[
           const SizedBox(height: 2),
-          Text(subtitle, style: GoogleFonts.inter(fontSize: 10.5, color: const Color(0xFF64748B))),
+          Text(subtitle, style: GoogleFonts.inter(fontSize: 10.5, color: colors.textSubtle)),
         ],
         const SizedBox(height: 6),
         TextField(
           controller: controller,
           maxLines: maxLines,
-          style: GoogleFonts.inter(fontSize: 13, color: Colors.white),
+          style: GoogleFonts.inter(fontSize: 13, color: colors.textPrimary),
           decoration: InputDecoration(
             filled: true,
-            fillColor: const Color(0xFF162238),
-            prefixIcon: icon != null ? Icon(icon, size: 16, color: const Color(0xFF38BDF8)) : null,
+            fillColor: colors.surface,
+            prefixIcon: icon != null ? Icon(icon, size: 16, color: colors.info) : null,
             contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Color(0xFF1E293B))),
-            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Color(0xFF1E293B))),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: colors.border)),
+            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: colors.border)),
+            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: colors.primary)),
           ),
         ),
       ],

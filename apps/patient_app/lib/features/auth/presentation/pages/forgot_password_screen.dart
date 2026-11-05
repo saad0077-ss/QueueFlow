@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/repositories/auth_repository.dart';
@@ -91,8 +91,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: colors.background,
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
@@ -108,21 +110,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     child: _isEmailSent
                         ? ForgotPasswordSuccessView(
                             sentEmail: _sentEmail,
+                            scale: scale,
                             resendCooldown: _resendCooldown,
-                            isLoading: _isLoading,
-                            onResend: () => _resendCooldown == 0 && !_isLoading ? _handleSendResetLink() : null,
-                            onUseDifferentEmail: () => setState(() => _isEmailSent = false),
+                            onResend: _handleSendResetLink,
                           )
                         : ForgotPasswordFormView(
-                            titleSize: (28.0 * scale).clamp(23.0, 32.0),
-                            subtitleSize: (14.0 * scale).clamp(12.5, 16.0),
-                            emailController: _emailController,
-                            emailError: _emailError,
+                            controller: _emailController,
+                            errorText: _emailError,
                             isLoading: _isLoading,
-                            onSendResetLink: _handleSendResetLink,
-                            onEmailChanged: (val) {
-                              if (_emailError != null) setState(() => _emailError = null);
-                            },
+                            scale: scale,
+                            onSubmit: _handleSendResetLink,
                           ),
                   ),
                 ),

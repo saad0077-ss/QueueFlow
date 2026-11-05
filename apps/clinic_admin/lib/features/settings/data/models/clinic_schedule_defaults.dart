@@ -1,4 +1,4 @@
-import '../../domain/entities/operating_hours_day_entity.dart';
+﻿import '../../domain/entities/operating_hours_day_entity.dart';
 
 /// Default weekly hours for clinics that have not saved a schedule, plus the
 /// one-click schedule presets.

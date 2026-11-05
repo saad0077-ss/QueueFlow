@@ -1,4 +1,4 @@
-import 'package:equatable/equatable.dart';
+﻿import 'package:equatable/equatable.dart';
 
 class ClinicQueueRulesEntity extends Equatable {
   final int maxQueueCapacity;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import 'appointment_item_model.dart';
 import 'appointment_status_pill.dart';
 
@@ -14,6 +15,8 @@ class AppointmentTableRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12),
       child: Row(
@@ -25,7 +28,7 @@ class AppointmentTableRow extends StatelessWidget {
               appointment.time,
               style: GoogleFonts.inter(
                 fontSize: 12,
-                color: const Color(0xFF94A3B8),
+                color: colors.textMuted,
               ),
             ),
           ),
@@ -37,7 +40,7 @@ class AppointmentTableRow extends StatelessWidget {
               style: GoogleFonts.inter(
                 fontSize: 12.5,
                 fontWeight: FontWeight.w500,
-                color: Colors.white,
+                color: colors.textPrimary,
               ),
             ),
           ),
@@ -48,7 +51,7 @@ class AppointmentTableRow extends StatelessWidget {
               appointment.service,
               style: GoogleFonts.inter(
                 fontSize: 12,
-                color: const Color(0xFF94A3B8),
+                color: colors.textMuted,
               ),
             ),
           ),
@@ -59,7 +62,7 @@ class AppointmentTableRow extends StatelessWidget {
               appointment.doctor,
               style: GoogleFonts.inter(
                 fontSize: 12,
-                color: const Color(0xFF94A3B8),
+                color: colors.textMuted,
               ),
             ),
           ),

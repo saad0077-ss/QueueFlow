@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/repositories/clinic_doctors_repository.dart';
 import '../../domain/usecases/call_next_patient_usecase.dart';

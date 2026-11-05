@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../dashboard/presentation/pages/platform_clinics_page.dart';
 import '../../../dashboard/presentation/widgets/console_sidebar.dart';
@@ -63,8 +64,10 @@ class _PlatformBillingViewState extends State<_PlatformBillingView> {
       builder: (context, state) {
         final bloc = context.read<PlatformBillingBloc>();
 
+        final colors = context.colors;
+
         return Scaffold(
-          backgroundColor: const Color(0xFF070B14),
+          backgroundColor: colors.background,
           drawer: isDesktop ? null : Drawer(child: ConsoleSidebar(activeIndex: 4, onIndexChanged: _onSidebarNav)),
           body: Row(
             children: [

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../../core/widgets/gradient_button.dart';
 
 class ForgotPasswordSuccessView extends StatelessWidget {
@@ -7,19 +7,23 @@ class ForgotPasswordSuccessView extends StatelessWidget {
   final int resendCooldown;
   final bool isLoading;
   final VoidCallback onResend;
-  final VoidCallback onUseDifferentEmail;
+  final VoidCallback? onUseDifferentEmail;
+  final double scale;
 
   const ForgotPasswordSuccessView({
     super.key,
     required this.sentEmail,
     required this.resendCooldown,
-    required this.isLoading,
+    this.isLoading = false,
     required this.onResend,
-    required this.onUseDifferentEmail,
+    this.onUseDifferentEmail,
+    this.scale = 1.0,
   });
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -30,36 +34,36 @@ class ForgotPasswordSuccessView extends StatelessWidget {
           width: 90,
           height: 90,
           decoration: BoxDecoration(
-            color: const Color(0xFF1E293B),
+            color: colors.primaryTint,
             shape: BoxShape.circle,
             border: Border.all(
-              color: const Color(0xFF334155),
+              color: colors.border,
               width: 2,
             ),
             boxShadow: [
               BoxShadow(
-                color: AppColors.primary.withValues(alpha: 0.25),
+                color: colors.primary.withValues(alpha: 0.25),
                 blurRadius: 24,
                 offset: const Offset(0, 8),
               ),
             ],
           ),
-          child: const Center(
+          child: Center(
             child: Icon(
               Icons.mark_email_read_rounded,
               size: 46,
-              color: AppColors.primaryLight,
+              color: colors.primary,
             ),
           ),
         ),
         const SizedBox(height: 28),
 
         // Title
-        const Text(
+        Text(
           'Password reset link sent',
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: Colors.white,
+            color: colors.textPrimary,
             fontSize: 25,
             fontWeight: FontWeight.w800,
             letterSpacing: -0.5,
@@ -72,7 +76,7 @@ class ForgotPasswordSuccessView extends StatelessWidget {
           'We have sent a password reset link to:',
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.7),
+            color: colors.textMuted,
             fontSize: 14.5,
           ),
         ),
@@ -82,14 +86,14 @@ class ForgotPasswordSuccessView extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
           decoration: BoxDecoration(
-            color: const Color(0xFF1E293B),
+            color: colors.surfaceSecondary,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: const Color(0xFF334155)),
+            border: Border.all(color: colors.border),
           ),
           child: Text(
             sentEmail,
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: colors.textPrimary,
               fontSize: 15,
               fontWeight: FontWeight.w600,
             ),
@@ -97,11 +101,11 @@ class ForgotPasswordSuccessView extends StatelessWidget {
         ),
         const SizedBox(height: 18),
 
-        const Text(
+        Text(
           'Please open your email client and follow the instructions to set up a new password.',
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: Color(0xFF94A3B8),
+            color: colors.textSubtle,
             fontSize: 13.5,
             height: 1.45,
           ),
@@ -119,20 +123,20 @@ class ForgotPasswordSuccessView extends StatelessWidget {
         TextButton.icon(
           onPressed: (resendCooldown > 0 || isLoading) ? null : onResend,
           icon: isLoading
-              ? const SizedBox(
+              ? SizedBox(
                   width: 14,
                   height: 14,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: AppColors.primaryLight,
+                    color: colors.primary,
                   ),
                 )
               : Icon(
                   Icons.refresh_rounded,
                   size: 18,
                   color: resendCooldown > 0
-                      ? const Color(0xFF64748B)
-                      : AppColors.primaryLight,
+                      ? colors.textSubtle
+                      : colors.primary,
                 ),
           label: Text(
             resendCooldown > 0
@@ -140,27 +144,27 @@ class ForgotPasswordSuccessView extends StatelessWidget {
                 : 'Resend reset email',
             style: TextStyle(
               color: resendCooldown > 0
-                  ? const Color(0xFF64748B)
-                  : AppColors.primaryLight,
+                  ? colors.textSubtle
+                  : colors.primary,
               fontWeight: FontWeight.w600,
               fontSize: 14,
             ),
           ),
         ),
-        const SizedBox(height: 12),
-
-        // Switch email
-        GestureDetector(
-          onTap: onUseDifferentEmail,
-          child: const Text(
-            'Use a different email address',
-            style: TextStyle(
-              color: AppColors.primaryLight,
-              fontSize: 13.5,
-              fontWeight: FontWeight.w600,
+        if (onUseDifferentEmail != null) ...[
+          const SizedBox(height: 12),
+          GestureDetector(
+            onTap: onUseDifferentEmail,
+            child: Text(
+              'Use a different email address',
+              style: TextStyle(
+                color: colors.accent,
+                fontSize: 13.5,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
-        ),
+        ],
         const SizedBox(height: 16),
       ],
     );

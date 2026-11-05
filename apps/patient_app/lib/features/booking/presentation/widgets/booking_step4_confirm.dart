@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:patient_app/core/theme/app_colors.dart';
 import 'package:patient_app/features/clinic_details/domain/entities/clinic_doctor_item.dart';
 import 'package:patient_app/features/clinic_details/domain/entities/clinic_service_item.dart';
 import 'package:patient_app/features/home/domain/entities/clinic_entity.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class BookingStep4Confirm extends StatelessWidget {
   final ClinicEntity clinic;
@@ -35,6 +35,8 @@ class BookingStep4Confirm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -43,7 +45,7 @@ class BookingStep4Confirm extends StatelessWidget {
           style: GoogleFonts.inter(
             fontSize: 18,
             fontWeight: FontWeight.w800,
-            color: AppColors.darkInk,
+            color: colors.textPrimary,
           ),
         ),
         const SizedBox(height: 4),
@@ -51,7 +53,7 @@ class BookingStep4Confirm extends StatelessWidget {
           'Please verify your appointment and billing summary.',
           style: GoogleFonts.inter(
             fontSize: 12.5,
-            color: AppColors.darkInkMuted,
+            color: colors.textMuted,
           ),
         ),
         const SizedBox(height: 16),
@@ -60,9 +62,9 @@ class BookingStep4Confirm extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: AppColors.darkSurface,
+            color: colors.surface,
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: AppColors.darkBorder, width: 1.2),
+            border: Border.all(color: colors.border, width: 1.2),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,7 +83,7 @@ class BookingStep4Confirm extends StatelessWidget {
                           style: GoogleFonts.inter(
                             fontSize: 15,
                             fontWeight: FontWeight.w800,
-                            color: AppColors.darkInk,
+                            color: colors.textPrimary,
                           ),
                         ),
                         const SizedBox(height: 2),
@@ -91,7 +93,7 @@ class BookingStep4Confirm extends StatelessWidget {
                               : '${clinic.distance} • ${clinic.city}',
                           style: GoogleFonts.inter(
                             fontSize: 11.5,
-                            color: AppColors.darkInkMuted,
+                            color: colors.textMuted,
                           ),
                         ),
                       ],
@@ -100,16 +102,16 @@ class BookingStep4Confirm extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(
-                      color: AppColors.success.withValues(alpha: 0.12),
+                      color: colors.success.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.verified_rounded,
                           size: 11,
-                          color: AppColors.success,
+                          color: colors.success,
                         ),
                         const SizedBox(width: 4),
                         Text(
@@ -117,7 +119,7 @@ class BookingStep4Confirm extends StatelessWidget {
                           style: GoogleFonts.inter(
                             fontSize: 10,
                             fontWeight: FontWeight.w700,
-                            color: AppColors.success,
+                            color: colors.success,
                           ),
                         ),
                       ],
@@ -126,7 +128,7 @@ class BookingStep4Confirm extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 14),
-              const Divider(color: AppColors.darkBorder, height: 1),
+              Divider(color: colors.border, height: 1),
               const SizedBox(height: 14),
 
               // 2-Column: Service & Doctor
@@ -141,7 +143,7 @@ class BookingStep4Confirm extends StatelessWidget {
                           'Selected Service',
                           style: GoogleFonts.inter(
                             fontSize: 11,
-                            color: AppColors.darkInkMuted,
+                            color: colors.textMuted,
                           ),
                         ),
                         const SizedBox(height: 3),
@@ -150,7 +152,7 @@ class BookingStep4Confirm extends StatelessWidget {
                           style: GoogleFonts.inter(
                             fontSize: 13,
                             fontWeight: FontWeight.w700,
-                            color: AppColors.darkInk,
+                            color: colors.textPrimary,
                           ),
                         ),
                       ],
@@ -165,7 +167,7 @@ class BookingStep4Confirm extends StatelessWidget {
                           'Doctor',
                           style: GoogleFonts.inter(
                             fontSize: 11,
-                            color: AppColors.darkInkMuted,
+                            color: colors.textMuted,
                           ),
                         ),
                         const SizedBox(height: 3),
@@ -174,7 +176,7 @@ class BookingStep4Confirm extends StatelessWidget {
                           style: GoogleFonts.inter(
                             fontSize: 13,
                             fontWeight: FontWeight.w700,
-                            color: AppColors.darkInk,
+                            color: colors.textPrimary,
                           ),
                         ),
                       ],
@@ -183,7 +185,7 @@ class BookingStep4Confirm extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 14),
-              const Divider(color: AppColors.darkBorder, height: 1),
+              Divider(color: colors.border, height: 1),
               const SizedBox(height: 14),
 
               // Scheduled Time & Edit Action
@@ -197,7 +199,7 @@ class BookingStep4Confirm extends StatelessWidget {
                         'Scheduled Date & Time',
                         style: GoogleFonts.inter(
                           fontSize: 11,
-                          color: AppColors.darkInkMuted,
+                          color: colors.textMuted,
                         ),
                       ),
                       const SizedBox(height: 3),
@@ -206,7 +208,7 @@ class BookingStep4Confirm extends StatelessWidget {
                         style: GoogleFonts.inter(
                           fontSize: 13.5,
                           fontWeight: FontWeight.w700,
-                          color: AppColors.primaryLight,
+                          color: colors.primary,
                         ),
                       ),
                     ],
@@ -217,17 +219,17 @@ class BookingStep4Confirm extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       visualDensity: VisualDensity.compact,
                     ),
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.edit_calendar_rounded,
                       size: 14,
-                      color: AppColors.primaryLight,
+                      color: colors.primary,
                     ),
                     label: Text(
                       'Edit',
                       style: GoogleFonts.inter(
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
-                        color: AppColors.primaryLight,
+                        color: colors.primary,
                       ),
                     ),
                   ),
@@ -243,9 +245,9 @@ class BookingStep4Confirm extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           decoration: BoxDecoration(
-            color: AppColors.darkSurface,
+            color: colors.surface,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: AppColors.darkBorder, width: 1.2),
+            border: Border.all(color: colors.border, width: 1.2),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -257,7 +259,7 @@ class BookingStep4Confirm extends StatelessWidget {
                     'Patient Details',
                     style: GoogleFonts.inter(
                       fontSize: 11,
-                      color: AppColors.darkInkMuted,
+                      color: colors.textMuted,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -266,14 +268,14 @@ class BookingStep4Confirm extends StatelessWidget {
                     style: GoogleFonts.inter(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
-                      color: AppColors.darkInk,
+                      color: colors.textPrimary,
                     ),
                   ),
                   Text(
                     patientPhone,
                     style: GoogleFonts.inter(
                       fontSize: 11.5,
-                      color: AppColors.darkInkMuted,
+                      color: colors.textMuted,
                     ),
                   ),
                 ],
@@ -281,16 +283,16 @@ class BookingStep4Confirm extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.15),
+                  color: colors.primaryTint,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.sms_rounded,
                       size: 12,
-                      color: AppColors.primaryLight,
+                      color: colors.primary,
                     ),
                     const SizedBox(width: 4),
                     Text(
@@ -298,7 +300,7 @@ class BookingStep4Confirm extends StatelessWidget {
                       style: GoogleFonts.inter(
                         fontSize: 10.5,
                         fontWeight: FontWeight.w700,
-                        color: AppColors.primaryLight,
+                        color: colors.primary,
                       ),
                     ),
                   ],
@@ -314,9 +316,9 @@ class BookingStep4Confirm extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: AppColors.darkSurface,
+            color: colors.surface,
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: AppColors.darkBorder, width: 1.2),
+            border: Border.all(color: colors.border, width: 1.2),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -326,7 +328,7 @@ class BookingStep4Confirm extends StatelessWidget {
                 style: GoogleFonts.inter(
                   fontSize: 11,
                   fontWeight: FontWeight.w800,
-                  color: AppColors.darkInkMuted,
+                  color: colors.textMuted,
                   letterSpacing: 0.8,
                 ),
               ),
@@ -338,7 +340,7 @@ class BookingStep4Confirm extends StatelessWidget {
                     'Consultation Fee',
                     style: GoogleFonts.inter(
                       fontSize: 12.5,
-                      color: AppColors.darkInkMuted,
+                      color: colors.textMuted,
                     ),
                   ),
                   Text(
@@ -346,7 +348,7 @@ class BookingStep4Confirm extends StatelessWidget {
                     style: GoogleFonts.robotoMono(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
-                      color: AppColors.darkInk,
+                      color: colors.textPrimary,
                     ),
                   ),
                 ],
@@ -359,7 +361,7 @@ class BookingStep4Confirm extends StatelessWidget {
                     'Platform / Convenience Fee',
                     style: GoogleFonts.inter(
                       fontSize: 12.5,
-                      color: AppColors.darkInkMuted,
+                      color: colors.textMuted,
                     ),
                   ),
                   Text(
@@ -367,13 +369,13 @@ class BookingStep4Confirm extends StatelessWidget {
                     style: GoogleFonts.robotoMono(
                       fontSize: 12.5,
                       fontWeight: FontWeight.w700,
-                      color: AppColors.success,
+                      color: colors.success,
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 10),
-              const Divider(color: AppColors.darkBorder, height: 1),
+              Divider(color: colors.border, height: 1),
               const SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -383,7 +385,7 @@ class BookingStep4Confirm extends StatelessWidget {
                     style: GoogleFonts.inter(
                       fontSize: 13.5,
                       fontWeight: FontWeight.w800,
-                      color: AppColors.darkInk,
+                      color: colors.textPrimary,
                     ),
                   ),
                   Text(
@@ -391,7 +393,7 @@ class BookingStep4Confirm extends StatelessWidget {
                     style: GoogleFonts.robotoMono(
                       fontSize: 16,
                       fontWeight: FontWeight.w800,
-                      color: AppColors.primaryLight,
+                      color: colors.primary,
                     ),
                   ),
                 ],
@@ -402,15 +404,10 @@ class BookingStep4Confirm extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      const Color(0xFF2563EB).withValues(alpha: 0.12),
-                      const Color(0xFF38BDF8).withValues(alpha: 0.16),
-                    ],
-                  ),
+                  color: colors.primaryTint,
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
-                    color: const Color(0xFF38BDF8).withValues(alpha: 0.35),
+                    color: colors.accent.withValues(alpha: 0.35),
                   ),
                 ),
                 child: Row(
@@ -418,10 +415,10 @@ class BookingStep4Confirm extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.bolt_rounded,
                           size: 16,
-                          color: Color(0xFF38BDF8),
+                          color: colors.accent,
                         ),
                         const SizedBox(width: 6),
                         Text(
@@ -429,7 +426,7 @@ class BookingStep4Confirm extends StatelessWidget {
                           style: GoogleFonts.inter(
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
-                            color: AppColors.darkInk,
+                            color: colors.textPrimary,
                           ),
                         ),
                       ],
@@ -437,7 +434,7 @@ class BookingStep4Confirm extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFF59E0B).withValues(alpha: 0.2),
+                        color: colors.warning.withValues(alpha: 0.18),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
@@ -445,7 +442,7 @@ class BookingStep4Confirm extends StatelessWidget {
                         style: GoogleFonts.inter(
                           fontSize: 9.5,
                           fontWeight: FontWeight.w800,
-                          color: const Color(0xFFFBBF24),
+                          color: colors.warning,
                         ),
                       ),
                     ),
@@ -458,7 +455,7 @@ class BookingStep4Confirm extends StatelessWidget {
                   'Accepted: UPI (GPay/PhonePe), Test Cards, NetBanking Sandbox',
                   style: GoogleFonts.inter(
                     fontSize: 10.5,
-                    color: AppColors.darkInkFaint,
+                    color: colors.textSubtle,
                   ),
                 ),
               ),
@@ -476,18 +473,18 @@ class BookingStep4Confirm extends StatelessWidget {
               height: 52,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppColors.darkSurface,
-                border: Border.all(color: AppColors.darkBorder, width: 1.5),
+                color: colors.surface,
+                border: Border.all(color: colors.border, width: 1.5),
               ),
               child: Material(
                 color: Colors.transparent,
                 child: InkWell(
                   customBorder: const CircleBorder(),
                   onTap: isSubmitting ? null : onBack,
-                  child: const Center(
+                  child: Center(
                     child: Icon(
                       Icons.chevron_left_rounded,
-                      color: AppColors.darkInk,
+                      color: colors.textPrimary,
                       size: 26,
                     ),
                   ),
@@ -500,11 +497,11 @@ class BookingStep4Confirm extends StatelessWidget {
                 height: 52,
                 decoration: BoxDecoration(
                   gradient: isSubmitting ? null : AppColors.primaryGradient,
-                  color: isSubmitting ? AppColors.darkBorder : null,
+                  color: isSubmitting ? colors.border : null,
                   borderRadius: BorderRadius.circular(26),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.primary.withValues(alpha: 0.35),
+                      color: colors.primary.withValues(alpha: 0.35),
                       blurRadius: 14,
                       offset: const Offset(0, 4),
                     ),

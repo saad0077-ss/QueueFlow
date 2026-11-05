@@ -1,4 +1,4 @@
-import 'package:equatable/equatable.dart';
+﻿import 'package:equatable/equatable.dart';
 
 class PlatformBillingKpis extends Equatable {
   final String totalMrr;

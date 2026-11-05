@@ -1,4 +1,4 @@
-import 'dart:typed_data';
+﻿import 'dart:typed_data';
 import '../entities/clinic_location_entity.dart';
 import '../entities/clinic_operating_schedule_entity.dart';
 import '../entities/clinic_profile_entity.dart';

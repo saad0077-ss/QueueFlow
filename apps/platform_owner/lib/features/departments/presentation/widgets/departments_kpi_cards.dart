@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class DepartmentsKpiCards extends StatelessWidget {
   final int totalDepartments;
@@ -17,6 +18,8 @@ class DepartmentsKpiCards extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final w = constraints.maxWidth;
@@ -26,24 +29,24 @@ class DepartmentsKpiCards extends StatelessWidget {
           spacing: 12,
           runSpacing: 12,
           children: [
-            _card('🩺', const Color(0xFF2563EB), totalDepartments.toString(), 'Total Departments', cardWidth),
-            _card('✓', const Color(0xFF10B981), activeSpecialties.toString(), 'Active Specialties', cardWidth),
-            _card('👨‍⚕️', const Color(0xFF0F766E), doctorsAssigned.toString(), 'Doctors Assigned', cardWidth),
-            _card('⚡', const Color(0xFFF59E0B), _formatNum(monthlyVisits), 'Monthly Consultations', cardWidth),
+            _card(colors, '🩺', const Color(0xFF2563EB), totalDepartments.toString(), 'Total Departments', cardWidth),
+            _card(colors, '✓', const Color(0xFF10B981), activeSpecialties.toString(), 'Active Specialties', cardWidth),
+            _card(colors, '👨‍⚕️', const Color(0xFF0F766E), doctorsAssigned.toString(), 'Doctors Assigned', cardWidth),
+            _card(colors, '⚡', const Color(0xFFF59E0B), _formatNum(monthlyVisits), 'Monthly Consultations', cardWidth),
           ],
         );
       },
     );
   }
 
-  Widget _card(String icon, Color tint, String value, String label, double width) {
+  Widget _card(AppColorsExtension colors, String icon, Color tint, String value, String label, double width) {
     return Container(
       width: width,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: const Color(0xFF0D1526),
+        color: colors.surface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFF1E293B)),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,10 +61,10 @@ class DepartmentsKpiCards extends StatelessWidget {
           const SizedBox(height: 14),
           Text(
             value,
-            style: GoogleFonts.inter(fontSize: 26, fontWeight: FontWeight.w800, color: Colors.white),
+            style: GoogleFonts.inter(fontSize: 26, fontWeight: FontWeight.w800, color: colors.textPrimary),
           ),
           const SizedBox(height: 3),
-          Text(label, style: GoogleFonts.inter(fontSize: 12.5, color: const Color(0xFF94A3B8))),
+          Text(label, style: GoogleFonts.inter(fontSize: 12.5, color: colors.textMuted)),
         ],
       ),
     );

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../domain/entities/clinic_doctor_item.dart';
 import 'clinic_doctor_item_tile.dart';
 
@@ -15,13 +15,15 @@ class ClinicDoctorsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     if (doctors.isEmpty) {
       return Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 24),
           child: Text(
             'No doctors listed for this clinic.',
-            style: TextStyle(color: AppColors.darkInkMuted, fontSize: 13),
+            style: TextStyle(color: colors.textMuted, fontSize: 13),
           ),
         ),
       );

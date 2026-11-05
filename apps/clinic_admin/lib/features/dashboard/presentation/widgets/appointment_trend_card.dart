@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class AppointmentTrendCard extends StatelessWidget {
   const AppointmentTrendCard({super.key});
@@ -16,13 +17,13 @@ class AppointmentTrendCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF10192D),
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xFF1E293B).withValues(alpha: 0.8),
-        ),
+        border: Border.all(color: colors.border),
       ),
       padding: const EdgeInsets.all(22),
       child: Column(
@@ -38,7 +39,7 @@ class AppointmentTrendCard extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 15.5,
                     fontWeight: FontWeight.w600,
-                    color: Colors.white,
+                    color: colors.textPrimary,
                   ),
                 ),
               ),
@@ -47,7 +48,7 @@ class AppointmentTrendCard extends StatelessWidget {
                 'Last 7 days',
                 style: GoogleFonts.inter(
                   fontSize: 12,
-                  color: const Color(0xFF64748B),
+                  color: colors.textMuted,
                 ),
               ),
             ],
@@ -108,7 +109,7 @@ class AppointmentTrendCard extends StatelessWidget {
                         style: GoogleFonts.inter(
                           fontSize: 11,
                           fontWeight: FontWeight.w400,
-                          color: const Color(0xFF64748B),
+                          color: colors.textMuted,
                         ),
                       ),
                     ],

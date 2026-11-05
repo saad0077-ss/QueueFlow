@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+﻿import 'package:flutter/widgets.dart';
 
 /// Width breakpoints shared by the clinic admin layouts.
 class ClinicBreakpoints {

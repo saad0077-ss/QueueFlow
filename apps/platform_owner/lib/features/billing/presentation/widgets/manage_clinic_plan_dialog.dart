@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../domain/entities/platform_tenant_subscription_entity.dart';
 
 class ManageClinicPlanDialog {
@@ -14,6 +15,7 @@ class ManageClinicPlanDialog {
       required String status,
     }) onSave,
   }) {
+    final colors = context.colors;
     String selectedPlan = clinic.planId;
     String selectedCadence = clinic.billingCadence;
     String selectedStatus = clinic.status;
@@ -30,9 +32,12 @@ class ManageClinicPlanDialog {
               width: 440,
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: const Color(0xFF0F172A),
+                color: colors.surfaceElevated,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: const Color(0xFF1E293B)),
+                border: Border.all(color: colors.border),
+                boxShadow: [
+                  BoxShadow(color: Colors.black.withValues(alpha: 0.35), blurRadius: 40, offset: const Offset(0, 16)),
+                ],
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -41,46 +46,62 @@ class ManageClinicPlanDialog {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Manage Clinic Subscription', style: GoogleFonts.inter(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 17)),
-                      IconButton(icon: const Icon(Icons.close_rounded, color: Colors.white54, size: 18), onPressed: () => Navigator.pop(ctx)),
+                      Text('Manage Clinic Subscription', style: GoogleFonts.inter(fontWeight: FontWeight.bold, color: colors.textPrimary, fontSize: 17)),
+                      IconButton(icon: Icon(Icons.close_rounded, color: colors.textMuted, size: 18), onPressed: () => Navigator.pop(ctx)),
                     ],
                   ),
                   const SizedBox(height: 16),
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(color: const Color(0xFF162238), borderRadius: BorderRadius.circular(10)),
+                    decoration: BoxDecoration(
+                      color: colors.surfaceSecondary,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: colors.border),
+                    ),
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      const Text('PRACTICE', style: TextStyle(color: Color(0xFF64748B), fontSize: 10, fontWeight: FontWeight.bold)),
+                      Text('PRACTICE', style: TextStyle(color: colors.textMuted, fontSize: 10, fontWeight: FontWeight.bold)),
                       const SizedBox(height: 2),
-                      Text(clinic.clinicName, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
+                      Text(clinic.clinicName, style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.bold, fontSize: 14)),
                     ]),
                   ),
                   const SizedBox(height: 14),
-                  _dropdown('Subscription Tier', selectedPlan, const [
-                    DropdownMenuItem(value: 'solo', child: Text('Solo Doctor Plan (₹999/mo)')),
-                    DropdownMenuItem(value: 'multi', child: Text('Multi-Doctor Clinic Plan (₹2,999/mo)')),
-                    DropdownMenuItem(value: 'enterprise', child: Text('Unlimited Doctors Plan (₹6,999/mo)')),
+                  _dropdown(colors, 'Subscription Tier', selectedPlan, [
+                    DropdownMenuItem(value: 'solo', child: Text('Solo Doctor Plan (₹999/mo)', style: TextStyle(color: colors.textPrimary))),
+                    DropdownMenuItem(value: 'multi', child: Text('Multi-Doctor Clinic Plan (₹2,999/mo)', style: TextStyle(color: colors.textPrimary))),
+                    DropdownMenuItem(value: 'enterprise', child: Text('Unlimited Doctors Plan (₹6,999/mo)', style: TextStyle(color: colors.textPrimary))),
                   ], (v) => setState(() => selectedPlan = v)),
                   const SizedBox(height: 12),
-                  _dropdown('Billing Cadence', selectedCadence, const [
-                    DropdownMenuItem(value: 'Monthly Auto-Debit', child: Text('Monthly Auto-Debit')),
-                    DropdownMenuItem(value: 'Annual Billing (20% off)', child: Text('Annual Billing (20% off)')),
+                  _dropdown(colors, 'Billing Cadence', selectedCadence, [
+                    DropdownMenuItem(value: 'Monthly Auto-Debit', child: Text('Monthly Auto-Debit', style: TextStyle(color: colors.textPrimary))),
+                    DropdownMenuItem(value: 'Annual Billing (20% off)', child: Text('Annual Billing (20% off)', style: TextStyle(color: colors.textPrimary))),
                   ], (v) => setState(() => selectedCadence = v)),
                   const SizedBox(height: 12),
-                  _dropdown('Subscription Status', selectedStatus, const [
-                    DropdownMenuItem(value: 'ACTIVE', child: Text('Active (Paid)')),
-                    DropdownMenuItem(value: 'TRIAL', child: Text('Trial Period')),
-                    DropdownMenuItem(value: 'SUSPENDED', child: Text('Suspended')),
+                  _dropdown(colors, 'Subscription Status', selectedStatus, [
+                    DropdownMenuItem(value: 'ACTIVE', child: Text('Active (Paid)', style: TextStyle(color: colors.textPrimary))),
+                    DropdownMenuItem(value: 'TRIAL', child: Text('Trial Period', style: TextStyle(color: colors.textPrimary))),
+                    DropdownMenuItem(value: 'SUSPENDED', child: Text('Suspended', style: TextStyle(color: colors.textPrimary))),
                   ], (v) => setState(() => selectedStatus = v)),
                   const SizedBox(height: 22),
                   Row(
                     children: [
-                      Expanded(child: OutlinedButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel'))),
+                      Expanded(
+                        child: OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: colors.textPrimary,
+                            side: BorderSide(color: colors.border),
+                          ),
+                          onPressed: () => Navigator.pop(ctx),
+                          child: const Text('Cancel'),
+                        ),
+                      ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF2563EB), foregroundColor: Colors.white),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: colors.primary,
+                            foregroundColor: Colors.white,
+                          ),
                           onPressed: () {
                             onSave(
                               clinicId: clinic.clinicId,
@@ -104,21 +125,25 @@ class ManageClinicPlanDialog {
     );
   }
 
-  static Widget _dropdown(String label, String value, List<DropdownMenuItem<String>> items, ValueChanged<String> onChanged) {
+  static Widget _dropdown(AppColorsExtension colors, String label, String value, List<DropdownMenuItem<String>> items, ValueChanged<String> onChanged) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: GoogleFonts.inter(fontSize: 11.5, fontWeight: FontWeight.w600, color: const Color(0xFF94A3B8))),
+        Text(label, style: GoogleFonts.inter(fontSize: 11.5, fontWeight: FontWeight.w600, color: colors.textMuted)),
         const SizedBox(height: 6),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(color: const Color(0xFF162238), borderRadius: BorderRadius.circular(10)),
+          decoration: BoxDecoration(
+            color: colors.surfaceSecondary,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: colors.border),
+          ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
               value: items.any((i) => i.value == value) ? value : items.first.value,
-              dropdownColor: const Color(0xFF162238),
+              dropdownColor: colors.surfaceElevated,
               isExpanded: true,
-              style: const TextStyle(color: Colors.white, fontSize: 13),
+              style: TextStyle(color: colors.textPrimary, fontSize: 13),
               items: items,
               onChanged: (v) {
                 if (v != null) onChanged(v);

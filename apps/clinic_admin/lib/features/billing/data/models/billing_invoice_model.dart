@@ -1,4 +1,4 @@
-import '../../domain/entities/billing_invoice_entity.dart';
+﻿import '../../domain/entities/billing_invoice_entity.dart';
 
 class BillingInvoiceModel extends BillingInvoiceEntity {
   const BillingInvoiceModel({

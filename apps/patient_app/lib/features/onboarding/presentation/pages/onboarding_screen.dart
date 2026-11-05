@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../../core/widgets/app_logo.dart';
 import '../bloc/onboarding_bloc.dart';
 import '../bloc/onboarding_event.dart';
@@ -49,8 +50,10 @@ class _OnboardingScreenViewState extends State<_OnboardingScreenView> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF070D18),
+      backgroundColor: colors.background,
       body: SafeArea(
         child: BlocBuilder<OnboardingBloc, OnboardingState>(
           builder: (context, state) {
@@ -86,8 +89,8 @@ class _OnboardingScreenViewState extends State<_OnboardingScreenView> {
                         card: const TicketPreviewCard(),
                         titleWidget: RichText(
                           textAlign: TextAlign.center,
-                          text: const TextSpan(
-                            style: TextStyle(
+                          text: TextSpan(
+                            style: const TextStyle(
                               fontSize: 34,
                               fontWeight: FontWeight.w800,
                               height: 1.2,
@@ -96,11 +99,11 @@ class _OnboardingScreenViewState extends State<_OnboardingScreenView> {
                             children: [
                               TextSpan(
                                 text: 'Book smarter.\n',
-                                style: TextStyle(color: Colors.white),
+                                style: TextStyle(color: colors.textPrimary),
                               ),
                               TextSpan(
                                 text: 'Wait less.',
-                                style: TextStyle(color: Color(0xFF38BDF8)),
+                                style: TextStyle(color: colors.accent),
                               ),
                             ],
                           ),

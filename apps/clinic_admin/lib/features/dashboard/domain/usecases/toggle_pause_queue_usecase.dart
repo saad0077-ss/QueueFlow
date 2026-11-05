@@ -1,4 +1,4 @@
-import '../repositories/clinic_dashboard_repository.dart';
+﻿import '../repositories/clinic_dashboard_repository.dart';
 
 /// Use case to toggle pause and resume status of the live queue.
 class TogglePauseQueueUseCase {

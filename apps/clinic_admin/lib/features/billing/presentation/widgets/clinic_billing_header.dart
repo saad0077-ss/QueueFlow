@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class ClinicBillingHeader extends StatelessWidget {
   final String clinicName;
@@ -19,6 +20,8 @@ class ClinicBillingHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -30,18 +33,18 @@ class ClinicBillingHeader extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
-                color: const Color(0xFF131D31),
+                color: colors.surfaceSecondary,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: const Color(0xFF1E293B)),
+                border: Border.all(color: colors.border),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.apartment_rounded, size: 13, color: Color(0xFF38BDF8)),
+                  Icon(Icons.apartment_rounded, size: 13, color: colors.primaryLight),
                   const SizedBox(width: 6),
                   Text(
                     '${clinicName.toUpperCase()} • ACCOUNT & SUBSCRIPTION',
-                    style: GoogleFonts.inter(fontSize: 10.5, fontWeight: FontWeight.w700, color: const Color(0xFF94A3B8), letterSpacing: 0.5),
+                    style: GoogleFonts.inter(fontSize: 10.5, fontWeight: FontWeight.w700, color: colors.textMuted, letterSpacing: 0.5),
                   ),
                 ],
               ),
@@ -49,18 +52,18 @@ class ClinicBillingHeader extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
-                color: const Color(0xFF064E3B).withAlpha(150),
+                color: colors.badgeOpenBg,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: const Color(0xFF059669)),
+                border: Border.all(color: colors.success),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Container(width: 6, height: 6, decoration: const BoxDecoration(color: Color(0xFF10B981), shape: BoxShape.circle)),
+                  Container(width: 6, height: 6, decoration: BoxDecoration(color: colors.success, shape: BoxShape.circle)),
                   const SizedBox(width: 6),
                   Text(
                     '${planName.toUpperCase()} ACTIVE • AUTO-RENEWS $renewalDate',
-                    style: GoogleFonts.inter(fontSize: 10.5, fontWeight: FontWeight.w700, color: const Color(0xFF34D399), letterSpacing: 0.4),
+                    style: GoogleFonts.inter(fontSize: 10.5, fontWeight: FontWeight.w700, color: colors.badgeOpenText, letterSpacing: 0.4),
                   ),
                 ],
               ),
@@ -77,12 +80,12 @@ class ClinicBillingHeader extends StatelessWidget {
                 children: [
                   Text(
                     'Clinic Subscription & Plan Billing',
-                    style: GoogleFonts.inter(fontSize: 24, fontWeight: FontWeight.w800, color: Colors.white, letterSpacing: -0.5),
+                    style: GoogleFonts.inter(fontSize: 24, fontWeight: FontWeight.w800, color: colors.textPrimary, letterSpacing: -0.5),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     'Manage your practice plan tier, quota limits, payment methods, GST details and official tax invoices',
-                    style: GoogleFonts.inter(fontSize: 13, color: const Color(0xFF94A3B8)),
+                    style: GoogleFonts.inter(fontSize: 13, color: colors.textMuted),
                   ),
                 ],
               ),
@@ -94,9 +97,9 @@ class ClinicBillingHeader extends StatelessWidget {
                 OutlinedButton.icon(
                   onPressed: onDownloadReceipt,
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    side: const BorderSide(color: Color(0xFF1E293B)),
-                    backgroundColor: const Color(0xFF0F172A),
+                    foregroundColor: colors.textPrimary,
+                    side: BorderSide(color: colors.border),
+                    backgroundColor: colors.surface,
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   ),
@@ -107,7 +110,7 @@ class ClinicBillingHeader extends StatelessWidget {
                   onPressed: onChangePlan,
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
-                    backgroundColor: const Color(0xFF2563EB),
+                    backgroundColor: colors.primary,
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   ),

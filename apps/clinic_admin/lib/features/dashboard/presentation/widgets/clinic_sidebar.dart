@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import 'clinic_sidebar_logo.dart';
 import 'clinic_sidebar_nav_item.dart';
 
@@ -31,11 +32,13 @@ class ClinicSidebar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Container(
       width: compact ? 80 : 240,
-      decoration: const BoxDecoration(
-        color: Color(0xFF090E1A),
-        border: Border(right: BorderSide(color: Color(0xFF131D31), width: 1)),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        border: Border(right: BorderSide(color: colors.border, width: 1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

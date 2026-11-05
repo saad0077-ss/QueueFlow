@@ -1,4 +1,4 @@
-import 'package:equatable/equatable.dart';
+﻿import 'package:equatable/equatable.dart';
 
 /// Domain entity representing an appointment in the clinic admin portal.
 class ClinicAppointmentEntity extends Equatable {

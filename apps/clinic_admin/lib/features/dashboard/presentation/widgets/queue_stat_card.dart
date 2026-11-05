@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class QueueStatCard extends StatelessWidget {
   final String title;
@@ -19,14 +20,14 @@ class QueueStatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF10192D),
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xFF1E293B).withValues(alpha: 0.8),
-        ),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -47,7 +48,7 @@ class QueueStatCard extends StatelessWidget {
             style: GoogleFonts.inter(
               fontSize: 26,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: colors.textPrimary,
               letterSpacing: -0.5,
             ),
           ),
@@ -57,7 +58,7 @@ class QueueStatCard extends StatelessWidget {
             style: GoogleFonts.inter(
               fontSize: 12.5,
               fontWeight: FontWeight.w400,
-              color: const Color(0xFF8E9CAE),
+              color: colors.textMuted,
             ),
           ),
         ],

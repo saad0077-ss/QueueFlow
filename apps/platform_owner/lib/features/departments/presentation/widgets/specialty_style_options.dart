@@ -1,4 +1,4 @@
-/// Preset icon / accent-color choices offered in the specialty forms.
+﻿/// Preset icon / accent-color choices offered in the specialty forms.
 /// Each map is `value -> display label`.
 const Map<String, String> kSpecialtyIconOptions = {
   '🩺': 'General Medicine',

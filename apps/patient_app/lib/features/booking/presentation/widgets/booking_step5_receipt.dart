@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:patient_app/core/theme/app_colors.dart';
 import 'package:patient_app/core/widgets/gradient_button.dart';
 import 'package:patient_app/features/booking/domain/entities/appointment_entity.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class BookingStep5Receipt extends StatelessWidget {
   final AppointmentEntity appointment;
@@ -18,11 +18,12 @@ class BookingStep5Receipt extends StatelessWidget {
   });
 
   void _copyReference(BuildContext context) {
+    final colors = context.colors;
     Clipboard.setData(ClipboardData(text: appointment.bookingRef));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Booking Reference ${appointment.bookingRef} copied!'),
-        backgroundColor: AppColors.success,
+        backgroundColor: colors.success,
         duration: const Duration(seconds: 2),
       ),
     );
@@ -30,6 +31,8 @@ class BookingStep5Receipt extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Column(
       children: [
         const SizedBox(height: 12),
@@ -69,7 +72,7 @@ class BookingStep5Receipt extends StatelessWidget {
           style: GoogleFonts.inter(
             fontSize: 20,
             fontWeight: FontWeight.w800,
-            color: AppColors.darkInk,
+            color: colors.textPrimary,
           ),
         ),
         const SizedBox(height: 4),
@@ -78,7 +81,7 @@ class BookingStep5Receipt extends StatelessWidget {
           textAlign: TextAlign.center,
           style: GoogleFonts.inter(
             fontSize: 12.5,
-            color: AppColors.darkInkMuted,
+            color: colors.textMuted,
           ),
         ),
 
@@ -88,12 +91,12 @@ class BookingStep5Receipt extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
-            color: AppColors.darkSurface,
+            color: colors.surface,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: AppColors.darkBorder, width: 1.2),
+            border: Border.all(color: colors.border, width: 1.2),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.25),
+                color: Colors.black.withValues(alpha: 0.15),
                 blurRadius: 18,
                 offset: const Offset(0, 6),
               ),
@@ -114,7 +117,7 @@ class BookingStep5Receipt extends StatelessWidget {
                         style: GoogleFonts.inter(
                           fontSize: 10.5,
                           fontWeight: FontWeight.w800,
-                          color: AppColors.darkInkMuted,
+                          color: colors.textMuted,
                           letterSpacing: 0.8,
                         ),
                       ),
@@ -124,7 +127,7 @@ class BookingStep5Receipt extends StatelessWidget {
                         style: GoogleFonts.robotoMono(
                           fontSize: 22,
                           fontWeight: FontWeight.w800,
-                          color: AppColors.primaryLight,
+                          color: colors.primary,
                           letterSpacing: 1.0,
                         ),
                       ),
@@ -132,43 +135,47 @@ class BookingStep5Receipt extends StatelessWidget {
                   ),
                   IconButton(
                     onPressed: () => _copyReference(context),
-                    icon: const Icon(Icons.copy_rounded, color: AppColors.primaryLight),
+                    icon: Icon(Icons.copy_rounded, color: colors.primary),
                     tooltip: 'Copy Reference',
                   ),
                 ],
               ),
 
               const SizedBox(height: 14),
-              const Divider(color: AppColors.darkBorder, height: 1),
+              Divider(color: colors.border, height: 1),
               const SizedBox(height: 14),
 
               // Detail Rows
               _buildDetailRow(
+                context,
                 'Clinic',
                 appointment.clinicName,
                 subtitle: appointment.clinicAddress,
               ),
               const SizedBox(height: 12),
               _buildDetailRow(
+                context,
                 'Doctor',
                 appointment.doctorName,
                 subtitle: appointment.doctorSpecialty,
               ),
               const SizedBox(height: 12),
               _buildDetailRow(
+                context,
                 'Service',
                 appointment.serviceName,
                 subtitle: '${appointment.serviceDuration} min consultation',
               ),
               const SizedBox(height: 12),
               _buildDetailRow(
+                context,
                 'Scheduled For',
                 appointment.dateTime,
                 isHighlight: true,
               ),
 
               const SizedBox(height: 14),
-              const Divider(color: AppColors.darkBorder, height: 1),
+              Divider(color: colors.border, height: 1),
               const SizedBox(height: 14),
 
               // Payment Status
@@ -182,17 +189,17 @@ class BookingStep5Receipt extends StatelessWidget {
                         'Payment Status',
                         style: GoogleFonts.inter(
                           fontSize: 11,
-                          color: AppColors.darkInkMuted,
+                          color: colors.textMuted,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
-                          color: AppColors.success.withValues(alpha: 0.15),
+                          color: colors.success.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(6),
                           border: Border.all(
-                            color: AppColors.success.withValues(alpha: 0.35),
+                            color: colors.success.withValues(alpha: 0.35),
                           ),
                         ),
                         child: Text(
@@ -200,7 +207,7 @@ class BookingStep5Receipt extends StatelessWidget {
                           style: GoogleFonts.inter(
                             fontSize: 10.5,
                             fontWeight: FontWeight.w800,
-                            color: AppColors.success,
+                            color: colors.success,
                           ),
                         ),
                       ),
@@ -213,7 +220,7 @@ class BookingStep5Receipt extends StatelessWidget {
                         'Amount Paid',
                         style: GoogleFonts.inter(
                           fontSize: 11,
-                          color: AppColors.darkInkMuted,
+                          color: colors.textMuted,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -222,7 +229,7 @@ class BookingStep5Receipt extends StatelessWidget {
                         style: GoogleFonts.robotoMono(
                           fontSize: 15,
                           fontWeight: FontWeight.w800,
-                          color: AppColors.darkInk,
+                          color: colors.textPrimary,
                         ),
                       ),
                     ],
@@ -236,7 +243,7 @@ class BookingStep5Receipt extends StatelessWidget {
                   'Transaction ID: ${appointment.payment!.paymentId}',
                   style: GoogleFonts.robotoMono(
                     fontSize: 10.5,
-                    color: AppColors.darkInkFaint,
+                    color: colors.textSubtle,
                   ),
                 ),
               ],
@@ -250,18 +257,18 @@ class BookingStep5Receipt extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.10),
+            color: colors.primaryTint,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: AppColors.primary.withValues(alpha: 0.25),
+              color: colors.borderSubtle,
             ),
           ),
           child: Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.notifications_active_outlined,
                 size: 16,
-                color: AppColors.primaryLight,
+                color: colors.primary,
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -269,7 +276,7 @@ class BookingStep5Receipt extends StatelessWidget {
                   'Confirmation SMS and reminder alerts dispatched to ${appointment.customerPhone.isNotEmpty ? appointment.customerPhone : 'your mobile'}.',
                   style: GoogleFonts.inter(
                     fontSize: 11.5,
-                    color: AppColors.primaryLight,
+                    color: colors.primary,
                   ),
                 ),
               ),
@@ -289,9 +296,9 @@ class BookingStep5Receipt extends StatelessWidget {
           width: double.infinity,
           height: 48,
           decoration: BoxDecoration(
-            color: AppColors.darkSurface,
+            color: colors.surface,
             borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: AppColors.darkBorder, width: 1.2),
+            border: Border.all(color: colors.border, width: 1.2),
           ),
           child: Material(
             color: Colors.transparent,
@@ -304,7 +311,7 @@ class BookingStep5Receipt extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 14.5,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.darkInk,
+                    color: colors.textPrimary,
                   ),
                 ),
               ),
@@ -316,7 +323,8 @@ class BookingStep5Receipt extends StatelessWidget {
     );
   }
 
-  Widget _buildDetailRow(String label, String value, {String? subtitle, bool isHighlight = false}) {
+  Widget _buildDetailRow(BuildContext context, String label, String value, {String? subtitle, bool isHighlight = false}) {
+    final colors = context.colors;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -325,7 +333,7 @@ class BookingStep5Receipt extends StatelessWidget {
           label,
           style: GoogleFonts.inter(
             fontSize: 12,
-            color: AppColors.darkInkMuted,
+            color: colors.textMuted,
           ),
         ),
         const SizedBox(width: 12),
@@ -338,7 +346,7 @@ class BookingStep5Receipt extends StatelessWidget {
                 style: GoogleFonts.inter(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
-                  color: isHighlight ? AppColors.primaryLight : AppColors.darkInk,
+                  color: isHighlight ? colors.primary : colors.textPrimary,
                 ),
                 textAlign: TextAlign.end,
               ),
@@ -348,7 +356,7 @@ class BookingStep5Receipt extends StatelessWidget {
                   subtitle,
                   style: GoogleFonts.inter(
                     fontSize: 11,
-                    color: AppColors.darkInkMuted,
+                    color: colors.textMuted,
                   ),
                   textAlign: TextAlign.end,
                 ),

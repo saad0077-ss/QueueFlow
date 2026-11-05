@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import 'app_icon_badge.dart';
 
 class AppLogo extends StatelessWidget {
@@ -13,6 +14,8 @@ class AppLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -28,12 +31,12 @@ class AppLogo extends StatelessWidget {
               fontWeight: FontWeight.w700,
               letterSpacing: -0.5,
             ),
-            children: const [
+            children: [
               TextSpan(
                 text: 'Queue',
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: colors.textPrimary),
               ),
-              TextSpan(
+              const TextSpan(
                 text: 'Flow',
                 style: TextStyle(color: Color(0xFF2563EB)),
               ),

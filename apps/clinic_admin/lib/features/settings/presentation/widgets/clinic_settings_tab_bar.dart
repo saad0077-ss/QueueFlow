@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class ClinicSettingsTabBar extends StatelessWidget {
   final int activeIndex;
@@ -13,6 +14,7 @@ class ClinicSettingsTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     const tabs = [
       'Clinic Profile',
       'Location & Map',
@@ -24,8 +26,8 @@ class ClinicSettingsTabBar extends StatelessWidget {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Container(
-        decoration: const BoxDecoration(
-          border: Border(bottom: BorderSide(color: Color(0xFF1E293B), width: 1)),
+        decoration: BoxDecoration(
+          border: Border(bottom: BorderSide(color: colors.border, width: 1)),
         ),
         child: Row(
           children: List.generate(tabs.length, (i) {
@@ -37,7 +39,7 @@ class ClinicSettingsTabBar extends StatelessWidget {
                 decoration: BoxDecoration(
                   border: Border(
                     bottom: BorderSide(
-                      color: isSelected ? const Color(0xFF2563EB) : Colors.transparent,
+                      color: isSelected ? colors.primary : Colors.transparent,
                       width: 2,
                     ),
                   ),
@@ -47,7 +49,7 @@ class ClinicSettingsTabBar extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 13,
                     fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                    color: isSelected ? const Color(0xFF60A5FA) : const Color(0xFF94A3B8),
+                    color: isSelected ? colors.primaryLight : colors.textMuted,
                   ),
                 ),
               ),

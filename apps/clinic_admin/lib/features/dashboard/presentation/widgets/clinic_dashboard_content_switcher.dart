@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../billing/presentation/pages/clinic_billing_view.dart';
 import '../../../doctors/presentation/pages/clinic_doctors_view.dart';

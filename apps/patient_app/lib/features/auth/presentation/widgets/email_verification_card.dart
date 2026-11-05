@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class EmailVerificationCard extends StatelessWidget {
   final String effectiveEmail;
@@ -11,6 +11,8 @@ class EmailVerificationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Column(
       children: [
         // Mail Icon Card
@@ -18,36 +20,36 @@ class EmailVerificationCard extends StatelessWidget {
           width: 90,
           height: 90,
           decoration: BoxDecoration(
-            color: const Color(0xFF1E293B),
+            color: colors.primaryTint,
             shape: BoxShape.circle,
             border: Border.all(
-              color: const Color(0xFF334155),
+              color: colors.border,
               width: 2,
             ),
             boxShadow: [
               BoxShadow(
-                color: AppColors.primary.withValues(alpha: 0.25),
+                color: colors.primary.withValues(alpha: 0.25),
                 blurRadius: 24,
                 offset: const Offset(0, 8),
               ),
             ],
           ),
-          child: const Center(
+          child: Center(
             child: Icon(
               Icons.mark_email_unread_rounded,
               size: 46,
-              color: AppColors.primaryLight,
+              color: colors.primary,
             ),
           ),
         ),
         const SizedBox(height: 28),
 
         // Title
-        const Text(
+        Text(
           'Verify your email',
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: Colors.white,
+            color: colors.textPrimary,
             fontSize: 26,
             fontWeight: FontWeight.w800,
             letterSpacing: -0.5,
@@ -60,7 +62,7 @@ class EmailVerificationCard extends StatelessWidget {
           'We sent a verification link to:',
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.7),
+            color: colors.textMuted,
             fontSize: 14.5,
           ),
         ),
@@ -70,14 +72,14 @@ class EmailVerificationCard extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
-            color: const Color(0xFF1E293B),
+            color: colors.surfaceSecondary,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: const Color(0xFF334155)),
+            border: Border.all(color: colors.border),
           ),
           child: Text(
             effectiveEmail,
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: colors.textPrimary,
               fontSize: 15,
               fontWeight: FontWeight.w600,
             ),
@@ -85,11 +87,11 @@ class EmailVerificationCard extends StatelessWidget {
         ),
         const SizedBox(height: 16),
 
-        const Text(
+        Text(
           'Click the link in the email to finish creating your account. Once verified, tap the button below.',
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: Color(0xFF94A3B8),
+            color: colors.textSubtle,
             fontSize: 13.5,
             height: 1.45,
           ),

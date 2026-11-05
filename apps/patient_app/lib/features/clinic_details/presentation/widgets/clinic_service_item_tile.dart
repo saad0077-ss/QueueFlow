@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../domain/entities/clinic_service_item.dart';
 
 class ClinicServiceItemTile extends StatelessWidget {
@@ -15,17 +15,18 @@ class ClinicServiceItemTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final hasDescription = service.description.trim().isNotEmpty;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: AppColors.darkSurface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.darkBorder, width: 1.5),
+        border: Border.all(color: colors.border, width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.18),
+            color: Colors.black.withValues(alpha: context.isDarkMode ? 0.18 : 0.05),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -37,7 +38,7 @@ class ClinicServiceItemTile extends StatelessWidget {
           onTap: onTap,
           borderRadius: BorderRadius.circular(16),
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
+            padding: const EdgeInsets.all(14),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -45,22 +46,15 @@ class ClinicServiceItemTile extends StatelessWidget {
                   width: 48,
                   height: 48,
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        AppColors.accent.withValues(alpha: 0.28),
-                        AppColors.accent.withValues(alpha: 0.10),
-                      ],
-                    ),
+                    color: colors.accentTint,
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(
-                      color: AppColors.accent.withValues(alpha: 0.25),
+                      color: colors.accent.withValues(alpha: 0.25),
                     ),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.medical_services_outlined,
-                    color: AppColors.accentLight,
+                    color: colors.accent,
                     size: 22,
                   ),
                 ),
@@ -70,7 +64,7 @@ class ClinicServiceItemTile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      _DepartmentTag(name: service.departmentName),
+                      _DepartmentTag(name: service.departmentName, colors: colors),
                       const SizedBox(height: 6),
                       Text(
                         service.name,
@@ -79,7 +73,7 @@ class ClinicServiceItemTile extends StatelessWidget {
                         style: GoogleFonts.inter(
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
-                          color: AppColors.darkInk,
+                          color: colors.textPrimary,
                           height: 1.25,
                         ),
                       ),
@@ -91,7 +85,7 @@ class ClinicServiceItemTile extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.inter(
                             fontSize: 11.5,
-                            color: AppColors.darkInkFaint,
+                            color: colors.textSubtle,
                             height: 1.3,
                           ),
                         ),
@@ -99,10 +93,10 @@ class ClinicServiceItemTile extends StatelessWidget {
                       const SizedBox(height: 6),
                       Row(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.access_time_rounded,
                             size: 13,
-                            color: AppColors.darkInkMuted,
+                            color: colors.textMuted,
                           ),
                           const SizedBox(width: 4),
                           Text(
@@ -110,7 +104,7 @@ class ClinicServiceItemTile extends StatelessWidget {
                             style: GoogleFonts.inter(
                               fontSize: 11.5,
                               fontWeight: FontWeight.w500,
-                              color: AppColors.darkInkMuted,
+                              color: colors.textMuted,
                             ),
                           ),
                         ],
@@ -128,20 +122,20 @@ class ClinicServiceItemTile extends StatelessWidget {
                       style: GoogleFonts.robotoMono(
                         fontWeight: FontWeight.w800,
                         fontSize: 15,
-                        color: AppColors.darkInk,
+                        color: colors.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 8),
                     Container(
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.15),
+                        color: colors.primaryTint,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.chevron_right_rounded,
                         size: 16,
-                        color: AppColors.primaryLight,
+                        color: colors.primary,
                       ),
                     ),
                   ],
@@ -157,25 +151,26 @@ class ClinicServiceItemTile extends StatelessWidget {
 
 class _DepartmentTag extends StatelessWidget {
   final String name;
+  final AppColorsExtension colors;
 
-  const _DepartmentTag({required this.name});
+  const _DepartmentTag({required this.name, required this.colors});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.14),
+        color: colors.primaryTint,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+        border: Border.all(color: colors.primary.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(
+          Icon(
             Icons.local_hospital_outlined,
             size: 11,
-            color: AppColors.primaryLight,
+            color: colors.primary,
           ),
           const SizedBox(width: 4),
           Flexible(
@@ -187,7 +182,7 @@ class _DepartmentTag extends StatelessWidget {
                 fontSize: 9.5,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 0.6,
-                color: AppColors.primaryLight,
+                color: colors.primary,
               ),
             ),
           ),

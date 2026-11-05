@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../domain/entities/clinic_doctor_profile_entity.dart';
-import 'doctor_ui_kit.dart';
 
 class DoctorDetailAboutCard extends StatelessWidget {
   final ClinicDoctorProfileEntity doctor;
@@ -10,11 +10,13 @@ class DoctorDetailAboutCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Container(
       decoration: BoxDecoration(
-        color: DoctorColors.surface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: DoctorColors.border),
+        border: Border.all(color: colors.border),
       ),
       padding: const EdgeInsets.all(22),
       child: Column(
@@ -22,7 +24,7 @@ class DoctorDetailAboutCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.person_outline_rounded, size: 16, color: DoctorColors.cyan),
+              Icon(Icons.person_outline_rounded, size: 16, color: colors.info),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -30,14 +32,14 @@ class DoctorDetailAboutCard extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 15,
                     fontWeight: FontWeight.w800,
-                    color: Colors.white,
+                    color: colors.textPrimary,
                   ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 14),
-          const Divider(color: DoctorColors.border, height: 1),
+          Divider(color: colors.border, height: 1),
           const SizedBox(height: 14),
           Text(
             doctor.bio.trim().isNotEmpty
@@ -47,8 +49,8 @@ class DoctorDetailAboutCard extends StatelessWidget {
               fontSize: 13.5,
               height: 1.6,
               color: doctor.bio.trim().isNotEmpty
-                  ? const Color(0xFFCBD5E1)
-                  : DoctorColors.subtle,
+                  ? colors.textPrimary
+                  : colors.textMuted,
               fontStyle: doctor.bio.trim().isNotEmpty
                   ? FontStyle.normal
                   : FontStyle.italic,

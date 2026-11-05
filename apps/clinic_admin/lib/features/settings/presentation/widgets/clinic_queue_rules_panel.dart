@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../domain/entities/clinic_queue_rules_entity.dart';
 
 class ClinicQueueRulesPanel extends StatefulWidget {
@@ -38,19 +39,21 @@ class _ClinicQueueRulesPanelState extends State<ClinicQueueRulesPanel> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _field('Maximum live queue capacity', _capacityCtrl),
+        _field(context, 'Maximum live queue capacity', _capacityCtrl),
         const SizedBox(height: 14),
-        _field('Estimated average consultation time (min)', _avgTimeCtrl),
+        _field(context, 'Estimated average consultation time (min)', _avgTimeCtrl),
         const SizedBox(height: 18),
         Container(
           padding: const EdgeInsets.symmetric(vertical: 12),
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             border: Border(
-              top: BorderSide(color: Color(0xFF1E293B)),
-              bottom: BorderSide(color: Color(0xFF1E293B)),
+              top: BorderSide(color: colors.border),
+              bottom: BorderSide(color: colors.border),
             ),
           ),
           child: Row(
@@ -59,14 +62,14 @@ class _ClinicQueueRulesPanelState extends State<ClinicQueueRulesPanel> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Allow walk-ins without appointment', style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.white)),
+                  Text('Allow walk-ins without appointment', style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.bold, color: colors.textPrimary)),
                   const SizedBox(height: 2),
-                  Text('Enables customer mobile app live queuing', style: GoogleFonts.inter(fontSize: 11.5, color: const Color(0xFF94A3B8))),
+                  Text('Enables customer mobile app live queuing', style: GoogleFonts.inter(fontSize: 11.5, color: colors.textMuted)),
                 ],
               ),
               Switch(
                 value: _allowWalkIns,
-                activeTrackColor: const Color(0xFF2563EB),
+                activeTrackColor: colors.primary,
                 onChanged: (val) => setState(() => _allowWalkIns = val),
               ),
             ],
@@ -84,7 +87,7 @@ class _ClinicQueueRulesPanelState extends State<ClinicQueueRulesPanel> {
             ));
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF2563EB),
+            backgroundColor: colors.primary,
             foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -95,22 +98,25 @@ class _ClinicQueueRulesPanelState extends State<ClinicQueueRulesPanel> {
     );
   }
 
-  Widget _field(String label, TextEditingController ctrl) {
+  Widget _field(BuildContext context, String label, TextEditingController ctrl) {
+    final colors = context.colors;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: const Color(0xFF94A3B8))),
+        Text(label, style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: colors.textMuted)),
         const SizedBox(height: 6),
         TextField(
           controller: ctrl,
           keyboardType: TextInputType.number,
-          style: GoogleFonts.inter(fontSize: 13, color: Colors.white),
+          style: GoogleFonts.inter(fontSize: 13, color: colors.textPrimary),
           decoration: InputDecoration(
             filled: true,
-            fillColor: const Color(0xFF162238),
+            fillColor: colors.surfaceSecondary,
             contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
-            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Color(0xFF2563EB))),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: colors.border)),
+            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: colors.border)),
+            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: colors.primary)),
           ),
         ),
       ],
