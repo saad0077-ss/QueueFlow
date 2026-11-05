@@ -1,5 +1,6 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
+import '../../../appointments/presentation/pages/clinic_appointments_view.dart';
 import '../../../billing/presentation/pages/clinic_billing_view.dart';
 import '../../../doctors/presentation/pages/clinic_doctors_view.dart';
 import '../../../services/presentation/pages/clinic_services_view.dart';
@@ -26,6 +27,10 @@ class ClinicDashboardContentSwitcher extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (state.activeNav == 'Appointments') {
+      return const ClinicAppointmentsView();
+    }
+
     if (state.activeNav == 'Services') {
       return const ClinicServicesView();
     }
@@ -63,6 +68,8 @@ class ClinicDashboardContentSwitcher extends StatelessWidget {
           onCreateAppointment: () => CreateAppointmentDialog.show(context),
           onTogglePauseQueue: () => bloc.add(const DashboardTogglePausePressed()),
           isQueuePaused: state.queue.isPaused,
+          onViewAllAppointments: () =>
+              bloc.add(const DashboardNavTabChanged('Appointments')),
         ),
       ],
     );

@@ -7,7 +7,6 @@ import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../domain/entities/clinic_doctor_profile_entity.dart';
 import '../bloc/clinic_doctors_bloc.dart';
 import '../bloc/clinic_doctors_event.dart';
-import 'doctor_detail_account_status_card.dart';
 import 'doctor_detail_availability_card.dart';
 import 'doctor_detail_back_bar.dart';
 import 'doctor_detail_contact_card.dart';
@@ -249,16 +248,6 @@ class DoctorDetailView extends StatelessWidget {
                         children: [
                           DoctorDetailContactCard(doctor: doctor),
                           const SizedBox(height: 18),
-                          DoctorDetailAccountStatusCard(
-                            doctor: doctor,
-                            onChangeStatus: (status) {
-                              bloc.add(DoctorAccountStatusChanged(
-                                doctorId: doctor.id,
-                                accountStatus: status,
-                              ));
-                            },
-                          ),
-                          const SizedBox(height: 18),
                           DoctorDetailDangerCard(
                             doctor: doctor,
                             onRemoveDoctor: () => _showRemoveConfirmationDialog(context),
@@ -281,16 +270,6 @@ class DoctorDetailView extends StatelessWidget {
                     DoctorDetailReviewsCard(doctor: doctor),
                     const SizedBox(height: 18),
                     DoctorDetailContactCard(doctor: doctor),
-                    const SizedBox(height: 18),
-                    DoctorDetailAccountStatusCard(
-                      doctor: doctor,
-                      onChangeStatus: (status) {
-                        bloc.add(DoctorAccountStatusChanged(
-                          doctorId: doctor.id,
-                          accountStatus: status,
-                        ));
-                      },
-                    ),
                     const SizedBox(height: 18),
                     DoctorDetailDangerCard(
                       doctor: doctor,

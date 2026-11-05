@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 import '../../../../core/layout/clinic_breakpoints.dart';
 import 'appointment_trend_card.dart';
@@ -20,6 +20,7 @@ class DashboardMainColumns extends StatelessWidget {
   final VoidCallback onCreateAppointment;
   final VoidCallback onTogglePauseQueue;
   final bool isQueuePaused;
+  final VoidCallback? onViewAllAppointments;
 
   const DashboardMainColumns({
     super.key,
@@ -31,6 +32,7 @@ class DashboardMainColumns extends StatelessWidget {
     required this.onCreateAppointment,
     required this.onTogglePauseQueue,
     required this.isQueuePaused,
+    this.onViewAllAppointments,
   });
 
   @override
@@ -57,7 +59,7 @@ class DashboardMainColumns extends StatelessWidget {
               const SizedBox(height: 16),
               quickActions,
               const SizedBox(height: 16),
-              const UpcomingAppointmentsCard(),
+              UpcomingAppointmentsCard(onViewAll: onViewAllAppointments),
               const SizedBox(height: 16),
               const AppointmentTrendCard(),
               const SizedBox(height: 16),
@@ -70,13 +72,13 @@ class DashboardMainColumns extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Left Column (flex 65)
-            const Expanded(
+            Expanded(
               flex: 65,
               child: Column(
                 children: [
-                  UpcomingAppointmentsCard(),
-                  SizedBox(height: 20),
-                  AppointmentTrendCard(),
+                  UpcomingAppointmentsCard(onViewAll: onViewAllAppointments),
+                  const SizedBox(height: 20),
+                  const AppointmentTrendCard(),
                 ],
               ),
             ),
