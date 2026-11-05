@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 /// Status pill badge shown for appointments (e.g. COMPLETED, RESCHEDULED, CHECKEDIN).
 class AppointmentStatusPill extends StatelessWidget {
@@ -14,12 +15,13 @@ class AppointmentStatusPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final bgColor = isCompleted
-        ? const Color(0xFF064E3B)
-        : const Color(0xFF172554);
+        ? colors.badgeOpenBg
+        : colors.infoTint;
     final textColor = isCompleted
-        ? const Color(0xFF34D399)
-        : const Color(0xFF38BDF8);
+        ? colors.badgeOpenText
+        : colors.info;
 
     return Container(
       padding: const EdgeInsets.symmetric(

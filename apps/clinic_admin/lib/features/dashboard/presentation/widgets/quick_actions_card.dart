@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class QuickActionsCard extends StatelessWidget {
   final VoidCallback? onAddWalkIn;
@@ -17,14 +18,14 @@ class QuickActionsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF10192D),
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xFF1E293B).withValues(alpha: 0.8),
-        ),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -34,7 +35,7 @@ class QuickActionsCard extends StatelessWidget {
             style: GoogleFonts.inter(
               fontSize: 15,
               fontWeight: FontWeight.w600,
-              color: Colors.white,
+              color: colors.textPrimary,
             ),
           ),
           const SizedBox(height: 14),
@@ -42,8 +43,8 @@ class QuickActionsCard extends StatelessWidget {
           // Add Walk-In Patient Button
           _buildActionButton(
             label: 'Add Walk-In Patient',
-            borderColor: const Color(0xFF27354E),
-            textColor: Colors.white,
+            borderColor: colors.border,
+            textColor: colors.textPrimary,
             onTap: onAddWalkIn,
           ),
 
@@ -52,8 +53,8 @@ class QuickActionsCard extends StatelessWidget {
           // Create Appointment Button
           _buildActionButton(
             label: 'Create Appointment',
-            borderColor: const Color(0xFF27354E),
-            textColor: Colors.white,
+            borderColor: colors.border,
+            textColor: colors.textPrimary,
             onTap: onCreateAppointment,
           ),
 
@@ -62,8 +63,8 @@ class QuickActionsCard extends StatelessWidget {
           // Pause Live Queue Button
           _buildActionButton(
             label: isQueuePaused ? 'Resume Live Queue' : 'Pause Live Queue',
-            borderColor: const Color(0xFFD97706),
-            textColor: const Color(0xFFF59E0B),
+            borderColor: colors.warning,
+            textColor: colors.warning,
             onTap: onTogglePauseQueue,
           ),
         ],

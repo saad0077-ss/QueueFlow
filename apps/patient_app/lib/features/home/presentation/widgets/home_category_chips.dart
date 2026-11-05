@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class CategoryItem {
   final String id;
@@ -74,6 +74,8 @@ class HomeCategoryChips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       physics: const BouncingScrollPhysics(),
@@ -82,6 +84,9 @@ class HomeCategoryChips extends StatelessWidget {
         child: Row(
           children: categories.map((cat) {
             final isSelected = selectedCategory.toLowerCase() == cat.id.toLowerCase();
+            final defaultBg = context.isDarkMode
+                ? cat.tintColor
+                : cat.iconColor.withValues(alpha: 0.08);
 
             return Padding(
               padding: const EdgeInsets.only(right: 12),
@@ -99,12 +104,12 @@ class HomeCategoryChips extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: isSelected
                               ? cat.iconColor.withValues(alpha: 0.22)
-                              : cat.tintColor,
+                              : defaultBg,
                           borderRadius: BorderRadius.circular(18),
                           border: Border.all(
                             color: isSelected
                                 ? cat.iconColor
-                                : AppColors.darkBorder.withValues(alpha: 0.6),
+                                : colors.border,
                             width: isSelected ? 2 : 1,
                           ),
                           boxShadow: isSelected
@@ -132,7 +137,7 @@ class HomeCategoryChips extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
-                          color: isSelected ? AppColors.darkInk : AppColors.darkInkMuted,
+                          color: isSelected ? colors.textPrimary : colors.textMuted,
                         ),
                       ),
                     ],

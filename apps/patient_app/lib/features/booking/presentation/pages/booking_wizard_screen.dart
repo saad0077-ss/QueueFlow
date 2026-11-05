@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:patient_app/core/theme/app_colors.dart';
-import 'package:patient_app/features/clinic_details/domain/entities/clinic_doctor_item.dart';
-import 'package:patient_app/features/clinic_details/domain/entities/clinic_service_item.dart';
-import 'package:patient_app/features/home/domain/entities/clinic_entity.dart';
-import 'package:patient_app/features/booking/data/repositories/booking_repository_impl.dart';
-import 'package:patient_app/features/booking/domain/repositories/booking_repository.dart';
-import 'package:patient_app/features/booking/domain/usecases/create_appointment_usecase.dart';
-import 'package:patient_app/features/booking/presentation/bloc/booking_bloc.dart';
-import 'package:patient_app/features/booking/presentation/bloc/booking_event.dart';
-import 'package:patient_app/features/booking/presentation/bloc/booking_state.dart';
-import 'package:patient_app/features/booking/presentation/widgets/booking_stepper_header.dart';
-import 'package:patient_app/features/booking/presentation/widgets/booking_step1_service.dart';
-import 'package:patient_app/features/booking/presentation/widgets/booking_step2_doctor.dart';
-import 'package:patient_app/features/booking/presentation/widgets/booking_step3_schedule.dart';
-import 'package:patient_app/features/booking/presentation/widgets/booking_step4_confirm.dart';
-import 'package:patient_app/features/booking/presentation/widgets/booking_step5_receipt.dart';
-import 'package:patient_app/core/services/razorpay_payment_service.dart';
-import 'package:patient_app/core/widgets/app_snack_bar.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
+import '../../../clinic_details/domain/entities/clinic_doctor_item.dart';
+import '../../../clinic_details/domain/entities/clinic_service_item.dart';
+import '../../../home/domain/entities/clinic_entity.dart';
+import '../../data/repositories/booking_repository_impl.dart';
+import '../../domain/repositories/booking_repository.dart';
+import '../../domain/usecases/create_appointment_usecase.dart';
+import '../bloc/booking_bloc.dart';
+import '../bloc/booking_event.dart';
+import '../bloc/booking_state.dart';
+import '../widgets/booking_stepper_header.dart';
+import '../widgets/booking_step1_service.dart';
+import '../widgets/booking_step2_doctor.dart';
+import '../widgets/booking_step3_schedule.dart';
+import '../widgets/booking_step4_confirm.dart';
+import '../widgets/booking_step5_receipt.dart';
+import '../../../../core/services/razorpay_payment_service.dart';
+import '../../../../core/widgets/app_snack_bar.dart';
 
 class BookingWizardScreen extends StatelessWidget {
   final ClinicEntity clinic;
@@ -97,13 +97,15 @@ class _BookingWizardViewState extends State<_BookingWizardView> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return BlocConsumer<BookingBloc, BookingState>(
       listener: (context, state) {
         if (state.errorMessage != null) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.errorMessage!),
-              backgroundColor: AppColors.error,
+              backgroundColor: colors.error,
             ),
           );
         }
@@ -112,13 +114,13 @@ class _BookingWizardViewState extends State<_BookingWizardView> {
         final bloc = context.read<BookingBloc>();
 
         return Scaffold(
-          backgroundColor: AppColors.darkBgApp,
+          backgroundColor: colors.background,
           appBar: AppBar(
-            backgroundColor: AppColors.darkBgApp,
+            backgroundColor: colors.headerBg,
             elevation: 0,
             leading: IconButton(
               icon: const Icon(Icons.chevron_left_rounded, size: 28),
-              color: AppColors.darkInk,
+              color: colors.textPrimary,
               onPressed: () {
                 if (state.step > 1 && state.step <= 4) {
                   bloc.add(const PreviousStep());
@@ -133,16 +135,16 @@ class _BookingWizardViewState extends State<_BookingWizardView> {
               style: GoogleFonts.inter(
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
-                color: AppColors.darkInk,
+                color: colors.textPrimary,
               ),
             ),
             actions: const [
-              SizedBox(width: 48), // Balance leading
+              SizedBox(width: 48),
             ],
           ),
           body: state.status == BookingStatus.loading
-              ? const Center(
-                  child: CircularProgressIndicator(color: AppColors.primaryLight),
+              ? Center(
+                  child: CircularProgressIndicator(color: colors.primary),
                 )
               : SafeArea(
                   child: SingleChildScrollView(
@@ -222,7 +224,6 @@ class _BookingWizardViewState extends State<_BookingWizardView> {
         return BookingStep5Receipt(
           appointment: state.confirmedAppointment!,
           onViewMyBookings: () {
-            // Pop with 'goToBookings: true' so caller navigates to My Bookings
             Navigator.of(context).pop(true);
           },
           onBackToHome: () {

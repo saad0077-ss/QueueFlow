@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../domain/entities/doctor_plan_entity.dart';
-import 'doctor_ui_kit.dart';
 
 class DoctorSlotCard extends StatelessWidget {
   final DoctorPlanEntity plan;
@@ -19,14 +19,15 @@ class DoctorSlotCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final isUnlimited = plan.isUnlimited;
     final docLimit = plan.doctorsLimit;
     final isAvailable = isUnlimited || currentCount < docLimit;
     final remaining = isUnlimited ? 999 : (docLimit - currentCount).clamp(0, 999);
 
     return CustomPaint(
-      painter: const _DashedRRectPainter(
-        color: Color(0xFF334155),
+      painter: _DashedRRectPainter(
+        color: colors.border,
         strokeWidth: 1.5,
         radius: 14,
         dashLength: 7,
@@ -35,7 +36,7 @@ class DoctorSlotCard extends StatelessWidget {
       child: Container(
         constraints: const BoxConstraints(minHeight: 310),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.015),
+          color: colors.surface.withValues(alpha: 0.5),
           borderRadius: BorderRadius.circular(14),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 28),
@@ -47,14 +48,14 @@ class DoctorSlotCard extends StatelessWidget {
               width: 44,
               height: 44,
               alignment: Alignment.center,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Color(0xFF1E293B),
+                color: colors.surfaceSecondary,
               ),
               child: Icon(
                 isAvailable ? Icons.add : Icons.lock_outline_rounded,
                 size: 22,
-                color: isAvailable ? DoctorColors.cyan : DoctorColors.amber,
+                color: isAvailable ? colors.primaryLight : colors.warning,
               ),
             ),
             const SizedBox(height: 14),
@@ -63,7 +64,7 @@ class DoctorSlotCard extends StatelessWidget {
               style: GoogleFonts.inter(
                 fontSize: 15,
                 fontWeight: FontWeight.w800,
-                color: Colors.white,
+                color: colors.textPrimary,
               ),
               textAlign: TextAlign.center,
             ),
@@ -76,7 +77,7 @@ class DoctorSlotCard extends StatelessWidget {
                   : 'Your ${plan.planName} covers $docLimit doctor${docLimit == 1 ? '' : 's'}. Upgrade to add more doctors.',
               style: GoogleFonts.inter(
                 fontSize: 12,
-                color: DoctorColors.muted,
+                color: colors.textMuted,
                 height: 1.4,
               ),
               textAlign: TextAlign.center,
@@ -85,7 +86,7 @@ class DoctorSlotCard extends StatelessWidget {
             ElevatedButton(
               onPressed: isAvailable ? onAdd : onUpgrade,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF0284C7),
+                backgroundColor: colors.primary,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 11),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),

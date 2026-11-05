@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../domain/entities/clinic_doctor_profile_entity.dart';
-import 'doctor_ui_kit.dart';
 
 class DoctorDetailProfessionalCard extends StatelessWidget {
   final ClinicDoctorProfileEntity doctor;
@@ -10,6 +10,7 @@ class DoctorDetailProfessionalCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final items = [
       ('SPECIALIZATION', doctor.specialty),
       ('DEPARTMENT', doctor.department),
@@ -20,9 +21,9 @@ class DoctorDetailProfessionalCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: DoctorColors.surface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: DoctorColors.border),
+        border: Border.all(color: colors.border),
       ),
       padding: const EdgeInsets.all(22),
       child: Column(
@@ -30,7 +31,7 @@ class DoctorDetailProfessionalCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.work_outline_rounded, size: 16, color: DoctorColors.cyan),
+              Icon(Icons.work_outline_rounded, size: 16, color: colors.primary),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -38,14 +39,14 @@ class DoctorDetailProfessionalCard extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 15,
                     fontWeight: FontWeight.w800,
-                    color: Colors.white,
+                    color: colors.textPrimary,
                   ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 14),
-          const Divider(color: DoctorColors.border, height: 1),
+          Divider(color: colors.border, height: 1),
           const SizedBox(height: 18),
           LayoutBuilder(
             builder: (context, constraints) {
@@ -68,7 +69,7 @@ class DoctorDetailProfessionalCard extends StatelessWidget {
                               fontSize: 11,
                               fontWeight: FontWeight.w700,
                               letterSpacing: 0.4,
-                              color: DoctorColors.subtle,
+                              color: colors.textMuted,
                             ),
                           ),
                           const SizedBox(height: 4),
@@ -77,7 +78,7 @@ class DoctorDetailProfessionalCard extends StatelessWidget {
                             style: GoogleFonts.inter(
                               fontSize: 13.5,
                               fontWeight: FontWeight.w600,
-                              color: Colors.white,
+                              color: colors.textPrimary,
                               letterSpacing: label.contains('REGISTRATION') ? 0.3 : 0,
                             ),
                           ),

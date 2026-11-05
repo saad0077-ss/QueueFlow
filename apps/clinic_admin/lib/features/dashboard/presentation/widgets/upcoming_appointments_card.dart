@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 import '../../../../core/widgets/app_snack_bar.dart';
 import 'appointment_item_model.dart';
@@ -15,13 +16,13 @@ class UpcomingAppointmentsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF10192D),
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xFF1E293B).withValues(alpha: 0.8),
-        ),
+        border: Border.all(color: colors.border),
       ),
       padding: const EdgeInsets.all(22),
       child: Column(
@@ -38,7 +39,7 @@ class UpcomingAppointmentsCard extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 15.5,
                     fontWeight: FontWeight.w600,
-                    color: Colors.white,
+                    color: colors.textPrimary,
                   ),
                 ),
               ),
@@ -64,14 +65,14 @@ class UpcomingAppointmentsCard extends StatelessWidget {
                         style: GoogleFonts.inter(
                           fontSize: 12.5,
                           fontWeight: FontWeight.w500,
-                          color: const Color(0xFF38BDF8),
+                          color: colors.primary,
                         ),
                       ),
                       const SizedBox(width: 4),
-                      const Icon(
+                      Icon(
                         Icons.arrow_forward_rounded,
                         size: 14,
-                        color: Color(0xFF38BDF8),
+                        color: colors.primary,
                       ),
                     ],
                   ),
@@ -91,7 +92,7 @@ class UpcomingAppointmentsCard extends StatelessWidget {
                   // Column Headers Row
                   const _AppointmentTableHeader(),
 
-                  const Divider(height: 1, color: Color(0xFF1E293B)),
+                  Divider(height: 1, color: colors.border),
 
                   // Appointment Rows List
                   ListView.separated(
@@ -99,7 +100,7 @@ class UpcomingAppointmentsCard extends StatelessWidget {
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: AppointmentItem.defaultList.length,
                     separatorBuilder: (context, index) =>
-                        const Divider(height: 1, color: Color(0x331E293B)),
+                        Divider(height: 1, color: colors.borderSubtle),
                     itemBuilder: (context, index) {
                       return AppointmentTableRow(
                         appointment: AppointmentItem.defaultList[index],
@@ -127,15 +128,17 @@ class _AppointmentTableHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         children: [
-          _headerText('TIME', flex: 2),
-          _headerText('CUSTOMER', flex: 3),
-          _headerText('SERVICE', flex: 4),
-          _headerText('DOCTOR', flex: 3),
-          _headerText('STATUS', flex: 3, alignRight: true),
+          _headerText('TIME', flex: 2, color: colors.textMuted),
+          _headerText('CUSTOMER', flex: 3, color: colors.textMuted),
+          _headerText('SERVICE', flex: 4, color: colors.textMuted),
+          _headerText('DOCTOR', flex: 3, color: colors.textMuted),
+          _headerText('STATUS', flex: 3, alignRight: true, color: colors.textMuted),
         ],
       ),
     );
@@ -145,13 +148,14 @@ class _AppointmentTableHeader extends StatelessWidget {
     String title, {
     required int flex,
     bool alignRight = false,
+    required Color color,
   }) {
     final text = Text(
       title,
       style: GoogleFonts.inter(
         fontSize: 11,
         fontWeight: FontWeight.w600,
-        color: const Color(0xFF64748B),
+        color: color,
         letterSpacing: 0.6,
       ),
     );

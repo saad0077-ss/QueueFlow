@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../domain/entities/clinic_doctor_profile_entity.dart';
 import 'doctor_ui_kit.dart';
 
@@ -25,33 +26,34 @@ class DoctorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     Color statusColor;
     String statusLabel;
     final isActiveAccount = doctor.isActiveAccount;
     if (doctor.isInactiveAccount) {
-      statusColor = DoctorColors.red;
+      statusColor = colors.error;
       statusLabel = 'INACTIVE';
     } else if (doctor.isPendingAccount) {
-      statusColor = DoctorColors.amber;
+      statusColor = colors.warning;
       statusLabel = 'PENDING';
     } else if (doctor.isBusy) {
-      statusColor = DoctorColors.cyan;
+      statusColor = colors.info;
       statusLabel = 'IN CONSULTATION';
     } else if (doctor.isOffDuty) {
-      statusColor = DoctorColors.amber;
+      statusColor = colors.warning;
       statusLabel = 'OFF DUTY';
     } else {
-      statusColor = DoctorColors.green;
+      statusColor = colors.success;
       statusLabel = 'AVAILABLE';
     }
 
     return Container(
       decoration: BoxDecoration(
-        color: DoctorColors.surface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
           color: isActiveAccount
-              ? DoctorColors.border
+              ? colors.border
               : statusColor.withValues(alpha: 0.4),
         ),
       ),
@@ -116,10 +118,10 @@ class DoctorCard extends StatelessWidget {
                                     vertical: 2,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFF0F172A),
+                                    color: colors.surfaceSecondary,
                                     borderRadius: BorderRadius.circular(12),
                                     border: Border.all(
-                                      color: const Color(0xFF1E293B),
+                                      color: colors.border,
                                     ),
                                   ),
                                   child: Text(
@@ -129,7 +131,7 @@ class DoctorCard extends StatelessWidget {
                                     style: GoogleFonts.inter(
                                       fontSize: 9.5,
                                       fontWeight: FontWeight.w600,
-                                      color: DoctorColors.green,
+                                      color: colors.success,
                                     ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
@@ -148,7 +150,7 @@ class DoctorCard extends StatelessWidget {
                         style: GoogleFonts.inter(
                           fontSize: 16.5,
                           fontWeight: FontWeight.w800,
-                          color: Colors.white,
+                          color: colors.textPrimary,
                           letterSpacing: -0.3,
                         ),
                         maxLines: 1,
@@ -162,7 +164,7 @@ class DoctorCard extends StatelessWidget {
                         style: GoogleFonts.inter(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
-                          color: DoctorColors.cyan,
+                          color: colors.primaryLight,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -221,9 +223,9 @@ class DoctorCard extends StatelessWidget {
                   vertical: 8,
                 ),
                 decoration: BoxDecoration(
-                  color: DoctorColors.field,
+                  color: colors.surfaceSecondary,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: DoctorColors.border),
+                  border: Border.all(color: colors.border),
                 ),
                 child: Column(
                   children: [
@@ -236,7 +238,7 @@ class DoctorCard extends StatelessWidget {
                             style: GoogleFonts.inter(
                               fontSize: 10,
                               fontWeight: FontWeight.w700,
-                              color: DoctorColors.muted,
+                              color: colors.textMuted,
                               letterSpacing: 0.4,
                             ),
                             maxLines: 1,
@@ -253,7 +255,7 @@ class DoctorCard extends StatelessWidget {
                           style: GoogleFonts.inter(
                             fontSize: 11.5,
                             fontWeight: FontWeight.w800,
-                            color: Colors.white,
+                            color: colors.textPrimary,
                           ),
                         ),
                       ],
@@ -268,7 +270,7 @@ class DoctorCard extends StatelessWidget {
                             style: GoogleFonts.inter(
                               fontSize: 10,
                               fontWeight: FontWeight.w700,
-                              color: DoctorColors.muted,
+                              color: colors.textMuted,
                               letterSpacing: 0.4,
                             ),
                             maxLines: 1,
@@ -282,7 +284,7 @@ class DoctorCard extends StatelessWidget {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: DoctorColors.green.withValues(alpha: 0.15),
+                            color: colors.successTint,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
@@ -290,7 +292,7 @@ class DoctorCard extends StatelessWidget {
                             style: GoogleFonts.inter(
                               fontSize: 10,
                               fontWeight: FontWeight.w700,
-                              color: DoctorColors.green,
+                              color: colors.success,
                             ),
                           ),
                         ),
@@ -320,7 +322,7 @@ class DoctorCard extends StatelessWidget {
                           : 'Room 1 (Consultation)',
                       style: GoogleFonts.inter(
                         fontSize: 12,
-                        color: DoctorColors.muted,
+                        color: colors.textMuted,
                         fontWeight: FontWeight.w500,
                       ),
                       overflow: TextOverflow.ellipsis,
@@ -344,7 +346,7 @@ class DoctorCard extends StatelessWidget {
                           : 'Mon–Fri, 9:00 AM – 5:00 PM',
                       style: GoogleFonts.inter(
                         fontSize: 12,
-                        color: DoctorColors.muted,
+                        color: colors.textMuted,
                         fontWeight: FontWeight.w500,
                       ),
                       overflow: TextOverflow.ellipsis,
@@ -368,7 +370,7 @@ class DoctorCard extends StatelessWidget {
                           : '+91 98450 00001',
                       style: GoogleFonts.inter(
                         fontSize: 12,
-                        color: DoctorColors.muted,
+                        color: colors.textMuted,
                         fontWeight: FontWeight.w500,
                       ),
                       overflow: TextOverflow.ellipsis,
@@ -384,7 +386,7 @@ class DoctorCard extends StatelessWidget {
             padding: const EdgeInsets.only(top: 12),
             child: Column(
               children: [
-                const Divider(color: DoctorColors.border, height: 1),
+                Divider(color: colors.border, height: 1),
                 const SizedBox(height: 10),
 
                 // Real-Time Status Quick Toggles
@@ -392,28 +394,31 @@ class DoctorCard extends StatelessWidget {
                   children: [
                     Expanded(
                       child: _buildStatusToggleBtn(
+                        colors: colors,
                         label: '✓ Available',
                         status: 'available',
                         isActive: doctor.isAvailable,
-                        activeColor: DoctorColors.green,
+                        activeColor: colors.success,
                       ),
                     ),
                     const SizedBox(width: 5),
                     Expanded(
                       child: _buildStatusToggleBtn(
+                        colors: colors,
                         label: '🩺 In Consult',
                         status: 'busy',
                         isActive: doctor.isBusy,
-                        activeColor: DoctorColors.cyan,
+                        activeColor: colors.info,
                       ),
                     ),
                     const SizedBox(width: 5),
                     Expanded(
                       child: _buildStatusToggleBtn(
+                        colors: colors,
                         label: '☕ Off Duty',
                         status: 'off-duty',
                         isActive: doctor.isOffDuty,
-                        activeColor: DoctorColors.amber,
+                        activeColor: colors.warning,
                       ),
                     ),
                   ],
@@ -482,11 +487,9 @@ class DoctorCard extends StatelessWidget {
                       child: OutlinedButton(
                         onPressed: onSelectDoctor ?? onViewQueue,
                         style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          side: const BorderSide(color: Color(0xFF334155)),
-                          backgroundColor: const Color(
-                            0xFF1E293B,
-                          ).withValues(alpha: 0.5),
+                          foregroundColor: colors.textPrimary,
+                          side: BorderSide(color: colors.border),
+                          backgroundColor: colors.surfaceSecondary,
                           padding: const EdgeInsets.symmetric(
                             vertical: 8,
                             horizontal: 4,
@@ -513,11 +516,9 @@ class DoctorCard extends StatelessWidget {
                         icon: const Text('🗑️', style: TextStyle(fontSize: 13)),
                         tooltip: 'Remove doctor',
                         style: IconButton.styleFrom(
-                          backgroundColor: DoctorColors.red.withValues(
-                            alpha: 0.1,
-                          ),
+                          backgroundColor: colors.error.withValues(alpha: 0.1),
                           side: BorderSide(
-                            color: DoctorColors.red.withValues(alpha: 0.3),
+                            color: colors.error.withValues(alpha: 0.3),
                           ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -538,6 +539,7 @@ class DoctorCard extends StatelessWidget {
   }
 
   Widget _buildStatusToggleBtn({
+    required AppColorsExtension colors,
     required String label,
     required String status,
     required bool isActive,
@@ -556,12 +558,10 @@ class DoctorCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: isActive
                 ? activeColor.withValues(alpha: 0.18)
-                : const Color(0xFF1E293B).withValues(alpha: 0.4),
+                : colors.surfaceSecondary,
             borderRadius: BorderRadius.circular(6),
             border: Border.all(
-              color: isActive
-                  ? activeColor
-                  : const BorderSide(color: Color(0xFF334155)).color,
+              color: isActive ? activeColor : colors.border,
               width: isActive ? 1.5 : 1.0,
             ),
           ),
@@ -570,7 +570,7 @@ class DoctorCard extends StatelessWidget {
             style: GoogleFonts.inter(
               fontSize: 10,
               fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
-              color: isActive ? activeColor : const Color(0xFF94A3B8),
+              color: isActive ? activeColor : colors.textMuted,
             ),
             textAlign: TextAlign.center,
             maxLines: 1,

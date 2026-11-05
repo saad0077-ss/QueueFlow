@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../domain/entities/clinic_doctor_profile_entity.dart';
 import 'doctor_ui_kit.dart';
 
@@ -136,6 +137,7 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
   }
 
   Widget _textField(
+    BuildContext context,
     TextEditingController controller, {
     String? hint,
     IconData? icon,
@@ -146,11 +148,12 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
     TextInputAction action = TextInputAction.next,
     VoidCallback? onSubmitted,
   }) {
+    final colors = context.colors;
     return TextFormField(
       controller: controller,
-      style: GoogleFonts.inter(fontSize: 13, color: Colors.white),
-      cursorColor: DoctorColors.cyan,
-      decoration: doctorInputDecoration(hint: hint, prefixIcon: icon, suffixText: suffix),
+      style: GoogleFonts.inter(fontSize: 13, color: colors.textPrimary),
+      cursorColor: colors.info,
+      decoration: doctorInputDecoration(context: context, hint: hint, prefixIcon: icon, suffixText: suffix),
       keyboardType: keyboardType,
       inputFormatters: formatters,
       validator: validator,
@@ -160,24 +163,26 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
     );
   }
 
-  Widget _dropdown({
+  Widget _dropdown(
+    BuildContext context, {
     required String value,
     required List<String> items,
     required IconData icon,
     required ValueChanged<String> onChanged,
   }) {
+    final colors = context.colors;
     return Container(
       height: 44,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: DoctorColors.field,
+        color: colors.surfaceSecondary,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: DoctorColors.fieldBorder),
+        border: Border.all(color: colors.border),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Row(
         children: [
-          Icon(icon, size: 17, color: DoctorColors.subtle),
+          Icon(icon, size: 17, color: colors.textMuted),
           const SizedBox(width: 10),
           Expanded(
             child: DropdownButtonHideUnderline(
@@ -186,9 +191,9 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
                 value: items.contains(value) ? value : items.first,
                 isExpanded: true,
                 borderRadius: BorderRadius.circular(10),
-                dropdownColor: const Color(0xFF0F172A),
-                icon: const Icon(Icons.keyboard_arrow_down_rounded, color: DoctorColors.muted),
-                style: GoogleFonts.inter(fontSize: 13, color: Colors.white),
+                dropdownColor: colors.surfaceElevated,
+                icon: Icon(Icons.keyboard_arrow_down_rounded, color: colors.textMuted),
+                style: GoogleFonts.inter(fontSize: 13, color: colors.textPrimary),
                 onChanged: (v) {
                   if (v != null) onChanged(v);
                 },
@@ -198,7 +203,7 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
                           child: Text(
                             e,
                             overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.inter(fontSize: 13, color: Colors.white),
+                            style: GoogleFonts.inter(fontSize: 13, color: colors.textPrimary),
                           ),
                         ))
                     .toList(),
@@ -212,6 +217,7 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final depts = widget.departments.isNotEmpty
         ? widget.departments
         : ['General Medicine', 'Dental & Oral Surgery', 'Pediatrics & Child Care', 'Cardiology'];
@@ -239,17 +245,17 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
         child: Container(
           constraints: const BoxConstraints(maxWidth: 620, maxHeight: 760),
           decoration: BoxDecoration(
-            color: DoctorColors.surface,
+            color: colors.surfaceElevated,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: DoctorColors.border),
+            border: Border.all(color: colors.border),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.55),
+                color: Colors.black.withValues(alpha: 0.35),
                 blurRadius: 40,
                 offset: const Offset(0, 16),
               ),
               BoxShadow(
-                color: DoctorColors.primary.withValues(alpha: 0.08),
+                color: colors.primary.withValues(alpha: 0.08),
                 blurRadius: 60,
                 spreadRadius: 2,
               ),
@@ -262,8 +268,8 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _buildHeader(),
-                const Divider(color: DoctorColors.border, height: 1),
+                _buildHeader(context),
+                Divider(color: colors.border, height: 1),
                 Flexible(
                   child: Scrollbar(
                     controller: _scrollController,
@@ -273,9 +279,10 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildProfileStrip(),
+                          _buildProfileStrip(context),
                           const SizedBox(height: 20),
                           _buildSection(
+                            context,
                             icon: Icons.medical_services_outlined,
                             title: 'PROFESSIONAL',
                             children: [
@@ -283,6 +290,7 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
                                 DoctorLabeledField(
                                   label: 'Full Name',
                                   child: _textField(
+                                    context,
                                     _nameController,
                                     icon: Icons.person_outline_rounded,
                                     hint: 'e.g. Dr. Anita Rao',
@@ -292,6 +300,7 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
                                 DoctorLabeledField(
                                   label: 'Department',
                                   child: _dropdown(
+                                    context,
                                     value: _selectedDept,
                                     items: depts,
                                     icon: Icons.apartment_rounded,
@@ -301,12 +310,13 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
                               ),
                               DoctorLabeledField(
                                 label: 'Qualifications',
-                                child: _buildQualificationField(),
+                                child: _buildQualificationField(context),
                               ),
                               _buildTwoCol(
                                 DoctorLabeledField(
                                   label: 'Experience',
                                   child: _textField(
+                                    context,
                                     _expController,
                                     icon: Icons.timeline_rounded,
                                     hint: 'e.g. 5',
@@ -319,6 +329,7 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
                                 DoctorLabeledField(
                                   label: 'Employment Type',
                                   child: _dropdown(
+                                    context,
                                     value: _selectedEmployment,
                                     items: employmentTypes,
                                     icon: Icons.work_outline_rounded,
@@ -330,6 +341,7 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
                           ),
                           const SizedBox(height: 16),
                           _buildSection(
+                            context,
                             icon: Icons.contact_phone_outlined,
                             title: 'CONTACT & CONSULTATION',
                             children: [
@@ -337,6 +349,7 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
                                 DoctorLabeledField(
                                   label: 'Email',
                                   child: _textField(
+                                    context,
                                     _emailController,
                                     icon: Icons.mail_outline_rounded,
                                     hint: 'doctor@clinic.com',
@@ -347,6 +360,7 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
                                 DoctorLabeledField(
                                   label: 'Phone',
                                   child: _textField(
+                                    context,
                                     _phoneController,
                                     icon: Icons.phone_outlined,
                                     hint: '+91 98450 00000',
@@ -359,6 +373,7 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
                               DoctorLabeledField(
                                 label: 'Consultation Room',
                                 child: _textField(
+                                  context,
                                   _roomController,
                                   icon: Icons.meeting_room_outlined,
                                   hint: 'e.g. Room 1',
@@ -373,8 +388,8 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
                     ),
                   ),
                 ),
-                const Divider(color: DoctorColors.border, height: 1),
-                _buildFooter(),
+                Divider(color: colors.border, height: 1),
+                _buildFooter(context),
               ],
             ),
           ),
@@ -383,18 +398,12 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
+    final colors = context.colors;
     return Container(
       padding: const EdgeInsets.fromLTRB(24, 20, 16, 18),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            DoctorColors.primary.withValues(alpha: 0.14),
-            Colors.transparent,
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: colors.surfaceElevated,
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -425,23 +434,23 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
                   style: GoogleFonts.inter(
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
-                    color: Colors.white,
+                    color: colors.textPrimary,
                     letterSpacing: -0.3,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   'Update professional, contact and consultation details',
-                  style: GoogleFonts.inter(fontSize: 12, color: DoctorColors.muted),
+                  style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted),
                 ),
               ],
             ),
           ),
           IconButton(
             tooltip: 'Close',
-            icon: const Icon(Icons.close_rounded, size: 20, color: DoctorColors.muted),
+            icon: Icon(Icons.close_rounded, size: 20, color: colors.textMuted),
             style: IconButton.styleFrom(
-              backgroundColor: DoctorColors.surfaceElevated.withValues(alpha: 0.6),
+              backgroundColor: colors.surfaceSecondary,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             ),
             onPressed: () => Navigator.of(context).pop(),
@@ -470,114 +479,118 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
     'PhD',
   ];
 
-  Future<void> _pickQualifications() async {
+  Future<void> _pickQualifications(BuildContext context) async {
     final options = {..._qualificationOptions, ..._selectedQuals}.toList();
     final picked = _selectedQuals.toSet();
     final result = await showDialog<List<String>>(
       context: context,
       builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setLocal) => Dialog(
-          backgroundColor: DoctorColors.surface,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-            side: const BorderSide(color: DoctorColors.border),
-          ),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 420),
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Select qualifications',
-                    style: GoogleFonts.inter(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 14),
-                  Flexible(
-                    child: SingleChildScrollView(
-                      child: Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: [
-                          for (final q in options)
-                            FilterChip(
-                              label: Text(q),
-                              selected: picked.contains(q),
-                              showCheckmark: true,
-                              checkmarkColor: DoctorColors.cyan,
-                              selectedColor: DoctorColors.cyan.withValues(alpha: 0.18),
-                              backgroundColor: DoctorColors.field,
-                              side: BorderSide(
-                                color: picked.contains(q) ? DoctorColors.cyan : DoctorColors.fieldBorder,
-                              ),
-                              labelStyle: GoogleFonts.inter(
-                                fontSize: 12.5,
-                                fontWeight: FontWeight.w600,
-                                color: picked.contains(q) ? DoctorColors.cyan : Colors.white,
-                              ),
-                              onSelected: (on) => setLocal(() {
-                                on ? picked.add(q) : picked.remove(q);
-                              }),
-                            ),
-                        ],
+        builder: (ctx, setLocal) {
+          final dialogColors = ctx.colors;
+          return Dialog(
+            backgroundColor: dialogColors.surfaceElevated,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+              side: BorderSide(color: dialogColors.border),
+            ),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 420),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Select qualifications',
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                        color: dialogColors.textPrimary,
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 18),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: () => Navigator.of(ctx).pop(),
-                        child: Text('Cancel', style: GoogleFonts.inter(color: DoctorColors.muted)),
-                      ),
-                      const SizedBox(width: 8),
-                      DoctorGradientButton(
-                        label: 'Done',
-                        height: 38,
-                        onPressed: () => Navigator.of(ctx).pop(
-                          options.where(picked.contains).toList(),
+                    const SizedBox(height: 14),
+                    Flexible(
+                      child: SingleChildScrollView(
+                        child: Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            for (final q in options)
+                              FilterChip(
+                                label: Text(q),
+                                selected: picked.contains(q),
+                                showCheckmark: true,
+                                checkmarkColor: dialogColors.info,
+                                selectedColor: dialogColors.infoTint,
+                                backgroundColor: dialogColors.surfaceSecondary,
+                                side: BorderSide(
+                                  color: picked.contains(q) ? dialogColors.info : dialogColors.border,
+                                ),
+                                labelStyle: GoogleFonts.inter(
+                                  fontSize: 12.5,
+                                  fontWeight: FontWeight.w600,
+                                  color: picked.contains(q) ? dialogColors.info : dialogColors.textPrimary,
+                                ),
+                                onSelected: (on) => setLocal(() {
+                                  on ? picked.add(q) : picked.remove(q);
+                                }),
+                              ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                    const SizedBox(height: 18),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () => Navigator.of(ctx).pop(),
+                          child: Text('Cancel', style: GoogleFonts.inter(color: dialogColors.textMuted)),
+                        ),
+                        const SizedBox(width: 8),
+                        DoctorGradientButton(
+                          label: 'Done',
+                          height: 38,
+                          onPressed: () => Navigator.of(ctx).pop(
+                            options.where(picked.contains).toList(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
     if (result != null) setState(() => _selectedQuals = result);
   }
 
-  Widget _buildQualificationField() {
+  Widget _buildQualificationField(BuildContext context) {
+    final colors = context.colors;
     return InkWell(
       borderRadius: BorderRadius.circular(10),
-      onTap: _pickQualifications,
+      onTap: () => _pickQualifications(context),
       child: Container(
         constraints: const BoxConstraints(minHeight: 44),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: DoctorColors.field,
+          color: colors.surfaceSecondary,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: DoctorColors.fieldBorder),
+          border: Border.all(color: colors.border),
         ),
         child: Row(
           children: [
-            const Icon(Icons.school_outlined, size: 17, color: DoctorColors.subtle),
+            Icon(Icons.school_outlined, size: 17, color: colors.textMuted),
             const SizedBox(width: 10),
             Expanded(
               child: _selectedQuals.isEmpty
                   ? Text(
                       'Select qualifications',
-                      style: GoogleFonts.inter(fontSize: 13, color: DoctorColors.subtle),
+                      style: GoogleFonts.inter(fontSize: 13, color: colors.textMuted),
                     )
                   : Wrap(
                       spacing: 6,
@@ -587,7 +600,7 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                             decoration: BoxDecoration(
-                              color: DoctorColors.cyan.withValues(alpha: 0.14),
+                              color: colors.infoTint,
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
@@ -595,14 +608,14 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
                               style: GoogleFonts.inter(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
-                                color: DoctorColors.cyan,
+                                color: colors.info,
                               ),
                             ),
                           ),
                       ],
                     ),
             ),
-            const Icon(Icons.keyboard_arrow_down_rounded, color: DoctorColors.muted),
+            Icon(Icons.keyboard_arrow_down_rounded, color: colors.textMuted),
           ],
         ),
       ),
@@ -656,13 +669,14 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
-  Widget _buildProfileStrip() {
+  Widget _buildProfileStrip(BuildContext context) {
+    final colors = context.colors;
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: DoctorColors.field,
+        color: colors.surfaceSecondary,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: DoctorColors.fieldBorder),
+        border: Border.all(color: colors.border),
       ),
       child: Row(
         children: [
@@ -672,13 +686,9 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
             alignment: Alignment.center,
             clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF1E293B), Color(0xFF334155)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+              color: colors.surfaceElevated,
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: DoctorColors.cyan.withValues(alpha: 0.35)),
+              border: Border.all(color: colors.info.withValues(alpha: 0.35)),
             ),
             child: _photoBytes != null
                 ? Image.memory(_photoBytes!, width: 52, height: 52, fit: BoxFit.cover, gaplessPlayback: true)
@@ -687,7 +697,7 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
                     style: GoogleFonts.inter(
                       fontSize: 17,
                       fontWeight: FontWeight.w800,
-                      color: DoctorColors.cyan,
+                      color: colors.info,
                     ),
                   ),
           ),
@@ -703,13 +713,13 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
                   style: GoogleFonts.inter(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    color: Colors.white,
+                    color: colors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 3),
                 Text(
                   'JPG or PNG, max 200 KB',
-                  style: GoogleFonts.inter(fontSize: 11, color: DoctorColors.subtle),
+                  style: GoogleFonts.inter(fontSize: 11, color: colors.textSubtle),
                 ),
               ],
             ),
@@ -717,7 +727,7 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
           if (_photoBytes != null) ...[
             IconButton(
               tooltip: 'Remove photo',
-              icon: const Icon(Icons.delete_outline_rounded, size: 18, color: DoctorColors.muted),
+              icon: Icon(Icons.delete_outline_rounded, size: 18, color: colors.textMuted),
               onPressed: () => setState(() {
                 _photoBytes = null;
                 _photoUrl = '';
@@ -733,9 +743,9 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
               style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600),
             ),
             style: OutlinedButton.styleFrom(
-              foregroundColor: Colors.white,
-              side: const BorderSide(color: Color(0xFF334155)),
-              backgroundColor: DoctorColors.surfaceElevated,
+              foregroundColor: colors.textPrimary,
+              side: BorderSide(color: colors.border),
+              backgroundColor: colors.surfaceElevated,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),
@@ -745,17 +755,19 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
     );
   }
 
-  Widget _buildSection({
+  Widget _buildSection(
+    BuildContext context, {
     required IconData icon,
     required String title,
     required List<Widget> children,
   }) {
+    final colors = context.colors;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.02),
+        color: colors.surfaceSecondary.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: DoctorColors.border),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -765,10 +777,10 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
               Container(
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: DoctorColors.cyan.withValues(alpha: 0.12),
+                  color: colors.infoTint,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(icon, size: 15, color: DoctorColors.cyan),
+                child: Icon(icon, size: 15, color: colors.info),
               ),
               const SizedBox(width: 10),
               Text(
@@ -776,7 +788,7 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
                 style: GoogleFonts.inter(
                   fontSize: 11,
                   fontWeight: FontWeight.w800,
-                  color: DoctorColors.cyan,
+                  color: colors.info,
                   letterSpacing: 0.8,
                 ),
               ),
@@ -792,7 +804,8 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
     );
   }
 
-  Widget _buildFooter() {
+  Widget _buildFooter(BuildContext context) {
+    final colors = context.colors;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       child: Row(
@@ -800,7 +813,7 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
           Expanded(
             child: Text(
               'Full name is required',
-              style: GoogleFonts.inter(fontSize: 11, color: DoctorColors.subtle),
+              style: GoogleFonts.inter(fontSize: 11, color: colors.textSubtle),
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -808,9 +821,9 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
           OutlinedButton(
             onPressed: () => Navigator.of(context).pop(),
             style: OutlinedButton.styleFrom(
-              foregroundColor: Colors.white,
-              side: const BorderSide(color: Color(0xFF334155)),
-              backgroundColor: const Color(0xFF1E293B).withValues(alpha: 0.6),
+              foregroundColor: colors.textPrimary,
+              side: BorderSide(color: colors.border),
+              backgroundColor: colors.surfaceSecondary,
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             ),
@@ -819,7 +832,7 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
               style: GoogleFonts.inter(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: const Color(0xFFCBD5E1),
+                color: colors.textMuted,
               ),
             ),
           ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../../core/widgets/clinic_dept_chip.dart';
 import '../../../home/domain/entities/clinic_entity.dart';
 import 'clinic_status_pill.dart';
@@ -17,6 +17,8 @@ class ClinicHeaderInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -30,7 +32,7 @@ class ClinicHeaderInfo extends StatelessWidget {
                 style: GoogleFonts.inter(
                   fontSize: 20,
                   fontWeight: FontWeight.w800,
-                  color: AppColors.darkInk,
+                  color: colors.textPrimary,
                 ),
               ),
             ),
@@ -41,14 +43,14 @@ class ClinicHeaderInfo extends StatelessWidget {
         const SizedBox(height: 6),
         Row(
           children: [
-            const Icon(Icons.star_rounded, size: 16, color: AppColors.warning),
+            Icon(Icons.star_rounded, size: 16, color: colors.ratingGold),
             const SizedBox(width: 4),
             Text(
               clinic.hasRatings ? clinic.rating.toStringAsFixed(1) : 'New',
               style: GoogleFonts.robotoMono(
                 fontWeight: FontWeight.w700,
                 fontSize: 13,
-                color: AppColors.darkInk,
+                color: colors.textPrimary,
               ),
             ),
             const SizedBox(width: 6),
@@ -59,7 +61,7 @@ class ClinicHeaderInfo extends StatelessWidget {
                     : 'No reviews yet · ${clinic.primaryCategory}',
                 style: GoogleFonts.inter(
                   fontSize: 12.5,
-                  color: AppColors.darkInkMuted,
+                  color: colors.textMuted,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -72,24 +74,24 @@ class ClinicHeaderInfo extends StatelessWidget {
         _buildInfoRow(
           icon: Icons.location_on_outlined,
           text: '${clinic.address} · ${clinic.distance} away',
-          color: AppColors.darkInkMuted,
+          color: colors.textMuted,
         ),
         const SizedBox(height: 5),
         _buildInfoRow(
           icon: Icons.phone_outlined,
           text: clinic.phone,
-          color: AppColors.primaryLight,
+          color: colors.primary,
           isBold: true,
         ),
         const SizedBox(height: 5),
         _buildInfoRow(
           icon: Icons.access_time_rounded,
           text: clinic.openingHours,
-          color: AppColors.darkInkMuted,
+          color: colors.textMuted,
         ),
         if (holidayNotice != null && holidayNotice!.isNotEmpty) ...[
           const SizedBox(height: 10),
-          _buildHolidayNotice(holidayNotice!),
+          _buildHolidayNotice(holidayNotice!, colors),
         ],
       ],
     );
@@ -121,19 +123,19 @@ class ClinicHeaderInfo extends StatelessWidget {
     );
   }
 
-  Widget _buildHolidayNotice(String notice) {
+  Widget _buildHolidayNotice(String notice, AppColorsExtension colors) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: AppColors.warning.withValues(alpha: 0.12),
+        color: colors.warningTint,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: AppColors.warning.withValues(alpha: 0.3)),
+        border: Border.all(color: colors.warning.withValues(alpha: 0.3)),
       ),
       child: Text(
         '📢 Notice: $notice',
         style: GoogleFonts.inter(
           fontSize: 11.5,
-          color: AppColors.warning,
+          color: colors.warning,
           fontWeight: FontWeight.w500,
         ),
       ),

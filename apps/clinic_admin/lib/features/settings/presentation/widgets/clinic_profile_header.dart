@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class ClinicProfileHeader extends StatelessWidget {
   final String clinicName;
@@ -22,6 +23,7 @@ class ClinicProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final name = clinicName.trim();
     final initial = name.isNotEmpty ? name[0].toUpperCase() : 'C';
 
@@ -30,17 +32,21 @@ class ClinicProfileHeader extends StatelessWidget {
     if (bytes != null) {
       image = Image.memory(bytes, fit: BoxFit.cover, gaplessPlayback: true);
     } else if (imageUrl.trim().isNotEmpty) {
-      image = Image.network(imageUrl.trim(), fit: BoxFit.cover, errorBuilder: (context, error, stackTrace) => _initialAvatar(initial));
+      image = Image.network(
+        imageUrl.trim(),
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => _initialAvatar(context, initial),
+      );
     } else {
-      image = _initialAvatar(initial);
+      image = _initialAvatar(context, initial);
     }
 
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(colors: [Color(0xFF13233F), Color(0xFF0F1A30)]),
+        color: colors.surfaceSecondary,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFF1E3A5F)),
+        border: Border.all(color: colors.border),
       ),
       child: Wrap(
         spacing: 18,
@@ -56,7 +62,7 @@ class ClinicProfileHeader extends StatelessWidget {
                 clipBehavior: Clip.antiAlias,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: const Color(0xFF14B8A6).withAlpha(140), width: 2),
+                  border: Border.all(color: colors.accent.withAlpha(140), width: 2),
                 ),
                 child: image,
               ),
@@ -64,15 +70,21 @@ class ClinicProfileHeader extends StatelessWidget {
                 Positioned.fill(
                   child: Container(
                     decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(20)),
-                    child: const Center(child: SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2.4))),
+                    child: Center(
+                      child: SizedBox(
+                        width: 22,
+                        height: 22,
+                        child: CircularProgressIndicator(strokeWidth: 2.4, color: colors.primary),
+                      ),
+                    ),
                   ),
                 ),
               Positioned(
                 right: -6,
                 bottom: -6,
                 child: Material(
-                  color: const Color(0xFF2563EB),
-                  shape: const CircleBorder(side: BorderSide(color: Color(0xFF0F172A), width: 3)),
+                  color: colors.primary,
+                  shape: CircleBorder(side: BorderSide(color: colors.surface, width: 3)),
                   child: InkWell(
                     customBorder: const CircleBorder(),
                     onTap: isUploadingImage ? null : onPickImage,
@@ -91,18 +103,22 @@ class ClinicProfileHeader extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(name.isEmpty ? 'Your Clinic' : name, style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w800, color: Colors.white)),
+                Text(
+                  name.isEmpty ? 'Your Clinic' : name,
+                  style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w800, color: colors.textPrimary),
+                ),
                 const SizedBox(height: 4),
                 Text(
                   'This photo is shown to patients on the clinic card and details page.',
-                  style: GoogleFonts.inter(fontSize: 12, color: const Color(0xFF94A3B8)),
+                  style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted),
                 ),
                 const SizedBox(height: 12),
                 OutlinedButton.icon(
                   onPressed: isUploadingImage ? null : onPickImage,
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    side: const BorderSide(color: Color(0xFF334E7A)),
+                    foregroundColor: colors.textPrimary,
+                    side: BorderSide(color: colors.border),
+                    backgroundColor: colors.surface,
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   ),
@@ -120,11 +136,15 @@ class ClinicProfileHeader extends StatelessWidget {
     );
   }
 
-  Widget _initialAvatar(String initial) {
+  Widget _initialAvatar(BuildContext context, String initial) {
+    final colors = context.colors;
     return Container(
-      color: const Color(0xFF0F3B3A),
+      color: colors.primaryTint,
       alignment: Alignment.center,
-      child: Text(initial, style: GoogleFonts.inter(fontSize: 32, fontWeight: FontWeight.w800, color: const Color(0xFF2DD4BF))),
+      child: Text(
+        initial,
+        style: GoogleFonts.inter(fontSize: 32, fontWeight: FontWeight.w800, color: colors.primary),
+      ),
     );
   }
 }

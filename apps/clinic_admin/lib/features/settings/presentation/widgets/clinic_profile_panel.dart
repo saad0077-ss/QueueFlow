@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../domain/entities/clinic_location_entity.dart';
 import '../../domain/entities/clinic_profile_entity.dart';
 import 'clinic_profile_header.dart';
@@ -82,6 +83,8 @@ class _ClinicProfilePanelState extends State<ClinicProfilePanel> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -94,9 +97,10 @@ class _ClinicProfilePanelState extends State<ClinicProfilePanel> {
           onPickImage: _pickImage,
         ),
         const SizedBox(height: 20),
-        _field('Clinic name', _nameCtrl),
+        _field(context, 'Clinic name', _nameCtrl),
         const SizedBox(height: 14),
         _field(
+          context,
           'Address',
           _addressCtrl,
           readOnly: true,
@@ -105,13 +109,13 @@ class _ClinicProfilePanelState extends State<ClinicProfilePanel> {
         const SizedBox(height: 14),
         Row(
           children: [
-            Expanded(child: _field('Contact phone', _phoneCtrl)),
+            Expanded(child: _field(context, 'Contact phone', _phoneCtrl)),
             const SizedBox(width: 14),
-            Expanded(child: _field('Email', _emailCtrl)),
+            Expanded(child: _field(context, 'Email', _emailCtrl)),
           ],
         ),
         const SizedBox(height: 14),
-        _field('Description', _descCtrl, maxLines: 3),
+        _field(context, 'Description', _descCtrl, maxLines: 3),
         const SizedBox(height: 20),
         ProfileLocationSummaryCard(
           location: widget.location,
@@ -129,7 +133,7 @@ class _ClinicProfilePanelState extends State<ClinicProfilePanel> {
             ));
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF2563EB),
+            backgroundColor: colors.primary,
             foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -140,28 +144,40 @@ class _ClinicProfilePanelState extends State<ClinicProfilePanel> {
     );
   }
 
-  Widget _field(String label, TextEditingController ctrl, {int maxLines = 1, bool readOnly = false, String? helperText}) {
+  Widget _field(BuildContext context, String label, TextEditingController ctrl, {int maxLines = 1, bool readOnly = false, String? helperText}) {
+    final colors = context.colors;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: const Color(0xFF94A3B8))),
+        Text(label, style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: colors.textMuted)),
         const SizedBox(height: 6),
         TextField(
           controller: ctrl,
           maxLines: maxLines,
           readOnly: readOnly,
-          style: GoogleFonts.inter(fontSize: 13, color: readOnly ? const Color(0xFFCBD5E1) : Colors.white),
+          style: GoogleFonts.inter(fontSize: 13, color: colors.textPrimary),
           decoration: InputDecoration(
             hintText: readOnly ? 'No address set yet' : null,
-            hintStyle: GoogleFonts.inter(fontSize: 13, color: const Color(0xFF64748B)),
+            hintStyle: GoogleFonts.inter(fontSize: 13, color: colors.textMuted),
             helperText: helperText,
-            helperStyle: GoogleFonts.inter(fontSize: 11, color: const Color(0xFF64748B)),
-            suffixIcon: readOnly ? const Icon(Icons.lock_outline_rounded, size: 15, color: Color(0xFF64748B)) : null,
+            helperStyle: GoogleFonts.inter(fontSize: 11, color: colors.textSubtle),
+            suffixIcon: readOnly ? Icon(Icons.lock_outline_rounded, size: 15, color: colors.textMuted) : null,
             filled: true,
-            fillColor: const Color(0xFF162238),
+            fillColor: colors.surfaceSecondary,
             contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
-            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Color(0xFF2563EB))),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: colors.border),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: colors.border),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: colors.primary),
+            ),
           ),
         ),
       ],

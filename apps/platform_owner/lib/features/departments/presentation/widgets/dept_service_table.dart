@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 import '../../domain/entities/dept_service_request_entity.dart';
 
@@ -12,6 +13,8 @@ class DeptServiceTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -23,7 +26,7 @@ class DeptServiceTable extends StatelessWidget {
             const Text('🔬', style: TextStyle(fontSize: 16)),
             Text(
               'Custom Procedure & Service Requests',
-              style: GoogleFonts.inter(fontSize: 13.5, fontWeight: FontWeight.bold, color: Colors.white),
+              style: GoogleFonts.inter(fontSize: 13.5, fontWeight: FontWeight.bold, color: colors.textPrimary),
             ),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -42,15 +45,15 @@ class DeptServiceTable extends StatelessWidget {
             return Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                color: const Color(0xFF070B14),
+                color: colors.surface,
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: const Color(0xFF1E293B)),
+                border: Border.all(color: colors.border),
               ),
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: SizedBox(
                   width: tableWidth,
-                  child: Column(children: [_buildHeader(), ...requests.map((r) => _buildRow(r))]),
+                  child: Column(children: [_buildHeader(context), ...requests.map((r) => _buildRow(context, r))]),
                 ),
               ),
             );
@@ -60,49 +63,51 @@ class DeptServiceTable extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
+    final colors = context.colors;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      decoration: const BoxDecoration(
-        color: Color(0xFF0B1324),
-        borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
-        border: Border(bottom: BorderSide(color: Color(0xFF1E293B))),
+      decoration: BoxDecoration(
+        color: colors.surfaceSecondary,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
+        border: Border(bottom: BorderSide(color: colors.border)),
       ),
       child: Row(
-        children: const [
+        children: [
           Expanded(
             flex: 2,
             child: Text(
               'Clinic & Doctor',
-              style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: Color(0xFF64748B)),
+              style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: colors.textMuted),
             ),
           ),
           Expanded(
             flex: 3,
             child: Text(
               'Proposed Service',
-              style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: Color(0xFF64748B)),
+              style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: colors.textMuted),
             ),
           ),
           Expanded(
             flex: 2,
             child: Text(
               'Department',
-              style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: Color(0xFF64748B)),
+              style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: colors.textMuted),
             ),
           ),
           Expanded(
             flex: 2,
             child: Text(
               'Duration / Fee',
-              style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: Color(0xFF64748B)),
+              style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: colors.textMuted),
             ),
           ),
           Expanded(
             flex: 3,
             child: Text(
               'Clinical Justification',
-              style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: Color(0xFF64748B)),
+              style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: colors.textMuted),
             ),
           ),
           Expanded(
@@ -110,7 +115,7 @@ class DeptServiceTable extends StatelessWidget {
             child: Text(
               'Actions',
               textAlign: TextAlign.right,
-              style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: Color(0xFF64748B)),
+              style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: colors.textMuted),
             ),
           ),
         ],
@@ -118,11 +123,13 @@ class DeptServiceTable extends StatelessWidget {
     );
   }
 
-  Widget _buildRow(DeptServiceRequestEntity r) {
+  Widget _buildRow(BuildContext context, DeptServiceRequestEntity r) {
+    final colors = context.colors;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: Color(0xFF1E293B))),
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: colors.border)),
       ),
       child: Row(
         children: [
@@ -133,9 +140,9 @@ class DeptServiceTable extends StatelessWidget {
               children: [
                 Text(
                   r.clinicName,
-                  style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.bold, color: colors.textPrimary),
                 ),
-                Text('By: ${r.requestedBy}', style: GoogleFonts.inter(fontSize: 11, color: const Color(0xFF64748B))),
+                Text('By: ${r.requestedBy}', style: GoogleFonts.inter(fontSize: 11, color: colors.textMuted)),
               ],
             ),
           ),
@@ -146,13 +153,13 @@ class DeptServiceTable extends StatelessWidget {
               children: [
                 Text(
                   r.serviceName,
-                  style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.bold, color: const Color(0xFF38BDF8)),
+                  style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.bold, color: colors.primary),
                 ),
                 Text(
                   r.description,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.inter(fontSize: 11, color: const Color(0xFF94A3B8)),
+                  style: GoogleFonts.inter(fontSize: 11, color: colors.textMuted),
                 ),
               ],
             ),
@@ -163,10 +170,10 @@ class DeptServiceTable extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(color: const Color(0xFF2563EB).withValues(alpha: 0.12), borderRadius: BorderRadius.circular(4)),
+                decoration: BoxDecoration(color: colors.primary.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(4)),
                 child: Text(
                   r.departmentName,
-                  style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w600, color: const Color(0xFF38BDF8)),
+                  style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w600, color: colors.primary),
                 ),
               ),
             ),
@@ -176,10 +183,10 @@ class DeptServiceTable extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('⏱️ ${r.duration} mins', style: GoogleFonts.inter(fontSize: 11.5, color: Colors.white)),
+                Text('⏱️ ${r.duration} mins', style: GoogleFonts.inter(fontSize: 11.5, color: colors.textPrimary)),
                 Text(
                   '₹${r.suggestedPrice}',
-                  style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.bold, color: colors.textPrimary),
                 ),
               ],
             ),
@@ -189,11 +196,11 @@ class DeptServiceTable extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                color: const Color(0xFF0F172A),
+                color: colors.surfaceSecondary,
                 borderRadius: BorderRadius.circular(6),
-                border: Border.all(color: const Color(0xFF1E293B)),
+                border: Border.all(color: colors.border),
               ),
-              child: Text('💬 "${r.notes}"', style: GoogleFonts.inter(fontSize: 11, color: const Color(0xFFCBD5E1))),
+              child: Text('💬 "${r.notes}"', style: GoogleFonts.inter(fontSize: 11, color: colors.textMuted)),
             ),
           ),
           Expanded(
@@ -203,7 +210,7 @@ class DeptServiceTable extends StatelessWidget {
               children: [
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF10B981),
+                    backgroundColor: colors.success,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                     minimumSize: Size.zero,
@@ -215,8 +222,8 @@ class DeptServiceTable extends StatelessWidget {
                 const SizedBox(width: 4),
                 OutlinedButton(
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: const Color(0xFFEF4444),
-                    side: const BorderSide(color: Color(0xFFEF4444)),
+                    foregroundColor: colors.error,
+                    side: BorderSide(color: colors.error),
                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
                     minimumSize: Size.zero,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),

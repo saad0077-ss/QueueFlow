@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../home/domain/entities/clinic_entity.dart';
 import '../../data/repositories/clinic_details_repository_impl.dart';
 import '../bloc/clinic_details_bloc.dart';
@@ -18,11 +18,15 @@ class ClinicDetailsScreen extends StatelessWidget {
       create: (context) => ClinicDetailsBloc(
         repository: ClinicDetailsRepositoryImpl(),
       )..add(LoadClinicDetails(clinicId: clinic.id, initialClinic: clinic)),
-      child: const Scaffold(
-        backgroundColor: AppColors.darkBgApp,
-        body: SafeArea(
-          child: ClinicDetailsView(),
-        ),
+      child: Builder(
+        builder: (ctx) {
+          return Scaffold(
+            backgroundColor: ctx.colors.background,
+            body: const SafeArea(
+              child: ClinicDetailsView(),
+            ),
+          );
+        },
       ),
     );
   }

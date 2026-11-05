@@ -1,4 +1,4 @@
-import '../../domain/entities/department_entity.dart';
+﻿import '../../domain/entities/department_entity.dart';
 import '../../domain/entities/standard_service_entity.dart';
 
 extension DepartmentEntityMapper on DepartmentEntity {

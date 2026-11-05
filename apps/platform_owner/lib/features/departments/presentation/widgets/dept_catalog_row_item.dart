@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 import '../../domain/entities/standard_service_entity.dart';
 
@@ -36,6 +37,7 @@ class _DeptCatalogRowItemState extends State<DeptCatalogRowItem> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final service = widget.service;
     final accent = _accents[widget.index % _accents.length];
     final formattedPrice = service.suggestedPrice.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},');
@@ -47,10 +49,10 @@ class _DeptCatalogRowItemState extends State<DeptCatalogRowItem> {
         duration: const Duration(milliseconds: 140),
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
         decoration: BoxDecoration(
-          color: _hover ? const Color(0xFF15213A).withValues(alpha: 0.6) : Colors.transparent,
+          color: _hover ? colors.surfaceSecondary.withValues(alpha: 0.6) : Colors.transparent,
           border: Border(
             left: BorderSide(color: _hover ? accent : Colors.transparent, width: 3),
-            bottom: widget.isLast ? BorderSide.none : const BorderSide(color: Color(0xFF1E293B)),
+            bottom: widget.isLast ? BorderSide.none : BorderSide(color: colors.border),
           ),
         ),
         child: Row(
@@ -75,14 +77,14 @@ class _DeptCatalogRowItemState extends State<DeptCatalogRowItem> {
                       children: [
                         Text(
                           service.name,
-                          style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w700, color: Colors.white),
+                          style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w700, color: colors.textPrimary),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           service.description,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.inter(fontSize: 12.5, color: const Color(0xFF94A3B8), height: 1.35),
+                          style: GoogleFonts.inter(fontSize: 12.5, color: colors.textMuted, height: 1.35),
                         ),
                       ],
                     ),
@@ -96,11 +98,12 @@ class _DeptCatalogRowItemState extends State<DeptCatalogRowItem> {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: _chip(
+                  context: context,
                   icon: Icons.schedule_rounded,
                   label: '${service.duration} mins',
-                  fg: const Color(0xFFE2E8F0),
-                  iconColor: const Color(0xFF94A3B8),
-                  bg: const Color(0xFF1E293B),
+                  fg: colors.textPrimary,
+                  iconColor: colors.textMuted,
+                  bg: colors.surfaceSecondary,
                 ),
               ),
             ),
@@ -111,13 +114,13 @@ class _DeptCatalogRowItemState extends State<DeptCatalogRowItem> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF3B82F6).withValues(alpha: 0.12),
+                    color: colors.primary.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: const Color(0xFF3B82F6).withValues(alpha: 0.3)),
+                    border: Border.all(color: colors.primary.withValues(alpha: 0.3)),
                   ),
                   child: Text(
                     '₹$formattedPrice',
-                    style: GoogleFonts.jetBrainsMono(fontSize: 13, fontWeight: FontWeight.w700, color: const Color(0xFF60A5FA)),
+                    style: GoogleFonts.jetBrainsMono(fontSize: 13, fontWeight: FontWeight.w700, color: colors.primary),
                   ),
                 ),
               ),
@@ -133,7 +136,7 @@ class _DeptCatalogRowItemState extends State<DeptCatalogRowItem> {
                       icon: Icons.edit_outlined,
                       label: 'Edit',
                       tooltip: 'Edit procedure',
-                      color: const Color(0xFF38BDF8),
+                      color: colors.primary,
                       onTap: () => widget.onEditService(service),
                     ),
                     const SizedBox(width: 8),
@@ -141,7 +144,7 @@ class _DeptCatalogRowItemState extends State<DeptCatalogRowItem> {
                       icon: Icons.delete_outline_rounded,
                       label: 'Remove',
                       tooltip: 'Remove from catalog',
-                      color: const Color(0xFFEF4444),
+                      color: colors.error,
                       onTap: () => widget.onRemoveService(service.id),
                     ),
                   ],
@@ -154,13 +157,14 @@ class _DeptCatalogRowItemState extends State<DeptCatalogRowItem> {
     );
   }
 
-  Widget _chip({required IconData icon, required String label, required Color fg, required Color iconColor, required Color bg}) {
+  Widget _chip({required BuildContext context, required IconData icon, required String label, required Color fg, required Color iconColor, required Color bg}) {
+    final colors = context.colors;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: bg.withValues(alpha: 0.7),
+        color: bg,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFF334155)),
+        border: Border.all(color: colors.border),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -196,7 +200,6 @@ class _ActionPillState extends State<_ActionPill> {
   @override
   Widget build(BuildContext context) {
     final color = widget.color;
-    final fg = Color.lerp(color, Colors.white, 0.2)!;
     return Tooltip(
       message: widget.tooltip,
       child: MouseRegion(
@@ -216,11 +219,11 @@ class _ActionPillState extends State<_ActionPill> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(widget.icon, size: 15, color: fg),
+                Icon(widget.icon, size: 15, color: color),
                 const SizedBox(width: 5),
                 Text(
                   widget.label,
-                  style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w700, color: fg),
+                  style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w700, color: color),
                 ),
               ],
             ),

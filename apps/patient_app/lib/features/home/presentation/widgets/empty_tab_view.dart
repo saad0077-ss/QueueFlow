@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 /// Clean empty placeholder for secondary tabs (Queue, Bookings, Profile).
 class EmptyTabView extends StatelessWidget {
@@ -14,6 +14,8 @@ class EmptyTabView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -23,18 +25,18 @@ class EmptyTabView extends StatelessWidget {
             const SizedBox(height: 18),
             Text(
               title,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w800,
-                color: AppColors.textWhite,
+                color: colors.textPrimary,
               ),
             ),
             const SizedBox(height: 6),
             Text(
               subtitle,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: AppColors.darkInkMuted,
+              style: TextStyle(
+                color: colors.textMuted,
                 fontSize: 13,
                 height: 1.4,
               ),

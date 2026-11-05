@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../domain/entities/clinic_operating_schedule_entity.dart';
 import '../../domain/entities/operating_hours_day_entity.dart';
 import 'hours_action_footer.dart';

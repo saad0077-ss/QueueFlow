@@ -1,4 +1,4 @@
-import '../../domain/entities/clinic_appointment_entity.dart';
+﻿import '../../domain/entities/clinic_appointment_entity.dart';
 
 /// Data model representing an appointment with mapping utilities.
 class ClinicAppointmentModel extends ClinicAppointmentEntity {

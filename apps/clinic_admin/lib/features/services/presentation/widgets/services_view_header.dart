@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'service_ui_kit.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class ServicesViewHeader extends StatelessWidget {
   final String planPill;
@@ -14,6 +14,8 @@ class ServicesViewHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final titleSize = constraints.maxWidth < 600 ? 22.0 : 26.0;
@@ -26,13 +28,12 @@ class ServicesViewHeader extends StatelessWidget {
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: ServiceColors.green.withValues(alpha: 0.15),
+                    color: colors.badgeOpenBg,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: ServiceColors.green.withValues(alpha: 0.3),
+                      color: colors.badgeOpenText.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Text(
@@ -40,7 +41,7 @@ class ServicesViewHeader extends StatelessWidget {
                     style: GoogleFonts.inter(
                       fontSize: 10.5,
                       fontWeight: FontWeight.w800,
-                      color: ServiceColors.green,
+                      color: colors.badgeOpenText,
                       letterSpacing: 0.3,
                     ),
                   ),
@@ -50,7 +51,7 @@ class ServicesViewHeader extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 12.5,
                     fontWeight: FontWeight.w500,
-                    color: const Color(0xFFCBD5E1),
+                    color: colors.textMuted,
                   ),
                 ),
               ],
@@ -61,7 +62,7 @@ class ServicesViewHeader extends StatelessWidget {
               style: GoogleFonts.inter(
                 fontSize: titleSize,
                 fontWeight: FontWeight.w800,
-                color: Colors.white,
+                color: colors.textPrimary,
                 letterSpacing: -0.5,
               ),
             ),
@@ -70,7 +71,7 @@ class ServicesViewHeader extends StatelessWidget {
               'Configure treatments, durations, pricing & clinical assignments (1 service per doctor limit)',
               style: GoogleFonts.inter(
                 fontSize: 13.5,
-                color: const Color(0xFFCBD5E1),
+                color: colors.textMuted,
               ),
             ),
           ],

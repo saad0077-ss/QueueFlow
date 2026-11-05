@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import '../../domain/entities/clinic_settings_entity.dart';
 import '../bloc/clinic_settings_bloc.dart';
 import '../bloc/clinic_settings_event.dart';

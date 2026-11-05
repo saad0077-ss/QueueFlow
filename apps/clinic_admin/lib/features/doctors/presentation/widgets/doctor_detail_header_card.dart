@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../domain/entities/clinic_doctor_profile_entity.dart';
 import 'doctor_ui_kit.dart';
 
@@ -21,16 +22,17 @@ class DoctorDetailHeaderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     Color accountColor;
     String accountLabel;
     if (doctor.isActiveAccount) {
-      accountColor = DoctorColors.green;
+      accountColor = colors.success;
       accountLabel = 'ACTIVE';
     } else if (doctor.isPendingAccount) {
-      accountColor = DoctorColors.amber;
+      accountColor = colors.warning;
       accountLabel = 'PENDING VERIFICATION';
     } else {
-      accountColor = DoctorColors.red;
+      accountColor = colors.error;
       accountLabel = 'INACTIVE';
     }
 
@@ -65,7 +67,7 @@ class DoctorDetailHeaderCard extends StatelessWidget {
                     style: GoogleFonts.inter(
                       fontSize: 22,
                       fontWeight: FontWeight.w800,
-                      color: Colors.white,
+                      color: colors.textPrimary,
                       letterSpacing: -0.5,
                     ),
                   ),
@@ -96,7 +98,7 @@ class DoctorDetailHeaderCard extends StatelessWidget {
                 style: GoogleFonts.inter(
                   fontSize: 13.5,
                   fontWeight: FontWeight.w700,
-                  color: DoctorColors.cyan,
+                  color: colors.primaryLight,
                 ),
               ),
               if (metaParts.isNotEmpty) ...[
@@ -105,7 +107,7 @@ class DoctorDetailHeaderCard extends StatelessWidget {
                   metaParts.join('  •  '),
                   style: GoogleFonts.inter(
                     fontSize: 12.5,
-                    color: DoctorColors.muted,
+                    color: colors.textMuted,
                     fontWeight: FontWeight.w500,
                   ),
                   maxLines: 1,
@@ -126,9 +128,9 @@ class DoctorDetailHeaderCard extends StatelessWidget {
         OutlinedButton(
           onPressed: onEditProfile,
           style: OutlinedButton.styleFrom(
-            foregroundColor: Colors.white,
-            side: const BorderSide(color: Color(0xFF334155)),
-            backgroundColor: const Color(0xFF1E293B).withValues(alpha: 0.6),
+            foregroundColor: colors.textPrimary,
+            side: BorderSide(color: colors.border),
+            backgroundColor: colors.surfaceSecondary,
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           ),
@@ -140,9 +142,9 @@ class DoctorDetailHeaderCard extends StatelessWidget {
         OutlinedButton(
           onPressed: onManageSchedule,
           style: OutlinedButton.styleFrom(
-            foregroundColor: Colors.white,
-            side: const BorderSide(color: Color(0xFF334155)),
-            backgroundColor: const Color(0xFF1E293B).withValues(alpha: 0.6),
+            foregroundColor: colors.textPrimary,
+            side: BorderSide(color: colors.border),
+            backgroundColor: colors.surfaceSecondary,
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           ),
@@ -154,11 +156,11 @@ class DoctorDetailHeaderCard extends StatelessWidget {
         OutlinedButton(
           onPressed: onToggleAccount,
           style: OutlinedButton.styleFrom(
-            foregroundColor: doctor.isActiveAccount ? const Color(0xFFEF4444) : DoctorColors.green,
+            foregroundColor: doctor.isActiveAccount ? colors.error : colors.success,
             side: BorderSide(
-              color: (doctor.isActiveAccount ? const Color(0xFFEF4444) : DoctorColors.green).withValues(alpha: 0.4),
+              color: (doctor.isActiveAccount ? colors.error : colors.success).withValues(alpha: 0.4),
             ),
-            backgroundColor: const Color(0xFF1E293B).withValues(alpha: 0.4),
+            backgroundColor: colors.surfaceSecondary,
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           ),
@@ -167,30 +169,30 @@ class DoctorDetailHeaderCard extends StatelessWidget {
             style: GoogleFonts.inter(
               fontSize: 12.5,
               fontWeight: FontWeight.w600,
-              color: doctor.isActiveAccount ? const Color(0xFFEF4444) : DoctorColors.green,
+              color: doctor.isActiveAccount ? colors.error : colors.success,
             ),
           ),
         ),
         OutlinedButton(
           onPressed: onRemoveDoctor,
           style: OutlinedButton.styleFrom(
-            foregroundColor: const Color(0xFFEF4444),
-            side: BorderSide(color: const Color(0xFFEF4444).withValues(alpha: 0.4)),
-            backgroundColor: const Color(0xFFEF4444).withValues(alpha: 0.08),
+            foregroundColor: colors.error,
+            side: BorderSide(color: colors.error.withValues(alpha: 0.4)),
+            backgroundColor: colors.errorTint,
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.delete_outline_rounded, size: 14, color: Color(0xFFEF4444)),
+              Icon(Icons.delete_outline_rounded, size: 14, color: colors.error),
               const SizedBox(width: 5),
               Text(
                 'Remove Doctor',
                 style: GoogleFonts.inter(
                   fontSize: 12.5,
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFFEF4444),
+                  color: colors.error,
                 ),
               ),
             ],
@@ -201,9 +203,9 @@ class DoctorDetailHeaderCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: DoctorColors.surface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: DoctorColors.border),
+        border: Border.all(color: colors.border),
       ),
       padding: const EdgeInsets.all(22),
       child: LayoutBuilder(

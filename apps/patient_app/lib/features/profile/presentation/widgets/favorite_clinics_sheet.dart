@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../domain/entities/favorite_clinic_entity.dart';
 
 class FavoriteClinicsSheet extends StatelessWidget {
@@ -30,14 +30,16 @@ class FavoriteClinicsSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Container(
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height * 0.85,
       ),
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
-      decoration: const BoxDecoration(
-        color: AppColors.darkSurface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      decoration: BoxDecoration(
+        color: colors.surfaceElevated,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -48,30 +50,30 @@ class FavoriteClinicsSheet extends StatelessWidget {
             children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     'Favorite Clinics',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
-                      color: AppColors.darkInk,
+                      color: colors.textPrimary,
                     ),
                   ),
-                  SizedBox(height: 3),
+                  const SizedBox(height: 3),
                   Text(
                     'Quick access to your trusted doctors',
                     style: TextStyle(
                       fontSize: 12,
-                      color: AppColors.darkInkMuted,
+                      color: colors.textMuted,
                     ),
                   ),
                 ],
               ),
               IconButton(
-                icon: const Icon(Icons.close_rounded, color: AppColors.darkInkMuted, size: 20),
+                icon: Icon(Icons.close_rounded, color: colors.textMuted, size: 20),
                 onPressed: () => Navigator.of(context).pop(),
                 style: IconButton.styleFrom(
-                  backgroundColor: AppColors.darkBorder.withValues(alpha: 0.5),
+                  backgroundColor: colors.surfaceSecondary,
                   shape: const CircleBorder(),
                 ),
               ),
@@ -89,9 +91,9 @@ class FavoriteClinicsSheet extends StatelessWidget {
                 return Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: AppColors.darkBgApp,
+                    color: colors.surfaceSecondary,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: AppColors.darkBorder, width: 1),
+                    border: Border.all(color: colors.border, width: 1),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -126,18 +128,18 @@ class FavoriteClinicsSheet extends StatelessWidget {
                               children: [
                                 Text(
                                   clinic.name,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w800,
-                                    color: AppColors.darkInk,
+                                    color: colors.textPrimary,
                                   ),
                                 ),
                                 const SizedBox(height: 2),
                                 Text(
                                   clinic.department,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 12,
-                                    color: AppColors.darkInkMuted,
+                                    color: colors.textMuted,
                                   ),
                                 ),
                               ],
@@ -148,20 +150,20 @@ class FavoriteClinicsSheet extends StatelessWidget {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFF59E0B).withValues(alpha: 0.12),
+                              color: colors.ratingGold.withValues(alpha: 0.12),
                               borderRadius: BorderRadius.circular(999),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Icon(Icons.star_rounded, size: 13, color: Color(0xFFF59E0B)),
+                                Icon(Icons.star_rounded, size: 13, color: colors.ratingGold),
                                 const SizedBox(width: 3),
                                 Text(
                                   clinic.rating.toStringAsFixed(1),
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 11.5,
                                     fontWeight: FontWeight.w700,
-                                    color: Color(0xFFF59E0B),
+                                    color: colors.ratingGold,
                                   ),
                                 ),
                               ],
@@ -174,14 +176,14 @@ class FavoriteClinicsSheet extends StatelessWidget {
                       // Location text
                       Row(
                         children: [
-                          const Icon(Icons.location_on_outlined, size: 14, color: AppColors.darkInkFaint),
+                          Icon(Icons.location_on_outlined, size: 14, color: colors.textSubtle),
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(
                               clinic.address,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 11.5,
-                                color: AppColors.darkInkFaint,
+                                color: colors.textSubtle,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -201,7 +203,7 @@ class FavoriteClinicsSheet extends StatelessWidget {
                                 onBookClinic?.call(clinic);
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.primary,
+                                backgroundColor: colors.primary,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),

@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+﻿import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../domain/entities/clinic_queue_entity.dart';
 import '../../domain/repositories/clinic_dashboard_repository.dart';
 import '../models/clinic_queue_model.dart';

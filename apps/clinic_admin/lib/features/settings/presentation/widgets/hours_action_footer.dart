@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class HoursActionFooter extends StatelessWidget {
   final VoidCallback onRevert;
@@ -13,6 +14,8 @@ class HoursActionFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 14),
       child: Row(
@@ -21,12 +24,12 @@ class HoursActionFooter extends StatelessWidget {
           Expanded(
             child: Row(
               children: [
-                const Icon(Icons.info_outline_rounded, size: 16, color: Color(0xFF38BDF8)),
+                Icon(Icons.info_outline_rounded, size: 16, color: colors.info),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     'All changes will sync live to the Patient Mobile App and queue management engine immediately upon saving.',
-                    style: GoogleFonts.inter(fontSize: 12, color: const Color(0xFF94A3B8)),
+                    style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted),
                   ),
                 ),
               ],
@@ -38,8 +41,9 @@ class HoursActionFooter extends StatelessWidget {
               OutlinedButton(
                 onPressed: onRevert,
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: const Color(0xFF94A3B8),
-                  side: const BorderSide(color: Color(0xFF1E293B)),
+                  foregroundColor: colors.textMuted,
+                  side: BorderSide(color: colors.border),
+                  backgroundColor: colors.surfaceSecondary,
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
@@ -49,12 +53,12 @@ class HoursActionFooter extends StatelessWidget {
               ElevatedButton.icon(
                 onPressed: onSave,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF2563EB),
+                  backgroundColor: colors.primary,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   elevation: 4,
-                  shadowColor: const Color(0xFF2563EB).withAlpha(120),
+                  shadowColor: colors.primary.withAlpha(120),
                 ),
                 icon: const Icon(Icons.check_circle_rounded, size: 16),
                 label: Text('Save Operating Hours', style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.bold)),

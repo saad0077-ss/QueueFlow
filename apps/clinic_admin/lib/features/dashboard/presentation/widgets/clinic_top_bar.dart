@@ -1,9 +1,10 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import 'clinic_notification_button.dart';
 import 'clinic_profile_chip.dart';
 import 'clinic_search_bar.dart';
 
-/// Top bar in the Clinic Admin dashboard containing search, notifications, and profile.
+/// Top bar in the Clinic Admin dashboard containing search, theme toggle, notifications, and profile.
 class ClinicTopBar extends StatelessWidget {
   final TextEditingController? searchController;
   final ValueChanged<String>? onSearchChanged;
@@ -24,27 +25,28 @@ class ClinicTopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final gap = compact ? 8.0 : 16.0;
+    final colors = context.colors;
+    final gap = compact ? 8.0 : 14.0;
 
     return Row(
       children: [
         if (onMenuTap != null) ...[
           Container(
-            width: 42,
-            height: 42,
+            width: 40,
+            height: 40,
             decoration: BoxDecoration(
-              color: const Color(0xFF10192D),
-              borderRadius: BorderRadius.circular(12),
+              color: colors.surfaceSecondary,
+              borderRadius: BorderRadius.circular(10),
               border: Border.all(
-                color: const Color(0xFF1E293B).withValues(alpha: 0.8),
+                color: colors.border,
               ),
             ),
             child: IconButton(
               padding: EdgeInsets.zero,
               tooltip: 'Menu',
-              icon: const Icon(
+              icon: Icon(
                 Icons.menu_rounded,
-                color: Color(0xFF94A3B8),
+                color: colors.textPrimary,
                 size: 20,
               ),
               onPressed: onMenuTap,
@@ -53,15 +55,16 @@ class ClinicTopBar extends StatelessWidget {
           SizedBox(width: gap),
         ],
 
-        // Search Input
-        Expanded(
+        // Search Input (Compact)
+        SizedBox(
+          width: compact ? 180 : 260,
           child: ClinicSearchBar(
             controller: searchController,
             onChanged: onSearchChanged,
           ),
         ),
 
-        SizedBox(width: gap),
+        const Spacer(),
 
         // Notifications Button
         const ClinicNotificationButton(),
@@ -70,6 +73,11 @@ class ClinicTopBar extends StatelessWidget {
 
         // Admin Profile Chip with Sign Out Menu
         ClinicProfileChip(compact: compact),
+
+        SizedBox(width: compact ? 4 : 8),
+
+        // Theme Toggle Button (at the end of the bar)
+        const ThemeModeToggleButton(),
       ],
     );
   }

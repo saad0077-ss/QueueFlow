@@ -1,4 +1,4 @@
-import 'package:equatable/equatable.dart';
+﻿import 'package:equatable/equatable.dart';
 
 /// Payment method details for clinic auto-debit.
 class ClinicPaymentMethodEntity extends Equatable {

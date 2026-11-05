@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class ClinicReviewsRatingCard extends StatelessWidget {
   final double rating;
@@ -19,13 +19,15 @@ class ClinicReviewsRatingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Container(
       padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: AppColors.darkSurface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.darkBorder),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         children: [
@@ -39,7 +41,7 @@ class ClinicReviewsRatingCard extends StatelessWidget {
                     style: GoogleFonts.robotoMono(
                       fontSize: 34,
                       fontWeight: FontWeight.w800,
-                      color: AppColors.darkInk,
+                      color: colors.textPrimary,
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -53,7 +55,7 @@ class ClinicReviewsRatingCard extends StatelessWidget {
                             i < rating.floor()
                                 ? Icons.star
                                 : (i < rating ? Icons.star_half : Icons.star_border),
-                            color: AppColors.warning,
+                            color: colors.ratingGold,
                             size: 16,
                           ),
                         ),
@@ -65,7 +67,7 @@ class ClinicReviewsRatingCard extends StatelessWidget {
                             : 'No ratings yet',
                         style: GoogleFonts.inter(
                           fontSize: 11,
-                          color: AppColors.darkInkMuted,
+                          color: colors.textMuted,
                         ),
                       ),
                     ],
@@ -75,7 +77,7 @@ class ClinicReviewsRatingCard extends StatelessWidget {
               ElevatedButton(
                 onPressed: onRateClinic,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
+                  backgroundColor: colors.primary,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   shape: RoundedRectangleBorder(
@@ -93,21 +95,21 @@ class ClinicReviewsRatingCard extends StatelessWidget {
           const SizedBox(height: 14),
           for (var i = 0; i < 5; i++) ...[
             if (i > 0) const SizedBox(height: 4),
-            _buildBar('${5 - i} ★', i < starPercents.length ? starPercents[i] : 0),
+            _buildBar('${5 - i} ★', i < starPercents.length ? starPercents[i] : 0, colors),
           ],
         ],
       ),
     );
   }
 
-  Widget _buildBar(String starLabel, int percent) {
+  Widget _buildBar(String starLabel, int percent, AppColorsExtension colors) {
     return Row(
       children: [
         SizedBox(
           width: 28,
           child: Text(
             starLabel,
-            style: GoogleFonts.inter(fontSize: 11, color: AppColors.darkInkMuted),
+            style: GoogleFonts.inter(fontSize: 11, color: colors.textMuted),
           ),
         ),
         const SizedBox(width: 8),
@@ -117,8 +119,8 @@ class ClinicReviewsRatingCard extends StatelessWidget {
             child: LinearProgressIndicator(
               value: percent / 100.0,
               minHeight: 6,
-              backgroundColor: AppColors.darkBgApp,
-              valueColor: const AlwaysStoppedAnimation<Color>(AppColors.warning),
+              backgroundColor: colors.surfaceSecondary,
+              valueColor: AlwaysStoppedAnimation<Color>(colors.ratingGold),
             ),
           ),
         ),
@@ -128,7 +130,7 @@ class ClinicReviewsRatingCard extends StatelessWidget {
           child: Text(
             '$percent%',
             textAlign: TextAlign.right,
-            style: GoogleFonts.inter(fontSize: 11, color: AppColors.darkInkMuted),
+            style: GoogleFonts.inter(fontSize: 11, color: colors.textMuted),
           ),
         ),
       ],

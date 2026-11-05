@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import 'app_logo.dart';
 
 class AuthBackHeader extends StatelessWidget {
@@ -9,6 +9,8 @@ class AuthBackHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -16,22 +18,22 @@ class AuthBackHeader extends StatelessWidget {
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: AppColors.cardBg,
+            color: colors.surface,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.cardBorder, width: 1.2),
+            border: Border.all(color: colors.border, width: 1.2),
           ),
           child: Material(
             color: Colors.transparent,
             child: InkWell(
               borderRadius: BorderRadius.circular(12),
               onTap: onBack ?? () => Navigator.of(context).maybePop(),
-              child: const Center(
+              child: Center(
                 child: Padding(
-                  padding: EdgeInsets.only(left: 6.0),
+                  padding: const EdgeInsets.only(left: 6.0),
                   child: Icon(
                     Icons.arrow_back_ios,
                     size: 16,
-                    color: Colors.white,
+                    color: colors.textPrimary,
                   ),
                 ),
               ),

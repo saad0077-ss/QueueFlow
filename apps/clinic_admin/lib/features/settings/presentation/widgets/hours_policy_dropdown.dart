@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class HoursPolicyDropdown extends StatelessWidget {
   final String title;
@@ -21,27 +22,29 @@ class HoursPolicyDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.bold, color: Colors.white)),
+        Text(title, style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.bold, color: colors.textPrimary)),
         const SizedBox(height: 2),
-        Text(subtitle, style: GoogleFonts.inter(fontSize: 11, color: const Color(0xFF64748B))),
+        Text(subtitle, style: GoogleFonts.inter(fontSize: 11, color: colors.textMuted)),
         const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
           decoration: BoxDecoration(
-            color: const Color(0xFF162238),
+            color: colors.surface,
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: const Color(0xFF1E293B)),
+            border: Border.all(color: colors.border),
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<int>(
               value: items.any((i) => i.value == value) ? value : items.first.value,
-              dropdownColor: const Color(0xFF0F172A),
+              dropdownColor: colors.surfaceElevated,
               isExpanded: true,
-              icon: Icon(icon, size: 16, color: const Color(0xFF94A3B8)),
-              style: GoogleFonts.inter(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w500),
+              icon: Icon(icon, size: 16, color: colors.textMuted),
+              style: GoogleFonts.inter(color: colors.textPrimary, fontSize: 13, fontWeight: FontWeight.w500),
               items: items,
               onChanged: (v) {
                 if (v != null) onChanged(v);

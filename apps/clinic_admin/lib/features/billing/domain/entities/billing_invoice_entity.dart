@@ -1,4 +1,4 @@
-import 'package:equatable/equatable.dart';
+﻿import 'package:equatable/equatable.dart';
 
 /// Represents a billing invoice or receipt for a clinic subscription.
 class BillingInvoiceEntity extends Equatable {

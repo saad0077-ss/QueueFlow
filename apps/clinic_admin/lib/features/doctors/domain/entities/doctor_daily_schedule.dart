@@ -1,4 +1,4 @@
-import 'package:equatable/equatable.dart';
+﻿import 'package:equatable/equatable.dart';
 
 /// Schedule entry for a single day of the week.
 class DoctorDailySchedule extends Equatable {

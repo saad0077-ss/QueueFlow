@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'doctor_ui_kit.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class DoctorsRosterHeader extends StatelessWidget {
   final int count;
@@ -9,6 +9,8 @@ class DoctorsRosterHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final isNarrow = constraints.maxWidth < 500;
@@ -25,10 +27,10 @@ class DoctorsRosterHeader extends StatelessWidget {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(
+                Icon(
                   Icons.medical_services_outlined,
                   size: 15,
-                  color: DoctorColors.cyan,
+                  color: colors.primary,
                 ),
                 const SizedBox(width: 8),
                 Text(
@@ -36,7 +38,7 @@ class DoctorsRosterHeader extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 11.5,
                     fontWeight: FontWeight.w800,
-                    color: DoctorColors.muted,
+                    color: colors.textMuted,
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -46,7 +48,7 @@ class DoctorsRosterHeader extends StatelessWidget {
               '$count Doctor${count == 1 ? '' : 's'} on Roster',
               style: GoogleFonts.inter(
                 fontSize: 12,
-                color: DoctorColors.muted,
+                color: colors.textMuted,
                 fontWeight: FontWeight.w500,
               ),
             ),

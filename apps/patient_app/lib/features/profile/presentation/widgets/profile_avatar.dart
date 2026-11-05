@@ -10,6 +10,9 @@ class ProfileAvatar extends StatelessWidget {
   final String? photoBase64;
   final double size;
   final double fontSize;
+
+  /// Text shown when there is no photo. Defaults to the first letter of [name].
+  final String? fallbackText;
   final BoxBorder? border;
   final List<BoxShadow>? boxShadow;
 
@@ -19,6 +22,7 @@ class ProfileAvatar extends StatelessWidget {
     this.photoBase64,
     required this.size,
     required this.fontSize,
+    this.fallbackText,
     this.border,
     this.boxShadow,
   });
@@ -36,7 +40,9 @@ class ProfileAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     final bytes = _decode(photoBase64);
     final trimmed = name.trim();
-    final letter = trimmed.isEmpty ? '?' : trimmed.characters.first.toUpperCase();
+    final letter = (fallbackText != null && fallbackText!.isNotEmpty)
+        ? fallbackText!
+        : (trimmed.isEmpty ? '?' : trimmed.characters.first.toUpperCase());
 
     return Container(
       width: size,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../domain/entities/clinic_doctor_profile_entity.dart';
-import 'doctor_ui_kit.dart';
 
 class DoctorDetailStatsRow extends StatelessWidget {
   final ClinicDoctorProfileEntity doctor;
@@ -10,6 +10,7 @@ class DoctorDetailStatsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final stats = [
       (
         'TOTAL APPOINTMENTS',
@@ -55,9 +56,9 @@ class DoctorDetailStatsRow extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
                     decoration: BoxDecoration(
-                      color: DoctorColors.surface,
+                      color: colors.surface,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: DoctorColors.border),
+                      border: Border.all(color: colors.border),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,7 +69,7 @@ class DoctorDetailStatsRow extends StatelessWidget {
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
                             letterSpacing: 0.5,
-                            color: DoctorColors.muted,
+                            color: colors.textMuted,
                           ),
                         ),
                         const SizedBox(height: 6),
@@ -77,7 +78,7 @@ class DoctorDetailStatsRow extends StatelessWidget {
                           style: GoogleFonts.inter(
                             fontSize: 24,
                             fontWeight: FontWeight.w800,
-                            color: Colors.white,
+                            color: colors.textPrimary,
                           ),
                         ),
                         const SizedBox(height: 2),
@@ -85,7 +86,7 @@ class DoctorDetailStatsRow extends StatelessWidget {
                           hint,
                           style: GoogleFonts.inter(
                             fontSize: 12,
-                            color: DoctorColors.subtle,
+                            color: colors.textSubtle,
                           ),
                         ),
                       ],

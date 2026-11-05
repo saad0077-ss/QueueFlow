@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class PasswordStrengthBar extends StatelessWidget {
   final double strength;
@@ -8,13 +9,14 @@ class PasswordStrengthBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color activeColor = const Color(0xFF1E293B);
+    final colors = context.colors;
+    Color activeColor = colors.border;
     if (strength >= 0.8) {
-      activeColor = const Color(0xFF10B981);
+      activeColor = colors.success;
     } else if (strength >= 0.4) {
-      activeColor = const Color(0xFFF59E0B);
+      activeColor = colors.warning;
     } else if (strength > 0) {
-      activeColor = const Color(0xFFEF4444);
+      activeColor = colors.error;
     }
 
     return Column(
@@ -26,7 +28,7 @@ class PasswordStrengthBar extends StatelessWidget {
           child: LinearProgressIndicator(
             value: strength == 0 ? 1.0 : strength,
             minHeight: 3,
-            backgroundColor: const Color(0xFF1E293B),
+            backgroundColor: colors.border,
             valueColor: AlwaysStoppedAnimation<Color>(activeColor),
           ),
         ),
@@ -35,7 +37,7 @@ class PasswordStrengthBar extends StatelessWidget {
           'Password strength',
           style: GoogleFonts.inter(
             fontSize: 11,
-            color: const Color(0xFF64748B),
+            color: colors.textMuted,
           ),
         ),
       ],

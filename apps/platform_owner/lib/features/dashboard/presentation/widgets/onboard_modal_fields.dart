@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../departments/domain/entities/department_entity.dart';
 
 class OnboardTextField extends StatelessWidget {
@@ -20,6 +21,8 @@ class OnboardTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -28,27 +31,27 @@ class OnboardTextField extends StatelessWidget {
           style: GoogleFonts.inter(
             fontSize: 12,
             fontWeight: FontWeight.w600,
-            color: const Color(0xFFCBD5E1),
+            color: colors.textPrimary,
           ),
         ),
         const SizedBox(height: 6),
         Container(
           height: 42,
           decoration: BoxDecoration(
-            color: readOnly ? const Color(0xFF0F172A) : const Color(0xFF162238),
+            color: colors.surfaceSecondary,
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: readOnly ? const Color(0xFF1E293B) : const Color(0xFF26354D)),
+            border: Border.all(color: colors.border),
           ),
           child: TextField(
             controller: controller,
             readOnly: readOnly,
             style: GoogleFonts.inter(
-              color: readOnly ? const Color(0xFF94A3B8) : Colors.white,
+              color: readOnly ? colors.textMuted : colors.textPrimary,
               fontSize: 13,
             ),
             decoration: InputDecoration(
               hintText: hint,
-              hintStyle: GoogleFonts.inter(color: const Color(0xFF64748B), fontSize: 13),
+              hintStyle: GoogleFonts.inter(color: colors.textMuted, fontSize: 13),
               border: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
             ),
@@ -58,7 +61,7 @@ class OnboardTextField extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             helperText!,
-            style: GoogleFonts.inter(fontSize: 11, color: const Color(0xFF64748B)),
+            style: GoogleFonts.inter(fontSize: 11, color: colors.textMuted),
           ),
         ],
       ],
@@ -78,6 +81,8 @@ class OnboardPlanDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -86,7 +91,7 @@ class OnboardPlanDropdown extends StatelessWidget {
           style: GoogleFonts.inter(
             fontSize: 12,
             fontWeight: FontWeight.w600,
-            color: const Color(0xFFCBD5E1),
+            color: colors.textPrimary,
           ),
         ),
         const SizedBox(height: 6),
@@ -94,16 +99,16 @@ class OnboardPlanDropdown extends StatelessWidget {
           height: 42,
           padding: const EdgeInsets.symmetric(horizontal: 14),
           decoration: BoxDecoration(
-            color: const Color(0xFF162238),
+            color: colors.surfaceSecondary,
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: const Color(0xFF26354D)),
+            border: Border.all(color: colors.border),
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
               value: value,
-              dropdownColor: const Color(0xFF162238),
-              icon: const Icon(Icons.keyboard_arrow_down_rounded, color: Color(0xFF94A3B8), size: 18),
-              style: GoogleFonts.inter(color: Colors.white, fontSize: 13),
+              dropdownColor: colors.surfaceElevated,
+              icon: Icon(Icons.keyboard_arrow_down_rounded, color: colors.textMuted, size: 18),
+              style: GoogleFonts.inter(color: colors.textPrimary, fontSize: 13),
               items: const [
                 DropdownMenuItem(value: 'solo', child: Text('Solo Doctor Plan (₹999/mo)')),
                 DropdownMenuItem(value: 'multi', child: Text('Multi-Doctor Clinic Plan (₹2,999/mo)')),
@@ -134,6 +139,7 @@ class OnboardDepartmentDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final activeDepartments = departments.where((d) => d.isActive).toList();
 
     return Column(
@@ -147,7 +153,7 @@ class OnboardDepartmentDropdown extends StatelessWidget {
               style: GoogleFonts.inter(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: const Color(0xFFCBD5E1),
+                color: colors.textPrimary,
               ),
             ),
             if (selectedDepartmentIds.isNotEmpty)
@@ -156,7 +162,7 @@ class OnboardDepartmentDropdown extends StatelessWidget {
                 style: GoogleFonts.inter(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFF38BDF8),
+                  color: colors.primaryLight,
                 ),
               ),
           ],
@@ -166,9 +172,9 @@ class OnboardDepartmentDropdown extends StatelessWidget {
           height: 42,
           padding: const EdgeInsets.symmetric(horizontal: 14),
           decoration: BoxDecoration(
-            color: const Color(0xFF162238),
+            color: colors.surfaceSecondary,
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: const Color(0xFF26354D)),
+            border: Border.all(color: colors.border),
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
@@ -183,13 +189,13 @@ class OnboardDepartmentDropdown extends StatelessWidget {
                             ? 'Select departments for this clinic...'
                             : '+ Add / toggle another department...')),
                 style: GoogleFonts.inter(
-                  color: const Color(0xFF64748B),
+                  color: colors.textMuted,
                   fontSize: 13,
                 ),
               ),
-              dropdownColor: const Color(0xFF162238),
-              icon: const Icon(Icons.keyboard_arrow_down_rounded, color: Color(0xFF94A3B8), size: 18),
-              style: GoogleFonts.inter(color: Colors.white, fontSize: 13),
+              dropdownColor: colors.surfaceElevated,
+              icon: Icon(Icons.keyboard_arrow_down_rounded, color: colors.textMuted, size: 18),
+              style: GoogleFonts.inter(color: colors.textPrimary, fontSize: 13),
               items: activeDepartments.map((dept) {
                 final isSelected = selectedDepartmentIds.contains(dept.id);
                 return DropdownMenuItem<String>(
@@ -199,7 +205,7 @@ class OnboardDepartmentDropdown extends StatelessWidget {
                       Icon(
                         isSelected ? Icons.check_box_rounded : Icons.check_box_outline_blank_rounded,
                         size: 16,
-                        color: isSelected ? const Color(0xFF38BDF8) : const Color(0xFF64748B),
+                        color: isSelected ? colors.primaryLight : colors.textMuted,
                       ),
                       const SizedBox(width: 8),
                       Text(
@@ -211,7 +217,7 @@ class OnboardDepartmentDropdown extends StatelessWidget {
                           '${dept.name} (${dept.code})',
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.inter(
-                            color: isSelected ? const Color(0xFF38BDF8) : Colors.white,
+                            color: isSelected ? colors.primaryLight : colors.textPrimary,
                             fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                           ),
                         ),
@@ -239,8 +245,6 @@ class OnboardDepartmentDropdown extends StatelessWidget {
             spacing: 6,
             runSpacing: 6,
             children: selectedDepartmentIds.map((id) {
-              // The list may be a List<DepartmentModel> at runtime, so firstWhere's
-              // orElse can't return a plain DepartmentEntity — fall back via ?? instead.
               final DepartmentEntity dept = departments.where((d) => d.id == id).firstOrNull ??
                   DepartmentEntity(
                     id: id,
@@ -252,9 +256,9 @@ class OnboardDepartmentDropdown extends StatelessWidget {
               return Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1E293B),
+                  color: colors.surfaceSecondary,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: const Color(0xFF38BDF8).withValues(alpha: 0.35)),
+                  border: Border.all(color: colors.primary.withValues(alpha: 0.35)),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -266,7 +270,7 @@ class OnboardDepartmentDropdown extends StatelessWidget {
                       style: GoogleFonts.inter(
                         fontSize: 11.5,
                         fontWeight: FontWeight.w600,
-                        color: const Color(0xFFE2E8F0),
+                        color: colors.textPrimary,
                       ),
                     ),
                     const SizedBox(width: 6),
@@ -276,10 +280,10 @@ class OnboardDepartmentDropdown extends StatelessWidget {
                         onChanged(updated);
                       },
                       borderRadius: BorderRadius.circular(10),
-                      child: const Icon(
+                      child: Icon(
                         Icons.close_rounded,
                         size: 14,
-                        color: Color(0xFF94A3B8),
+                        color: colors.textMuted,
                       ),
                     ),
                   ],

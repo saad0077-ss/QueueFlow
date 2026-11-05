@@ -2,8 +2,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:patient_app/core/constants/payment_constants.dart';
-import 'package:patient_app/core/theme/app_colors.dart';
 import 'package:patient_app/features/booking/domain/entities/payment_info_entity.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class RazorpayCheckoutDialog extends StatefulWidget {
   final String title;
@@ -109,15 +109,17 @@ class _RazorpayCheckoutDialogState extends State<RazorpayCheckoutDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Container(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
-      decoration: const BoxDecoration(
-        color: AppColors.darkSurface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      decoration: BoxDecoration(
+        color: colors.surfaceElevated,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         border: Border(
-          top: BorderSide(color: Color(0xFF38BDF8), width: 1.5),
+          top: BorderSide(color: colors.primary, width: 1.5),
         ),
       ),
       child: SafeArea(
@@ -133,6 +135,8 @@ class _RazorpayCheckoutDialogState extends State<RazorpayCheckoutDialog> {
   }
 
   Widget _buildCheckoutContent() {
+    final colors = context.colors;
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -143,7 +147,7 @@ class _RazorpayCheckoutDialogState extends State<RazorpayCheckoutDialog> {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: AppColors.darkBorder,
+              color: colors.border,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -161,16 +165,16 @@ class _RazorpayCheckoutDialogState extends State<RazorpayCheckoutDialog> {
                   width: 38,
                   height: 38,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF2563EB).withValues(alpha: 0.18),
+                    color: colors.primaryTint,
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color: const Color(0xFF38BDF8).withValues(alpha: 0.4),
+                      color: colors.accent.withValues(alpha: 0.4),
                     ),
                   ),
-                  child: const Center(
+                  child: Center(
                     child: Icon(
                       Icons.bolt_rounded,
-                      color: Color(0xFF38BDF8),
+                      color: colors.accent,
                       size: 22,
                     ),
                   ),
@@ -184,14 +188,14 @@ class _RazorpayCheckoutDialogState extends State<RazorpayCheckoutDialog> {
                       style: GoogleFonts.inter(
                         fontSize: 14.5,
                         fontWeight: FontWeight.w800,
-                        color: AppColors.darkInk,
+                        color: colors.textPrimary,
                       ),
                     ),
                     Text(
                       widget.orderRef,
                       style: GoogleFonts.inter(
                         fontSize: 11.5,
-                        color: AppColors.darkInkMuted,
+                        color: colors.textMuted,
                       ),
                     ),
                     const SizedBox(height: 3),
@@ -200,20 +204,20 @@ class _RazorpayCheckoutDialogState extends State<RazorpayCheckoutDialog> {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF59E0B).withValues(alpha: 0.16),
+                            color: colors.warning.withValues(alpha: 0.16),
                             borderRadius: BorderRadius.circular(4),
                             border: Border.all(
-                              color: const Color(0xFFF59E0B).withValues(alpha: 0.4),
+                              color: colors.warning.withValues(alpha: 0.4),
                               width: 0.8,
                             ),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.verified_user_rounded,
                                 size: 10,
-                                color: Color(0xFFFBBF24),
+                                color: colors.warning,
                               ),
                               const SizedBox(width: 3),
                               Text(
@@ -221,7 +225,7 @@ class _RazorpayCheckoutDialogState extends State<RazorpayCheckoutDialog> {
                                 style: GoogleFonts.robotoMono(
                                   fontSize: 9,
                                   fontWeight: FontWeight.w700,
-                                  color: const Color(0xFFFBBF24),
+                                  color: colors.warning,
                                 ),
                               ),
                             ],
@@ -235,7 +239,7 @@ class _RazorpayCheckoutDialogState extends State<RazorpayCheckoutDialog> {
             ),
             IconButton(
               onPressed: () => Navigator.pop(context),
-              icon: const Icon(Icons.close_rounded, color: AppColors.darkInkMuted),
+              icon: Icon(Icons.close_rounded, color: colors.textMuted),
               visualDensity: VisualDensity.compact,
             ),
           ],
@@ -247,9 +251,9 @@ class _RazorpayCheckoutDialogState extends State<RazorpayCheckoutDialog> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           decoration: BoxDecoration(
-            color: AppColors.darkBgApp,
+            color: colors.surfaceSecondary,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.darkBorder),
+            border: Border.all(color: colors.border),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -258,7 +262,7 @@ class _RazorpayCheckoutDialogState extends State<RazorpayCheckoutDialog> {
                 'Amount to Pay',
                 style: GoogleFonts.inter(
                   fontSize: 12.5,
-                  color: AppColors.darkInkMuted,
+                  color: colors.textMuted,
                 ),
               ),
               Text(
@@ -266,7 +270,7 @@ class _RazorpayCheckoutDialogState extends State<RazorpayCheckoutDialog> {
                 style: GoogleFonts.robotoMono(
                   fontSize: 17,
                   fontWeight: FontWeight.w800,
-                  color: const Color(0xFF38BDF8),
+                  color: colors.primary,
                 ),
               ),
             ],
@@ -278,7 +282,7 @@ class _RazorpayCheckoutDialogState extends State<RazorpayCheckoutDialog> {
         // Payment Mode Tabs
         Container(
           decoration: BoxDecoration(
-            color: AppColors.darkBgApp,
+            color: colors.surfaceSecondary,
             borderRadius: BorderRadius.circular(12),
           ),
           padding: const EdgeInsets.all(3),
@@ -305,15 +309,13 @@ class _RazorpayCheckoutDialogState extends State<RazorpayCheckoutDialog> {
           width: double.infinity,
           height: 48,
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xFF2563EB), Color(0xFF0284C7)],
-            ),
+            gradient: AppColors.primaryGradient,
             borderRadius: BorderRadius.circular(14),
-            boxShadow: const [
+            boxShadow: [
               BoxShadow(
-                color: Color(0x402563EB),
+                color: colors.primary.withValues(alpha: 0.35),
                 blurRadius: 14,
-                offset: Offset(0, 4),
+                offset: const Offset(0, 4),
               ),
             ],
           ),
@@ -351,6 +353,7 @@ class _RazorpayCheckoutDialogState extends State<RazorpayCheckoutDialog> {
   }
 
   Widget _buildTabButton(int index, String label, IconData icon) {
+    final colors = context.colors;
     final isSelected = _selectedTab == index;
 
     return Expanded(
@@ -360,10 +363,10 @@ class _RazorpayCheckoutDialogState extends State<RazorpayCheckoutDialog> {
           duration: const Duration(milliseconds: 180),
           padding: const EdgeInsets.symmetric(vertical: 8),
           decoration: BoxDecoration(
-            color: isSelected ? AppColors.darkSurface : Colors.transparent,
+            color: isSelected ? colors.surface : Colors.transparent,
             borderRadius: BorderRadius.circular(10),
             border: isSelected
-                ? Border.all(color: const Color(0xFF38BDF8).withValues(alpha: 0.4))
+                ? Border.all(color: colors.primary.withValues(alpha: 0.4))
                 : null,
           ),
           child: Row(
@@ -372,7 +375,7 @@ class _RazorpayCheckoutDialogState extends State<RazorpayCheckoutDialog> {
               Icon(
                 icon,
                 size: 14,
-                color: isSelected ? const Color(0xFF38BDF8) : AppColors.darkInkFaint,
+                color: isSelected ? colors.primary : colors.textSubtle,
               ),
               const SizedBox(width: 6),
               Text(
@@ -380,7 +383,7 @@ class _RazorpayCheckoutDialogState extends State<RazorpayCheckoutDialog> {
                 style: GoogleFonts.inter(
                   fontSize: 11.5,
                   fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                  color: isSelected ? Colors.white : AppColors.darkInkMuted,
+                  color: isSelected ? colors.textPrimary : colors.textMuted,
                 ),
               ),
             ],
@@ -391,6 +394,7 @@ class _RazorpayCheckoutDialogState extends State<RazorpayCheckoutDialog> {
   }
 
   Widget _buildUpiPanel() {
+    final colors = context.colors;
     final apps = ['Google Pay', 'PhonePe', 'Paytm', 'BHIM'];
 
     return Column(
@@ -400,7 +404,7 @@ class _RazorpayCheckoutDialogState extends State<RazorpayCheckoutDialog> {
           'Select Fast UPI App:',
           style: GoogleFonts.inter(
             fontSize: 11.5,
-            color: AppColors.darkInkMuted,
+            color: colors.textMuted,
           ),
         ),
         const SizedBox(height: 8),
@@ -415,11 +419,11 @@ class _RazorpayCheckoutDialogState extends State<RazorpayCheckoutDialog> {
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? const Color(0xFF2563EB).withValues(alpha: 0.15)
-                        : AppColors.darkBgApp,
+                        ? colors.primaryTint
+                        : colors.surfaceSecondary,
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color: isSelected ? const Color(0xFF38BDF8) : AppColors.darkBorder,
+                      color: isSelected ? colors.primary : colors.border,
                     ),
                   ),
                   child: Center(
@@ -428,7 +432,7 @@ class _RazorpayCheckoutDialogState extends State<RazorpayCheckoutDialog> {
                       style: GoogleFonts.inter(
                         fontSize: 10.5,
                         fontWeight: isSelected ? FontWeight.w800 : FontWeight.w500,
-                        color: isSelected ? const Color(0xFF38BDF8) : AppColors.darkInk,
+                        color: isSelected ? colors.primary : colors.textPrimary,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -442,20 +446,20 @@ class _RazorpayCheckoutDialogState extends State<RazorpayCheckoutDialog> {
         const SizedBox(height: 10),
         TextField(
           controller: _upiController,
-          style: GoogleFonts.robotoMono(fontSize: 12.5, color: AppColors.darkInk),
+          style: GoogleFonts.robotoMono(fontSize: 12.5, color: colors.textPrimary),
           decoration: InputDecoration(
             labelText: 'UPI ID / VPA',
-            labelStyle: GoogleFonts.inter(fontSize: 11, color: AppColors.darkInkMuted),
+            labelStyle: GoogleFonts.inter(fontSize: 11, color: colors.textMuted),
             filled: true,
-            fillColor: AppColors.darkBgApp,
+            fillColor: colors.surfaceSecondary,
             contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: AppColors.darkBorder),
+              borderSide: BorderSide(color: colors.border),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: AppColors.darkBorder),
+              borderSide: BorderSide(color: colors.border),
             ),
           ),
         ),
@@ -464,12 +468,14 @@ class _RazorpayCheckoutDialogState extends State<RazorpayCheckoutDialog> {
   }
 
   Widget _buildCardPanel() {
+    final colors = context.colors;
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppColors.darkBgApp,
+        color: colors.surfaceSecondary,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.darkBorder),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -482,14 +488,14 @@ class _RazorpayCheckoutDialogState extends State<RazorpayCheckoutDialog> {
                 style: GoogleFonts.inter(
                   fontSize: 10.5,
                   fontWeight: FontWeight.w800,
-                  color: AppColors.darkInkMuted,
+                  color: colors.textMuted,
                   letterSpacing: 0.5,
                 ),
               ),
-              const Icon(
+              Icon(
                 Icons.credit_card_rounded,
                 size: 16,
-                color: Color(0xFF38BDF8),
+                color: colors.accent,
               ),
             ],
           ),
@@ -499,7 +505,7 @@ class _RazorpayCheckoutDialogState extends State<RazorpayCheckoutDialog> {
             style: GoogleFonts.robotoMono(
               fontSize: 15,
               fontWeight: FontWeight.w700,
-              color: AppColors.darkInk,
+              color: colors.textPrimary,
             ),
           ),
           const SizedBox(height: 6),
@@ -508,11 +514,11 @@ class _RazorpayCheckoutDialogState extends State<RazorpayCheckoutDialog> {
             children: [
               Text(
                 'Expiry: 12/28',
-                style: GoogleFonts.inter(fontSize: 11.5, color: AppColors.darkInkMuted),
+                style: GoogleFonts.inter(fontSize: 11.5, color: colors.textMuted),
               ),
               Text(
                 'CVV: 123',
-                style: GoogleFonts.inter(fontSize: 11.5, color: AppColors.darkInkMuted),
+                style: GoogleFonts.inter(fontSize: 11.5, color: colors.textMuted),
               ),
             ],
           ),
@@ -522,6 +528,7 @@ class _RazorpayCheckoutDialogState extends State<RazorpayCheckoutDialog> {
   }
 
   Widget _buildNetBankingPanel() {
+    final colors = context.colors;
     final banks = ['HDFC Bank', 'ICICI Bank', 'State Bank of India', 'Axis Bank'];
 
     return Column(
@@ -535,11 +542,11 @@ class _RazorpayCheckoutDialogState extends State<RazorpayCheckoutDialog> {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
               color: isSelected
-                  ? const Color(0xFF2563EB).withValues(alpha: 0.15)
-                  : AppColors.darkBgApp,
+                  ? colors.primaryTint
+                  : colors.surfaceSecondary,
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
-                color: isSelected ? const Color(0xFF38BDF8) : AppColors.darkBorder,
+                color: isSelected ? colors.primary : colors.border,
               ),
             ),
             child: Row(
@@ -550,14 +557,14 @@ class _RazorpayCheckoutDialogState extends State<RazorpayCheckoutDialog> {
                   style: GoogleFonts.inter(
                     fontSize: 12,
                     fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                    color: isSelected ? const Color(0xFF38BDF8) : AppColors.darkInk,
+                    color: isSelected ? colors.primary : colors.textPrimary,
                   ),
                 ),
                 if (isSelected)
-                  const Icon(
+                  Icon(
                     Icons.check_circle_rounded,
                     size: 16,
-                    color: Color(0xFF38BDF8),
+                    color: colors.primary,
                   ),
               ],
             ),
@@ -568,17 +575,19 @@ class _RazorpayCheckoutDialogState extends State<RazorpayCheckoutDialog> {
   }
 
   Widget _buildProcessingState() {
+    final colors = context.colors;
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 40),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const SizedBox(
+          SizedBox(
             width: 44,
             height: 44,
             child: CircularProgressIndicator(
               strokeWidth: 3,
-              color: Color(0xFF38BDF8),
+              color: colors.primary,
             ),
           ),
           const SizedBox(height: 20),
@@ -587,7 +596,7 @@ class _RazorpayCheckoutDialogState extends State<RazorpayCheckoutDialog> {
             style: GoogleFonts.inter(
               fontSize: 16,
               fontWeight: FontWeight.w800,
-              color: AppColors.darkInk,
+              color: colors.textPrimary,
             ),
           ),
           const SizedBox(height: 6),
@@ -596,7 +605,7 @@ class _RazorpayCheckoutDialogState extends State<RazorpayCheckoutDialog> {
             textAlign: TextAlign.center,
             style: GoogleFonts.inter(
               fontSize: 12,
-              color: AppColors.darkInkMuted,
+              color: colors.textMuted,
             ),
           ),
         ],
@@ -605,6 +614,8 @@ class _RazorpayCheckoutDialogState extends State<RazorpayCheckoutDialog> {
   }
 
   Widget _buildSuccessState() {
+    final colors = context.colors;
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 36),
       child: Column(
@@ -613,8 +624,8 @@ class _RazorpayCheckoutDialogState extends State<RazorpayCheckoutDialog> {
           Container(
             width: 60,
             height: 60,
-            decoration: const BoxDecoration(
-              color: AppColors.success,
+            decoration: BoxDecoration(
+              color: colors.success,
               shape: BoxShape.circle,
             ),
             child: const Icon(
@@ -629,7 +640,7 @@ class _RazorpayCheckoutDialogState extends State<RazorpayCheckoutDialog> {
             style: GoogleFonts.inter(
               fontSize: 17,
               fontWeight: FontWeight.w800,
-              color: AppColors.darkInk,
+              color: colors.textPrimary,
             ),
           ),
           const SizedBox(height: 4),
@@ -637,7 +648,7 @@ class _RazorpayCheckoutDialogState extends State<RazorpayCheckoutDialog> {
             'Transaction ID: $_generatedPaymentId',
             style: GoogleFonts.robotoMono(
               fontSize: 12,
-              color: AppColors.success,
+              color: colors.success,
             ),
           ),
         ],

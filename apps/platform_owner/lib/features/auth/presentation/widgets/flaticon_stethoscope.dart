@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 /// Vector Flaticon Medical Stethoscope Icon Widget
 class FlaticonStethoscope extends StatelessWidget {

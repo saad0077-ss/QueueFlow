@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../data/repositories/clinic_services_repository_impl.dart';
@@ -70,10 +71,10 @@ class _ClinicServicesBody extends StatelessWidget {
             const SizedBox(height: 14),
             if (state.status == ServicesStatus.initial ||
                 state.status == ServicesStatus.loading)
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 48),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 48),
                 child: Center(
-                  child: CircularProgressIndicator(color: Color(0xFF38BDF8)),
+                  child: CircularProgressIndicator(color: context.colors.primary),
                 ),
               )
             else

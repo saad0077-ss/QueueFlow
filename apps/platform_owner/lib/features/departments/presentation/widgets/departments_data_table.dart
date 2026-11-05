@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 import '../../domain/entities/department_entity.dart';
 import 'dept_table_row_item.dart';
@@ -22,15 +23,17 @@ class DepartmentsDataTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     if (departments.isEmpty) {
       return Container(
         width: double.infinity,
         padding: const EdgeInsets.all(36),
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: const Color(0xFF0D1526),
+          color: colors.surface,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: const Color(0xFF1E293B)),
+          border: Border.all(color: colors.border),
         ),
         child: Column(
           children: [
@@ -38,10 +41,10 @@ class DepartmentsDataTable extends StatelessWidget {
             const SizedBox(height: 10),
             Text(
               'No medical departments match your criteria',
-              style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
+              style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.bold, color: colors.textPrimary),
             ),
             const SizedBox(height: 4),
-            Text('Try clearing search filters or add a new department above.', style: GoogleFonts.inter(fontSize: 12, color: const Color(0xFF94A3B8))),
+            Text('Try clearing search filters or add a new department above.', style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted)),
           ],
         ),
       );
@@ -55,9 +58,9 @@ class DepartmentsDataTable extends StatelessWidget {
           width: double.infinity,
           clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
-            color: const Color(0xFF0D1526),
+            color: colors.surface,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: const Color(0xFF1E293B)),
+            border: Border.all(color: colors.border),
           ),
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -65,7 +68,7 @@ class DepartmentsDataTable extends StatelessWidget {
               width: tableWidth,
               child: Column(
                 children: [
-                  _buildHeader(),
+                  _buildHeader(colors),
                   ...departments.map(
                     (d) => DeptTableRowItem(department: d, onDetails: onDetails, onEdit: onEdit, onToggleStatus: onToggleStatus, onDelete: onDelete),
                   ),
@@ -78,23 +81,23 @@ class DepartmentsDataTable extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(AppColorsExtension colors) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: const BoxDecoration(
-        color: Color(0xFF070B14),
-        borderRadius: BorderRadius.vertical(top: Radius.circular(14)),
-        border: Border(bottom: BorderSide(color: Color(0xFF1E293B))),
+      decoration: BoxDecoration(
+        color: colors.surfaceSecondary,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(14)),
+        border: Border(bottom: BorderSide(color: colors.border)),
       ),
       child: Row(
-        children: const [
-          Expanded(flex: 3, child: _HeaderText('DEPARTMENT & CODE')),
-          Expanded(flex: 3, child: _HeaderText('CLINICAL SPECIALTY')),
-          Expanded(flex: 2, child: _HeaderText('AVERAGE CONSULTATION')),
-          Expanded(flex: 2, child: _HeaderText('LINKED CLINICS')),
-          Expanded(flex: 2, child: _HeaderText('MONTHLY TRIAGE')),
-          Expanded(flex: 2, child: _HeaderText('STATUS')),
-          Expanded(flex: 4, child: _HeaderText('ACTIONS', textAlign: TextAlign.right)),
+        children: [
+          Expanded(flex: 3, child: _HeaderText('DEPARTMENT & CODE', colors: colors)),
+          Expanded(flex: 3, child: _HeaderText('CLINICAL SPECIALTY', colors: colors)),
+          Expanded(flex: 2, child: _HeaderText('AVERAGE CONSULTATION', colors: colors)),
+          Expanded(flex: 2, child: _HeaderText('LINKED CLINICS', colors: colors)),
+          Expanded(flex: 2, child: _HeaderText('MONTHLY TRIAGE', colors: colors)),
+          Expanded(flex: 2, child: _HeaderText('STATUS', colors: colors)),
+          Expanded(flex: 4, child: _HeaderText('ACTIONS', textAlign: TextAlign.right, colors: colors)),
         ],
       ),
     );
@@ -104,14 +107,15 @@ class DepartmentsDataTable extends StatelessWidget {
 class _HeaderText extends StatelessWidget {
   final String text;
   final TextAlign textAlign;
-  const _HeaderText(this.text, {this.textAlign = TextAlign.left});
+  final AppColorsExtension colors;
+  const _HeaderText(this.text, {this.textAlign = TextAlign.left, required this.colors});
 
   @override
   Widget build(BuildContext context) {
     return Text(
       text,
       textAlign: textAlign,
-      style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w700, color: const Color(0xFF64748B), letterSpacing: 0.5),
+      style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w700, color: colors.textMuted, letterSpacing: 0.5),
     );
   }
 }

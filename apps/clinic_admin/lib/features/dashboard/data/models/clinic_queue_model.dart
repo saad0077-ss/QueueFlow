@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+﻿import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../domain/entities/clinic_queue_entity.dart';
 
 /// Data model representing the clinic queue with Firestore serialization.

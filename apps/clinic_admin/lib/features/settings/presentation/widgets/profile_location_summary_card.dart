@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../domain/entities/clinic_location_entity.dart';
 
 class ProfileLocationSummaryCard extends StatelessWidget {
@@ -21,12 +22,14 @@ class ProfileLocationSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF090E1A),
+        color: colors.surfaceSecondary,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFF1E293B)),
+        border: Border.all(color: colors.border),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -35,10 +38,10 @@ class ProfileLocationSummaryCard extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: const Color(0xFF2563EB).withAlpha(30),
+              color: colors.infoTint,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: const Icon(Icons.location_on_rounded, color: Color(0xFF38BDF8), size: 20),
+            child: Icon(Icons.location_on_rounded, color: colors.info, size: 20),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -47,12 +50,12 @@ class ProfileLocationSummaryCard extends StatelessWidget {
               children: [
                 Text(
                   'Clinic GPS & Google Maps Location',
-                  style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w700, color: Colors.white),
+                  style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w700, color: colors.textPrimary),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   _summary,
-                  style: GoogleFonts.inter(fontSize: 11.5, color: const Color(0xFF94A3B8)),
+                  style: GoogleFonts.inter(fontSize: 11.5, color: colors.textMuted),
                 ),
               ],
             ),
@@ -61,8 +64,9 @@ class ProfileLocationSummaryCard extends StatelessWidget {
           OutlinedButton(
             onPressed: onConfigureLocation,
             style: OutlinedButton.styleFrom(
-              foregroundColor: const Color(0xFF60A5FA),
-              side: const BorderSide(color: Color(0xFF2563EB)),
+              foregroundColor: colors.primaryLight,
+              side: BorderSide(color: colors.primary),
+              backgroundColor: colors.surface,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),

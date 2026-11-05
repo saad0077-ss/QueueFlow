@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+﻿import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../domain/entities/clinic_service_entity.dart';
 
 class ClinicServiceModel extends ClinicServiceEntity {

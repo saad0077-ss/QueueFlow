@@ -1,4 +1,4 @@
-const sampleDepartmentsSeed = [
+﻿const sampleDepartmentsSeed = [
   {
     'name': 'General Medicine',
     'code': 'GEN',

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../domain/entities/clinic_doctor_profile_entity.dart';
-import 'doctor_ui_kit.dart';
 
 class DoctorDetailAccountStatusCard extends StatelessWidget {
   final ClinicDoctorProfileEntity doctor;
@@ -13,34 +13,36 @@ class DoctorDetailAccountStatusCard extends StatelessWidget {
     required this.onChangeStatus,
   });
 
-  static const _options = [
-    (
-      'active',
-      'Active',
-      'Visible to patients and bookable in the live queue.',
-      DoctorColors.green,
-    ),
-    (
-      'inactive',
-      'Inactive',
-      'Hidden from booking. Existing records are kept.',
-      DoctorColors.red,
-    ),
-    (
-      'pending',
-      'Pending',
-      'Awaiting verification before the doctor can take bookings.',
-      DoctorColors.amber,
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
+    final options = [
+      (
+        'active',
+        'Active',
+        'Visible to patients and bookable in the live queue.',
+        colors.success,
+      ),
+      (
+        'inactive',
+        'Inactive',
+        'Hidden from booking. Existing records are kept.',
+        colors.error,
+      ),
+      (
+        'pending',
+        'Pending',
+        'Awaiting verification before the doctor can take bookings.',
+        colors.warning,
+      ),
+    ];
+
     return Container(
       decoration: BoxDecoration(
-        color: DoctorColors.surface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: DoctorColors.border),
+        border: Border.all(color: colors.border),
       ),
       padding: const EdgeInsets.all(22),
       child: Column(
@@ -48,7 +50,7 @@ class DoctorDetailAccountStatusCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.shield_outlined, size: 16, color: DoctorColors.cyan),
+              Icon(Icons.shield_outlined, size: 16, color: colors.info),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -56,17 +58,18 @@ class DoctorDetailAccountStatusCard extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 15,
                     fontWeight: FontWeight.w800,
-                    color: Colors.white,
+                    color: colors.textPrimary,
                   ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 14),
-          const Divider(color: DoctorColors.border, height: 1),
+          Divider(color: colors.border, height: 1),
           const SizedBox(height: 12),
-          for (final (key, label, desc, color) in _options) ...[
+          for (final (key, label, desc, color) in options) ...[
             _buildStatusRadio(
+              context: context,
               key: key,
               label: label,
               desc: desc,
@@ -81,12 +84,15 @@ class DoctorDetailAccountStatusCard extends StatelessWidget {
   }
 
   Widget _buildStatusRadio({
+    required BuildContext context,
     required String key,
     required String label,
     required String desc,
     required Color color,
     required bool isSelected,
   }) {
+    final colors = context.colors;
+
     return InkWell(
       onTap: () => onChangeStatus(key),
       borderRadius: BorderRadius.circular(10),
@@ -94,11 +100,11 @@ class DoctorDetailAccountStatusCard extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: isSelected
-              ? const Color(0xFF2563EB).withValues(alpha: 0.12)
-              : DoctorColors.field,
+              ? colors.primaryTint
+              : colors.surfaceSecondary,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: isSelected ? const Color(0xFF2563EB) : DoctorColors.border,
+            color: isSelected ? colors.primary : colors.border,
             width: isSelected ? 1.5 : 1.0,
           ),
         ),
@@ -124,7 +130,7 @@ class DoctorDetailAccountStatusCard extends StatelessWidget {
                     style: GoogleFonts.inter(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
-                      color: Colors.white,
+                      color: colors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -132,7 +138,7 @@ class DoctorDetailAccountStatusCard extends StatelessWidget {
                     desc,
                     style: GoogleFonts.inter(
                       fontSize: 11.5,
-                      color: DoctorColors.muted,
+                      color: colors.textMuted,
                       height: 1.3,
                     ),
                   ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class ClinicsHeaderBar extends StatelessWidget {
   final VoidCallback onExportCsv;
@@ -19,6 +20,8 @@ class ClinicsHeaderBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final isCompact = constraints.maxWidth < 750;
@@ -29,24 +32,24 @@ class ClinicsHeaderBar extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
-                color: const Color(0xFF064E3B).withValues(alpha: 0.5),
+                color: colors.badgeOpenBg,
                 borderRadius: BorderRadius.circular(6),
-                border: Border.all(color: const Color(0xFF059669)),
+                border: Border.all(color: colors.success.withValues(alpha: 0.5)),
               ),
               child: Text(
                 'NETWORK MANAGEMENT  •  $activeCount of $totalCount Facilities Active',
-                style: const TextStyle(fontSize: 10.5, fontWeight: FontWeight.w600, color: Color(0xFF34D399)),
+                style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w600, color: colors.badgeOpenText),
               ),
             ),
             const SizedBox(height: 8),
             Text(
               'Platform Clinics Directory',
-              style: GoogleFonts.inter(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white, letterSpacing: -0.4),
+              style: GoogleFonts.inter(fontSize: 24, fontWeight: FontWeight.bold, color: colors.textPrimary, letterSpacing: -0.4),
             ),
             const SizedBox(height: 4),
             Text(
               'All healthcare facilities onboarded on QueueFlow • Subscription tiers, doctor capacity & live queue triage',
-              style: GoogleFonts.inter(fontSize: 13, color: const Color(0xFF94A3B8)),
+              style: GoogleFonts.inter(fontSize: 13, color: colors.textMuted),
             ),
           ],
         );
@@ -59,8 +62,9 @@ class ClinicsHeaderBar extends StatelessWidget {
             OutlinedButton.icon(
               onPressed: onExportCsv,
               style: OutlinedButton.styleFrom(
-                foregroundColor: const Color(0xFF94A3B8),
-                side: const BorderSide(color: Color(0xFF334155)),
+                foregroundColor: colors.textPrimary,
+                backgroundColor: colors.surface,
+                side: BorderSide(color: colors.border),
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
@@ -70,8 +74,9 @@ class ClinicsHeaderBar extends StatelessWidget {
             OutlinedButton.icon(
               onPressed: onRefresh,
               style: OutlinedButton.styleFrom(
-                foregroundColor: const Color(0xFF94A3B8),
-                side: const BorderSide(color: Color(0xFF334155)),
+                foregroundColor: colors.textPrimary,
+                backgroundColor: colors.surface,
+                side: BorderSide(color: colors.border),
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),

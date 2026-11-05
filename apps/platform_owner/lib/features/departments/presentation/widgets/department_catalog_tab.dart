@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 import '../../domain/entities/standard_service_entity.dart';
 import 'add_procedure_form_card.dart';
@@ -28,6 +29,7 @@ class _DepartmentCatalogTabState extends State<DepartmentCatalogTab> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final filtered = widget.services.where((s) {
       if (_search.isEmpty) return true;
       final q = _search.toLowerCase();
@@ -43,17 +45,19 @@ class _DepartmentCatalogTabState extends State<DepartmentCatalogTab> {
           width: double.infinity,
           clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
-            color: const Color(0xFF0D1526),
+            color: colors.surface,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFF1E293B)),
+            border: Border.all(color: colors.border),
           ),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildHeader(filtered.length), _buildTable(filtered)]),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildHeader(context, filtered.length), _buildTable(context, filtered)]),
         ),
       ],
     );
   }
 
-  Widget _buildHeader(int count) {
+  Widget _buildHeader(BuildContext context, int count) {
+    final colors = context.colors;
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
       child: Row(
@@ -76,15 +80,15 @@ class _DepartmentCatalogTabState extends State<DepartmentCatalogTab> {
                   children: [
                     Text(
                       'Active Catalog Procedures',
-                      style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w800, color: Colors.white),
+                      style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w800, color: colors.textPrimary),
                     ),
                     const SizedBox(width: 8),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      decoration: BoxDecoration(color: const Color(0xFF10B981).withValues(alpha: 0.15), borderRadius: BorderRadius.circular(20)),
+                      decoration: BoxDecoration(color: colors.success.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(20)),
                       child: Text(
                         '$count',
-                        style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w800, color: const Color(0xFF34D399)),
+                        style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w800, color: colors.success),
                       ),
                     ),
                   ],
@@ -92,7 +96,7 @@ class _DepartmentCatalogTabState extends State<DepartmentCatalogTab> {
                 const SizedBox(height: 3),
                 Text(
                   'Standard clinical procedures available to clinics under this specialty',
-                  style: GoogleFonts.inter(fontSize: 12, color: const Color(0xFF94A3B8)),
+                  style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted),
                 ),
               ],
             ),
@@ -101,32 +105,32 @@ class _DepartmentCatalogTabState extends State<DepartmentCatalogTab> {
           SizedBox(
             width: 270,
             child: TextField(
-              style: GoogleFonts.inter(fontSize: 12.5, color: Colors.white),
-              cursorColor: Colors.white,
+              style: GoogleFonts.inter(fontSize: 12.5, color: colors.textPrimary),
+              cursorColor: colors.primary,
               onChanged: (v) => setState(() => _search = v),
               decoration: InputDecoration(
                 hintText: 'Filter procedures...',
-                hintStyle: GoogleFonts.inter(fontSize: 12.5, color: const Color(0xFF94A3B8)),
-                prefixIcon: const Padding(
-                  padding: EdgeInsets.only(left: 12, right: 8),
-                  child: Icon(Icons.search_rounded, size: 17, color: Color(0xFF60A5FA)),
+                hintStyle: GoogleFonts.inter(fontSize: 12.5, color: colors.textMuted),
+                prefixIcon: Padding(
+                  padding: const EdgeInsets.only(left: 12, right: 8),
+                  child: Icon(Icons.search_rounded, size: 17, color: colors.primary),
                 ),
                 prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
                 isDense: true,
                 filled: true,
-                fillColor: const Color(0xFF15213A),
+                fillColor: colors.surfaceSecondary,
                 contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 11),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
-                  borderSide: const BorderSide(color: Color(0xFF2A3A57)),
+                  borderSide: BorderSide(color: colors.border),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
-                  borderSide: const BorderSide(color: Color(0xFF2A3A57)),
+                  borderSide: BorderSide(color: colors.border),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
-                  borderSide: const BorderSide(color: Color(0xFF3B82F6)),
+                  borderSide: BorderSide(color: colors.primary),
                 ),
               ),
             ),
@@ -136,24 +140,26 @@ class _DepartmentCatalogTabState extends State<DepartmentCatalogTab> {
     );
   }
 
-  Widget _buildTable(List<StandardServiceEntity> list) {
+  Widget _buildTable(BuildContext context, List<StandardServiceEntity> list) {
+    final colors = context.colors;
+
     if (list.isEmpty) {
       return Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 36),
-        decoration: const BoxDecoration(
-          border: Border(top: BorderSide(color: Color(0xFF1E293B))),
+        decoration: BoxDecoration(
+          border: Border(top: BorderSide(color: colors.border)),
         ),
         child: Column(
           children: [
-            const Icon(Icons.search_off_rounded, size: 30, color: Color(0xFF475569)),
+            Icon(Icons.search_off_rounded, size: 30, color: colors.textMuted),
             const SizedBox(height: 8),
-            Text('No procedures match your filter.', style: GoogleFonts.inter(fontSize: 13, color: const Color(0xFF94A3B8))),
+            Text('No procedures match your filter.', style: GoogleFonts.inter(fontSize: 13, color: colors.textMuted)),
           ],
         ),
       );
     }
-    final headerStyle = GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w700, color: const Color(0xFF64748B), letterSpacing: 0.8, height: 1.35);
+    final headerStyle = GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w700, color: colors.textMuted, letterSpacing: 0.8, height: 1.35);
 
     return LayoutBuilder(
       builder: (context, constraints) => SingleChildScrollView(
@@ -164,11 +170,11 @@ class _DepartmentCatalogTabState extends State<DepartmentCatalogTab> {
             children: [
               Container(
                 padding: const EdgeInsets.fromLTRB(23, 12, 20, 12),
-                decoration: const BoxDecoration(
-                  color: Color(0xFF0A1120),
+                decoration: BoxDecoration(
+                  color: colors.surfaceSecondary,
                   border: Border(
-                    top: BorderSide(color: Color(0xFF1E293B)),
-                    bottom: BorderSide(color: Color(0xFF1E293B)),
+                    top: BorderSide(color: colors.border),
+                    bottom: BorderSide(color: colors.border),
                   ),
                 ),
                 child: Row(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class ClinicRateSheet extends StatefulWidget {
   final String clinicName;
@@ -47,6 +47,8 @@ class _ClinicRateSheetState extends State<ClinicRateSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Container(
       padding: EdgeInsets.only(
         left: 20,
@@ -54,9 +56,9 @@ class _ClinicRateSheetState extends State<ClinicRateSheet> {
         top: 20,
         bottom: MediaQuery.of(context).viewInsets.bottom + 20,
       ),
-      decoration: const BoxDecoration(
-        color: AppColors.darkSurface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      decoration: BoxDecoration(
+        color: colors.surfaceElevated,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: SingleChildScrollView(
         child: Column(
@@ -68,7 +70,7 @@ class _ClinicRateSheetState extends State<ClinicRateSheet> {
               style: GoogleFonts.inter(
                 fontSize: 18,
                 fontWeight: FontWeight.w800,
-                color: AppColors.darkInk,
+                color: colors.textPrimary,
               ),
             ),
             const SizedBox(height: 12),
@@ -79,7 +81,7 @@ class _ClinicRateSheetState extends State<ClinicRateSheet> {
                 return IconButton(
                   icon: Icon(
                     star <= _rating ? Icons.star_rounded : Icons.star_outline_rounded,
-                    color: AppColors.warning,
+                    color: colors.ratingGold,
                     size: 32,
                   ),
                   onPressed: () => setState(() => _rating = star),
@@ -95,10 +97,11 @@ class _ClinicRateSheetState extends State<ClinicRateSheet> {
                 return FilterChip(
                   label: Text(tag, style: const TextStyle(fontSize: 11)),
                   selected: isSelected,
-                  selectedColor: AppColors.primary.withValues(alpha: 0.25),
-                  backgroundColor: AppColors.darkBgApp,
+                  selectedColor: colors.primaryTint,
+                  backgroundColor: colors.surfaceSecondary,
+                  side: BorderSide(color: isSelected ? colors.primary : colors.border),
                   labelStyle: TextStyle(
-                    color: isSelected ? AppColors.primaryLight : AppColors.darkInkMuted,
+                    color: isSelected ? colors.primary : colors.textMuted,
                   ),
                   onSelected: (_) => _toggleTag(tag),
                 );
@@ -108,15 +111,23 @@ class _ClinicRateSheetState extends State<ClinicRateSheet> {
             TextField(
               controller: _commentController,
               maxLines: 3,
-              style: const TextStyle(color: AppColors.darkInk, fontSize: 13),
+              style: TextStyle(color: colors.textPrimary, fontSize: 13),
               decoration: InputDecoration(
                 hintText: 'Share details of your experience...',
-                hintStyle: const TextStyle(color: AppColors.darkInkFaint, fontSize: 13),
+                hintStyle: TextStyle(color: colors.textMuted, fontSize: 13),
                 filled: true,
-                fillColor: AppColors.darkBgApp,
+                fillColor: colors.surfaceSecondary,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: AppColors.darkBorder),
+                  borderSide: BorderSide(color: colors.border),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: colors.border),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: colors.primary, width: 1.5),
                 ),
               ),
             ),
@@ -126,7 +137,7 @@ class _ClinicRateSheetState extends State<ClinicRateSheet> {
               height: 46,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
+                  backgroundColor: colors.primary,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),

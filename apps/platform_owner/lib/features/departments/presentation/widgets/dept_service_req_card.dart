@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 import '../../domain/entities/dept_service_request_entity.dart';
 
@@ -12,12 +13,14 @@ class DeptServiceReqCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFF070B14),
+        color: colors.surfaceSecondary,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFF1E293B)),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -36,21 +39,21 @@ class DeptServiceReqCard extends StatelessWidget {
                       children: [
                         Text(
                           request.serviceName,
-                          style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.white),
+                          style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.bold, color: colors.textPrimary),
                         ),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                          decoration: BoxDecoration(color: const Color(0xFF38BDF8).withValues(alpha: 0.15), borderRadius: BorderRadius.circular(4)),
+                          decoration: BoxDecoration(color: colors.primary.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(4)),
                           child: Text(
                             request.departmentName,
-                            style: GoogleFonts.inter(fontSize: 10, color: const Color(0xFF38BDF8), fontWeight: FontWeight.w600),
+                            style: GoogleFonts.inter(fontSize: 10, color: colors.primary, fontWeight: FontWeight.w600),
                           ),
                         ),
                       ],
                     ),
                     Text(
                       '${request.clinicName} • By ${request.requestedBy} • ${request.duration}m • ₹${request.suggestedPrice}',
-                      style: GoogleFonts.inter(fontSize: 11, color: const Color(0xFF64748B)),
+                      style: GoogleFonts.inter(fontSize: 11, color: colors.textMuted),
                     ),
                   ],
                 ),
@@ -61,7 +64,7 @@ class DeptServiceReqCard extends StatelessWidget {
                 children: [
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF10B981),
+                      backgroundColor: colors.success,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                       minimumSize: Size.zero,
@@ -73,8 +76,8 @@ class DeptServiceReqCard extends StatelessWidget {
                   const SizedBox(width: 6),
                   OutlinedButton(
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFFEF4444),
-                      side: const BorderSide(color: Color(0xFFEF4444)),
+                      foregroundColor: colors.error,
+                      side: BorderSide(color: colors.error),
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                       minimumSize: Size.zero,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
@@ -91,8 +94,12 @@ class DeptServiceReqCard extends StatelessWidget {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(color: const Color(0xFF0F172A), borderRadius: BorderRadius.circular(6)),
-              child: Text('"${request.notes}"', style: GoogleFonts.inter(fontSize: 11.5, color: const Color(0xFF94A3B8))),
+              decoration: BoxDecoration(
+                color: colors.background,
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(color: colors.border),
+              ),
+              child: Text('"${request.notes}"', style: GoogleFonts.inter(fontSize: 11.5, color: colors.textMuted)),
             ),
           ],
         ],

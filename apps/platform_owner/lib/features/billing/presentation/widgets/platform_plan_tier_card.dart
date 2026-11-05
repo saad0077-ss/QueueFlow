@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 import '../../domain/entities/platform_plan_tier_entity.dart';
 
@@ -35,16 +36,16 @@ class PlatformPlanTierCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final capacity = tier.isUnlimited ? 'Unlimited' : '${tier.doctorLimit}';
+
     return Container(
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: const Color(0xFF0F172A),
+        color: colors.surface,
         borderRadius: BorderRadius.circular(22),
         border: Border.all(
-          color: tier.isPopular
-              ? const Color(0xFF3B82F6)
-              : const Color(0xFF1E293B),
+          color: tier.isPopular ? colors.primary : colors.border,
           width: 1.5,
         ),
       ),
@@ -79,19 +80,27 @@ class PlatformPlanTierCard extends StatelessWidget {
                             style: GoogleFonts.inter(
                               fontSize: 21,
                               fontWeight: FontWeight.w800,
-                              color: Colors.white,
+                              color: colors.textPrimary,
                             ),
                           ),
                         ),
                       ),
                       if (tier.badge.isNotEmpty)
-                        Text(
-                          tier.badge.toUpperCase(),
-                          style: GoogleFonts.inter(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.white,
-                            letterSpacing: 0.5,
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: colors.primaryTint,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: colors.primary.withValues(alpha: 0.3)),
+                          ),
+                          child: Text(
+                            tier.badge.toUpperCase(),
+                            style: GoogleFonts.inter(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w800,
+                              color: colors.primaryLight,
+                              letterSpacing: 0.5,
+                            ),
                           ),
                         ),
                     ],
@@ -101,7 +110,7 @@ class PlatformPlanTierCard extends StatelessWidget {
                     tier.tagline,
                     style: GoogleFonts.inter(
                       fontSize: 14,
-                      color: const Color(0xFF94A3B8),
+                      color: colors.textMuted,
                       height: 1.35,
                     ),
                   ),
@@ -115,7 +124,7 @@ class PlatformPlanTierCard extends StatelessWidget {
                         style: GoogleFonts.inter(
                           fontSize: 22,
                           fontWeight: FontWeight.w800,
-                          color: const Color(0xFF3B82F6),
+                          color: colors.primaryLight,
                         ),
                       ),
                       Text(
@@ -123,7 +132,7 @@ class PlatformPlanTierCard extends StatelessWidget {
                         style: GoogleFonts.jetBrainsMono(
                           fontSize: 36,
                           fontWeight: FontWeight.w800,
-                          color: Colors.white,
+                          color: colors.textPrimary,
                         ),
                       ),
                     ],
@@ -132,7 +141,7 @@ class PlatformPlanTierCard extends StatelessWidget {
                     '/ month (Annual: ₹${formatInr(tier.annualPrice)}/mo)',
                     style: GoogleFonts.inter(
                       fontSize: 12.5,
-                      color: const Color(0xFFCBD5E1),
+                      color: colors.textMuted,
                     ),
                   ),
                   const SizedBox(height: 18),
@@ -142,9 +151,9 @@ class PlatformPlanTierCard extends StatelessWidget {
                       vertical: 9,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1E293B).withAlpha(160),
+                      color: colors.surfaceSecondary,
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: const Color(0xFF334E7A)),
+                      border: Border.all(color: colors.border),
                     ),
                     child: Row(
                       children: [
@@ -153,7 +162,7 @@ class PlatformPlanTierCard extends StatelessWidget {
                             'Enrolled Practice Clinics:',
                             style: GoogleFonts.inter(
                               fontSize: 13,
-                              color: const Color(0xFFCBD5E1),
+                              color: colors.textMuted,
                             ),
                           ),
                         ),
@@ -162,7 +171,7 @@ class PlatformPlanTierCard extends StatelessWidget {
                           style: GoogleFonts.inter(
                             fontSize: 13.5,
                             fontWeight: FontWeight.w700,
-                            color: const Color(0xFF3B82F6),
+                            color: colors.primaryLight,
                           ),
                         ),
                       ],
@@ -174,18 +183,21 @@ class PlatformPlanTierCard extends StatelessWidget {
                     runSpacing: 8,
                     children: [
                       _chip(
+                        colors,
                         Icons.medical_services_outlined,
                         const Color(0xFF60A5FA),
                         capacity,
                         'Doctor${tier.doctorLimit == 1 ? '' : 's'} Capacity',
                       ),
                       _chip(
+                        colors,
                         Icons.bolt_rounded,
                         const Color(0xFFF97316),
                         'Unlimited',
                         'Live Queue & Patient Check-Ins',
                       ),
                       _chip(
+                        colors,
                         Icons.tv_rounded,
                         const Color(0xFFA78BFA),
                         'Live',
@@ -199,13 +211,13 @@ class PlatformPlanTierCard extends StatelessWidget {
                       tier.description,
                       style: GoogleFonts.inter(
                         fontSize: 13.5,
-                        color: const Color(0xFF94A3B8),
+                        color: colors.textMuted,
                         height: 1.4,
                       ),
                     ),
                   ],
                   const SizedBox(height: 14),
-                  const Divider(color: Color(0xFF1E293B), height: 1),
+                  Divider(color: colors.border, height: 1),
                   const SizedBox(height: 18),
                   ...tier.features.map(
                     (f) => Padding(
@@ -234,7 +246,7 @@ class PlatformPlanTierCard extends StatelessWidget {
                               f,
                               style: GoogleFonts.inter(
                                 fontSize: 13.5,
-                                color: Colors.white,
+                                color: colors.textPrimary,
                               ),
                             ),
                           ),
@@ -256,13 +268,13 @@ class PlatformPlanTierCard extends StatelessWidget {
 
   Widget _expandIf(Widget child) => expand ? Expanded(child: child) : child;
 
-  Widget _chip(IconData icon, Color iconColor, String bold, String rest) {
+  Widget _chip(AppColorsExtension colors, IconData icon, Color iconColor, String bold, String rest) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E293B).withAlpha(160),
+        color: colors.surfaceSecondary,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFF334E7A)),
+        border: Border.all(color: colors.border),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -274,7 +286,7 @@ class PlatformPlanTierCard extends StatelessWidget {
             style: GoogleFonts.inter(
               fontSize: 12,
               fontWeight: FontWeight.w800,
-              color: Colors.white,
+              color: colors.textPrimary,
             ),
           ),
           Text(
@@ -282,7 +294,7 @@ class PlatformPlanTierCard extends StatelessWidget {
             style: GoogleFonts.inter(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: const Color(0xFFCBD5E1),
+              color: colors.textMuted,
             ),
           ),
         ],

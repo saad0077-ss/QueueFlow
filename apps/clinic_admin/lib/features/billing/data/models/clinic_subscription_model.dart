@@ -1,4 +1,4 @@
-import '../../domain/entities/clinic_subscription_entity.dart';
+﻿import '../../domain/entities/clinic_subscription_entity.dart';
 
 class ClinicSubscriptionModel extends ClinicSubscriptionEntity {
   const ClinicSubscriptionModel({

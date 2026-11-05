@@ -1,4 +1,4 @@
-import 'package:equatable/equatable.dart';
+﻿import 'package:equatable/equatable.dart';
 import '../../../domain/entities/clinic_staff_entity.dart';
 
 class ClinicSignInState extends Equatable {

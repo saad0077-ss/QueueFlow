@@ -1,4 +1,4 @@
-import 'package:equatable/equatable.dart';
+﻿import 'package:equatable/equatable.dart';
 
 /// Doctor quota and plan details for the active clinic subscription.
 class DoctorPlanEntity extends Equatable {

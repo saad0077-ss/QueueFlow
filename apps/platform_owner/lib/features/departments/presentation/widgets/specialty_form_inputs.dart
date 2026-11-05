@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 import 'specialty_style_options.dart';
 
-const _fill = Color(0xFF1A2742);
-const _border = Color(0xFF334155);
-const _focus = Color(0xFF3B82F6);
 const _radius = 12.0;
 
 /// Parses `#RRGGBB` (with or without `#`); returns null when invalid.
@@ -22,11 +20,13 @@ class SpecialtyFieldLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 7),
       child: Text(
         text,
-        style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w700, color: const Color(0xFFE2E8F0)),
+        style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w700, color: colors.textPrimary),
       ),
     );
   }
@@ -42,12 +42,14 @@ class SpecialtyLabeled extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SpecialtyFieldLabel(label),
         child,
-        if (helper != null) ...[const SizedBox(height: 5), Text(helper!, style: GoogleFonts.inter(fontSize: 11.5, color: const Color(0xFF94A3B8)))],
+        if (helper != null) ...[const SizedBox(height: 5), Text(helper!, style: GoogleFonts.inter(fontSize: 11.5, color: colors.textMuted))],
       ],
     );
   }
@@ -77,29 +79,31 @@ class SpecialtyTextInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return TextField(
       controller: controller,
       readOnly: readOnly,
       minLines: minLines,
       maxLines: maxLines,
       onChanged: onChanged,
-      cursorColor: Colors.white,
+      cursorColor: colors.primary,
       mouseCursor: readOnly ? SystemMouseCursors.forbidden : null,
-      style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w500, color: readOnly ? const Color(0xFFCBD5E1) : Colors.white),
+      style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w500, color: readOnly ? colors.textMuted : colors.textPrimary),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: GoogleFonts.inter(fontSize: 14, color: const Color(0xFF94A3B8)),
+        hintStyle: GoogleFonts.inter(fontSize: 14, color: colors.textMuted),
         isDense: true,
         filled: true,
-        fillColor: _fill,
+        fillColor: colors.surfaceSecondary,
         prefixIcon: prefix,
         prefixIconConstraints: const BoxConstraints(minWidth: 40, minHeight: 0),
         suffixIcon: suffix,
         suffixIconConstraints: const BoxConstraints(minWidth: 40, minHeight: 0),
         contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 13),
-        border: _outline(_border),
-        enabledBorder: _outline(_border),
-        focusedBorder: readOnly ? _outline(_border) : _outline(_focus, 1.5),
+        border: _outline(colors.border),
+        enabledBorder: _outline(colors.border),
+        focusedBorder: readOnly ? _outline(colors.border) : _outline(colors.primary, 1.5),
       ),
     );
   }
@@ -123,12 +127,14 @@ class SpecialtyDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Container(
       padding: const EdgeInsets.only(left: 15, right: 10),
       decoration: BoxDecoration(
-        color: _fill,
+        color: colors.surfaceSecondary,
         borderRadius: BorderRadius.circular(_radius),
-        border: Border.all(color: _border),
+        border: Border.all(color: colors.border),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
@@ -137,9 +143,9 @@ class SpecialtyDropdown extends StatelessWidget {
           isDense: false,
           itemHeight: 48,
           borderRadius: BorderRadius.circular(_radius),
-          dropdownColor: const Color(0xFF15213A),
-          icon: const Icon(Icons.keyboard_arrow_down_rounded, color: Colors.white, size: 20),
-          style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w700, color: Colors.white),
+          dropdownColor: colors.surfaceElevated,
+          icon: Icon(Icons.keyboard_arrow_down_rounded, color: colors.textMuted, size: 20),
+          style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w700, color: colors.textPrimary),
           selectedItemBuilder: selectedOverride == null
               ? null
               : (_) => items.keys.map((k) => Align(alignment: Alignment.centerLeft, child: k == value ? selectedOverride! : items[k]!)).toList(),
@@ -190,6 +196,7 @@ class _SpecialtyIconPickerState extends State<SpecialtyIconPicker> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final custom = _ctrl.text.trim();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -215,7 +222,7 @@ class _SpecialtyIconPickerState extends State<SpecialtyIconPicker> {
           SpecialtyTextInput(
             controller: _ctrl,
             hint: 'Paste or type an emoji, e.g. 🫀',
-            prefix: const Icon(Icons.emoji_emotions_outlined, size: 18, color: Color(0xFF94A3B8)),
+            prefix: Icon(Icons.emoji_emotions_outlined, size: 18, color: colors.textMuted),
             onChanged: (v) {
               setState(() {});
               if (v.trim().isNotEmpty) widget.onChanged(v.trim());
@@ -250,6 +257,7 @@ class _SpecialtyColorPickerState extends State<SpecialtyColorPicker> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final customColor = parseHexColor(_ctrl.text);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -278,7 +286,7 @@ class _SpecialtyColorPickerState extends State<SpecialtyColorPicker> {
             controller: _ctrl,
             hint: 'Hex code, e.g. #14B8A6',
             prefix: Center(widthFactor: 1, child: _swatch(customColor ?? Colors.transparent)),
-            suffix: _ctrl.text.isEmpty || customColor != null ? null : const Icon(Icons.error_outline_rounded, size: 18, color: Color(0xFFEF4444)),
+            suffix: _ctrl.text.isEmpty || customColor != null ? null : Icon(Icons.error_outline_rounded, size: 18, color: colors.error),
             onChanged: (v) {
               setState(() {});
               if (parseHexColor(v) != null) widget.onChanged(_normalized(v));
@@ -354,7 +362,7 @@ class GradientPillButton extends StatelessWidget {
   }
 }
 
-/// Dark outlined pill used for secondary actions like Cancel.
+/// Outlined pill used for secondary actions like Cancel.
 class OutlinePillButton extends StatelessWidget {
   final String label;
   final VoidCallback onPressed;
@@ -363,9 +371,11 @@ class OutlinePillButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Material(
-      color: const Color(0xFF1E293B),
-      shape: const StadiumBorder(side: BorderSide(color: _border)),
+      color: colors.surfaceSecondary,
+      shape: StadiumBorder(side: BorderSide(color: colors.border)),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onPressed,
@@ -374,7 +384,7 @@ class OutlinePillButton extends StatelessWidget {
           child: Text(
             label,
             textAlign: TextAlign.center,
-            style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w700, color: Colors.white),
+            style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w700, color: colors.textPrimary),
           ),
         ),
       ),

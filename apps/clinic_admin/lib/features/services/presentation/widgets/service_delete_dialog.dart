@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class ServiceDeleteDialog extends StatelessWidget {
   final String serviceName;
@@ -25,27 +26,32 @@ class ServiceDeleteDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return AlertDialog(
-      backgroundColor: const Color(0xFF10192D),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      backgroundColor: colors.surfaceElevated,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14),
+        side: BorderSide(color: colors.border),
+      ),
       title: Text(
         'Delete Service',
         style: GoogleFonts.inter(
           fontSize: 16,
           fontWeight: FontWeight.w700,
-          color: Colors.white,
+          color: colors.textPrimary,
         ),
       ),
       content: Text(
         'Are you sure you want to delete "$serviceName" permanently?',
-        style: GoogleFonts.inter(fontSize: 13, color: const Color(0xFF94A3B8)),
+        style: GoogleFonts.inter(fontSize: 13, color: colors.textMuted),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
           child: Text(
             'Cancel',
-            style: GoogleFonts.inter(color: const Color(0xFF94A3B8)),
+            style: GoogleFonts.inter(color: colors.textMuted),
           ),
         ),
         ElevatedButton(
@@ -54,7 +60,7 @@ class ServiceDeleteDialog extends StatelessWidget {
             onConfirm();
           },
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFFEF4444),
+            backgroundColor: colors.error,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),

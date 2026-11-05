@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 import '../../../../core/widgets/gradient_submit_button.dart';
 import '../bloc/activation/account_activation_bloc.dart';
@@ -25,6 +26,7 @@ class ClinicAccountActivationForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<AccountActivationBloc>();
+    final colors = context.colors;
 
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 420),
@@ -37,7 +39,7 @@ class ClinicAccountActivationForm extends StatelessWidget {
             style: GoogleFonts.inter(
               fontSize: 26,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: colors.textPrimary,
             ),
           ),
           const SizedBox(height: 6),
@@ -45,7 +47,7 @@ class ClinicAccountActivationForm extends StatelessWidget {
             "You've been invited to manage ${state.clinicName} on\nQueueFlow. Set a password to activate your account.",
             style: GoogleFonts.inter(
               fontSize: 13,
-              color: const Color(0xFF94A3B8),
+              color: colors.textMuted,
               height: 1.45,
             ),
           ),
@@ -116,7 +118,7 @@ class ClinicAccountActivationForm extends StatelessWidget {
               ),
               child: Text(
                 'Already activated? Sign in to Clinic Portal',
-                style: GoogleFonts.inter(fontSize: 12, color: const Color(0xFF3B82F6)),
+                style: GoogleFonts.inter(fontSize: 12, color: colors.primaryLight),
               ),
             ),
           ),

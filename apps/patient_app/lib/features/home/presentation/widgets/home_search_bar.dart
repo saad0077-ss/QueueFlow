@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class HomeSearchBar extends StatelessWidget {
   final TextEditingController controller;
@@ -25,19 +25,21 @@ class HomeSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.darkSurface,
+          color: colors.surfaceSecondary,
           borderRadius: BorderRadius.circular(9999),
-          border: Border.all(color: AppColors.darkBorder, width: 1.5),
-          boxShadow: const [
+          border: Border.all(color: colors.border, width: 1.5),
+          boxShadow: [
             BoxShadow(
-              color: Color(0x140F172A),
+              color: Colors.black.withValues(alpha: context.isDarkMode ? 0.15 : 0.04),
               blurRadius: 6,
-              offset: Offset(0, 2),
+              offset: const Offset(0, 2),
             ),
           ],
         ),
@@ -45,9 +47,9 @@ class HomeSearchBar extends StatelessWidget {
         margin: margin ?? const EdgeInsets.only(bottom: 16),
         child: Row(
           children: [
-            const Icon(
+            Icon(
               Icons.search_rounded,
-              color: AppColors.darkInkFaint,
+              color: colors.textSubtle,
               size: 20,
             ),
             const SizedBox(width: 10),
@@ -60,15 +62,15 @@ class HomeSearchBar extends StatelessWidget {
                 onTap: onTap,
                 readOnly: readOnly,
                 autofocus: autoFocus,
-                style: const TextStyle(
-                  color: AppColors.darkInk,
+                style: TextStyle(
+                  color: colors.textPrimary,
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   hintText: 'Search clinics, doctors or services...',
                   hintStyle: TextStyle(
-                    color: AppColors.darkInkFaint,
+                    color: colors.textMuted,
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
                   ),
@@ -77,7 +79,7 @@ class HomeSearchBar extends StatelessWidget {
                   border: InputBorder.none,
                   enabledBorder: InputBorder.none,
                   focusedBorder: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(vertical: 12),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 12),
                 ),
               ),
             ),
@@ -88,11 +90,11 @@ class HomeSearchBar extends StatelessWidget {
                   onClear?.call();
                   onChanged?.call('');
                 },
-                child: const Padding(
-                  padding: EdgeInsets.all(4.0),
+                child: Padding(
+                  padding: const EdgeInsets.all(4.0),
                   child: Icon(
                     Icons.close_rounded,
-                    color: AppColors.darkInkFaint,
+                    color: colors.textSubtle,
                     size: 18,
                   ),
                 ),

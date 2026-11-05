@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../data/repositories/clinic_settings_repository_impl.dart';
 import '../bloc/clinic_settings_bloc.dart';
@@ -10,17 +11,17 @@ import '../widgets/clinic_settings_content_switcher.dart';
 import '../widgets/clinic_settings_tab_bar.dart';
 
 class ClinicSettingsView extends StatelessWidget {
-  const ClinicSettingsView({super.key});  
+  const ClinicSettingsView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider( 
+    return BlocProvider(
       create: (_) =>
           ClinicSettingsBloc(repository: ClinicSettingsRepositoryImpl())
             ..add(const ClinicSettingsStarted()),
       child: const _ClinicSettingsBody(),
     );
-  }               
+  }
 }
 
 class _ClinicSettingsBody extends StatelessWidget {
@@ -28,6 +29,8 @@ class _ClinicSettingsBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return BlocConsumer<ClinicSettingsBloc, ClinicSettingsState>(
       listener: (context, state) {
         if (state.feedbackMessage != null) {
@@ -43,20 +46,20 @@ class _ClinicSettingsBody extends StatelessWidget {
       },
       builder: (context, state) {
         if (state.isLoading) {
-          return const Center(
+          return Center(
             child: Padding(
-              padding: EdgeInsets.all(40),
-              child: CircularProgressIndicator(),
+              padding: const EdgeInsets.all(40),
+              child: CircularProgressIndicator(color: colors.primary),
             ),
           );
         }
 
         final settings = state.settings;
         if (settings == null) {
-          return const Center(
+          return Center(
             child: Text(
               'Settings could not be loaded.',
-              style: TextStyle(color: Colors.white70),
+              style: TextStyle(color: colors.textMuted),
             ),
           );
         }
@@ -73,7 +76,7 @@ class _ClinicSettingsBody extends StatelessWidget {
                 style: GoogleFonts.inter(
                   fontSize: 24,
                   fontWeight: FontWeight.w800,
-                  color: Colors.white,
+                  color: colors.textPrimary,
                 ),
               ),
               const SizedBox(height: 4),
@@ -81,7 +84,7 @@ class _ClinicSettingsBody extends StatelessWidget {
                 'Configure operational parameters, working hours and security',
                 style: GoogleFonts.inter(
                   fontSize: 13,
-                  color: const Color(0xFF94A3B8),
+                  color: colors.textMuted,
                 ),
               ),
               const SizedBox(height: 18),
@@ -95,9 +98,9 @@ class _ClinicSettingsBody extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF0F172A),
+                    color: colors.surface,
                     borderRadius: BorderRadius.circular(18),
-                    border: Border.all(color: const Color(0xFF1E293B)),
+                    border: Border.all(color: colors.border),
                   ),
                   child: ClinicSettingsContentSwitcher(
                     activeTab: state.activeTab,

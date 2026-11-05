@@ -1,4 +1,4 @@
-import 'package:equatable/equatable.dart';
+﻿import 'package:equatable/equatable.dart';
 
 /// The clinic's subscription plan as shown on the Services page.
 /// Clinical services are unlimited on every plan, so there is no quota here.

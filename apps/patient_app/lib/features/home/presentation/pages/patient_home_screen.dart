@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../booking/presentation/widgets/my_bookings_tab_view.dart';
+import '../../../profile/data/repositories/profile_repository_impl.dart';
+import '../../../profile/domain/usecases/profile_usecases.dart';
+import '../../../profile/presentation/bloc/profile_bloc.dart';
+import '../../../profile/presentation/bloc/profile_event.dart';
 import '../../../profile/presentation/widgets/profile_tab_view.dart';
 import '../../data/repositories/home_repository_impl.dart';
 import '../../domain/repositories/home_repository.dart';
@@ -27,13 +30,36 @@ class PatientHomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final repo = homeRepository ?? HomeRepositoryImpl();
-    return BlocProvider(
-      create: (_) => HomeBloc(
-        getFeaturedClinicsUseCase: GetFeaturedClinicsUseCase(repo),
-        getActiveTicketUseCase: GetActiveTicketUseCase(repo),
-        joinQueueUseCase: JoinQueueUseCase(repo),
-        cancelTicketUseCase: CancelTicketUseCase(repo),
-      )..add(const HomeInitialDataRequested()),
+    final profileRepo = ProfileRepositoryImpl();
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => HomeBloc(
+            getFeaturedClinicsUseCase: GetFeaturedClinicsUseCase(repo),
+            getActiveTicketUseCase: GetActiveTicketUseCase(repo),
+            joinQueueUseCase: JoinQueueUseCase(repo),
+            cancelTicketUseCase: CancelTicketUseCase(repo),
+          )..add(const HomeInitialDataRequested()),
+        ),
+        // Provided here so the greeting header and the Profile tab share the
+        // same profile (and therefore the same photo).
+        BlocProvider(
+          create: (_) => ProfileBloc(
+            getProfileUseCase: GetProfileUseCase(profileRepo),
+            updateProfileUseCase: UpdateProfileUseCase(profileRepo),
+            toggleDarkModeUseCase: ToggleDarkModeUseCase(profileRepo),
+            getFavoriteClinicsUseCase: GetFavoriteClinicsUseCase(profileRepo),
+            getUserReviewsUseCase: GetUserReviewsUseCase(profileRepo),
+            addReviewUseCase: AddReviewUseCase(profileRepo),
+            deleteReviewUseCase: DeleteReviewUseCase(profileRepo),
+            getSupportTicketsUseCase: GetSupportTicketsUseCase(profileRepo),
+            createSupportTicketUseCase: CreateSupportTicketUseCase(profileRepo),
+            sendTicketReplyUseCase: SendTicketReplyUseCase(profileRepo),
+            logoutUseCase: LogoutUseCase(profileRepo),
+            deleteAccountUseCase: DeleteAccountUseCase(profileRepo),
+          )..add(const ProfileLoadRequested()),
+        ),
+      ],
       child: const _PatientHomeView(),
     );
   }
@@ -57,11 +83,12 @@ class _PatientHomeView extends StatelessWidget {
         final bloc = context.read<HomeBloc>();
 
         return Scaffold(
-          backgroundColor: AppColors.darkBgApp,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           appBar: state.currentTabIndex == 0
               ? HomeGreetHeader(
                   userName: state.userName,
                   userInitials: state.userInitials,
+                  photoBase64: context.watch<ProfileBloc>().state.profile?.photoBase64,
                   unreadNotifications: state.unreadNotificationsCount,
                   onAvatarTap: () => bloc.add(const HomeNavTabChanged(3)),
                 )
@@ -84,7 +111,7 @@ class _PatientHomeView extends StatelessWidget {
                 ),
               ],
             ),
-          ),
+          ), 
           bottomNavigationBar: PatientBottomNavBar(
             currentIndex: state.currentTabIndex,
             hasActiveQueueTicket: state.activeTicket?.isActive ?? false,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 import '../../domain/entities/department_entity.dart';
 
@@ -21,6 +22,7 @@ class DeptRowActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final active = department.isActive;
 
     return Row(
@@ -29,8 +31,8 @@ class DeptRowActions extends StatelessWidget {
         Tooltip(
           message: 'Manage services catalog',
           child: Material(
-            color: const Color(0xFF2563EB).withValues(alpha: 0.15),
-            shape: StadiumBorder(side: BorderSide(color: const Color(0xFF2563EB).withValues(alpha: 0.45))),
+            color: colors.primaryTint,
+            shape: StadiumBorder(side: BorderSide(color: colors.primary.withValues(alpha: 0.45))),
             clipBehavior: Clip.antiAlias,
             child: InkWell(
               onTap: onDetails,
@@ -39,11 +41,11 @@ class DeptRowActions extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.medical_services_outlined, size: 13, color: Color(0xFF60A5FA)),
+                    Icon(Icons.medical_services_outlined, size: 13, color: colors.primaryLight),
                     const SizedBox(width: 5),
                     Text(
                       'Services',
-                      style: GoogleFonts.inter(fontSize: 11.5, fontWeight: FontWeight.w700, color: const Color(0xFF60A5FA)),
+                      style: GoogleFonts.inter(fontSize: 11.5, fontWeight: FontWeight.w700, color: colors.primaryLight),
                     ),
                   ],
                 ),
@@ -52,16 +54,16 @@ class DeptRowActions extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 6),
-        _iconButton(icon: Icons.edit_outlined, color: const Color(0xFF38BDF8), tooltip: 'Edit department', onTap: onEdit),
+        _iconButton(icon: Icons.edit_outlined, color: colors.primaryLight, tooltip: 'Edit department', onTap: onEdit),
         const SizedBox(width: 6),
         _iconButton(
           icon: active ? Icons.pause_rounded : Icons.play_arrow_rounded,
-          color: active ? const Color(0xFFF59E0B) : const Color(0xFF10B981),
+          color: active ? colors.warning : colors.success,
           tooltip: active ? 'Deactivate specialty' : 'Activate specialty',
           onTap: onToggleStatus,
         ),
         const SizedBox(width: 6),
-        _iconButton(icon: Icons.delete_outline_rounded, color: const Color(0xFFEF4444), tooltip: 'Delete department', onTap: onDelete),
+        _iconButton(icon: Icons.delete_outline_rounded, color: colors.error, tooltip: 'Delete department', onTap: onDelete),
       ],
     );
   }

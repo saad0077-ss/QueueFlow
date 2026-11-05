@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../data/models/tenant_clinic_model.dart';
@@ -76,8 +77,9 @@ class _PlatformClinicsViewState extends State<_PlatformClinicsView> {
   @override
   Widget build(BuildContext context) {
     final isDesktop = MediaQuery.sizeOf(context).width >= 1000;
+    final colors = context.colors;
     return Scaffold(
-      backgroundColor: const Color(0xFF070B14),
+      backgroundColor: colors.background,
       drawer: isDesktop ? null : Drawer(child: ConsoleSidebar(activeIndex: 0, onIndexChanged: _onSidebarNav)),
       body: Row(
         children: [

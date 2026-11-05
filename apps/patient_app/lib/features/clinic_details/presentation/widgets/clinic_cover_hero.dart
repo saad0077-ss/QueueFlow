@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../../core/widgets/clinic_photo.dart';
 
 class ClinicCoverHero extends StatelessWidget {
@@ -24,6 +24,7 @@ class ClinicCoverHero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final letter = clinicName.trim().isNotEmpty
         ? clinicName.trim().substring(0, 1).toUpperCase()
         : 'C';
@@ -38,7 +39,7 @@ class ClinicCoverHero extends StatelessWidget {
             width: double.infinity,
             decoration: BoxDecoration(
               gradient: AppColors.primaryGradient,
-              borderRadius: BorderRadius.circular(AppColors.radiusLg),
+              borderRadius: BorderRadius.circular(26),
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
@@ -68,14 +69,14 @@ class ClinicCoverHero extends StatelessWidget {
               width: 60,
               height: 60,
               decoration: BoxDecoration(
-                color: AppColors.darkSurface,
+                color: colors.surface,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppColors.darkBorder, width: 2),
-                boxShadow: const [
+                border: Border.all(color: colors.border, width: 2),
+                boxShadow: [
                   BoxShadow(
-                    color: Colors.black26,
+                    color: Colors.black.withValues(alpha: context.isDarkMode ? 0.35 : 0.08),
                     blurRadius: 10,
-                    offset: Offset(0, 4),
+                    offset: const Offset(0, 4),
                   ),
                 ],
               ),
@@ -84,7 +85,7 @@ class ClinicCoverHero extends StatelessWidget {
                 clinicId: clinicId,
                 imageVersion: imageVersion,
                 imageUrl: imageUrl,
-                placeholder: _initialBadge(letter),
+                placeholder: _initialBadge(letter, colors),
               ),
             ),
           ),
@@ -116,12 +117,12 @@ class ClinicCoverHero extends StatelessWidget {
     );
   }
 
-  Widget _initialBadge(String letter) {
+  Widget _initialBadge(String letter, AppColorsExtension colors) {
     return Center(
       child: Text(
         letter,
-        style: const TextStyle(
-          color: AppColors.primaryLight,
+        style: TextStyle(
+          color: colors.primary,
           fontSize: 24,
           fontWeight: FontWeight.w800,
         ),

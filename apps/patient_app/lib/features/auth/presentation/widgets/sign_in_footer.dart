@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../../core/widgets/google_sign_in_button.dart';
 import '../bloc/sign_in/sign_in_bloc.dart';
 import '../bloc/sign_in/sign_in_event.dart';
@@ -18,13 +18,15 @@ class SignInFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Column(
       children: [
         Row(
           children: [
-            const Expanded(
+            Expanded(
               child: Divider(
-                color: AppColors.cardBorder,
+                color: colors.border,
                 thickness: 1,
               ),
             ),
@@ -33,14 +35,14 @@ class SignInFooter extends StatelessWidget {
               child: Text(
                 'or continue with',
                 style: TextStyle(
-                  color: AppColors.textSubtle,
+                  color: colors.textSubtle,
                   fontSize: dividerTextSize,
                 ),
               ),
             ),
-            const Expanded(
+            Expanded(
               child: Divider(
-                color: AppColors.cardBorder,
+                color: colors.border,
                 thickness: 1,
               ),
             ),
@@ -64,14 +66,14 @@ class SignInFooter extends StatelessWidget {
               text: TextSpan(
                 text: "Don't have an account? ",
                 style: TextStyle(
-                  color: AppColors.textMuted,
+                  color: colors.textMuted,
                   fontSize: bottomLinkSize,
                 ),
                 children: [
                   TextSpan(
                     text: 'Create one',
                     style: TextStyle(
-                      color: AppColors.textLink,
+                      color: colors.accent,
                       fontSize: bottomLinkSize,
                       fontWeight: FontWeight.bold,
                     ),

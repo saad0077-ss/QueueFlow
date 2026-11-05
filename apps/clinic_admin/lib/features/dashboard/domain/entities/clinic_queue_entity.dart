@@ -1,4 +1,4 @@
-import 'package:equatable/equatable.dart';
+﻿import 'package:equatable/equatable.dart';
 
 /// Domain entity representing the live patient queue state.
 class ClinicQueueEntity extends Equatable {

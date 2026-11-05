@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 /// Header displaying the greeting and current date/clinic name.
 class DashboardGreetingHeader extends StatelessWidget {
@@ -17,6 +18,7 @@ class DashboardGreetingHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final now = DateTime.now();
     final greeting = now.hour < 12 ? 'Good morning' : (now.hour < 17 ? 'Good afternoon' : 'Good evening');
     final date = '${_weekdays[now.weekday - 1]}, ${now.day} ${_months[now.month - 1]} ${now.year}';
@@ -30,7 +32,7 @@ class DashboardGreetingHeader extends StatelessWidget {
           style: GoogleFonts.inter(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: colors.textPrimary,
             letterSpacing: -0.4,
           ),
         ),
@@ -40,7 +42,7 @@ class DashboardGreetingHeader extends StatelessWidget {
           style: GoogleFonts.inter(
             fontSize: 12.5,
             fontWeight: FontWeight.w400,
-            color: const Color(0xFF64748B),
+            color: colors.textMuted,
           ),
         ),
       ],

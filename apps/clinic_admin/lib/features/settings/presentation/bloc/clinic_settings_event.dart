@@ -1,4 +1,4 @@
-import 'dart:typed_data';
+﻿import 'dart:typed_data';
 import 'package:equatable/equatable.dart';
 import '../../domain/entities/clinic_location_entity.dart';
 import '../../domain/entities/clinic_operating_schedule_entity.dart';

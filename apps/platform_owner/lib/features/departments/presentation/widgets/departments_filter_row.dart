@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class DepartmentsFilterRow extends StatelessWidget {
   final String searchQuery;
@@ -35,16 +36,18 @@ class DepartmentsFilterRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final isCompact = constraints.maxWidth < 900;
-        final searchBox = _searchBox();
-        final statusDropdown = _dropdown(selectedStatus, const ['All Statuses', 'Active Specialties', 'Inactive'], onStatusChanged);
+        final searchBox = _searchBox(colors);
+        final statusDropdown = _dropdown(colors, selectedStatus, const ['All Statuses', 'Active Specialties', 'Inactive'], onStatusChanged);
         // State stores the clinic id, so map it back to its display name for the dropdown.
         final clinicName = _clinicsMap.entries.firstWhere((e) => e.value == selectedClinic, orElse: () => _clinicsMap.entries.first).key;
-        final clinicDropdown = _dropdown(clinicName, _clinicsMap.keys.toList(), (name) => onClinicChanged(_clinicsMap[name] ?? 'all'));
-        final resetBtn = _resetPill();
-        final countText = Text('Showing $count of $total departments', style: GoogleFonts.inter(fontSize: 12, color: const Color(0xFF94A3B8)));
+        final clinicDropdown = _dropdown(colors, clinicName, _clinicsMap.keys.toList(), (name) => onClinicChanged(_clinicsMap[name] ?? 'all'));
+        final resetBtn = _resetPill(colors);
+        final countText = Text('Showing $count of $total departments', style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted));
 
         final compactContent = Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -75,9 +78,9 @@ class DepartmentsFilterRow extends StatelessWidget {
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
-            color: const Color(0xFF0F172A),
+            color: colors.surface,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: const Color(0xFF1E293B)),
+            border: Border.all(color: colors.border),
           ),
           child: isCompact ? compactContent : desktopContent,
         );
@@ -85,27 +88,27 @@ class DepartmentsFilterRow extends StatelessWidget {
     );
   }
 
-  Widget _searchBox() {
+  Widget _searchBox(AppColorsExtension colors) {
     return Container(
       height: 38,
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFF162238),
+        color: colors.surfaceSecondary,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFF26354D)),
+        border: Border.all(color: colors.border),
       ),
       child: Row(
         children: [
-          const Icon(Icons.search_rounded, color: Color(0xFF38BDF8), size: 17),
+          Icon(Icons.search_rounded, color: colors.primaryLight, size: 17),
           const SizedBox(width: 8),
           Expanded(
             child: TextField(
               onChanged: onSearch,
-              cursorColor: Colors.white,
-              style: GoogleFonts.inter(color: Colors.white, fontSize: 12.5),
+              cursorColor: colors.primary,
+              style: GoogleFonts.inter(color: colors.textPrimary, fontSize: 12.5),
               decoration: InputDecoration(
                 hintText: 'Search by name, code, doctor, specialty...',
-                hintStyle: GoogleFonts.inter(color: const Color(0xFF64748B), fontSize: 12.5),
+                hintStyle: GoogleFonts.inter(color: colors.textMuted, fontSize: 12.5),
                 border: InputBorder.none,
                 isDense: true,
                 contentPadding: const EdgeInsets.symmetric(vertical: 9),
@@ -117,30 +120,30 @@ class DepartmentsFilterRow extends StatelessWidget {
     );
   }
 
-  Widget _dropdown(String value, List<String> items, ValueChanged<String> onChanged) {
+  Widget _dropdown(AppColorsExtension colors, String value, List<String> items, ValueChanged<String> onChanged) {
     return Container(
       height: 38,
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFF162238),
+        color: colors.surfaceSecondary,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFF26354D)),
+        border: Border.all(color: colors.border),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
           value: items.contains(value) ? value : items.first,
           isExpanded: true,
-          dropdownColor: const Color(0xFF162238),
-          style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.bold, color: Colors.white),
-          icon: const Icon(Icons.keyboard_arrow_down_rounded, color: Color(0xFF94A3B8), size: 18),
-          items: items.map((i) => DropdownMenuItem(value: i, child: Text(i, overflow: TextOverflow.ellipsis))).toList(),
+          dropdownColor: colors.surfaceElevated,
+          style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.bold, color: colors.textPrimary),
+          icon: Icon(Icons.keyboard_arrow_down_rounded, color: colors.textMuted, size: 18),
+          items: items.map((i) => DropdownMenuItem(value: i, child: Text(i, overflow: TextOverflow.ellipsis, style: TextStyle(color: colors.textPrimary)))).toList(),
           onChanged: (v) => onChanged(v ?? items.first),
         ),
       ),
     );
   }
 
-  Widget _resetPill() {
+  Widget _resetPill(AppColorsExtension colors) {
     return InkWell(
       onTap: onReset,
       borderRadius: BorderRadius.circular(20),
@@ -149,11 +152,11 @@ class DepartmentsFilterRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 14),
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: const Color(0xFF162238),
+          color: colors.surfaceSecondary,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: const Color(0xFF26354D)),
+          border: Border.all(color: colors.border),
         ),
-        child: Text('Reset Filters', style: GoogleFonts.inter(fontSize: 11.5, fontWeight: FontWeight.bold, color: Colors.white)),
+        child: Text('Reset Filters', style: GoogleFonts.inter(fontSize: 11.5, fontWeight: FontWeight.bold, color: colors.textPrimary)),
       ),
     );
   }

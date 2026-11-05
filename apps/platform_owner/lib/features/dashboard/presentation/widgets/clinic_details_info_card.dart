@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../domain/entities/tenant_clinic_entity.dart';
 
 class StatMetricBox extends StatelessWidget {
@@ -16,13 +17,15 @@ class StatMetricBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Expanded(
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: BoxDecoration(
-          color: const Color(0xFF131D31),
+          color: colors.surfaceSecondary,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: const Color(0xFF1E293B)),
+          border: Border.all(color: colors.border),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -31,7 +34,7 @@ class StatMetricBox extends StatelessWidget {
             Text(
               label,
               style: GoogleFonts.inter(
-                color: const Color(0xFF94A3B8),
+                color: colors.textMuted,
                 fontSize: 10,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 0.3,
@@ -62,42 +65,44 @@ class FacilityInfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFF10192C),
+        color: colors.surfaceSecondary,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFF1E293B)),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         children: [
-          _row(Icons.location_on_outlined, 'Facility Address:', clinic.address),
-          _row(Icons.person_outline_rounded, 'Medical Director:', '${clinic.adminName} (${clinic.adminEmail})'),
-          _row(Icons.phone_outlined, 'Phone Contact:', clinic.phone),
-          _row(Icons.access_time_rounded, 'Operating Hours:', clinic.operatingHours),
-          _row(Icons.medical_services_outlined, 'Doctor Capacity:', '${clinic.practicingDoctors} Doctors active • ${clinic.doctorLimitText}'),
-          _row(Icons.confirmation_number_outlined, 'Live Queue Activity:', '${clinic.queueStatus} • Token ${clinic.servingToken} (Avg: ${clinic.avgWaitTime})'),
-          _row(Icons.star_rounded, 'Patient Reviews:', '★ ${clinic.rating} / 5.0 (Patient Rating)'),
-          _row(Icons.calendar_today_outlined, 'Monthly Appointments:', '${clinic.monthlyVisits} visits this month'),
+          _row(colors, Icons.location_on_outlined, 'Facility Address:', clinic.address),
+          _row(colors, Icons.person_outline_rounded, 'Medical Director:', '${clinic.adminName} (${clinic.adminEmail})'),
+          _row(colors, Icons.phone_outlined, 'Phone Contact:', clinic.phone),
+          _row(colors, Icons.access_time_rounded, 'Operating Hours:', clinic.operatingHours),
+          _row(colors, Icons.medical_services_outlined, 'Doctor Capacity:', '${clinic.practicingDoctors} Doctors active • ${clinic.doctorLimitText}'),
+          _row(colors, Icons.confirmation_number_outlined, 'Live Queue Activity:', '${clinic.queueStatus} • Token ${clinic.servingToken} (Avg: ${clinic.avgWaitTime})'),
+          _row(colors, Icons.star_rounded, 'Patient Reviews:', '★ ${clinic.rating} / 5.0 (Patient Rating)'),
+          _row(colors, Icons.calendar_today_outlined, 'Monthly Appointments:', '${clinic.monthlyVisits} visits this month'),
         ],
       ),
     );
   }
 
-  static Widget _row(IconData icon, String label, String value) {
+  static Widget _row(AppColorsExtension colors, IconData icon, String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 14, color: const Color(0xFF38BDF8)),
+          Icon(icon, size: 14, color: colors.primaryLight),
           const SizedBox(width: 8),
           SizedBox(
             width: 140,
             child: Text(
               label,
               style: GoogleFonts.inter(
-                color: const Color(0xFF94A3B8),
+                color: colors.textMuted,
                 fontSize: 11.5,
                 fontWeight: FontWeight.w500,
               ),
@@ -107,7 +112,7 @@ class FacilityInfoCard extends StatelessWidget {
             child: Text(
               value,
               style: GoogleFonts.inter(
-                color: const Color(0xFFF1F5F9),
+                color: colors.textPrimary,
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
                 height: 1.25,
@@ -128,20 +133,22 @@ class DoctorRosterTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Container(
       margin: const EdgeInsets.only(top: 6),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: const Color(0xFF131D31),
+        color: colors.surfaceSecondary,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFF1E293B)),
+        border: Border.all(color: colors.border),
       ),
       child: Row(
         children: [
           CircleAvatar(
             radius: 14,
-            backgroundColor: const Color(0xFF2563EB).withValues(alpha: 0.25),
-            child: const Icon(Icons.person_rounded, size: 16, color: Color(0xFF60A5FA)),
+            backgroundColor: colors.primaryTint,
+            child: Icon(Icons.person_rounded, size: 16, color: colors.primaryLight),
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -151,7 +158,7 @@ class DoctorRosterTile extends StatelessWidget {
                   doc.name,
                   style: GoogleFonts.inter(
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: colors.textPrimary,
                     fontSize: 12.5,
                   ),
                 ),
@@ -159,7 +166,7 @@ class DoctorRosterTile extends StatelessWidget {
                 Text(
                   '${doc.specialty} • ${doc.room}',
                   style: GoogleFonts.inter(
-                    color: const Color(0xFF94A3B8),
+                    color: colors.textMuted,
                     fontSize: 11,
                   ),
                 ),
@@ -170,19 +177,19 @@ class DoctorRosterTile extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
             decoration: BoxDecoration(
               color: doc.isAvailable
-                  ? const Color(0xFF064E3B).withValues(alpha: 0.5)
-                  : const Color(0xFF78350F).withValues(alpha: 0.35),
+                  ? colors.badgeOpenBg
+                  : colors.warningTint,
               borderRadius: BorderRadius.circular(4),
               border: Border.all(
                 color: doc.isAvailable
-                    ? const Color(0xFF059669).withValues(alpha: 0.4)
-                    : const Color(0xFFF59E0B).withValues(alpha: 0.3),
+                    ? colors.success.withValues(alpha: 0.4)
+                    : colors.warning.withValues(alpha: 0.3),
               ),
             ),
             child: Text(
               doc.isAvailable ? 'AVAILABLE' : 'OFF DUTY',
               style: GoogleFonts.inter(
-                color: doc.isAvailable ? const Color(0xFF10B981) : const Color(0xFFF59E0B),
+                color: doc.isAvailable ? colors.badgeOpenText : colors.warning,
                 fontSize: 9.5,
                 fontWeight: FontWeight.bold,
               ),

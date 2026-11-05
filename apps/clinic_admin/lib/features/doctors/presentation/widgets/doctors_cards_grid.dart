@@ -1,4 +1,4 @@
-import 'dart:math' as math;
+﻿import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../domain/entities/clinic_doctor_profile_entity.dart';
 import '../../domain/entities/doctor_plan_entity.dart';

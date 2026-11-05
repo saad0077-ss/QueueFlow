@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/layout/clinic_breakpoints.dart';
 import 'appointment_trend_card.dart';

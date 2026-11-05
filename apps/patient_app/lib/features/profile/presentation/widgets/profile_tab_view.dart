@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../onboarding/presentation/pages/welcome_screen.dart';
 import '../../data/repositories/profile_repository_impl.dart';
@@ -29,10 +29,8 @@ class ProfileTabView extends StatelessWidget {
   Widget build(BuildContext context) {
     // If a ProfileBloc is already provided by a parent, use it; otherwise provide a fresh one.
     try {
-      final existingBloc = context.read<ProfileBloc?>();
-      if (existingBloc != null) {
-        return _ProfileTabConsumer(onVisitsTap: onVisitsTap);
-      }
+      context.read<ProfileBloc>();
+      return _ProfileTabConsumer(onVisitsTap: onVisitsTap);
     } catch (_) {}
 
     final repo = ProfileRepositoryImpl();
@@ -340,11 +338,19 @@ class _ProfileTabConsumer extends StatelessWidget {
                           iconBgColor: const Color(0xFF7C3AED).withValues(alpha: 0.15),
                           title: 'Dark mode',
                           trailing: Switch.adaptive(
-                            value: profile.darkMode,
+                            value: (context.watch<ThemeBloc?>()?.state.isDark) ?? profile.darkMode,
                             activeTrackColor: const Color(0xFF7C3AED),
-                            onChanged: (val) => bloc.add(ProfileDarkModeToggled(val)),
+                            onChanged: (val) {
+                              context.read<ThemeBloc?>()?.add(ThemeModeChanged(val ? ThemeMode.dark : ThemeMode.light));
+                              bloc.add(ProfileDarkModeToggled(val));
+                            },
                           ),
-                          onTap: () => bloc.add(ProfileDarkModeToggled(!profile.darkMode)),
+                          onTap: () {
+                            final currentIsDark = (context.read<ThemeBloc?>()?.state.isDark) ?? profile.darkMode;
+                            final nextVal = !currentIsDark;
+                            context.read<ThemeBloc?>()?.add(ThemeModeChanged(nextVal ? ThemeMode.dark : ThemeMode.light));
+                            bloc.add(ProfileDarkModeToggled(nextVal));
+                          },
                         ),
                       ],
                     ),

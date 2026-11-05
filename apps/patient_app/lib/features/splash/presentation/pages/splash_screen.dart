@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../../core/widgets/app_icon_badge.dart';
 import '../../../../core/widgets/app_logo.dart';
 import '../../../../main.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import '../../../auth/data/repositories/auth_repository_impl.dart';
 import '../../../auth/presentation/pages/email_verification_screen.dart';
 import '../../../onboarding/presentation/pages/onboarding_screen.dart';
@@ -78,6 +79,8 @@ class _SplashScreenViewState extends State<_SplashScreenView>
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return BlocListener<SplashBloc, SplashState>(
       listener: (context, state) {
         if (state is SplashAuthenticated) {
@@ -94,14 +97,14 @@ class _SplashScreenViewState extends State<_SplashScreenView>
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFF070D18),
+        backgroundColor: colors.background,
         body: Center(
           child: AnimatedBuilder(
             animation: _animController,
             builder: (context, _) => Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Clean crisp App Icon Badge without color spread radius
+                // Clean crisp App Icon Badge - switches to queueflow_icon.png in light mode
                 Transform.scale(
                   scale: _scaleAnimation.value,
                   child: const AppIconBadge(size: 96),
@@ -111,13 +114,13 @@ class _SplashScreenViewState extends State<_SplashScreenView>
                 Opacity(
                   opacity: _fadeAnimation.value,
                   child: Column(
-                    children: const [
-                      AppLogo(fontSize: 30),
-                      SizedBox(height: 8),
+                    children: [
+                      const AppLogo(fontSize: 30),
+                      const SizedBox(height: 8),
                       Text(
                         'Book smarter. Wait less.',
                         style: TextStyle(
-                          color: Color(0xFF94A3B8),
+                          color: colors.textMuted,
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
                           letterSpacing: 0.2,

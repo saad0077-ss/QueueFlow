@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../../core/widgets/custom_text_field.dart';
 import '../../../../core/widgets/gradient_button.dart';
@@ -61,6 +61,7 @@ class SignInForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final bloc = context.read<SignInBloc>();
 
     return Column(
@@ -93,7 +94,7 @@ class SignInForm extends StatelessWidget {
               state.isPasswordObscured
                   ? Icons.visibility_outlined
                   : Icons.visibility_off_outlined,
-              color: AppColors.textSubtle,
+              color: colors.textSubtle,
               size: 20,
             ),
             onPressed: () => bloc.add(const SignInTogglePasswordVisibility()),
@@ -118,7 +119,7 @@ class SignInForm extends StatelessWidget {
               child: Text(
                 'Forgot password?',
                 style: TextStyle(
-                  color: AppColors.textLink,
+                  color: colors.accent,
                   fontSize: forgotPasswordSize,
                   fontWeight: FontWeight.w500,
                 ),

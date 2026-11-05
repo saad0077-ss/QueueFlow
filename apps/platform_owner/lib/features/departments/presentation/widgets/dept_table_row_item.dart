@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 import '../../domain/entities/department_entity.dart';
 import 'dept_row_actions.dart';
@@ -22,28 +23,30 @@ class DeptTableRowItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return InkWell(
       onTap: () => onDetails(department),
-      hoverColor: const Color(0xFF1E293B).withValues(alpha: 0.35),
+      hoverColor: colors.surfaceSecondary,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        decoration: const BoxDecoration(
-          border: Border(bottom: BorderSide(color: Color(0xFF1E293B))),
+        decoration: BoxDecoration(
+          border: Border(bottom: BorderSide(color: colors.border)),
         ),
         child: Row(
           children: [
-            Expanded(flex: 3, child: _colDept()),
+            Expanded(flex: 3, child: _colDept(colors)),
             Expanded(flex: 3, child: _colSpecialty(department.standardServices.length)),
             Expanded(
               flex: 2,
               child: Text(
                 '⏱️ ${department.avgConsultationTime}',
-                style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w600, color: Colors.white),
+                style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w600, color: colors.textPrimary),
               ),
             ),
-            Expanded(flex: 2, child: _colClinics()),
-            Expanded(flex: 2, child: _colVisits()),
-            Expanded(flex: 2, child: _colStatus()),
+            Expanded(flex: 2, child: _colClinics(colors)),
+            Expanded(flex: 2, child: _colVisits(colors)),
+            Expanded(flex: 2, child: _colStatus(colors)),
             Expanded(
               flex: 4,
               child: DeptRowActions(
@@ -60,13 +63,13 @@ class DeptTableRowItem extends StatelessWidget {
     );
   }
 
-  Widget _colDept() {
+  Widget _colDept(AppColorsExtension colors) {
     return Row(
       children: [
         Container(
           width: 36,
           height: 36,
-          decoration: BoxDecoration(color: const Color(0xFF2563EB).withValues(alpha: 0.15), borderRadius: BorderRadius.circular(10)),
+          decoration: BoxDecoration(color: colors.primaryTint, borderRadius: BorderRadius.circular(10)),
           alignment: Alignment.center,
           child: Text(department.icon, style: const TextStyle(fontSize: 18)),
         ),
@@ -77,7 +80,7 @@ class DeptTableRowItem extends StatelessWidget {
             children: [
               Text(
                 department.name,
-                style: GoogleFonts.inter(fontSize: 13.5, fontWeight: FontWeight.bold, color: Colors.white),
+                style: GoogleFonts.inter(fontSize: 13.5, fontWeight: FontWeight.bold, color: colors.textPrimary),
                 overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 2),
@@ -85,16 +88,16 @@ class DeptTableRowItem extends StatelessWidget {
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-                    decoration: BoxDecoration(color: const Color(0xFF2563EB).withValues(alpha: 0.18), borderRadius: BorderRadius.circular(4)),
+                    decoration: BoxDecoration(color: colors.primaryTint, borderRadius: BorderRadius.circular(4)),
                     child: Text(
                       department.code,
-                      style: GoogleFonts.jetBrainsMono(fontSize: 10.5, fontWeight: FontWeight.w800, color: const Color(0xFF38BDF8)),
+                      style: GoogleFonts.jetBrainsMono(fontSize: 10.5, fontWeight: FontWeight.w800, color: colors.primaryLight),
                     ),
                   ),
                   const SizedBox(width: 6),
                   Text(
                     '${department.doctorCount} Doctor${department.doctorCount == 1 ? '' : 's'}',
-                    style: GoogleFonts.inter(fontSize: 11, color: const Color(0xFF94A3B8)),
+                    style: GoogleFonts.inter(fontSize: 11, color: colors.textMuted),
                   ),
                 ],
               ),
@@ -109,9 +112,9 @@ class DeptTableRowItem extends StatelessWidget {
     return _countBadge('$count Standard Service${count == 1 ? '' : 's'}', const Color(0xFF10B981));
   }
 
-  Widget _colClinics() {
+  Widget _colClinics(AppColorsExtension colors) {
     final count = department.assignedClinics.length;
-    return _countBadge('$count Clinic${count == 1 ? '' : 's'}', const Color(0xFF38BDF8));
+    return _countBadge('$count Clinic${count == 1 ? '' : 's'}', colors.primaryLight);
   }
 
   Widget _countBadge(String label, Color color) {
@@ -128,32 +131,32 @@ class DeptTableRowItem extends StatelessWidget {
     );
   }
 
-  Widget _colVisits() {
+  Widget _colVisits(AppColorsExtension colors) {
     final formatted = department.totalVisits.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},');
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           formatted,
-          style: GoogleFonts.jetBrainsMono(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.white),
+          style: GoogleFonts.jetBrainsMono(fontSize: 13, fontWeight: FontWeight.bold, color: colors.textPrimary),
         ),
-        Text('visits / mo', style: GoogleFonts.inter(fontSize: 10.5, color: const Color(0xFF64748B))),
+        Text('visits / mo', style: GoogleFonts.inter(fontSize: 10.5, color: colors.textMuted)),
       ],
     );
   }
 
-  Widget _colStatus() {
+  Widget _colStatus(AppColorsExtension colors) {
     return Align(
       alignment: Alignment.centerLeft,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
         decoration: BoxDecoration(
-          color: (department.isActive ? const Color(0xFF10B981) : const Color(0xFF64748B)).withValues(alpha: 0.15),
+          color: (department.isActive ? colors.success : colors.textMuted).withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(
           department.isActive ? 'ACTIVE' : 'INACTIVE',
-          style: GoogleFonts.inter(fontSize: 10.5, fontWeight: FontWeight.w800, color: department.isActive ? const Color(0xFF10B981) : const Color(0xFF94A3B8)),
+          style: GoogleFonts.inter(fontSize: 10.5, fontWeight: FontWeight.w800, color: department.isActive ? colors.success : colors.textMuted),
         ),
       ),
     );

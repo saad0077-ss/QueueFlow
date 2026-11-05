@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../domain/entities/department_entity.dart';

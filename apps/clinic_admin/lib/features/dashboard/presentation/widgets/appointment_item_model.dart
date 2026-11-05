@@ -1,4 +1,4 @@
-import '../../domain/entities/clinic_appointment_entity.dart';
+﻿import '../../domain/entities/clinic_appointment_entity.dart';
 
 /// Presentation-layer model representing an upcoming appointment item,
 /// extending the domain [ClinicAppointmentEntity].

@@ -1,4 +1,4 @@
-import 'package:equatable/equatable.dart';
+﻿import 'package:equatable/equatable.dart';
 
 import '../../domain/entities/department_entity.dart';
 import '../../domain/entities/dept_expansion_request_entity.dart';

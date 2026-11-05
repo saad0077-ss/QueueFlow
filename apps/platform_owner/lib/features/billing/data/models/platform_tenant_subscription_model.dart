@@ -1,4 +1,4 @@
-import '../../domain/entities/platform_tenant_subscription_entity.dart';
+﻿import '../../domain/entities/platform_tenant_subscription_entity.dart';
 
 class PlatformTenantSubscriptionModel extends PlatformTenantSubscriptionEntity {
   const PlatformTenantSubscriptionModel({

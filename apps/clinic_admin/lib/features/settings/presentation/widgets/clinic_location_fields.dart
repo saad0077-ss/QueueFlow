@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class ClinicLocationFields extends StatelessWidget {
   static const parkingOptions = [
@@ -54,33 +55,36 @@ class ClinicLocationFields extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _sectionLabel('Facility & Street Address'),
+        _sectionLabel(context, 'Facility & Street Address'),
         const SizedBox(height: 10),
-        _row2(_field('Building / Floor / Suite', buildingCtrl), _field('Street / Road Address', streetCtrl)),
+        _row2(_field(context, 'Building / Floor / Suite', buildingCtrl), _field(context, 'Street / Road Address', streetCtrl)),
         const SizedBox(height: 12),
-        _row2(_field('Area / Neighborhood', areaCtrl), _field('City / District', cityCtrl)),
+        _row2(_field(context, 'Area / Neighborhood', areaCtrl), _field(context, 'City / District', cityCtrl)),
         const SizedBox(height: 12),
-        _row2(_field('State / Province', stateCtrl), _field('Postal / PIN Code', pincodeCtrl)),
+        _row2(_field(context, 'State / Province', stateCtrl), _field(context, 'Postal / PIN Code', pincodeCtrl)),
         const SizedBox(height: 12),
-        _field('Prominent Landmark (for patient arrival)', landmarkCtrl),
+        _field(context, 'Prominent Landmark (for patient arrival)', landmarkCtrl),
         const SizedBox(height: 20),
-        _sectionLabel('GPS Pin & Google Maps Navigation'),
+        _sectionLabel(context, 'GPS Pin & Google Maps Navigation'),
         const SizedBox(height: 10),
         Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Expanded(child: _field('Google Maps URL or Share Link', mapsUrlCtrl)),
+            Expanded(child: _field(context, 'Google Maps URL or Share Link', mapsUrlCtrl)),
             const SizedBox(width: 10),
             Padding(
               padding: const EdgeInsets.only(bottom: 2),
               child: OutlinedButton.icon(
                 onPressed: onTestLink,
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  side: const BorderSide(color: Color(0xFF1E293B)),
+                  foregroundColor: colors.textPrimary,
+                  side: BorderSide(color: colors.border),
+                  backgroundColor: colors.surfaceSecondary,
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
@@ -91,19 +95,21 @@ class ClinicLocationFields extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 12),
-        _row2(_field('GPS Latitude', latCtrl), _field('GPS Longitude', lngCtrl)),
+        _row2(_field(context, 'GPS Latitude', latCtrl), _field(context, 'GPS Longitude', lngCtrl)),
         const SizedBox(height: 10),
         Wrap(
           spacing: 10,
           runSpacing: 8,
           children: [
             _actionButton(
+              context: context,
               onPressed: onDetectGps,
               icon: Icons.my_location_rounded,
               label: isDetectingGps ? 'Detecting Location...' : 'Detect My Current GPS Location',
               busy: isDetectingGps,
             ),
             _actionButton(
+              context: context,
               onPressed: onFillAddress,
               icon: Icons.auto_fix_high_rounded,
               label: isFillingAddress ? 'Filling Address...' : 'Auto-fill Address from Coordinates',
@@ -112,42 +118,46 @@ class ClinicLocationFields extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 20),
-        _sectionLabel('Parking & Accessibility Guidance'),
+        _sectionLabel(context, 'Parking & Accessibility Guidance'),
         const SizedBox(height: 10),
-        _parkingDropdown(),
+        _parkingDropdown(context),
         const SizedBox(height: 12),
-        _field('Front-Desk Arrival Directions', directionsCtrl, maxLines: 2),
+        _field(context, 'Front-Desk Arrival Directions', directionsCtrl, maxLines: 2),
       ],
     );
   }
 
-  Widget _actionButton({required VoidCallback? onPressed, required IconData icon, required String label, required bool busy}) {
+  Widget _actionButton({required BuildContext context, required VoidCallback? onPressed, required IconData icon, required String label, required bool busy}) {
+    final colors = context.colors;
+
     return OutlinedButton.icon(
       onPressed: onPressed,
       style: OutlinedButton.styleFrom(
-        foregroundColor: const Color(0xFF38BDF8),
-        side: const BorderSide(color: Color(0xFF1E293B)),
+        foregroundColor: colors.info,
+        side: BorderSide(color: colors.border),
+        backgroundColor: colors.surfaceSecondary,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
       icon: busy
-          ? const SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 1.6, color: Color(0xFF38BDF8)))
+          ? SizedBox(width: 12, height: 12, child: CircularProgressIndicator(strokeWidth: 1.6, color: colors.info))
           : Icon(icon, size: 14),
       label: Text(label, style: GoogleFonts.inter(fontSize: 11.5, fontWeight: FontWeight.w600)),
     );
   }
 
-  Widget _parkingDropdown() {
+  Widget _parkingDropdown(BuildContext context) {
+    final colors = context.colors;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Parking & Wheelchair Accessibility', style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: const Color(0xFF94A3B8))),
+        Text('Parking & Wheelchair Accessibility', style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: colors.textMuted)),
         const SizedBox(height: 6),
         ValueListenableBuilder<TextEditingValue>(
           valueListenable: parkingCtrl,
           builder: (context, value, _) {
             final current = value.text.trim();
-            // Keep a previously saved custom value selectable instead of dropping it.
             final options = [
               ...parkingOptions,
               if (current.isNotEmpty && !parkingOptions.contains(current)) current,
@@ -155,17 +165,18 @@ class ClinicLocationFields extends StatelessWidget {
             return Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
               decoration: BoxDecoration(
-                color: const Color(0xFF162238),
+                color: colors.surfaceSecondary,
                 borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: colors.border),
               ),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
                   value: current.isEmpty ? null : current,
-                  hint: Text('Select parking & accessibility', style: GoogleFonts.inter(fontSize: 13, color: const Color(0xFF64748B))),
-                  dropdownColor: const Color(0xFF0F172A),
+                  hint: Text('Select parking & accessibility', style: GoogleFonts.inter(fontSize: 13, color: colors.textMuted)),
+                  dropdownColor: colors.surfaceElevated,
                   isExpanded: true,
-                  icon: const Icon(Icons.keyboard_arrow_down_rounded, size: 18, color: Color(0xFF94A3B8)),
-                  style: GoogleFonts.inter(color: Colors.white, fontSize: 13),
+                  icon: Icon(Icons.keyboard_arrow_down_rounded, size: 18, color: colors.textMuted),
+                  style: GoogleFonts.inter(color: colors.textPrimary, fontSize: 13),
                   items: [
                     for (final o in options)
                       DropdownMenuItem(
@@ -174,7 +185,7 @@ class ClinicLocationFields extends StatelessWidget {
                           Icon(
                             o.contains('not wheelchair') ? Icons.local_parking_rounded : Icons.accessible_rounded,
                             size: 15,
-                            color: const Color(0xFF38BDF8),
+                            color: colors.info,
                           ),
                           const SizedBox(width: 10),
                           Expanded(child: Text(o, overflow: TextOverflow.ellipsis)),
@@ -193,8 +204,9 @@ class ClinicLocationFields extends StatelessWidget {
     );
   }
 
-  Widget _sectionLabel(String label) {
-    return Text(label.toUpperCase(), style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w800, color: const Color(0xFF94A3B8), letterSpacing: 0.5));
+  Widget _sectionLabel(BuildContext context, String label) {
+    final colors = context.colors;
+    return Text(label.toUpperCase(), style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w800, color: colors.textMuted, letterSpacing: 0.5));
   }
 
   Widget _row2(Widget a, Widget b) {
@@ -207,22 +219,25 @@ class ClinicLocationFields extends StatelessWidget {
     );
   }
 
-  Widget _field(String label, TextEditingController ctrl, {int maxLines = 1}) {
+  Widget _field(BuildContext context, String label, TextEditingController ctrl, {int maxLines = 1}) {
+    final colors = context.colors;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: const Color(0xFF94A3B8))),
+        Text(label, style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: colors.textMuted)),
         const SizedBox(height: 6),
         TextField(
           controller: ctrl,
           maxLines: maxLines,
-          style: GoogleFonts.inter(fontSize: 13, color: Colors.white),
+          style: GoogleFonts.inter(fontSize: 13, color: colors.textPrimary),
           decoration: InputDecoration(
             filled: true,
-            fillColor: const Color(0xFF162238),
+            fillColor: colors.surfaceSecondary,
             contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
-            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: const BorderSide(color: Color(0xFF2563EB))),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: colors.border)),
+            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: colors.border)),
+            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: colors.primary)),
           ),
         ),
       ],

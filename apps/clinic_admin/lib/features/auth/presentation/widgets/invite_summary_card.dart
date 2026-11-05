@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class InviteSummaryCard extends StatelessWidget {
   final String email;
@@ -15,26 +16,28 @@ class InviteSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
       decoration: BoxDecoration(
-        color: const Color(0xFF0B132B).withValues(alpha: 0.7),
+        color: colors.surfaceSecondary,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFF1E293B)),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         children: [
-          _buildRow('Email', email),
-          const Divider(color: Color(0xFF1E293B), height: 20, thickness: 1),
-          _buildRow('Role', role),
-          const Divider(color: Color(0xFF1E293B), height: 20, thickness: 1),
-          _buildRow('Clinic', clinicName),
+          _buildRow('Email', email, colors),
+          Divider(color: colors.border, height: 20, thickness: 1),
+          _buildRow('Role', role, colors),
+          Divider(color: colors.border, height: 20, thickness: 1),
+          _buildRow('Clinic', clinicName, colors),
         ],
       ),
     );
   }
 
-  Widget _buildRow(String label, String value) {
+  Widget _buildRow(String label, String value, AppColorsExtension colors) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -42,7 +45,7 @@ class InviteSummaryCard extends StatelessWidget {
           label,
           style: GoogleFonts.inter(
             fontSize: 12.5,
-            color: const Color(0xFF64748B),
+            color: colors.textMuted,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -52,7 +55,7 @@ class InviteSummaryCard extends StatelessWidget {
             textAlign: TextAlign.right,
             style: GoogleFonts.inter(
               fontSize: 12.5,
-              color: Colors.white,
+              color: colors.textPrimary,
               fontWeight: FontWeight.w600,
             ),
           ),

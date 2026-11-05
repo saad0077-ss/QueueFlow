@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:patient_app/core/theme/app_colors.dart';
 import 'package:patient_app/features/booking/data/repositories/booking_repository_impl.dart';
 import 'package:patient_app/features/booking/domain/entities/appointment_entity.dart';
 import 'package:patient_app/features/booking/domain/repositories/booking_repository.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class MyBookingsTabView extends StatefulWidget {
   final BookingRepository? repository;
@@ -51,14 +51,15 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
   }
 
   Future<void> _confirmCancelAppointment(AppointmentEntity apt) async {
+    final colors = context.colors;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => Dialog(
-        backgroundColor: AppColors.darkSurface,
+        backgroundColor: colors.surfaceElevated,
         insetPadding: const EdgeInsets.symmetric(horizontal: 24),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24),
-          side: const BorderSide(color: AppColors.darkBorder),
+          side: BorderSide(color: colors.border),
         ),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
@@ -68,8 +69,8 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
               Container(
                 width: 52,
                 height: 52,
-                decoration: const BoxDecoration(
-                  color: Color(0xFFE53935),
+                decoration: BoxDecoration(
+                  color: colors.error,
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
@@ -84,7 +85,7 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
                 style: GoogleFonts.inter(
                   fontSize: 17,
                   fontWeight: FontWeight.w800,
-                  color: Colors.white,
+                  color: colors.textPrimary,
                 ),
               ),
               const SizedBox(height: 8),
@@ -93,7 +94,7 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
                 textAlign: TextAlign.center,
                 style: GoogleFonts.inter(
                   fontSize: 12.5,
-                  color: const Color(0xFFB6C0D4),
+                  color: colors.textMuted,
                   height: 1.4,
                 ),
               ),
@@ -127,8 +128,8 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
                     child: OutlinedButton(
                       onPressed: () => Navigator.pop(ctx, true),
                       style: OutlinedButton.styleFrom(
-                        side: const BorderSide(
-                          color: Color(0xFFE53935),
+                        side: BorderSide(
+                          color: colors.error,
                           width: 1.5,
                         ),
                         shape: const StadiumBorder(),
@@ -139,7 +140,7 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
                         style: GoogleFonts.inter(
                           fontSize: 13,
                           fontWeight: FontWeight.w800,
-                          color: const Color(0xFFE53935),
+                          color: colors.error,
                         ),
                       ),
                     ),
@@ -157,9 +158,9 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
       await _loadAppointments();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Appointment has been cancelled.'),
-            backgroundColor: AppColors.error,
+          SnackBar(
+            content: const Text('Appointment has been cancelled.'),
+            backgroundColor: colors.error,
           ),
         );
       }
@@ -168,6 +169,8 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Column(
       children: [
         Padding(
@@ -184,7 +187,7 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
                     style: GoogleFonts.inter(
                       fontSize: 24,
                       fontWeight: FontWeight.w800,
-                      color: AppColors.darkInk,
+                      color: colors.textPrimary,
                     ),
                   ),
                   Stack(
@@ -193,13 +196,13 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
                       Container(
                         padding: const EdgeInsets.all(11),
                         decoration: BoxDecoration(
-                          color: AppColors.darkSurface,
+                          color: colors.surface,
                           borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: AppColors.darkBorder),
+                          border: Border.all(color: colors.border),
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.notifications_none_rounded,
-                          color: AppColors.darkInk,
+                          color: colors.textPrimary,
                           size: 22,
                         ),
                       ),
@@ -209,8 +212,8 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
                         child: Container(
                           width: 8,
                           height: 8,
-                          decoration: const BoxDecoration(
-                            color: AppColors.error,
+                          decoration: BoxDecoration(
+                            color: colors.error,
                             shape: BoxShape.circle,
                           ),
                         ),
@@ -225,9 +228,9 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
               // Segmented Filter Tabs
               Container(
                 decoration: BoxDecoration(
-                  color: AppColors.darkSurface,
+                  color: colors.surface,
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: AppColors.darkBorder),
+                  border: Border.all(color: colors.border),
                 ),
                 padding: const EdgeInsets.all(4),
                 child: Row(
@@ -244,8 +247,8 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
         Expanded(
           child: RefreshIndicator(
             onRefresh: _loadAppointments,
-            color: AppColors.primaryLight,
-            backgroundColor: AppColors.darkSurface,
+            color: colors.primary,
+            backgroundColor: colors.surface,
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
@@ -254,11 +257,11 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
                 children: [
                   // Content List
                   if (_isLoading)
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 40),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 40),
                       child: Center(
                         child: CircularProgressIndicator(
-                          color: AppColors.primaryLight,
+                          color: colors.primary,
                         ),
                       ),
                     )
@@ -285,6 +288,7 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
   }
 
   Widget _buildFilterTab(int index, String label) {
+    final colors = context.colors;
     final isSelected = _selectedFilterIndex == index;
 
     return Expanded(
@@ -303,7 +307,7 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
               style: GoogleFonts.inter(
                 fontSize: 12.5,
                 fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-                color: isSelected ? Colors.white : AppColors.darkInkMuted,
+                color: isSelected ? Colors.white : colors.textMuted,
               ),
             ),
           ),
@@ -313,6 +317,7 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
   }
 
   Widget _buildEmptyState() {
+    final colors = context.colors;
     String label = 'upcoming';
     if (_selectedFilterIndex == 1) label = 'completed';
     if (_selectedFilterIndex == 2) label = 'cancelled';
@@ -327,13 +332,13 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
             height: 64,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: AppColors.darkSurface,
-              border: Border.all(color: AppColors.darkBorder),
+              color: colors.surface,
+              border: Border.all(color: colors.border),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.event_busy_rounded,
               size: 30,
-              color: AppColors.darkInkFaint,
+              color: colors.textSubtle,
             ),
           ),
           const SizedBox(height: 16),
@@ -342,7 +347,7 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
             style: GoogleFonts.inter(
               fontSize: 15,
               fontWeight: FontWeight.w700,
-              color: AppColors.darkInk,
+              color: colors.textPrimary,
             ),
           ),
           const SizedBox(height: 6),
@@ -351,17 +356,13 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
             textAlign: TextAlign.center,
             style: GoogleFonts.inter(
               fontSize: 12.5,
-              color: AppColors.darkInkMuted,
+              color: colors.textMuted,
             ),
           ),
         ],
       ),
     );
   }
-
-  static const _blue = Color(0xFF2F6BFF);
-  static const _soft = Color(0xFFB6C0D4);
-  static const _link = Color(0xFF3B9CFF);
 
   Widget _pill(String text, Color color, {double size = 10.5}) {
     return Container(
@@ -383,15 +384,16 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
     );
   }
 
-  Widget _infoRow(IconData icon, String text) {
+  Widget _infoRow(BuildContext context, IconData icon, String text) {
+    final colors = context.colors;
     return Row(
       children: [
-        Icon(icon, size: 16, color: _soft),
+        Icon(icon, size: 16, color: colors.textMuted),
         const SizedBox(width: 8),
         Expanded(
           child: Text(
             text,
-            style: GoogleFonts.inter(fontSize: 12.5, color: _soft),
+            style: GoogleFonts.inter(fontSize: 12.5, color: colors.textMuted),
           ),
         ),
       ],
@@ -399,19 +401,21 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
   }
 
   Widget _dlgRow(
+    BuildContext context,
     String k,
     String v, {
     Color? color,
     bool mono = false,
     double size = 12.5,
   }) {
+    final colors = context.colors;
     final style = mono ? GoogleFonts.robotoMono : GoogleFonts.inter;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(k, style: GoogleFonts.inter(fontSize: 12.5, color: _soft)),
+          Text(k, style: GoogleFonts.inter(fontSize: 12.5, color: colors.textMuted)),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
@@ -420,7 +424,7 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
               style: style(
                 fontSize: size,
                 fontWeight: FontWeight.w800,
-                color: color ?? Colors.white,
+                color: color ?? colors.textPrimary,
               ),
             ),
           ),
@@ -429,12 +433,13 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
     );
   }
 
-  Widget _dlgBox(Color border, List<Widget> children) {
+  Widget _dlgBox(BuildContext context, Color border, List<Widget> children) {
+    final colors = context.colors;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.darkBgApp.withValues(alpha: 0.6),
+        color: colors.surfaceSecondary,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: border),
       ),
@@ -446,6 +451,7 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
   }
 
   void _showReceipt(AppointmentEntity apt) {
+    final colors = context.colors;
     final label = GoogleFonts.inter(
       fontSize: 10.5,
       fontWeight: FontWeight.w800,
@@ -456,11 +462,11 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
     showDialog(
       context: context,
       builder: (ctx) => Dialog(
-        backgroundColor: AppColors.darkSurface,
+        backgroundColor: colors.surfaceElevated,
         insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24),
-          side: const BorderSide(color: AppColors.darkBorder),
+          side: BorderSide(color: colors.border),
         ),
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(18),
@@ -479,7 +485,7 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
                           'REF: ${apt.bookingRef}',
                           style: GoogleFonts.robotoMono(
                             fontSize: 11,
-                            color: _link,
+                            color: colors.primary,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -488,7 +494,7 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
                           style: GoogleFonts.inter(
                             fontSize: 19,
                             fontWeight: FontWeight.w800,
-                            color: Colors.white,
+                            color: colors.textPrimary,
                           ),
                         ),
                       ],
@@ -496,27 +502,27 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
                   ),
                   GestureDetector(
                     onTap: () => Navigator.pop(ctx),
-                    child: const Icon(
+                    child: Icon(
                       Icons.close_rounded,
-                      color: Colors.white,
+                      color: colors.textPrimary,
                       size: 22,
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 16),
-              _dlgBox(_blue.withValues(alpha: 0.5), [
+              _dlgBox(context, colors.primary.withValues(alpha: 0.5), [
                 Row(
                   children: [
                     Expanded(
                       child: Text(
                         'SERVICE SELECTED',
-                        style: label.copyWith(color: _link),
+                        style: label.copyWith(color: colors.primary),
                       ),
                     ),
                     _pill(
                       '⏰ ${apt.serviceDuration} mins',
-                      AppColors.success,
+                      colors.success,
                       size: 11,
                     ),
                   ],
@@ -527,12 +533,12 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
                   style: GoogleFonts.inter(
                     fontSize: 17,
                     fontWeight: FontWeight.w800,
-                    color: Colors.white,
+                    color: colors.textPrimary,
                   ),
                 ),
                 if (apt.doctorSpecialty.isNotEmpty) ...[
                   const SizedBox(height: 8),
-                  _pill('🩺 ${apt.doctorSpecialty}', _blue, size: 11),
+                  _pill('🩺 ${apt.doctorSpecialty}', colors.primary, size: 11),
                 ],
                 if (apt.notes.isNotEmpty) ...[
                   const SizedBox(height: 10),
@@ -540,46 +546,49 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
                     apt.notes,
                     style: GoogleFonts.inter(
                       fontSize: 12.5,
-                      color: _soft,
+                      color: colors.textMuted,
                       height: 1.4,
                     ),
                   ),
                 ],
-                const Divider(color: AppColors.darkBorder, height: 22),
-                _dlgRow('Consulting Doctor:', apt.doctorName),
-                _dlgRow('Appointment Time:', apt.dateTime),
+                Divider(color: colors.border, height: 22),
+                _dlgRow(context, 'Consulting Doctor:', apt.doctorName),
+                _dlgRow(context, 'Appointment Time:', apt.dateTime),
               ]),
               if (apt.isCancelled) ...[
                 const SizedBox(height: 14),
-                _dlgBox(AppColors.error.withValues(alpha: 0.5), [
+                _dlgBox(context, colors.error.withValues(alpha: 0.5), [
                   Row(
                     children: [
                       Expanded(
                         child: Text(
                           'CANCELLATION & REFUND',
-                          style: label.copyWith(color: AppColors.error),
+                          style: label.copyWith(color: colors.error),
                         ),
                       ),
-                      _pill('✕ CANCELLED', AppColors.error, size: 11),
+                      _pill('✕ CANCELLED', colors.error, size: 11),
                     ],
                   ),
                   const SizedBox(height: 10),
-                  _dlgRow('Booking Status:', 'Cancelled'),
+                  _dlgRow(context, 'Booking Status:', 'Cancelled'),
                   _dlgRow(
+                    context,
                     'Refund Status:',
                     apt.isPaid ? 'Refund initiated' : 'No charge applied',
-                    color: apt.isPaid ? AppColors.warning : AppColors.success,
+                    color: apt.isPaid ? colors.warning : colors.success,
                   ),
                   if (apt.isPaid) ...[
                     _dlgRow(
+                      context,
                       'Refund Amount:',
                       '₹${apt.servicePrice.toStringAsFixed(2)}',
                     ),
                     _dlgRow(
+                      context,
                       'Refund To:',
                       apt.payment?.method ?? 'Original payment method',
                     ),
-                    _dlgRow('Expected By:', '5-7 business days'),
+                    _dlgRow(context, 'Expected By:', '5-7 business days'),
                   ],
                   const SizedBox(height: 6),
                   Text(
@@ -588,36 +597,38 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
                         : 'This booking was unpaid, so there is nothing to refund.',
                     style: GoogleFonts.inter(
                       fontSize: 11.5,
-                      color: _soft,
+                      color: colors.textMuted,
                       height: 1.4,
                     ),
                   ),
                 ]),
               ],
               const SizedBox(height: 14),
-              _dlgBox(AppColors.darkBorder, [
+              _dlgBox(context, colors.border, [
                 Row(
                   children: [
                     Expanded(
                       child: Text(
                         'PAYMENT & INVOICING',
-                        style: label.copyWith(color: _soft),
+                        style: label.copyWith(color: colors.textMuted),
                       ),
                     ),
                     apt.isCancelled && apt.isPaid
-                        ? _pill('↩ REFUND', AppColors.warning, size: 11)
+                        ? _pill('↩ REFUND', colors.warning, size: 11)
                         : apt.isPaid
-                        ? _pill('✓ PAID', AppColors.success, size: 11)
-                        : _pill('⏳ DUE', AppColors.warning, size: 11),
+                        ? _pill('✓ PAID', colors.success, size: 11)
+                        : _pill('⏳ DUE', colors.warning, size: 11),
                   ],
                 ),
                 const SizedBox(height: 10),
                 _dlgRow(
+                  context,
                   apt.isPaid ? 'Total Amount Paid:' : 'Total Amount Due:',
                   '₹${apt.servicePrice.toStringAsFixed(2)}',
                   size: 20,
                 ),
                 _dlgRow(
+                  context,
                   'Payment Method:',
                   apt.isPaid
                       ? (apt.payment?.method ?? 'Online')
@@ -625,13 +636,14 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
                 ),
                 if (payId.isNotEmpty)
                   _dlgRow(
+                    context,
                     'Transaction ID:',
                     payId,
-                    color: _link,
+                    color: colors.primary,
                     mono: true,
                     size: 11.5,
                   ),
-                _dlgRow('Receipt Reference:', receiptNo),
+                _dlgRow(context, 'Receipt Reference:', receiptNo),
               ]),
               const SizedBox(height: 18),
               Container(
@@ -686,25 +698,26 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
   }
 
   Widget _buildAppointmentCard(AppointmentEntity apt) {
-    Color statusColor = _blue;
+    final colors = context.colors;
+    Color statusColor = colors.primary;
     String statusLabel = 'UPCOMING';
     if (apt.isCompleted) {
-      statusColor = AppColors.success;
+      statusColor = colors.success;
       statusLabel = 'COMPLETED';
     } else if (apt.isCancelled) {
-      statusColor = AppColors.error;
+      statusColor = colors.error;
       statusLabel = 'CANCELLED';
     } else if (apt.isPending) {
-      statusColor = AppColors.warning;
+      statusColor = colors.warning;
       statusLabel = 'PENDING';
     }
     final price = '₹${apt.servicePrice.toStringAsFixed(0)}';
-    final payColor = apt.isPaid ? AppColors.success : AppColors.warning;
+    final payColor = apt.isPaid ? colors.success : colors.warning;
     var payText = apt.isPaid ? '✓ PAID · $price' : '⏳ DUE · $price';
     var payColor2 = payColor;
     if (apt.isCancelled) {
       payText = apt.isPaid ? '↩ REFUND · $price' : 'NO REFUND · UNPAID';
-      payColor2 = apt.isPaid ? AppColors.warning : AppColors.darkInkMuted;
+      payColor2 = apt.isPaid ? colors.warning : colors.textMuted;
     }
     final refText = (apt.payment?.paymentId.isNotEmpty ?? false)
         ? apt.payment!.paymentId
@@ -713,18 +726,14 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [AppColors.darkSurface, AppColors.darkSurface],
-        ),
+        color: colors.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.darkBorder),
+        border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.15),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 12,
-            offset: const Offset(0, 8),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -745,7 +754,7 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
                         style: GoogleFonts.inter(
                           fontSize: 15,
                           fontWeight: FontWeight.w800,
-                          color: Colors.white,
+                          color: colors.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -754,7 +763,7 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
                         style: GoogleFonts.inter(
                           fontSize: 13,
                           fontWeight: FontWeight.w800,
-                          color: _blue,
+                          color: colors.primary,
                         ),
                       ),
                     ],
@@ -777,7 +786,7 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
                   Flexible(
                     child: _pill(
                       '🩺 ${apt.doctorSpecialty}',
-                      AppColors.success,
+                      colors.success,
                       size: 10.5,
                     ),
                   ),
@@ -785,14 +794,14 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
                 ],
                 Text(
                   '⏰ ${apt.serviceDuration} mins',
-                  style: GoogleFonts.inter(fontSize: 12, color: _soft),
+                  style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted),
                 ),
               ],
             ),
             const SizedBox(height: 10),
-            _infoRow(Icons.person_outline_rounded, apt.doctorName),
+            _infoRow(context, Icons.person_outline_rounded, apt.doctorName),
             const SizedBox(height: 6),
-            _infoRow(Icons.schedule_rounded, apt.dateTime),
+            _infoRow(context, Icons.schedule_rounded, apt.dateTime),
             const SizedBox(height: 10),
             Row(
               children: [
@@ -809,7 +818,7 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
                     },
                     child: Row(
                       children: [
-                        const Icon(Icons.bolt_rounded, size: 14, color: _link),
+                        Icon(Icons.bolt_rounded, size: 14, color: colors.primary),
                         const SizedBox(width: 4),
                         Flexible(
                           child: Text(
@@ -818,7 +827,7 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
                             style: GoogleFonts.robotoMono(
                               fontSize: 11.5,
                               fontWeight: FontWeight.w700,
-                              color: _link,
+                              color: colors.primary,
                             ),
                           ),
                         ),
@@ -830,9 +839,9 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
                 OutlinedButton(
                   onPressed: () => _showReceipt(apt),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: AppColors.darkBgApp,
-                    side: const BorderSide(color: Color(0xFFD5DBE8)),
+                    foregroundColor: colors.textPrimary,
+                    backgroundColor: colors.surfaceSecondary,
+                    side: BorderSide(color: colors.border),
                     shape: const StadiumBorder(),
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12,
@@ -854,14 +863,14 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
             ),
             if (apt.isUpcoming) ...[
               const SizedBox(height: 10),
-              const Divider(color: AppColors.darkBorder, height: 1),
+              Divider(color: colors.border, height: 1),
               const SizedBox(height: 10),
               Row(
                 children: [
                   _actionBtn(
                     'Reschedule',
                     Icons.event_repeat_rounded,
-                    _blue,
+                    colors.primary,
                     () => ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Rescheduling is coming soon.'),
@@ -872,7 +881,7 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
                   _actionBtn(
                     'Cancel',
                     Icons.close_rounded,
-                    const Color(0xFFEF2D2D),
+                    colors.error,
                     () => _confirmCancelAppointment(apt),
                   ),
                 ],

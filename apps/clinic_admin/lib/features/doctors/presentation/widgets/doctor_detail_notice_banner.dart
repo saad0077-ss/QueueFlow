@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../domain/entities/clinic_doctor_profile_entity.dart';
-import 'doctor_ui_kit.dart';
 
 class DoctorDetailNoticeBanner extends StatelessWidget {
   final ClinicDoctorProfileEntity doctor;
@@ -12,8 +12,9 @@ class DoctorDetailNoticeBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     if (doctor.isActiveAccount) return const SizedBox.shrink();
 
+    final colors = context.colors;
     final isPending = doctor.isPendingAccount;
-    final bannerColor = isPending ? DoctorColors.amber : DoctorColors.red;
+    final bannerColor = isPending ? colors.warning : colors.error;
 
     final title = isPending ? 'Verification pending' : 'Account inactive';
     final desc = isPending
@@ -62,7 +63,7 @@ class DoctorDetailNoticeBanner extends StatelessWidget {
                       desc,
                       style: GoogleFonts.inter(
                         fontSize: 12.5,
-                        color: const Color(0xFFE2E8F0),
+                        color: colors.textPrimary,
                         height: 1.4,
                       ),
                     ),

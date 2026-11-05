@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../departments/data/repositories/department_repository_impl.dart';
 import '../../../departments/domain/entities/department_entity.dart';
@@ -88,6 +89,8 @@ class _EditClinicDialogState extends State<_EditClinicDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return BackdropFilter(
       filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
       child: Dialog(
@@ -100,12 +103,12 @@ class _EditClinicDialogState extends State<_EditClinicDialog> {
           ),
           padding: const EdgeInsets.fromLTRB(26, 22, 26, 24),
           decoration: BoxDecoration(
-            color: const Color(0xFF0D1527),
+            color: colors.surfaceElevated,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: const Color(0xFF1E293B), width: 1.2),
+            border: Border.all(color: colors.border, width: 1.2),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.65),
+                color: Colors.black.withValues(alpha: 0.35),
                 blurRadius: 40,
                 offset: const Offset(0, 16),
               ),
@@ -123,14 +126,14 @@ class _EditClinicDialogState extends State<_EditClinicDialog> {
                       Container(
                         padding: const EdgeInsets.all(7),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF0C4A6E).withValues(alpha: 0.5),
+                          color: colors.primaryTint,
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: const Color(0xFF0284C7).withValues(alpha: 0.3)),
+                          border: Border.all(color: colors.primary.withValues(alpha: 0.3)),
                         ),
-                        child: const Icon(
+                        child: Icon(
                           Icons.edit_note_rounded,
                           size: 18,
-                          color: Color(0xFF38BDF8),
+                          color: colors.primaryLight,
                         ),
                       ),
                       const SizedBox(width: 10),
@@ -138,7 +141,7 @@ class _EditClinicDialogState extends State<_EditClinicDialog> {
                         'Edit Clinic Details',
                         style: GoogleFonts.inter(
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: colors.textPrimary,
                           fontSize: 17.5,
                         ),
                       ),
@@ -150,13 +153,13 @@ class _EditClinicDialogState extends State<_EditClinicDialog> {
                     child: Container(
                       padding: const EdgeInsets.all(5),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF1A253C),
+                        color: colors.surfaceSecondary,
                         borderRadius: BorderRadius.circular(6),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.close_rounded,
                         size: 14,
-                        color: Color(0xFF94A3B8),
+                        color: colors.textMuted,
                       ),
                     ),
                   ),
@@ -263,9 +266,9 @@ class _EditClinicDialogState extends State<_EditClinicDialog> {
                       child: OutlinedButton(
                         onPressed: _isSaving ? null : () => Navigator.pop(context),
                         style: OutlinedButton.styleFrom(
-                          backgroundColor: const Color(0xFF1A253C),
-                          foregroundColor: const Color(0xFFE2E8F0),
-                          side: const BorderSide(color: Color(0xFF2A3B59)),
+                          backgroundColor: colors.surfaceSecondary,
+                          foregroundColor: colors.textPrimary,
+                          side: BorderSide(color: colors.border),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(24),
                           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../../core/layout/clinic_breakpoints.dart';
 import '../../domain/entities/clinic_doctor_entity.dart';
 import '../../domain/entities/clinic_service_entity.dart';
@@ -39,14 +40,15 @@ class ServiceEditDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final isMobile = ClinicBreakpoints.isMobile(context);
 
     return Dialog(
-      backgroundColor: const Color(0xFF0F172A),
+      backgroundColor: colors.surfaceElevated,
       surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        side: const BorderSide(color: Color(0xFF1E293B), width: 1.2),
+        side: BorderSide(color: colors.border, width: 1.2),
       ),
       clipBehavior: Clip.antiAlias,
       insetPadding: isMobile

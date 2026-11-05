@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../domain/entities/clinic_doctor_profile_entity.dart';
 import '../../domain/entities/doctor_daily_schedule.dart';
 import 'doctor_ui_kit.dart';
@@ -114,25 +115,22 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Dialog(
       backgroundColor: Colors.transparent,
       insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
       child: Container(
         constraints: const BoxConstraints(maxWidth: 500),
         decoration: BoxDecoration(
-          color: const Color(0xFF0F172A),
+          color: colors.surfaceElevated,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: const Color(0xFF1E293B), width: 1.2),
+          border: Border.all(color: colors.border, width: 1.2),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.65),
+              color: Colors.black.withValues(alpha: 0.3),
               blurRadius: 40,
               offset: const Offset(0, 16),
-            ),
-            BoxShadow(
-              color: const Color(0xFF0284C7).withValues(alpha: 0.08),
-              blurRadius: 24,
-              spreadRadius: 1,
             ),
           ],
         ),
@@ -203,7 +201,7 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
                                         style: GoogleFonts.inter(
                                           fontSize: 17,
                                           fontWeight: FontWeight.w800,
-                                          color: Colors.white,
+                                          color: colors.textPrimary,
                                           letterSpacing: -0.3,
                                         ),
                                         overflow: TextOverflow.ellipsis,
@@ -213,7 +211,7 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
                                         'Register a practicing doctor for queue triage',
                                         style: GoogleFonts.inter(
                                           fontSize: 11.5,
-                                          color: const Color(0xFF94A3B8),
+                                          color: colors.textMuted,
                                         ),
                                         overflow: TextOverflow.ellipsis,
                                       ),
@@ -232,21 +230,21 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
                               height: 32,
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
-                                color: const Color(0xFF1E293B),
+                                color: colors.surfaceSecondary,
                                 borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: const Color(0xFF334155)),
+                                border: Border.all(color: colors.border),
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.close_rounded,
                                 size: 18,
-                                color: Color(0xFF94A3B8),
+                                color: colors.textMuted,
                               ),
                             ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 18),
-                      const Divider(color: Color(0xFF1E293B), height: 1),
+                      Divider(color: colors.border, height: 1),
                       const SizedBox(height: 18),
 
                       // Doctor Full Name
@@ -254,7 +252,7 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
                         label: 'Doctor Full Name',
                         child: TextFormField(
                           controller: _nameController,
-                          style: GoogleFonts.inter(fontSize: 13.5, color: Colors.white),
+                          style: GoogleFonts.inter(fontSize: 13.5, color: colors.textPrimary),
                           decoration: _inputDecoration(
                             hint: 'e.g. Dr. Rajesh Pillai',
                             prefixIcon: Icons.badge_outlined,
@@ -326,9 +324,9 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
                             child: OutlinedButton(
                               onPressed: () => Navigator.of(context).pop(),
                               style: OutlinedButton.styleFrom(
-                                foregroundColor: Colors.white,
-                                side: const BorderSide(color: Color(0xFF334155)),
-                                backgroundColor: const Color(0xFF1E293B).withValues(alpha: 0.65),
+                                foregroundColor: colors.textPrimary,
+                                side: BorderSide(color: colors.border),
+                                backgroundColor: colors.surfaceSecondary,
                                 padding: const EdgeInsets.symmetric(vertical: 13),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
@@ -339,7 +337,7 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
                                 style: GoogleFonts.inter(
                                   fontSize: 13.5,
                                   fontWeight: FontWeight.w600,
-                                  color: const Color(0xFFCBD5E1),
+                                  color: colors.textMuted,
                                 ),
                               ),
                             ),
@@ -400,6 +398,7 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
   }
 
   Widget _buildDepartmentDropdown() {
+    final colors = context.colors;
     final items = widget.departments;
     final hasItems = items.isNotEmpty;
     final currentVal = hasItems
@@ -415,10 +414,10 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
             height: 44,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: const Color(0xFF162033),
+              color: colors.surfaceSecondary,
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
-                color: hasItems ? const Color(0xFF26334D) : const Color(0xFF475569),
+                color: colors.border,
               ),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -427,17 +426,17 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
                 isDense: true,
                 value: currentVal,
                 isExpanded: true,
-                dropdownColor: const Color(0xFF0F172A),
-                icon: const Icon(
+                dropdownColor: colors.surfaceElevated,
+                icon: Icon(
                   Icons.keyboard_arrow_down_rounded,
-                  color: Color(0xFF94A3B8),
+                  color: colors.textMuted,
                   size: 20,
                 ),
                 hint: Text(
                   hasItems ? 'Select Department' : 'No assigned departments',
-                  style: GoogleFonts.inter(fontSize: 13, color: const Color(0xFF64748B)),
+                  style: GoogleFonts.inter(fontSize: 13, color: colors.textMuted),
                 ),
-                style: GoogleFonts.inter(fontSize: 13, color: Colors.white),
+                style: GoogleFonts.inter(fontSize: 13, color: colors.textPrimary),
                 onChanged: hasItems
                     ? (val) {
                         if (val != null) setState(() => _selectedSpecialty = val);
@@ -451,7 +450,7 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
                       style: GoogleFonts.inter(
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
-                        color: Colors.white,
+                        color: colors.textPrimary,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -464,7 +463,7 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
             const SizedBox(height: 4),
             Text(
               'No departments assigned by Platform Admin yet',
-              style: GoogleFonts.inter(fontSize: 11, color: DoctorColors.amber),
+              style: GoogleFonts.inter(fontSize: 11, color: colors.warning),
             ),
           ],
         ],
@@ -473,11 +472,12 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
   }
 
   Widget _buildRoomField() {
+    final colors = context.colors;
     return DoctorLabeledField(
       label: 'Consultation Room',
       child: TextFormField(
         controller: _roomController,
-        style: GoogleFonts.inter(fontSize: 13.5, color: Colors.white),
+        style: GoogleFonts.inter(fontSize: 13.5, color: colors.textPrimary),
         decoration: _inputDecoration(
           hint: 'e.g. Room 2',
           prefixIcon: Icons.meeting_room_outlined,
@@ -487,11 +487,12 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
   }
 
   Widget _buildEmailField() {
+    final colors = context.colors;
     return DoctorLabeledField(
       label: 'Work Email',
       child: TextFormField(
         controller: _emailController,
-        style: GoogleFonts.inter(fontSize: 13.5, color: Colors.white),
+        style: GoogleFonts.inter(fontSize: 13.5, color: colors.textPrimary),
         decoration: _inputDecoration(
           hint: 'doctor@clinic.com',
           prefixIcon: Icons.mail_outline_rounded,
@@ -502,11 +503,12 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
   }
 
   Widget _buildPhoneField() {
+    final colors = context.colors;
     return DoctorLabeledField(
       label: 'Phone',
       child: TextFormField(
         controller: _phoneController,
-        style: GoogleFonts.inter(fontSize: 13.5, color: Colors.white),
+        style: GoogleFonts.inter(fontSize: 13.5, color: colors.textPrimary),
         decoration: _inputDecoration(
           hint: '+91 98450 00000',
           prefixIcon: Icons.phone_outlined,
@@ -517,6 +519,7 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
   }
 
   InputDecoration _inputDecoration({required String hint, IconData? prefixIcon}) {
+    final colors = context.colors;
     OutlineInputBorder border(Color color, [double width = 1]) => OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: color, width: width),
@@ -524,19 +527,19 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
 
     return InputDecoration(
       hintText: hint,
-      hintStyle: GoogleFonts.inter(fontSize: 13, color: const Color(0xFF64748B)),
+      hintStyle: GoogleFonts.inter(fontSize: 13, color: colors.textMuted),
       prefixIcon: prefixIcon != null
-          ? Icon(prefixIcon, size: 18, color: const Color(0xFF64748B))
+          ? Icon(prefixIcon, size: 18, color: colors.textMuted)
           : null,
       filled: true,
-      fillColor: const Color(0xFF162033),
+      fillColor: colors.surfaceSecondary,
       isDense: true,
       contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      enabledBorder: border(const Color(0xFF26334D)),
-      focusedBorder: border(DoctorColors.focus, 1.5),
-      errorBorder: border(DoctorColors.red),
-      focusedErrorBorder: border(DoctorColors.red, 1.5),
-      border: border(const Color(0xFF26334D)),
+      enabledBorder: border(colors.border),
+      focusedBorder: border(colors.primary, 1.5),
+      errorBorder: border(colors.error),
+      focusedErrorBorder: border(colors.error, 1.5),
+      border: border(colors.border),
     );
   }
 }

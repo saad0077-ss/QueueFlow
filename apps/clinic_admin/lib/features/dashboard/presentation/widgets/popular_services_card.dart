@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class ServicePopularityItem {
   final String name;
@@ -19,14 +20,14 @@ class PopularServicesCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF10192D),
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xFF1E293B).withValues(alpha: 0.8),
-        ),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -36,7 +37,7 @@ class PopularServicesCard extends StatelessWidget {
             style: GoogleFonts.inter(
               fontSize: 15,
               fontWeight: FontWeight.w600,
-              color: Colors.white,
+              color: colors.textPrimary,
             ),
           ),
           const SizedBox(height: 16),
@@ -61,7 +62,7 @@ class PopularServicesCard extends StatelessWidget {
                           style: GoogleFonts.inter(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
-                            color: const Color(0xFFE2E8F0),
+                            color: colors.textPrimary,
                           ),
                         ),
                       ),
@@ -71,7 +72,7 @@ class PopularServicesCard extends StatelessWidget {
                         style: GoogleFonts.inter(
                           fontSize: 11.5,
                           fontWeight: FontWeight.w500,
-                          color: const Color(0xFF64748B),
+                          color: colors.textMuted,
                         ),
                       ),
                     ],
@@ -81,7 +82,7 @@ class PopularServicesCard extends StatelessWidget {
                     height: 4,
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1E293B),
+                      color: colors.surfaceSecondary,
                       borderRadius: BorderRadius.circular(2),
                     ),
                     alignment: Alignment.centerLeft,

@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
+﻿import 'package:firebase_auth/firebase_auth.dart';
 import '../../domain/entities/admin_entity.dart';
 
 class AdminModel extends AdminEntity {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../domain/entities/clinic_doctor_item.dart';
 
 class ClinicDoctorItemTile extends StatelessWidget {
@@ -15,12 +15,14 @@ class ClinicDoctorItemTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-        color: AppColors.darkSurface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.darkBorder, width: 1.5),
+        border: Border.all(color: colors.border, width: 1.5),
       ),
       child: Material(
         color: Colors.transparent,
@@ -33,13 +35,13 @@ class ClinicDoctorItemTile extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 22,
-                  backgroundColor: AppColors.primary.withValues(alpha: 0.18),
+                  backgroundColor: colors.primaryTint,
                   child: Text(
                     doctor.initials,
                     style: GoogleFonts.inter(
                       fontSize: 13,
                       fontWeight: FontWeight.w800,
-                      color: AppColors.primaryLight,
+                      color: colors.primary,
                     ),
                   ),
                 ),
@@ -53,7 +55,7 @@ class ClinicDoctorItemTile extends StatelessWidget {
                         style: GoogleFonts.inter(
                           fontSize: 13.5,
                           fontWeight: FontWeight.w700,
-                          color: AppColors.darkInk,
+                          color: colors.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -61,13 +63,13 @@ class ClinicDoctorItemTile extends StatelessWidget {
                         doctor.title,
                         style: GoogleFonts.inter(
                           fontSize: 11.5,
-                          color: AppColors.darkInkMuted,
+                          color: colors.textMuted,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 6),
-                      _buildSchedulePill(doctor.schedule),
+                      _buildSchedulePill(doctor.schedule, colors),
                     ],
                   ),
                 ),
@@ -79,11 +81,11 @@ class ClinicDoctorItemTile extends StatelessWidget {
     );
   }
 
-  Widget _buildSchedulePill(String schedule) {
+  Widget _buildSchedulePill(String schedule, AppColorsExtension colors) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: AppColors.success.withValues(alpha: 0.12),
+        color: colors.badgeOpenBg,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -92,8 +94,8 @@ class ClinicDoctorItemTile extends StatelessWidget {
           Container(
             width: 5,
             height: 5,
-            decoration: const BoxDecoration(
-              color: AppColors.success,
+            decoration: BoxDecoration(
+              color: colors.badgeOpenText,
               shape: BoxShape.circle,
             ),
           ),
@@ -102,8 +104,8 @@ class ClinicDoctorItemTile extends StatelessWidget {
             schedule,
             style: GoogleFonts.inter(
               fontSize: 10.5,
-              fontWeight: FontWeight.w600,
-              color: AppColors.success,
+              fontWeight: FontWeight.w700,
+              color: colors.badgeOpenText,
             ),
           ),
         ],

@@ -1,4 +1,4 @@
-import '../entities/clinic_queue_entity.dart';
+﻿import '../entities/clinic_queue_entity.dart';
 
 /// Contract interface for clinic dashboard and live queue operations.
 abstract class ClinicDashboardRepository {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class ClinicBottomActions extends StatelessWidget {
   final VoidCallback onBookAppointment;
@@ -16,6 +16,8 @@ class ClinicBottomActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16),
       child: Column(
@@ -26,11 +28,11 @@ class ClinicBottomActions extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: AppColors.primaryGradient,
               borderRadius: BorderRadius.circular(14),
-              boxShadow: const [
+              boxShadow: [
                 BoxShadow(
-                  color: Color(0x402563EB),
+                  color: colors.primary.withValues(alpha: 0.35),
                   blurRadius: 16,
-                  offset: Offset(0, 4),
+                  offset: const Offset(0, 4),
                 ),
               ],
             ),
@@ -57,9 +59,9 @@ class ClinicBottomActions extends StatelessWidget {
             width: double.infinity,
             height: 48,
             decoration: BoxDecoration(
-              color: AppColors.darkSurface,
+              color: colors.surface,
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: AppColors.darkBorder, width: 1.5),
+              border: Border.all(color: colors.border, width: 1.5),
             ),
             child: Material(
               color: Colors.transparent,
@@ -70,10 +72,10 @@ class ClinicBottomActions extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.confirmation_number_outlined,
                         size: 18,
-                        color: AppColors.primaryLight,
+                        color: colors.primary,
                       ),
                       const SizedBox(width: 8),
                       Text(
@@ -81,7 +83,7 @@ class ClinicBottomActions extends StatelessWidget {
                         style: GoogleFonts.inter(
                           fontSize: 14.5,
                           fontWeight: FontWeight.w700,
-                          color: AppColors.darkInk,
+                          color: colors.textPrimary,
                         ),
                       ),
                     ],

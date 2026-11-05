@@ -1,4 +1,4 @@
-import 'package:equatable/equatable.dart';
+﻿import 'package:equatable/equatable.dart';
 import '../../domain/entities/clinic_queue_entity.dart';
 
 /// Base class for all Clinic Dashboard events.

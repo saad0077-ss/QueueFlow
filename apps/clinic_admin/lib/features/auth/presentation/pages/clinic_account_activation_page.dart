@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../dashboard/presentation/pages/clinic_dashboard_page.dart';
@@ -42,44 +43,48 @@ class _AccountActivationView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDesktop = MediaQuery.sizeOf(context).width >= 900;
+    final colors = context.colors;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF070B14),
-      body: BlocConsumer<AccountActivationBloc, AccountActivationState>(
-        listener: (context, state) {
-          if (state.activatedStaff != null) {
-            AppSnackBar.showSuccess(context, message: 'Account activated.');
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (_) => const ClinicDashboardPage()),
-            );
-          }
-          if (state.errorMessage != null) {
-            AppSnackBar.showError(context, message: state.errorMessage!);
-          }
-        },
-        builder: (context, state) => Row(
-          children: [
-            if (isDesktop)
-              const Expanded(
-                flex: 5,
-                child: ClinicHeroBanner(
-                  tagline: "You're almost in. Set a password to activate your\naccount.",
-                ),
-              ),
-            Expanded(
-              flex: isDesktop ? 6 : 1,
-              child: Center(
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: isDesktop ? 64 : 24,
-                    vertical: 32,
+      backgroundColor: colors.background,
+      body: Stack(
+        children: [
+          BlocConsumer<AccountActivationBloc, AccountActivationState>(
+            listener: (context, state) {
+              if (state.activatedStaff != null) {
+                AppSnackBar.showSuccess(context, message: 'Account activated.');
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (_) => const ClinicDashboardPage()),
+                );
+              }
+              if (state.errorMessage != null) {
+                AppSnackBar.showError(context, message: state.errorMessage!);
+              }
+            },
+            builder: (context, state) => Row(
+              children: [
+                if (isDesktop) const Expanded(flex: 5, child: ClinicHeroBanner()),
+                Expanded(
+                  flex: isDesktop ? 6 : 1,
+                  child: Center(
+                    child: SingleChildScrollView(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isDesktop ? 64 : 24,
+                        vertical: 36,
+                      ),
+                      child: ClinicAccountActivationForm(state: state),
+                    ),
                   ),
-                  child: ClinicAccountActivationForm(state: state),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
+          ),
+          const Positioned(
+            top: 20,
+            right: 20,
+            child: ThemeModeToggleButton(),
+          ),
+        ],
       ),
     );
   }

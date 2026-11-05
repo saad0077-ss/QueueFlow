@@ -1,4 +1,4 @@
-import 'package:equatable/equatable.dart';
+﻿import 'package:equatable/equatable.dart';
 
 /// A practicing doctor registered on the clinic, assignable to services.
 class ClinicDoctorEntity extends Equatable {

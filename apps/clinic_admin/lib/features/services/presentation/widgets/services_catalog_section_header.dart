@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'service_ui_kit.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class ServicesCatalogSectionHeader extends StatelessWidget {
   final int count;
@@ -9,6 +9,8 @@ class ServicesCatalogSectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Wrap(
       alignment: WrapAlignment.spaceBetween,
       crossAxisAlignment: WrapCrossAlignment.center,
@@ -20,13 +22,13 @@ class ServicesCatalogSectionHeader extends StatelessWidget {
           style: GoogleFonts.inter(
             fontSize: 13,
             fontWeight: FontWeight.w800,
-            color: const Color(0xFFCBD5E1),
+            color: colors.textPrimary,
             letterSpacing: 0.6,
           ),
         ),
         Text(
           '$count Service${count == 1 ? '' : 's'} Configured',
-          style: GoogleFonts.inter(fontSize: 12.5, color: ServiceColors.muted),
+          style: GoogleFonts.inter(fontSize: 12.5, color: colors.textMuted),
         ),
       ],
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../../core/layout/clinic_breakpoints.dart';
 import 'queue_stat_card.dart';
 
@@ -14,14 +15,16 @@ class DashboardStatsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     final cards = <Widget>[
       // 1. Today's Appointments
-      const QueueStatCard(
+      QueueStatCard(
         title: "Today's Appointments",
         value: '8',
         icon: Icons.assignment_outlined,
-        iconColor: Color(0xFF38BDF8),
-        iconBgColor: Color(0xFF172554),
+        iconColor: colors.info,
+        iconBgColor: colors.infoTint,
       ),
 
       // 2. Customers Waiting
@@ -29,26 +32,26 @@ class DashboardStatsRow extends StatelessWidget {
         title: 'Customers Waiting',
         value: '$waitingCount',
         icon: Icons.people_outline_rounded,
-        iconColor: const Color(0xFF10B981),
-        iconBgColor: const Color(0xFF064E3B),
+        iconColor: colors.success,
+        iconBgColor: colors.successTint,
       ),
 
       // 3. Customers Served
-      const QueueStatCard(
+      QueueStatCard(
         title: 'Customers Served',
         value: '22',
         icon: Icons.check_rounded,
-        iconColor: Color(0xFF10B981),
-        iconBgColor: Color(0xFF064E3B),
+        iconColor: colors.primary,
+        iconBgColor: colors.primaryTint,
       ),
 
       // 4. Average Wait Time
-      const QueueStatCard(
+      QueueStatCard(
         title: 'Average Wait Time',
         value: '18 min',
         icon: Icons.access_time_rounded,
-        iconColor: Color(0xFFF59E0B),
-        iconBgColor: Color(0xFF451A03),
+        iconColor: colors.warning,
+        iconBgColor: colors.warningTint,
       ),
     ];
 

@@ -1,4 +1,4 @@
-import 'package:equatable/equatable.dart';
+﻿import 'package:equatable/equatable.dart';
 import 'doctor_daily_schedule.dart';
 import 'doctor_review_entity.dart';
 

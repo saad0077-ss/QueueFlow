@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 import 'accent_border_card.dart';
 
@@ -28,6 +29,7 @@ class DepartmentApprovalQueue extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final total = expansionRequests.length + serviceRequests.length;
 
     return AccentBorderCard(
@@ -57,12 +59,12 @@ class DepartmentApprovalQueue extends StatelessWidget {
                       children: [
                         Text(
                           'Clinic Service & Specialty Approval Requests',
-                          style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
+                          style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.bold, color: colors.textPrimary),
                         ),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                           decoration: BoxDecoration(
-                            color: (total > 0 ? const Color(0xFFF59E0B) : const Color(0xFF10B981)).withValues(alpha: 0.15),
+                            color: (total > 0 ? const Color(0xFFF59E0B) : colors.success).withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
@@ -70,7 +72,7 @@ class DepartmentApprovalQueue extends StatelessWidget {
                             style: GoogleFonts.inter(
                               fontSize: 10.5,
                               fontWeight: FontWeight.w700,
-                              color: total > 0 ? const Color(0xFFF59E0B) : const Color(0xFF10B981),
+                              color: total > 0 ? const Color(0xFFF59E0B) : colors.success,
                             ),
                           ),
                         ),
@@ -79,14 +81,14 @@ class DepartmentApprovalQueue extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       "Clinics requesting new treatments/procedures. Once approved, the service is activated for the clinic and added to the Department's catalog.",
-                      style: GoogleFonts.inter(fontSize: 12, color: const Color(0xFF94A3B8)),
+                      style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted),
                     ),
                   ],
                 ),
               ),
               if (MediaQuery.sizeOf(context).width >= 1100) ...[
                 const SizedBox(width: 12),
-                Text('Governed Medical Catalog Engine • Active', style: GoogleFonts.inter(fontSize: 11.5, color: const Color(0xFF64748B))),
+                Text('Governed Medical Catalog Engine • Active', style: GoogleFonts.inter(fontSize: 11.5, color: colors.textMuted)),
               ],
             ],
           ),
@@ -97,9 +99,9 @@ class DepartmentApprovalQueue extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: const Color(0xFF070B14),
+                color: colors.surfaceSecondary,
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: const Color(0xFF1E293B)),
+                border: Border.all(color: colors.border),
               ),
               child: RichText(
                 textAlign: TextAlign.center,
@@ -108,11 +110,11 @@ class DepartmentApprovalQueue extends StatelessWidget {
                   children: [
                     TextSpan(
                       text: '✓ All clinic requests reviewed! ',
-                      style: GoogleFonts.inter(color: const Color(0xFF10B981), fontWeight: FontWeight.bold),
+                      style: GoogleFonts.inter(color: colors.success, fontWeight: FontWeight.bold),
                     ),
                     TextSpan(
                       text: 'No pending multi-department expansion or custom service additions awaiting Super Admin approval.',
-                      style: GoogleFonts.inter(color: const Color(0xFF94A3B8)),
+                      style: GoogleFonts.inter(color: colors.textMuted),
                     ),
                   ],
                 ),

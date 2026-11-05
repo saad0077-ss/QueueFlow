@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class DepartmentsHeaderBar extends StatelessWidget {
   final int activeCount;
@@ -11,6 +12,8 @@ class DepartmentsHeaderBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final isCompact = constraints.maxWidth < 750;
@@ -24,13 +27,13 @@ class DepartmentsHeaderBar extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF10B981).withValues(alpha: 0.15),
+                    color: colors.badgeOpenBg,
                     borderRadius: BorderRadius.circular(6),
-                    border: Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.3)),
+                    border: Border.all(color: colors.success.withValues(alpha: 0.3)),
                   ),
                   child: Text(
                     'SPECIALTY MANAGEMENT',
-                    style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w700, color: const Color(0xFF10B981)),
+                    style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w700, color: colors.badgeOpenText),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -38,7 +41,7 @@ class DepartmentsHeaderBar extends StatelessWidget {
                   child: Text(
                     '$activeCount Active Specialties',
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.inter(fontSize: 12, color: const Color(0xFF94A3B8)),
+                    style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted),
                   ),
                 ),
               ],
@@ -46,12 +49,12 @@ class DepartmentsHeaderBar extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               'Platform Medical Departments',
-              style: GoogleFonts.inter(fontSize: 24, fontWeight: FontWeight.w800, color: Colors.white),
+              style: GoogleFonts.inter(fontSize: 24, fontWeight: FontWeight.w800, color: colors.textPrimary),
             ),
             const SizedBox(height: 2),
             Text(
               'Global clinical specialty catalog, multi-clinic department allocation, consultation rules and triage',
-              style: GoogleFonts.inter(fontSize: 13, color: const Color(0xFF94A3B8)),
+              style: GoogleFonts.inter(fontSize: 13, color: colors.textMuted),
             ),
           ],
         );
@@ -61,11 +64,11 @@ class DepartmentsHeaderBar extends StatelessWidget {
           runSpacing: 8,
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
-            _secondaryBtn('📥 Export CSV', onExportCsv),
-            _secondaryBtn('🔄 Refresh', onRefresh),
+            _secondaryBtn(colors, '📥 Export CSV', onExportCsv),
+            _secondaryBtn(colors, '🔄 Refresh', onRefresh),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF0284C7),
+                backgroundColor: colors.primary,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -93,12 +96,12 @@ class DepartmentsHeaderBar extends StatelessWidget {
     );
   }
 
-  Widget _secondaryBtn(String label, VoidCallback onPressed) {
+  Widget _secondaryBtn(AppColorsExtension colors, String label, VoidCallback onPressed) {
     return OutlinedButton(
       style: OutlinedButton.styleFrom(
-        backgroundColor: const Color(0xFF0D1526),
-        foregroundColor: const Color(0xFFE2E8F0),
-        side: const BorderSide(color: Color(0xFF1E293B)),
+        backgroundColor: colors.surface,
+        foregroundColor: colors.textPrimary,
+        side: BorderSide(color: colors.border),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),

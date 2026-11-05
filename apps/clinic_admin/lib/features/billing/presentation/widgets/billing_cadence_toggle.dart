@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class BillingCadenceToggle extends StatelessWidget {
   final String activeCadence; // 'monthly' | 'annual'
@@ -13,38 +14,41 @@ class BillingCadenceToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final isMonthly = activeCadence == 'monthly';
 
     return Column(
       children: [
         Text(
           'QueueFlow Subscription Plans',
-          style: GoogleFonts.inter(fontSize: 22, fontWeight: FontWeight.w800, color: Colors.white),
+          style: GoogleFonts.inter(fontSize: 22, fontWeight: FontWeight.w800, color: colors.textPrimary),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 6),
         Text(
           'Doctor-capacity based pricing for clinics of all sizes. Switch or upgrade anytime.',
-          style: GoogleFonts.inter(fontSize: 13, color: const Color(0xFF94A3B8)),
+          style: GoogleFonts.inter(fontSize: 13, color: colors.textMuted),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 18),
         Container(
           padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
-            color: const Color(0xFF0F172A),
+            color: colors.surfaceSecondary,
             borderRadius: BorderRadius.circular(30),
-            border: Border.all(color: const Color(0xFF1E293B)),
+            border: Border.all(color: colors.border),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               _toggleOption(
+                colors: colors,
                 label: 'Monthly',
                 isSelected: isMonthly,
                 onTap: () => onCadenceChanged('monthly'),
               ),
               _toggleOption(
+                colors: colors,
                 label: 'Annual',
                 badgeText: 'SAVE 20%',
                 isSelected: !isMonthly,
@@ -58,6 +62,7 @@ class BillingCadenceToggle extends StatelessWidget {
   }
 
   Widget _toggleOption({
+    required AppColorsExtension colors,
     required String label,
     String? badgeText,
     required bool isSelected,
@@ -69,7 +74,7 @@ class BillingCadenceToggle extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF2563EB) : Colors.transparent,
+          color: isSelected ? colors.primary : Colors.transparent,
           borderRadius: BorderRadius.circular(24),
         ),
         child: Row(
@@ -80,7 +85,7 @@ class BillingCadenceToggle extends StatelessWidget {
               style: GoogleFonts.inter(
                 fontSize: 12.5,
                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                color: isSelected ? Colors.white : const Color(0xFF94A3B8),
+                color: isSelected ? Colors.white : colors.textMuted,
               ),
             ),
             if (badgeText != null) ...[
@@ -88,7 +93,7 @@ class BillingCadenceToggle extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: isSelected ? Colors.white.withAlpha(50) : const Color(0xFF10B981).withAlpha(40),
+                  color: isSelected ? Colors.white.withAlpha(50) : colors.badgeOpenBg,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
@@ -96,7 +101,7 @@ class BillingCadenceToggle extends StatelessWidget {
                   style: GoogleFonts.inter(
                     fontSize: 9.5,
                     fontWeight: FontWeight.w800,
-                    color: isSelected ? Colors.white : const Color(0xFF34D399),
+                    color: isSelected ? Colors.white : colors.badgeOpenText,
                   ),
                 ),
               ),

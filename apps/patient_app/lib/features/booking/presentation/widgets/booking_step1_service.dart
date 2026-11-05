@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:patient_app/core/theme/app_colors.dart';
 import 'package:patient_app/core/widgets/gradient_button.dart';
 import 'package:patient_app/features/clinic_details/domain/entities/clinic_service_item.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class BookingStep1Service extends StatelessWidget {
   final List<ClinicServiceItem> services;
@@ -35,6 +35,8 @@ class BookingStep1Service extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -43,7 +45,7 @@ class BookingStep1Service extends StatelessWidget {
           style: GoogleFonts.inter(
             fontSize: 18,
             fontWeight: FontWeight.w800,
-            color: AppColors.darkInk,
+            color: colors.textPrimary,
           ),
         ),
         const SizedBox(height: 4),
@@ -51,7 +53,7 @@ class BookingStep1Service extends StatelessWidget {
           'Select the consultation or medical care you require.',
           style: GoogleFonts.inter(
             fontSize: 12.5,
-            color: AppColors.darkInkMuted,
+            color: colors.textMuted,
           ),
         ),
         const SizedBox(height: 16),
@@ -62,7 +64,7 @@ class BookingStep1Service extends StatelessWidget {
               child: Text(
                 'No services currently available for this clinic.',
                 style: GoogleFonts.inter(
-                  color: AppColors.darkInkMuted,
+                  color: colors.textMuted,
                   fontSize: 13,
                 ),
               ),
@@ -96,21 +98,22 @@ class BookingStep1Service extends StatelessWidget {
     ClinicServiceItem service,
     bool isSelected,
   ) {
+    final colors = context.colors;
     final iconData = _getServiceIcon(service.name, service.departmentName);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: AppColors.darkSurface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isSelected ? AppColors.primary : AppColors.darkBorder,
+          color: isSelected ? colors.primary : colors.border,
           width: isSelected ? 1.8 : 1.2,
         ),
         boxShadow: isSelected
             ? [
                 BoxShadow(
-                  color: AppColors.primary.withValues(alpha: 0.16),
+                  color: colors.primary.withValues(alpha: 0.16),
                   blurRadius: 14,
                   offset: const Offset(0, 4),
                 ),
@@ -131,18 +134,18 @@ class BookingStep1Service extends StatelessWidget {
                   height: 44,
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? AppColors.primary.withValues(alpha: 0.22)
-                        : AppColors.primary.withValues(alpha: 0.10),
+                        ? colors.primaryTint
+                        : colors.primary.withValues(alpha: 0.10),
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(
                       color: isSelected
-                          ? AppColors.primary.withValues(alpha: 0.4)
-                          : AppColors.primary.withValues(alpha: 0.15),
+                          ? colors.primary.withValues(alpha: 0.4)
+                          : colors.primary.withValues(alpha: 0.15),
                     ),
                   ),
                   child: Icon(
                     iconData,
-                    color: isSelected ? AppColors.primaryLight : AppColors.accentLight,
+                    color: isSelected ? colors.primary : colors.accent,
                     size: 22,
                   ),
                 ),
@@ -156,23 +159,23 @@ class BookingStep1Service extends StatelessWidget {
                         style: GoogleFonts.inter(
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
-                          color: AppColors.darkInk,
+                          color: colors.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Row(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.access_time_rounded,
                             size: 13,
-                            color: AppColors.darkInkMuted,
+                            color: colors.textMuted,
                           ),
                           const SizedBox(width: 4),
                           Text(
                             '${service.duration} min',
                             style: GoogleFonts.inter(
                               fontSize: 12,
-                              color: AppColors.darkInkMuted,
+                              color: colors.textMuted,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -182,7 +185,7 @@ class BookingStep1Service extends StatelessWidget {
                               '•  ${service.departmentName}',
                               style: GoogleFonts.inter(
                                 fontSize: 11.5,
-                                color: AppColors.darkInkFaint,
+                                color: colors.textSubtle,
                               ),
                             ),
                           ],
@@ -200,7 +203,7 @@ class BookingStep1Service extends StatelessWidget {
                       style: GoogleFonts.robotoMono(
                         fontSize: 15,
                         fontWeight: FontWeight.w800,
-                        color: isSelected ? AppColors.primaryLight : AppColors.darkInk,
+                        color: isSelected ? colors.primary : colors.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 6),
@@ -213,7 +216,7 @@ class BookingStep1Service extends StatelessWidget {
                         gradient: isSelected ? AppColors.primaryGradient : null,
                         color: isSelected ? null : Colors.transparent,
                         border: Border.all(
-                          color: isSelected ? Colors.transparent : AppColors.darkBorder,
+                          color: isSelected ? Colors.transparent : colors.border,
                           width: 1.5,
                         ),
                       ),

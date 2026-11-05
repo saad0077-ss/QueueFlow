@@ -1,6 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
+﻿import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../auth/presentation/pages/clinic_staff_login_page.dart';
 
 /// Doctor/Staff profile chip in the clinic top bar with a logout popup menu.
@@ -12,6 +13,7 @@ class ClinicProfileChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final user = FirebaseAuth.instance.currentUser;
     final displayName = user?.displayName?.trim();
     final name = (displayName != null && displayName.isNotEmpty)
@@ -26,11 +28,11 @@ class ClinicProfileChip extends StatelessWidget {
         .join();
 
     return PopupMenuButton<String>(
-      color: const Color(0xFF10192D),
+      color: colors.surfaceElevated,
       elevation: 6,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: const Color(0xFF1E293B).withValues(alpha: 0.9)),
+        side: BorderSide(color: colors.border),
       ),
       offset: const Offset(0, 48),
       onSelected: (value) async {
@@ -48,15 +50,15 @@ class ClinicProfileChip extends StatelessWidget {
           value: 'profile',
           child: Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.person_outline_rounded,
-                color: Color(0xFF94A3B8),
+                color: colors.textMuted,
                 size: 18,
               ),
               const SizedBox(width: 10),
               Text(
                 'Profile Settings',
-                style: GoogleFonts.inter(fontSize: 13, color: Colors.white),
+                style: GoogleFonts.inter(fontSize: 13, color: colors.textPrimary),
               ),
             ],
           ),
@@ -66,9 +68,9 @@ class ClinicProfileChip extends StatelessWidget {
           value: 'logout',
           child: Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.logout_rounded,
-                color: Color(0xFFEF4444),
+                color: colors.error,
                 size: 18,
               ),
               const SizedBox(width: 10),
@@ -76,7 +78,7 @@ class ClinicProfileChip extends StatelessWidget {
                 'Sign Out',
                 style: GoogleFonts.inter(
                   fontSize: 13,
-                  color: const Color(0xFFEF4444),
+                  color: colors.error,
                 ),
               ),
             ],
@@ -90,7 +92,7 @@ class ClinicProfileChip extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 18,
-              backgroundColor: const Color(0xFF0284C7),
+              backgroundColor: colors.primary,
               child: Text(
                 initials.isEmpty ? 'DR' : initials,
                 style: GoogleFonts.inter(
@@ -111,14 +113,14 @@ class ClinicProfileChip extends StatelessWidget {
                     style: GoogleFonts.inter(
                       fontSize: 13.5,
                       fontWeight: FontWeight.w700,
-                      color: Colors.white,
+                      color: colors.textPrimary,
                     ),
                   ),
                   Text(
                     'Clinic Admin',
                     style: GoogleFonts.inter(
                       fontSize: 11.5,
-                      color: const Color(0xFF94A3B8),
+                      color: colors.textMuted,
                     ),
                   ),
                 ],

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_colors.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 class ProfileStatsStrip extends StatelessWidget {
   final int visitsCount;
@@ -17,12 +17,14 @@ class ProfileStatsStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: AppColors.darkSurface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.darkBorder, width: 1),
+        border: Border.all(color: colors.border, width: 1),
       ),
       clipBehavior: Clip.antiAlias,
       child: IntrinsicHeight(
@@ -46,12 +48,12 @@ class ProfileStatsStrip extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 2),
-                      const Text(
+                      Text(
                         'Visits',
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
-                          color: AppColors.darkInkMuted,
+                          color: colors.textMuted,
                         ),
                       ),
                     ],
@@ -61,8 +63,8 @@ class ProfileStatsStrip extends StatelessWidget {
             ),
 
             // Divider
-            const VerticalDivider(
-              color: AppColors.darkBorder,
+            VerticalDivider(
+              color: colors.border,
               width: 1,
               thickness: 1,
             ),
@@ -85,12 +87,12 @@ class ProfileStatsStrip extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 2),
-                      const Text(
+                      Text(
                         'Favorites',
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
-                          color: AppColors.darkInkMuted,
+                          color: colors.textMuted,
                         ),
                       ),
                     ],

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 /// The official QueueFlow app icon badge matching brand identity.
-/// Features the signature blue rounded squircle with the teal circle accent.
+/// In light mode, renders the brand asset image queueflow_icon.png.
+/// In dark mode, features the signature blue rounded squircle with the teal circle accent.
 class AppIconBadge extends StatelessWidget {
   final double size;
 
@@ -9,7 +11,21 @@ class AppIconBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final double radius = size * 0.28;
+
+    if (!colors.isDark) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(radius),
+        child: Image.asset(
+          'assets/images/queueflow_icon.png',
+          width: size,
+          height: size,
+          fit: BoxFit.contain,
+        ),
+      );
+    }
+
     final double circleDiameter = size * 0.44;
 
     return ClipRRect(
