@@ -40,6 +40,9 @@ class ClinicAdminApp extends StatelessWidget {
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             themeMode: themeState.themeMode,
+            themeAnimationDuration: Duration.zero,
+            builder: (context, child) =>
+                ThemeWaveScope(child: child ?? const SizedBox.shrink()),
             home: StreamBuilder<User?>(
               initialData: FirebaseAuth.instance.currentUser,
               stream: FirebaseAuth.instance.authStateChanges(),

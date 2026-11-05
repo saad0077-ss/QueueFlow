@@ -31,6 +31,7 @@ class AppointmentStatusPill extends StatelessWidget {
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: textColor.withValues(alpha: 0.35)),
       ),
       child: Text(
         status,

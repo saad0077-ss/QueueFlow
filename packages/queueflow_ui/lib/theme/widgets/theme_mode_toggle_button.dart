@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'theme_wave_scope.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../app_colors_extension.dart';
 import '../bloc/theme_bloc.dart';
@@ -24,7 +25,14 @@ class ThemeModeToggleButton extends StatelessWidget {
           message: tooltip,
           child: InkWell(
             onTap: () {
-              context.read<ThemeBloc>().add(const ThemeToggleRequested());
+              final box = context.findRenderObject() as RenderBox;
+              final origin = box.localToGlobal(box.size.center(Offset.zero));
+              final bloc = context.read<ThemeBloc>();
+              ThemeWaveScope.run(
+                context,
+                origin: origin, 
+                applyTheme: () => bloc.add(const ThemeToggleRequested()),
+              );
             },
             borderRadius: BorderRadius.circular(10),
             child: Container(

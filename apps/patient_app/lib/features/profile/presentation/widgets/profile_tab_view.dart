@@ -63,23 +63,23 @@ class _ProfileTabConsumer extends StatelessWidget {
     showDialog(
       context: context,
       builder: (dialogCtx) => AlertDialog(
-        backgroundColor: AppColors.darkSurface,
+        backgroundColor: context.colors.surfaceElevated,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: const BorderSide(color: AppColors.darkBorder, width: 1),
+          side: BorderSide(color: context.colors.border, width: 1),
         ),
-        title: const Text(
+        title: Text(
           'Log out',
-          style: TextStyle(color: AppColors.darkInk, fontWeight: FontWeight.w800),
+          style: TextStyle(color: context.colors.textPrimary, fontWeight: FontWeight.w800),
         ),
-        content: const Text(
+        content: Text(
           'Are you sure you want to log out of your QueueFlow account?',
-          style: TextStyle(color: AppColors.darkInkMuted, fontSize: 13),
+          style: TextStyle(color: context.colors.textMuted, fontSize: 13),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogCtx).pop(),
-            child: const Text('Cancel', style: TextStyle(color: AppColors.darkInkMuted)),
+            child: Text('Cancel', style: TextStyle(color: context.colors.textMuted)),
           ),
           ElevatedButton(
             onPressed: () {
@@ -101,29 +101,29 @@ class _ProfileTabConsumer extends StatelessWidget {
     showDialog(
       context: context,
       builder: (dialogCtx) => AlertDialog(
-        backgroundColor: AppColors.darkSurface,
+        backgroundColor: context.colors.surfaceElevated,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
-          side: const BorderSide(color: AppColors.darkBorder, width: 1),
+          side: BorderSide(color: context.colors.border, width: 1),
         ),
-        title: const Row(
+        title: Row(
           children: [
             Icon(Icons.warning_amber_rounded, color: AppColors.error, size: 22),
             SizedBox(width: 8),
             Text(
               'Delete Account',
-              style: TextStyle(color: AppColors.darkInk, fontWeight: FontWeight.w800),
+              style: TextStyle(color: context.colors.textPrimary, fontWeight: FontWeight.w800),
             ),
           ],
         ),
-        content: const Text(
+        content: Text(
           'Are you sure you want to permanently delete your account? All your queue history and tokens will be reset.',
-          style: TextStyle(color: AppColors.darkInkMuted, fontSize: 13),
+          style: TextStyle(color: context.colors.textMuted, fontSize: 13),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogCtx).pop(),
-            child: const Text('Cancel', style: TextStyle(color: AppColors.darkInkMuted)),
+            child: Text('Cancel', style: TextStyle(color: context.colors.textMuted)),
           ),
           ElevatedButton(
             onPressed: () {
@@ -175,9 +175,9 @@ class _ProfileTabConsumer extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
+                Text(
                   'Could not load profile',
-                  style: TextStyle(color: AppColors.darkInk, fontSize: 15, fontWeight: FontWeight.w700),
+                  style: TextStyle(color: context.colors.textPrimary, fontSize: 15, fontWeight: FontWeight.w700),
                 ),
                 const SizedBox(height: 12),
                 ElevatedButton(
@@ -197,7 +197,7 @@ class _ProfileTabConsumer extends StatelessWidget {
             bloc.add(const ProfileLoadRequested());
           },
           color: AppColors.primary,
-          backgroundColor: AppColors.darkSurface,
+          backgroundColor: context.colors.surfaceElevated,
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -280,11 +280,11 @@ class _ProfileTabConsumer extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              const SizedBox(width: 4),
-                              const Icon(
+                              SizedBox(width: 4),
+                              Icon(
                                 Icons.chevron_right_rounded,
                                 size: 18,
-                                color: AppColors.darkInkFaint,
+                                color: context.colors.textSubtle,
                               ),
                             ],
                           ),
@@ -305,16 +305,16 @@ class _ProfileTabConsumer extends StatelessWidget {
                             children: [
                               Text(
                                 '${state.favoriteClinics.length} Clinics',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 12,
-                                  color: AppColors.darkInkMuted,
+                                  color: context.colors.textMuted,
                                 ),
                               ),
-                              const SizedBox(width: 4),
-                              const Icon(
+                              SizedBox(width: 4),
+                              Icon(
                                 Icons.chevron_right_rounded,
                                 size: 18,
-                                color: AppColors.darkInkFaint,
+                                color: context.colors.textSubtle,
                               ),
                             ],
                           ),

@@ -205,7 +205,7 @@ class DoctorCard extends StatelessWidget {
                               : 'Inactive. Hidden from patient booking and the live queue.',
                           style: GoogleFonts.inter(
                             fontSize: 11,
-                            color: const Color(0xFFE2E8F0),
+                            color: colors.textPrimary,
                             height: 1.3,
                           ),
                         ),
