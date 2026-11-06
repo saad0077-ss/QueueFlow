@@ -21,7 +21,7 @@ class QuickActionsCard extends StatelessWidget {
     final colors = context.colors;
 
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
         color: colors.surface,
         borderRadius: BorderRadius.circular(16),
@@ -33,8 +33,8 @@ class QuickActionsCard extends StatelessWidget {
           Text(
             'Quick actions',
             style: GoogleFonts.inter(
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
+              fontSize: 15.5,
+              fontWeight: FontWeight.w700,
               color: colors.textPrimary,
             ),
           ),
@@ -43,6 +43,7 @@ class QuickActionsCard extends StatelessWidget {
           // Add Walk-In Patient Button
           _buildActionButton(
             label: 'Add Walk-In Patient',
+            bgColor: colors.surfaceSecondary,
             borderColor: colors.border,
             textColor: colors.textPrimary,
             onTap: onAddWalkIn,
@@ -53,6 +54,7 @@ class QuickActionsCard extends StatelessWidget {
           // Create Appointment Button
           _buildActionButton(
             label: 'Create Appointment',
+            bgColor: colors.surfaceSecondary,
             borderColor: colors.border,
             textColor: colors.textPrimary,
             onTap: onCreateAppointment,
@@ -63,6 +65,7 @@ class QuickActionsCard extends StatelessWidget {
           // Pause Live Queue Button
           _buildActionButton(
             label: isQueuePaused ? 'Resume Live Queue' : 'Pause Live Queue',
+            bgColor: colors.warningTint.withValues(alpha: 0.3),
             borderColor: colors.warning,
             textColor: colors.warning,
             onTap: onTogglePauseQueue,
@@ -74,27 +77,28 @@ class QuickActionsCard extends StatelessWidget {
 
   Widget _buildActionButton({
     required String label,
+    required Color bgColor,
     required Color borderColor,
     required Color textColor,
     VoidCallback? onTap,
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
+      borderRadius: BorderRadius.circular(10),
       child: Container(
-        height: 38,
+        height: 40,
         width: double.infinity,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
+          color: bgColor,
+          borderRadius: BorderRadius.circular(10),
           border: Border.all(color: borderColor, width: 1.2),
-          color: Colors.transparent,
         ),
         child: Text(
           label,
           style: GoogleFonts.inter(
             fontSize: 12.5,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w600,
             color: textColor,
           ),
         ),

@@ -1,4 +1,4 @@
-﻿import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../domain/entities/clinic_queue_entity.dart';
 
 /// Data model representing the clinic queue with Firestore serialization.
@@ -19,9 +19,9 @@ class ClinicQueueModel extends ClinicQueueEntity {
     final data = doc.data() as Map<String, dynamic>;
     final rawToken = data['currentToken'] as String?;
     final currentToken = (rawToken == null || rawToken.isEmpty || rawToken == '---')
-        ? 'A-029'
+        ? '---'
         : rawToken;
-    final totalIssued = data['totalIssued'] as int? ?? 29;
+    final totalIssued = data['totalIssued'] as int? ?? 0;
     final waitingCount = data['waitingCount'] as int? ?? 0;
     final status = data['status'] as String? ?? 'open';
     final isPaused = status == 'paused';

@@ -1,4 +1,4 @@
-﻿import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
@@ -14,6 +14,7 @@ import '../bloc/clinic_dashboard_event.dart';
 import '../bloc/clinic_dashboard_state.dart';
 import '../widgets/clinic_account_removal_guard.dart';
 import '../widgets/clinic_dashboard_content_switcher.dart';
+import '../widgets/clinic_profile_chip.dart';
 import '../widgets/clinic_sidebar.dart';
 import '../widgets/clinic_top_bar.dart';
 
@@ -44,7 +45,7 @@ class _ClinicDashboardView extends StatelessWidget {
     final user = FirebaseAuth.instance.currentUser;
     final doctorName = user?.displayName?.trim().isNotEmpty == true
         ? user!.displayName!
-        : 'Dr. Priya';
+        : '';
 
     final isMobile = ClinicBreakpoints.isMobile(context);
     final isDesktop = ClinicBreakpoints.isDesktop(context);
@@ -79,6 +80,10 @@ class _ClinicDashboardView extends StatelessWidget {
                         onItemTap: (nav) {
                           Navigator.of(drawerContext).pop();
                           bloc.add(DashboardNavTabChanged(nav));
+                        },
+                        onSignOut: () {
+                          Navigator.of(drawerContext).pop();
+                          clinicSignOut(context);
                         },
                       ),
                     ),
