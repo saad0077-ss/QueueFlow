@@ -1,4 +1,5 @@
 import 'dart:async';
+import '../models/sample_appointments_seed.dart';
 import '../../domain/entities/clinic_appointment_entity.dart';
 import '../../domain/repositories/clinic_appointments_repository.dart';
 
@@ -10,7 +11,7 @@ class ClinicAppointmentsRepositoryImpl implements ClinicAppointmentsRepository {
   ClinicAppointmentsRepositoryImpl({
     List<ClinicAppointmentEntity>? initialData,
   }) {
-    if (initialData != null) _appointments.addAll(initialData);
+    _appointments.addAll(initialData ?? getInitialAppointmentsSeed());
   }
 
   @override

@@ -239,6 +239,58 @@ class _ClinicAppointmentsBody extends StatelessWidget {
           );
         }
 
+        // Detail view replaces the list (not an overlay), so it takes its
+        // natural height and the page scrolls instead of being clipped.
+        if (state.selectedAppointment != null) {
+          return AppointmentDetailPage(
+            appointment: state.selectedAppointment!,
+            onBack: () => bloc.add(const SelectAppointment(null)),
+            onCheckIn: () {
+              bloc.add(CheckInAppointment(state.selectedAppointment!.id));
+              AppSnackBar.showSuccess(
+                context,
+                message:
+                    'Patient #${state.selectedAppointment!.bookingId} checked in.',
+              );
+            },
+            onComplete: () {
+              bloc.add(CompleteAppointment(state.selectedAppointment!.id));
+              AppSnackBar.showSuccess(
+                context,
+                message:
+                    'Appointment #${state.selectedAppointment!.bookingId} marked as completed.',
+              );
+            },
+            onReschedule: () {
+              RescheduleAppointmentDialog.show(
+                context,
+                appointment: state.selectedAppointment!,
+                onReschedule: (newDate, newTime) {
+                  bloc.add(
+                    RescheduleAppointment(
+                      id: state.selectedAppointment!.id,
+                      newDate: newDate,
+                      newTime: newTime,
+                    ),
+                  );
+                  AppSnackBar.showSuccess(
+                    context,
+                    message:
+                        'Appointment #${state.selectedAppointment!.bookingId} rescheduled to $newDate · $newTime',
+                  );
+                },
+              );
+            },
+            onCancel: () {
+              _confirmCancelAppointment(
+                context,
+                bloc,
+                state.selectedAppointment!,
+              );
+            },
+          );
+        }
+
         final filtered = state.filteredAppointments;
 
         return Stack(
@@ -334,65 +386,6 @@ class _ClinicAppointmentsBody extends StatelessWidget {
                 ],
               ),
             ),
-
-            // Full-screen Appointment Detail Page
-            if (state.selectedAppointment != null)
-              Positioned.fill(
-                child: Container(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                  child: AppointmentDetailPage(
-                    appointment: state.selectedAppointment!,
-                    onBack: () => bloc.add(const SelectAppointment(null)),
-                    onCheckIn: () {
-                      bloc.add(
-                        CheckInAppointment(state.selectedAppointment!.id),
-                      );
-                      AppSnackBar.showSuccess(
-                        context,
-                        message:
-                            'Patient #${state.selectedAppointment!.bookingId} checked in.',
-                      );
-                    },
-                    onComplete: () {
-                      bloc.add(
-                        CompleteAppointment(state.selectedAppointment!.id),
-                      );
-                      AppSnackBar.showSuccess(
-                        context,
-                        message:
-                            'Appointment #${state.selectedAppointment!.bookingId} marked as completed.',
-                      );
-                    },
-                    onReschedule: () {
-                      RescheduleAppointmentDialog.show(
-                        context,
-                        appointment: state.selectedAppointment!,
-                        onReschedule: (newDate, newTime) {
-                          bloc.add(
-                            RescheduleAppointment(
-                              id: state.selectedAppointment!.id,
-                              newDate: newDate,
-                              newTime: newTime,
-                            ),
-                          );
-                          AppSnackBar.showSuccess(
-                            context,
-                            message:
-                                'Appointment #${state.selectedAppointment!.bookingId} rescheduled to $newDate · $newTime',
-                          );
-                        },
-                      );
-                    },
-                    onCancel: () {
-                      _confirmCancelAppointment(
-                        context,
-                        bloc,
-                        state.selectedAppointment!,
-                      );
-                    },
-                  ),
-                ),
-              ),
           ],
         );
       },

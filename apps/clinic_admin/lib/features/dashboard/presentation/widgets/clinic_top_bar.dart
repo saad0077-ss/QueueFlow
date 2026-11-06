@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 import 'clinic_notification_button.dart';
 import 'clinic_profile_chip.dart';
@@ -66,18 +66,18 @@ class ClinicTopBar extends StatelessWidget {
 
         const Spacer(),
 
+        // Theme Toggle Button
+        const ThemeModeToggleButton(),
+
+        SizedBox(width: compact ? 4 : 8),
+
         // Notifications Button
         const ClinicNotificationButton(),
 
         SizedBox(width: compact ? 4 : 8),
 
-        // Admin Profile Chip with Sign Out Menu
+        // Clinic profile chip with sign out menu
         ClinicProfileChip(compact: compact),
-
-        SizedBox(width: compact ? 4 : 8),
-
-        // Theme Toggle Button (at the end of the bar)
-        const ThemeModeToggleButton(),
       ],
     );
   }

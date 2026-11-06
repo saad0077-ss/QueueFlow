@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 import 'clinic_sidebar_logo.dart';
 import 'clinic_sidebar_nav_item.dart';
@@ -8,6 +8,9 @@ class ClinicSidebar extends StatelessWidget {
   final String activeItem;
   final ValueChanged<String>? onItemTap;
 
+  /// When set, a Sign out button is pinned to the bottom.
+  final VoidCallback? onSignOut;
+
   /// Shows an icon-only rail instead of the full labelled sidebar.
   final bool compact;
 
@@ -15,6 +18,7 @@ class ClinicSidebar extends StatelessWidget {
     super.key,
     this.activeItem = 'Dashboard',
     this.onItemTap,
+    this.onSignOut,
     this.compact = false,
   });
 
@@ -67,6 +71,20 @@ class ClinicSidebar extends StatelessWidget {
               },
             ),
           ),
+
+          if (onSignOut != null) ...[
+            Divider(height: 1, color: colors.border),
+            Padding(
+              padding: EdgeInsets.all(compact ? 12 : 14),
+              child: ClinicSidebarNavItem(
+                title: 'Sign Out',
+                icon: Icons.logout_rounded,
+                isActive: false,
+                compact: compact,
+                onTap: onSignOut!,
+              ),
+            ),
+          ],
         ],
       ),
     );

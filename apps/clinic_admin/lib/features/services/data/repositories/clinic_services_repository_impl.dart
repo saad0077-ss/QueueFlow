@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../../../core/services/current_clinic_resolver.dart';
@@ -77,6 +77,9 @@ class ClinicServicesRepositoryImpl implements ClinicServicesRepository {
   }
 
   Future<String> _clinicId() async => (await _clinicDoc()).id;
+
+  /// Id of the clinic managed by the signed-in admin.
+  Future<String> currentClinicId() => _clinicId();
 
   @override
   Stream<List<ClinicServiceEntity>> watchServices() {
