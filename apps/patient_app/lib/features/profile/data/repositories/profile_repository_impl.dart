@@ -20,7 +20,6 @@ class ProfileRepositoryImpl implements ProfileRepository {
   PatientProfileModel? _cachedProfile;
   List<PatientReviewModel>? _cachedReviews;
   List<SupportTicketModel>? _cachedTickets;
-  List<FavoriteClinicModel>? _cachedFavorites;
 
   ProfileRepositoryImpl({
     FirebaseFirestore? firestore,
@@ -201,11 +200,22 @@ class ProfileRepositoryImpl implements ProfileRepository {
 
   @override
   Future<List<FavoriteClinicEntity>> getFavoriteClinics() async {
-    if (_cachedFavorites != null) {
-      return _cachedFavorites!;
+    final user = _auth?.currentUser;
+    if (user == null || _firestore == null) return const [];
+    try {
+      final data = (await _firestore.collection('users').doc(user.uid).get()).data();
+      final favs = data?['favoriteClinics'];
+      if (favs is! Map) return const [];
+      final list = <FavoriteClinicModel>[];
+      for (final v in favs.values) {
+        if (v is Map) list.add(FavoriteClinicModel.fromJson(Map<String, dynamic>.from(v)));
+      }
+      list.sort((a, b) => a.name.compareTo(b.name));
+      return list;
+    } catch (e) {
+      debugPrint('Error loading favorite clinics: $e');
+      return const [];
     }
-    _cachedFavorites = List.from(FavoriteClinicModel.defaultFavorites);
-    return _cachedFavorites!;
   }
 
   @override
@@ -436,7 +446,6 @@ class ProfileRepositoryImpl implements ProfileRepository {
     _cachedProfile = null;
     _cachedReviews = null;
     _cachedTickets = null;
-    _cachedFavorites = null;
     try {
       await _auth?.signOut();
     } catch (e) {
@@ -449,7 +458,6 @@ class ProfileRepositoryImpl implements ProfileRepository {
     _cachedProfile = null;
     _cachedReviews = null;
     _cachedTickets = null;
-    _cachedFavorites = null;
     try {
       final user = _auth?.currentUser;
       if (user != null) {

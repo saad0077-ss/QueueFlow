@@ -1,9 +1,11 @@
 import 'dart:math';
+import 'package:flutter/material.dart' show DateUtils;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:patient_app/core/utils/booking_date_formatter.dart';
 import 'package:patient_app/features/clinic_details/domain/entities/clinic_doctor_item.dart';
+import 'package:patient_app/features/clinic_details/domain/entities/clinic_service_item.dart';
 import 'package:patient_app/features/booking/domain/entities/appointment_entity.dart';
 import 'package:patient_app/features/booking/domain/repositories/booking_repository.dart';
 import 'package:patient_app/features/booking/domain/usecases/create_appointment_usecase.dart';
@@ -63,12 +65,6 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
         event.clinic.category,
       );
 
-      final today = DateTime.now();
-      final slots = await bookingRepository.getAvailableTimeSlots(
-        clinicId: event.clinic.id,
-        doctorId: doctors.isNotEmpty ? doctors.first.id : '',
-        date: today,
-      );
 
       // Prepopulate logged in user info
       final currentUser = _firebaseAuth?.currentUser;
@@ -87,11 +83,14 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       }
 
       final initialService = event.preselectedService ?? (services.isNotEmpty ? services.first : null);
-      final initialFilteredDoctors = _filterDoctorsForService(doctors, initialService?.name);
-      final initialDoctor = event.preselectedDoctor ??
-          (initialFilteredDoctors.isNotEmpty
-              ? initialFilteredDoctors.first
-              : (doctors.isNotEmpty ? doctors.first : null));
+      final initialFilteredDoctors = _filterDoctorsForService(doctors, initialService);
+      final preDoc = event.preselectedDoctor;
+      final initialDoctor =
+          preDoc != null && initialFilteredDoctors.any((d) => d.id == preDoc.id)
+              ? preDoc
+              : (initialFilteredDoctors.isNotEmpty ? initialFilteredDoctors.first : null);
+
+      final schedule = _scheduleFor(initialDoctor, initialService, DateTime.now());
 
       emit(state.copyWith(
         status: BookingStatus.ready,
@@ -100,13 +99,14 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
         filteredDoctors: initialFilteredDoctors,
         selectedService: initialService,
         selectedDoctor: initialDoctor,
-        selectedDate: today,
-        availableTimeSlots: slots,
-        selectedTimeSlot: slots.contains('11:00 AM') ? '11:00 AM' : (slots.isNotEmpty ? slots.first : '09:30 AM'),
+        selectedDate: schedule.date,
+        availableTimeSlots: schedule.slots,
+        selectedTimeSlot: schedule.slots.isNotEmpty ? schedule.slots.first : '',
         patientName: pName,
         patientPhone: pPhone,
         patientEmail: pEmail,
       ));
+      await _syncAvailability(emit);
     } catch (e) {
       emit(state.copyWith(
         status: BookingStatus.failure,
@@ -115,36 +115,136 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     }
   }
 
-  void _onSelectService(
+  Future<void> _onSelectService(
     SelectService event,
     Emitter<BookingState> emit,
-  ) {
-    final filtered = _filterDoctorsForService(state.doctors, event.service.name);
+  ) async {
+    final filtered = _filterDoctorsForService(state.doctors, event.service);
     final currentDoc = state.selectedDoctor;
-    ClinicDoctorItem? doctor = currentDoc;
-    if (currentDoc == null || !filtered.any((d) => d.id == currentDoc.id || d.name == currentDoc.name)) {
-      doctor = filtered.isNotEmpty ? filtered.first : (state.doctors.isNotEmpty ? state.doctors.first : null);
-    }
+    final keep = currentDoc != null && filtered.any((d) => d.id == currentDoc.id);
+
+    final doctor = keep ? currentDoc : (filtered.isNotEmpty ? filtered.first : null);
+    final schedule = _scheduleFor(doctor, event.service, state.selectedDate);
 
     emit(state.copyWith(
       selectedService: event.service,
       filteredDoctors: filtered,
       selectedDoctor: doctor,
+      clearSelectedDoctor: doctor == null,
+      selectedDate: schedule.date,
+      availableTimeSlots: schedule.slots,
+      selectedTimeSlot: schedule.slots.isNotEmpty ? schedule.slots.first : '',
+      bookedSlots: const {},
     ));
+    await _syncAvailability(emit);
   }
 
-  void _onSelectDoctor(
+  Future<void> _onSelectDoctor(
     SelectDoctor event,
     Emitter<BookingState> emit,
-  ) {
-    emit(state.copyWith(selectedDoctor: event.doctor));
+  ) async {
+    final schedule = _scheduleFor(event.doctor, state.selectedService, state.selectedDate);
+    emit(state.copyWith(
+      selectedDoctor: event.doctor,
+      selectedDate: schedule.date,
+      availableTimeSlots: schedule.slots,
+      selectedTimeSlot: schedule.slots.isNotEmpty ? schedule.slots.first : '',
+      bookedSlots: const {},
+    ));
+    await _syncAvailability(emit);
   }
 
-  void _onSelectDate(
+  Future<void> _onSelectDate(
     SelectDate event,
     Emitter<BookingState> emit,
+  ) async {
+    final slots = state.selectedDoctor?.slotsFor(event.date, state.selectedDoctor!.slotDuration) ?? const <String>[];
+    emit(state.copyWith(
+      selectedDate: event.date,
+      availableTimeSlots: slots,
+      selectedTimeSlot: slots.isNotEmpty ? slots.first : '',
+      bookedSlots: const {},
+    ));
+    await _syncAvailability(emit);
+  }
+
+  /// Loads booked slots for the selected doctor/date (optionally re-reading
+  /// doctors so admin leave/availability changes show up), picks first free slot.
+  Future<void> _syncAvailability(
+    Emitter<BookingState> emit, {
+    bool refreshDoctors = false,
+  }) async {
+    final clinic = state.clinic;
+    if (clinic == null) return;
+
+    if (refreshDoctors) {
+      try {
+        final fresh = await bookingRepository.getClinicDoctors(clinic.id, clinic.category);
+        if (fresh.isNotEmpty) {
+          final cur = state.selectedDoctor;
+          ClinicDoctorItem? doc;
+          for (final d in fresh) {
+            if (cur != null && d.id == cur.id) doc = d;
+          }
+          final schedule = _scheduleFor(doc, state.selectedService, state.selectedDate);
+          emit(state.copyWith(
+            doctors: fresh,
+            filteredDoctors: _filterDoctorsForService(fresh, state.selectedService),
+            selectedDoctor: doc,
+            clearSelectedDoctor: doc == null,
+            selectedDate: schedule.date,
+            availableTimeSlots: schedule.slots,
+            selectedTimeSlot: schedule.slots.isNotEmpty ? schedule.slots.first : '',
+            bookedSlots: const {},
+          ));
+        }
+      } catch (_) {}
+    }
+
+    final doctor = state.selectedDoctor;
+    if (doctor == null) return;
+    final date = state.selectedDate;
+    final booked = await bookingRepository.getBookedSlots(
+      clinicId: clinic.id,
+      doctorId: doctor.id,
+      date: date,
+    );
+    if (state.selectedDoctor?.id != doctor.id || !DateUtils.isSameDay(state.selectedDate, date)) {
+      return;
+    }
+    String pick = state.selectedTimeSlot;
+    bool isBooked(String s) => booked.contains(s.trim().toUpperCase());
+    if (pick.isEmpty || isBooked(pick)) {
+      pick = '';
+      for (final s in state.availableTimeSlots) {
+        if (!isBooked(s)) {
+          pick = s;
+          break;
+        }
+      }
+    }
+    emit(state.copyWith(bookedSlots: booked, selectedTimeSlot: pick));
+  }
+
+  /// Keeps [preferred] if the doctor works that day, otherwise jumps to the
+  /// doctor's next bookable date (within a year) and returns its slots.
+  ({DateTime date, List<String> slots}) _scheduleFor(
+    ClinicDoctorItem? doctor,
+    ClinicServiceItem? service,
+    DateTime preferred,
   ) {
-    emit(state.copyWith(selectedDate: event.date));
+    final start = DateTime(preferred.year, preferred.month, preferred.day);
+    if (doctor == null) return (date: start, slots: const <String>[]);
+    final now = DateTime.now();
+    var d = start.isBefore(DateTime(now.year, now.month, now.day))
+        ? DateTime(now.year, now.month, now.day)
+        : start;
+    for (var i = 0; i < 366; i++) {
+      final slots = doctor.slotsFor(d, doctor.slotDuration);
+      if (slots.isNotEmpty) return (date: d, slots: slots);
+      d = d.add(const Duration(days: 1));
+    }
+    return (date: start, slots: const <String>[]);
   }
 
   void _onSelectTimeSlot(
@@ -165,12 +265,13 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     ));
   }
 
-  void _onNextStep(
+  Future<void> _onNextStep(
     NextStep event,
     Emitter<BookingState> emit,
-  ) {
+  ) async {
     if (state.step < 4) {
       emit(state.copyWith(step: state.step + 1));
+      if (state.step == 3) await _syncAvailability(emit, refreshDoctors: true);
     }
   }
 
@@ -183,12 +284,13 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     }
   }
 
-  void _onGoToStep(
+  Future<void> _onGoToStep(
     GoToStep event,
     Emitter<BookingState> emit,
-  ) {
+  ) async {
     if (event.step >= 1 && event.step <= 4) {
       emit(state.copyWith(step: event.step));
+      if (event.step == 3) await _syncAvailability(emit, refreshDoctors: true);
     }
   }
 
@@ -270,18 +372,26 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     ));
   }
 
+  /// Doctors who serve [service]: explicitly assigned to it, listed under it,
+  /// or belonging to the service's department.
   List<ClinicDoctorItem> _filterDoctorsForService(
     List<ClinicDoctorItem> doctors,
-    String? serviceName,
+    ClinicServiceItem? service,
   ) {
-    if (serviceName == null || serviceName.isEmpty) return doctors;
-    final nameLower = serviceName.toLowerCase();
+    if (service == null) return doctors;
+    String norm(String s) => s.toLowerCase().trim();
+    final serviceName = norm(service.name);
+    final dept = norm(service.departmentName);
+    final assigned = service.assignedStaff.map(norm).toSet();
 
-    final matching = doctors.where((d) {
-      if (d.services.isEmpty) return true;
-      return d.services.any((s) => s.toLowerCase().contains(nameLower) || nameLower.contains(s.toLowerCase()));
+    return doctors.where((d) {
+      final name = norm(d.name);
+      if (assigned.isNotEmpty) {
+        return assigned.contains(name) || assigned.contains(norm(d.id));
+      }
+      if (d.services.any((s) => norm(s) == serviceName)) return true;
+      if (dept.isEmpty) return false;
+      return norm(d.department) == dept || norm(d.specialty) == dept;
     }).toList();
-
-    return matching.isNotEmpty ? matching : doctors;
   }
 }

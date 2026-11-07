@@ -1,4 +1,5 @@
-﻿import '../../domain/entities/clinic_subscription_entity.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../domain/entities/clinic_subscription_entity.dart';
 
 class ClinicSubscriptionModel extends ClinicSubscriptionEntity {
   const ClinicSubscriptionModel({
@@ -10,6 +11,8 @@ class ClinicSubscriptionModel extends ClinicSubscriptionEntity {
     super.amount,
     super.status,
     super.currentPeriodEnd,
+    super.periodEndAt,
+    super.periodStartAt,
     super.autoRenew,
     super.paymentMethod,
     super.billingContact,
@@ -51,7 +54,9 @@ class ClinicSubscriptionModel extends ClinicSubscriptionEntity {
       billingCycle: cadence.toLowerCase().contains('annual') ? 'annual' : 'monthly',
       amount: data['amount'] as String? ?? (isEnterprise ? '₹6,999' : isMulti ? '₹2,999' : '₹999'),
       status: status,
-      currentPeriodEnd: data['currentPeriodEnd'] as String? ?? '',
+      currentPeriodEnd: _periodText(data),
+      periodEndAt: data['periodEndAt'] is Timestamp ? (data['periodEndAt'] as Timestamp).toDate() : null,
+      periodStartAt: data['currentPeriodStart'] is Timestamp ? (data['currentPeriodStart'] as Timestamp).toDate() : null,
       autoRenew: data['autoRenew'] as bool? ?? true,
       paymentMethod: ClinicPaymentMethodEntity(
         gateway: pmData['gateway'] as String? ?? 'Razorpay',
@@ -73,5 +78,16 @@ class ClinicSubscriptionModel extends ClinicSubscriptionEntity {
       activeServices: activeSvcs,
       serviceLimit: svcLimit,
     );
+  }
+
+  static const _months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  static String _periodText(Map<String, dynamic> data) {
+    final ts = data['periodEndAt'];
+    if (ts is Timestamp) {
+      final d = ts.toDate();
+      return '${d.day} ${_months[d.month - 1]} ${d.year}';
+    }
+    return data['currentPeriodEnd'] as String? ?? '';
   }
 }

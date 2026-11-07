@@ -15,9 +15,12 @@ class ConsoleTopBar extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final isMobile = constraints.maxWidth < 620;
+        final radius = BorderRadius.circular(10);
+        OutlineInputBorder outline(Color c, [double w = 1]) =>
+            OutlineInputBorder(borderRadius: radius, borderSide: BorderSide(color: c, width: w));
+
         return Container(
-          height: 64,
-          padding: EdgeInsets.symmetric(horizontal: isMobile ? 12 : 20),
+          padding: EdgeInsets.symmetric(horizontal: isMobile ? 12 : 24, vertical: isMobile ? 10 : 14),
           decoration: BoxDecoration(
             color: colors.surface,
             border: Border(bottom: BorderSide(color: colors.border, width: 1)),
@@ -25,60 +28,68 @@ class ConsoleTopBar extends StatelessWidget {
           child: Row(
             children: [
               if (onMenuPressed != null) ...[
-                IconButton(
-                  icon: Icon(Icons.menu_rounded, color: colors.textPrimary, size: 22),
-                  onPressed: onMenuPressed,
-                  tooltip: 'Open navigation',
-                ),
-                const SizedBox(width: 4),
-              ],
-              SizedBox(
-                width: isMobile ? 180 : 260,
-                height: 40,
-                child: Container(
+                Container(
+                  width: 40,
+                  height: 40,
                   decoration: BoxDecoration(
                     color: colors.surfaceSecondary,
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(color: colors.border),
                   ),
-                  child: TextField(
-                    onChanged: onSearch,
-                    style: GoogleFonts.inter(color: colors.textPrimary, fontSize: 13),
-                    decoration: InputDecoration(
-                      hintText: isMobile ? 'Search...' : 'Search patients, appointments...',
-                      hintStyle: GoogleFonts.inter(color: colors.textMuted, fontSize: 13),
-                      prefixIcon: Icon(Icons.search_rounded, color: colors.textMuted, size: 18),
-                      border: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 10),
-                    ),
+                  child: IconButton(
+                    padding: EdgeInsets.zero,
+                    tooltip: 'Menu',
+                    icon: Icon(Icons.menu_rounded, color: colors.textPrimary, size: 20),
+                    onPressed: onMenuPressed,
+                  ),
+                ),
+                SizedBox(width: isMobile ? 8 : 14),
+              ],
+              SizedBox(
+                width: isMobile ? 180 : 260,
+                height: 40,
+                child: TextField(
+                  onChanged: onSearch,
+                  cursorColor: colors.primary,
+                  textAlignVertical: TextAlignVertical.center,
+                  style: GoogleFonts.inter(fontSize: 13.5, color: colors.textPrimary),
+                  decoration: InputDecoration(
+                    isDense: true,
+                    filled: true,
+                    fillColor: colors.surfaceSecondary,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                    hintText: isMobile ? 'Search...' : 'Search clinics, doctors...',
+                    hintStyle: GoogleFonts.inter(fontSize: 13.5, color: colors.textMuted),
+                    prefixIcon: Icon(Icons.search_rounded, color: colors.textMuted, size: 19),
+                    prefixIconConstraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+                    border: outline(colors.border),
+                    enabledBorder: outline(colors.border),
+                    focusedBorder: outline(colors.primary, 1.5),
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
-
-              // Theme Toggle Button (placed next to search input)
-              const ThemeModeToggleButton(),
-
               const Spacer(),
-
+              const ThemeModeToggleButton(),
+              SizedBox(width: isMobile ? 4 : 8),
               IconButton(
-                icon: Icon(Icons.notifications_none_rounded, color: colors.textMuted, size: 20),
+                tooltip: 'Notifications',
+                icon: Icon(Icons.notifications_none_rounded, color: colors.textMuted, size: 22),
                 onPressed: () {},
               ),
-              const SizedBox(width: 6),
+              SizedBox(width: isMobile ? 4 : 8),
               CircleAvatar(
-                radius: 15,
+                radius: 18,
                 backgroundColor: colors.primary,
-                child: const Text('MS', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white)),
+                child: Text('MS', style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w800, color: Colors.white)),
               ),
               if (!isMobile) ...[
-                const SizedBox(width: 8),
+                const SizedBox(width: 10),
                 Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Muhammed Saad', style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: colors.textPrimary)),
-                    Text('Platform Admin', style: GoogleFonts.inter(fontSize: 10, color: colors.textMuted)),
+                    Text('Muhammed Saad', style: GoogleFonts.inter(fontSize: 13.5, fontWeight: FontWeight.w700, color: colors.textPrimary)),
+                    Text('Platform Admin', style: GoogleFonts.inter(fontSize: 11.5, color: colors.textMuted)),
                   ],
                 ),
               ],

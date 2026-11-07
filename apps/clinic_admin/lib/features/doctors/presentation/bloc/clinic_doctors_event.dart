@@ -62,15 +62,17 @@ class DoctorScheduleUpdated extends ClinicDoctorsEvent {
   final String doctorId;
   final Map<String, DoctorDailySchedule> schedule;
   final int slotDuration;
+  final List<String>? leaveDates;
 
   const DoctorScheduleUpdated({
     required this.doctorId,
     required this.schedule,
     required this.slotDuration,
+    this.leaveDates,
   });
 
   @override
-  List<Object?> get props => [doctorId, schedule, slotDuration];
+  List<Object?> get props => [doctorId, schedule, slotDuration, leaveDates];
 }
 
 class DoctorAccountStatusToggled extends ClinicDoctorsEvent {

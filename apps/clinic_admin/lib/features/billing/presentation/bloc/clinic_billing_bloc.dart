@@ -1,4 +1,4 @@
-﻿import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/repositories/clinic_billing_repository.dart';
 import 'clinic_billing_event.dart';
 import 'clinic_billing_state.dart';
@@ -41,10 +41,9 @@ class ClinicBillingBloc extends Bloc<ClinicBillingEvent, ClinicBillingState> {
     ClinicBillingCadenceToggled event,
     Emitter<ClinicBillingState> emit,
   ) async {
+    // The toggle only changes which prices are previewed. The clinic's actual
+    // billing cycle changes only once a plan change is paid/confirmed.
     emit(state.copyWith(activeCadence: event.newCadence));
-    try {
-      await repository.toggleBillingCycle(event.newCadence);
-    } catch (_) {}
   }
 
   Future<void> _onPlanChangeRequested(
@@ -53,26 +52,24 @@ class ClinicBillingBloc extends Bloc<ClinicBillingEvent, ClinicBillingState> {
   ) async {
     emit(state.copyWith(isSubmitting: true));
     try {
-      final price = event.billingCadence == 'annual'
-          ? event.targetTier.annualPrice
-          : event.targetTier.monthlyPrice;
-      await repository.updatePlan(
+      await repository.activateSubscription(
         planId: event.targetTier.id,
-        planName: event.targetTier.name,
         billingCycle: event.billingCadence,
-        amount: '₹${price.toString()}',
+        paymentId: event.paymentId,
       );
       final sub = await repository.getClinicSubscription();
+      final invoices = await repository.getInvoices();
       emit(state.copyWith(
         isSubmitting: false,
         subscription: sub,
-        feedbackMessage: 'Successfully switched to ${event.targetTier.name}!',
+        invoices: invoices,
+        feedbackMessage: '${event.targetTier.name} activated. Your receipt is available in Invoice History.',
         isError: false,
       ));
     } catch (e) {
       emit(state.copyWith(
         isSubmitting: false,
-        feedbackMessage: 'Failed to switch plan: $e',
+        feedbackMessage: e.toString().replaceFirst('Exception: ', ''),
         isError: true,
       ));
     }

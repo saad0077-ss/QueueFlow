@@ -30,7 +30,7 @@ class ClinicCoverHero extends StatelessWidget {
         : 'C';
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 34),
+      margin: const EdgeInsets.only(bottom: 42),
       child: Stack(
         clipBehavior: Clip.none,
         children: [
@@ -63,15 +63,18 @@ class ClinicCoverHero extends StatelessWidget {
             ),
           ),
           Positioned(
-            bottom: -22,
+            bottom: -30,
             left: 16,
             child: Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                color: colors.surface,
-                borderRadius: BorderRadius.circular(16),
+              width: 80,
+              height: 80,
+              // Border painted over the photo so it doesn't inset the image.
+              foregroundDecoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
                 border: Border.all(color: colors.border, width: 2),
+              ),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: context.isDarkMode ? 0.35 : 0.08),

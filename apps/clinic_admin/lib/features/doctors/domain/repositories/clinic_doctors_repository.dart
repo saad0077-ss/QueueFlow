@@ -23,6 +23,7 @@ abstract class ClinicDoctorsRepository {
     required String doctorId,
     required Map<String, DoctorDailySchedule> schedule,
     required int slotDuration,
+    List<String>? leaveDates,
   });
 
   /// Updates account status ('active', 'inactive', 'pending') for a doctor.

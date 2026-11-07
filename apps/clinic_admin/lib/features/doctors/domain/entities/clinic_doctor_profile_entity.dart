@@ -29,6 +29,9 @@ class ClinicDoctorProfileEntity extends Equatable {
   final int waitingCount;
   final List<String> services;
   final Map<String, DoctorDailySchedule> weeklySchedule;
+
+  /// Dates the doctor is on leave, as 'yyyy-MM-dd'. Patients can't book these.
+  final List<String> leaveDates;
   final List<DoctorReviewEntity> reviews;
   final int totalAppointments;
   final int completedAppointments;
@@ -38,7 +41,7 @@ class ClinicDoctorProfileEntity extends Equatable {
     required this.id,
     this.clinicId = 'sunrise-health',
     required this.name,
-    this.title = 'Consulting Physician',
+    this.title = '',
     this.specialty = 'General Medicine',
     String? department,
     this.room = '',
@@ -60,6 +63,7 @@ class ClinicDoctorProfileEntity extends Equatable {
     this.waitingCount = 0,
     this.services = const [],
     Map<String, DoctorDailySchedule>? weeklySchedule,
+    this.leaveDates = const [],
     this.reviews = const [],
     this.totalAppointments = 0,
     this.completedAppointments = 0,
@@ -131,6 +135,7 @@ class ClinicDoctorProfileEntity extends Equatable {
     int? waitingCount,
     List<String>? services,
     Map<String, DoctorDailySchedule>? weeklySchedule,
+    List<String>? leaveDates,
     List<DoctorReviewEntity>? reviews,
     int? totalAppointments,
     int? completedAppointments,
@@ -162,6 +167,7 @@ class ClinicDoctorProfileEntity extends Equatable {
       waitingCount: waitingCount ?? this.waitingCount,
       services: services ?? this.services,
       weeklySchedule: weeklySchedule ?? this.weeklySchedule,
+      leaveDates: leaveDates ?? this.leaveDates,
       reviews: reviews ?? this.reviews,
       totalAppointments: totalAppointments ?? this.totalAppointments,
       completedAppointments: completedAppointments ?? this.completedAppointments,
@@ -196,6 +202,7 @@ class ClinicDoctorProfileEntity extends Equatable {
     waitingCount,
     services,
     weeklySchedule,
+    leaveDates,
     reviews,
     totalAppointments,
     completedAppointments,

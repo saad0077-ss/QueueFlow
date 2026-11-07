@@ -96,7 +96,7 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
     final doc = ClinicDoctorProfileEntity(
       id: 'doc-${DateTime.now().millisecondsSinceEpoch}',
       name: name,
-      title: 'Consulting Physician',
+      title: '',
       specialty: specialty,
       department: specialty,
       room: room,

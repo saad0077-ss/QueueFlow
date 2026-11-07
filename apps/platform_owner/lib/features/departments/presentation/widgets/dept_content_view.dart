@@ -1,6 +1,7 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/utils/pdf_exporter.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../domain/entities/department_entity.dart';
 import '../../domain/repositories/department_repository.dart';
@@ -32,7 +33,7 @@ class DeptContentView extends StatelessWidget {
             children: [
               DepartmentsHeaderBar(
                 activeCount: state.activeDepartments,
-                onExportCsv: () => AppSnackBar.showInfo(context, message: 'Exported departments CSV.'),
+                onExportPdf: () => PdfExporter.exportDepartments(context, state.filteredDepartments),
                 onRefresh: () => AppSnackBar.showSuccess(context, message: 'Departments refreshed.'),
                 onAddDepartment: () => AddDepartmentModal.show(
                   context,

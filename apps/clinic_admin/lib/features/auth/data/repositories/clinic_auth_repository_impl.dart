@@ -42,6 +42,20 @@ class ClinicAuthRepositoryImpl implements ClinicAuthRepository {
         throw Exception('The platform owner has removed this clinic facility and account.');
       }
 
+      // Suspended clinics cannot sign in; show the platform owner's reason.
+      for (final doc in clinicSnap.docs) {
+        final data = doc.data();
+        if ((data['status'] ?? '').toString().toUpperCase() == 'SUSPENDED') {
+          await _auth.signOut();
+          final reason = (data['suspensionReason'] ?? '').toString().trim();
+          throw Exception(
+            reason.isEmpty
+                ? 'Your clinic has been suspended. Please contact QueueFlow support.'
+                : 'Your clinic has been suspended. Reason: $reason',
+          );
+        }
+      }
+
       await _markClinicAsActive(cleanEmail);
       return ClinicStaffModel.fromFirebaseUser(credential.user!);
     } on FirebaseAuthException catch (e) {
@@ -135,6 +149,8 @@ class ClinicAuthRepositoryImpl implements ClinicAuthRepository {
     try {
       final clinicSnap = await _firestore.collection('clinics').where('adminEmail', isEqualTo: email).get();
       for (final doc in clinicSnap.docs) {
+        // Never lift a suspension just because the admin signed in.
+        if ((doc.data()['status'] ?? '').toString().toUpperCase() == 'SUSPENDED') continue;
         await doc.reference.update({'status': 'ACTIVE', 'activatedAt': FieldValue.serverTimestamp()});
       }
       final inviteSnap = await _firestore.collection('invites').where('adminEmail', isEqualTo: email).get();

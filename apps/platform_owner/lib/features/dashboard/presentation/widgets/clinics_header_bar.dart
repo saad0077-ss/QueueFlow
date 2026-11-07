@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 
 class ClinicsHeaderBar extends StatelessWidget {
-  final VoidCallback onExportCsv;
+  final VoidCallback onExportPdf;
   final VoidCallback onRefresh;
   final VoidCallback onOnboard;
   final int activeCount;
@@ -11,7 +11,7 @@ class ClinicsHeaderBar extends StatelessWidget {
 
   const ClinicsHeaderBar({
     super.key,
-    required this.onExportCsv,
+    required this.onExportPdf,
     required this.onRefresh,
     required this.onOnboard,
     required this.activeCount,
@@ -60,7 +60,7 @@ class ClinicsHeaderBar extends StatelessWidget {
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
             OutlinedButton.icon(
-              onPressed: onExportCsv,
+              onPressed: onExportPdf,
               style: OutlinedButton.styleFrom(
                 foregroundColor: colors.textPrimary,
                 backgroundColor: colors.surface,
@@ -69,7 +69,7 @@ class ClinicsHeaderBar extends StatelessWidget {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
               icon: const Icon(Icons.file_download_outlined, size: 16),
-              label: const Text('Export CSV', style: TextStyle(fontSize: 12.5)),
+              label: const Text('Export PDF', style: TextStyle(fontSize: 12.5)),
             ),
             OutlinedButton.icon(
               onPressed: onRefresh,

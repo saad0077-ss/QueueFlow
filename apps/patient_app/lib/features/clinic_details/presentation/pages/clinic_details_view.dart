@@ -11,6 +11,7 @@ import '../bloc/clinic_details_state.dart';
 import '../widgets/clinic_bottom_actions.dart';
 import '../widgets/clinic_cover_hero.dart';
 import '../widgets/clinic_doctors_tab.dart';
+import '../widgets/doctor_rate_dialog.dart';
 import '../widgets/clinic_header_info.dart';
 import '../widgets/clinic_overview_tab.dart';
 import '../widgets/clinic_rate_sheet.dart';
@@ -132,6 +133,7 @@ class ClinicDetailsView extends StatelessWidget {
             clinic: clinic,
             initialDoctor: doctor,
           ),
+          onRateDoctor: (doctor) => _showDoctorRateDialog(context, doctor),
         );
       case 3:
         return ClinicReviewsTab(
@@ -145,6 +147,17 @@ class ClinicDetailsView extends StatelessWidget {
       default:
         return const SizedBox.shrink();
     }
+  }
+
+  void _showDoctorRateDialog(BuildContext context, ClinicDoctorItem doctor) {
+    final bloc = context.read<ClinicDetailsBloc>();
+    showDialog<void>(
+      context: context,
+      builder: (_) => DoctorRateDialog(
+        doctorName: doctor.name,
+        onSubmit: (r, c) => bloc.add(SubmitDoctorReviewEvent(doctorId: doctor.id, rating: r, comment: c)),
+      ),
+    );
   }
 
   void _showRateModal(BuildContext context, String clinicName) {

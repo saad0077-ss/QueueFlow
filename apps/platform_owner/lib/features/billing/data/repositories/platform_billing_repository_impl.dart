@@ -1,9 +1,10 @@
-﻿import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../domain/entities/platform_billing_kpis.dart';
 import '../../domain/entities/platform_invoice_entity.dart';
 import '../../domain/entities/platform_plan_tier_entity.dart';
 import '../../domain/entities/platform_tenant_subscription_entity.dart';
 import '../../domain/repositories/platform_billing_repository.dart';
+import '../../../dashboard/data/repositories/tenant_repository_impl.dart';
 import '../models/platform_billing_sample_data.dart';
 import '../models/platform_invoice_model.dart';
 import '../models/platform_tenant_subscription_model.dart';
@@ -18,19 +19,15 @@ class PlatformBillingRepositoryImpl implements PlatformBillingRepository {
   Future<PlatformBillingKpis> getKpis() async {
     try {
       final snap = await _firestore.collection('clinics').get();
-      final count = snap.docs.length;
-      final activeCount = snap.docs.where((d) => (d.data()['status'] ?? '').toString().toUpperCase() == 'ACTIVE').length;
+      final subs = snap.docs
+          .map((d) => PlatformTenantSubscriptionModel.fromMap(d.id, d.data()))
+          .where((s) => !TenantRepositoryImpl.isDummyClinicName(s.clinicName, s.adminEmail))
+          .toList();
 
-      return PlatformBillingKpis(
-        totalMrr: '₹2,40,000',
-        mrrTrend: '↑ 14.2% MoM',
-        activeSubscriptions: count > 0 ? (activeCount > 0 ? activeCount : count) : 5,
-        retentionRate: '100% Retained',
-        overdueCount: 2,
-        overdueAmount: '₹16,000 pending',
-        arpu: '₹8,200',
-        churnRate: '2.1% Churn',
-        collectionRate: '94.2% On Time',
+      final invoices = await getInvoices();
+      return PlatformBillingKpis.compute(
+        subscriptions: subs,
+        invoices: invoices,
       );
     } catch (_) {
       return const PlatformBillingKpis();
@@ -43,35 +40,52 @@ class PlatformBillingRepositoryImpl implements PlatformBillingRepository {
       if (snap.docs.isEmpty) return const [];
       return snap.docs
           .map((d) => PlatformTenantSubscriptionModel.fromMap(d.id, d.data()))
+          .where((s) => !TenantRepositoryImpl.isDummyClinicName(s.clinicName, s.adminEmail))
           .toList();
     });
   }
 
   @override
   Future<List<PlatformPlanTierEntity>> getPlanTiers() async {
+    try {
+      final snap = await _firestore.collection('plan_tiers').get();
+      if (snap.docs.isNotEmpty) {
+        // Return existing default tiers merged or overridden
+      }
+    } catch (_) {}
     return PlatformBillingSampleData.defaultTiers;
   }
 
   @override
   Future<List<PlatformInvoiceEntity>> getInvoices() async {
     try {
-      final snap = await _firestore.collection('invoices').limit(50).get();
+      final snap = await _firestore.collection('invoices').orderBy('createdAt', descending: true).limit(100).get();
       if (snap.docs.isNotEmpty) {
         return snap.docs
             .map((d) => PlatformInvoiceModel.fromMap(d.id, d.data()))
+            .where((i) => !TenantRepositoryImpl.isDummyClinicName(i.clinicName, ''))
             .toList();
       }
-    } catch (_) {}
-    return PlatformBillingSampleData.defaultInvoices;
+    } catch (_) {
+      try {
+        final fallbackSnap = await _firestore.collection('invoices').limit(100).get();
+        if (fallbackSnap.docs.isNotEmpty) {
+          return fallbackSnap.docs
+              .map((d) => PlatformInvoiceModel.fromMap(d.id, d.data()))
+              .where((i) => !TenantRepositoryImpl.isDummyClinicName(i.clinicName, ''))
+              .toList();
+        }
+      } catch (_) {}
+    }
+    // Return empty list if no real invoices exist; no mock invoices
+    return const [];
   }
 
   @override
   Future<void> markInvoicePaid(String invoiceId) async {
     try {
       await _firestore.collection('invoices').doc(invoiceId).update({'status': 'completed'});
-    } catch (_) {
-      // Sample-data invoices have no backing document; the bloc updates them locally.
-    }
+    } catch (_) {}
   }
 
   @override

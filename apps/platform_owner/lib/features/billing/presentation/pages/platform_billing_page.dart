@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+import '../../../../core/utils/pdf_exporter.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../dashboard/presentation/pages/platform_clinics_page.dart';
 import '../../../dashboard/presentation/widgets/console_sidebar.dart';
@@ -99,8 +100,13 @@ class _PlatformBillingViewState extends State<_PlatformBillingView> {
                                           ));
                                         }, 
                                       ), 
-                                      onExportCsv: () => AppSnackBar.showInfo(context, message: 'Exporting queueflow_billing_report.csv...'),
-                                      onSync: () => bloc.add(const PlatformBillingStarted()),
+                                      onExportPdf: () {
+                                        if (state.activeTab == 2) {
+                                          PdfExporter.exportInvoices(context, state.filteredInvoices);
+                                        } else {
+                                          PdfExporter.exportSubscriptions(context, state.filteredSubscriptions);
+                                        }
+                                      },
                                     ),
                                     const SizedBox(height: 24),
                                     PlatformBillingKpiStrip(kpis: state.kpis),

@@ -1,3 +1,4 @@
+import '../widgets/clinic_photo_avatar.dart';
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -14,6 +15,7 @@ import '../widgets/clinic_reviews_card.dart';
 import '../widgets/console_sidebar.dart';
 import '../widgets/manage_subscription_modal.dart';
 import '../widgets/edit_clinic_modal.dart';
+import '../widgets/suspend_clinic_dialog.dart';
 
 class ClinicDetailsPage extends StatelessWidget {
   final TenantClinicEntity clinic;
@@ -222,20 +224,7 @@ class _ClinicDetailsViewState extends State<ClinicDetailsView> {
           final isWide = constraints.maxWidth >= 1050;
           final identity = Row(
             children: [
-              Container(
-                width: 68,
-                height: 68,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(colors: [Color(0xFF2563EB), Color(0xFF06B6D4)], begin: Alignment.topLeft, end: Alignment.bottomRight),
-                  borderRadius: BorderRadius.circular(18),
-                  boxShadow: [BoxShadow(color: const Color(0xFF2563EB).withValues(alpha: 0.35), blurRadius: 18, offset: const Offset(0, 6))],
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  clinic.name.isNotEmpty ? clinic.name.substring(0, 1).toUpperCase() : 'C',
-                  style: GoogleFonts.inter(fontSize: 30, fontWeight: FontWeight.w800, color: Colors.white),
-                ),
-              ),
+              ClinicPhotoAvatar(clinicId: clinic.id, name: clinic.name, size: 68, radius: 18, fontSize: 24),
               const SizedBox(width: 18),
               Expanded(
                 child: Column(
@@ -388,7 +377,7 @@ class _ClinicDetailsViewState extends State<ClinicDetailsView> {
                 color: const Color(0xFFA855F7),
                 title: 'DOCTORS ON ROSTER',
                 value: '${clinic.doctors.length} Doctor${clinic.doctors.length == 1 ? '' : 's'}',
-                subtitle: clinic.doctorLimitText,
+                subtitle: '${clinic.doctors.where((d) => d.isAvailable).length} available now',
               ),
             ),
             SizedBox(
@@ -570,18 +559,6 @@ class _ClinicDetailsViewState extends State<ClinicDetailsView> {
             icon: Icons.medical_services_outlined,
             color: const Color(0xFFA855F7),
             title: 'Practicing Medical Team (${clinic.doctors.length})',
-            trailing: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                color: colors.primaryTint,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: colors.primary.withValues(alpha: 0.3)),
-              ),
-              child: Text(
-                clinic.doctorLimitText,
-                style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.bold, color: colors.primaryLight),
-              ),
-            ),
           ),
           const SizedBox(height: 14),
           if (clinic.doctors.isEmpty)
@@ -593,13 +570,13 @@ class _ClinicDetailsViewState extends State<ClinicDetailsView> {
               ),
             )
           else
-            for (final doc in clinic.doctors) _doctorTile(colors, name: doc.name, specialty: doc.specialty, room: doc.room, isAvailable: doc.isAvailable),
+            for (final doc in clinic.doctors) _doctorTile(colors, name: doc.name, specialty: doc.specialty, room: doc.room, isAvailable: doc.isAvailable, status: doc.status),
         ],
       ),
     );
   }
 
-  Widget _doctorTile(AppColorsExtension colors, {required String name, required String specialty, required String room, required bool isAvailable}) {
+  Widget _doctorTile(AppColorsExtension colors, {required String name, required String specialty, required String room, required bool isAvailable, String status = 'available'}) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(12),
@@ -636,7 +613,7 @@ class _ClinicDetailsViewState extends State<ClinicDetailsView> {
               borderRadius: BorderRadius.circular(6),
             ),
             child: Text(
-              isAvailable ? 'AVAILABLE' : 'OFF DUTY',
+              status.toUpperCase().replaceAll('-', ' '),
               style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.bold, color: isAvailable ? colors.badgeOpenText : colors.warning),
             ),
           ),
@@ -681,7 +658,7 @@ class _ClinicDetailsViewState extends State<ClinicDetailsView> {
                       style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.bold, color: colors.textPrimary),
                     ),
                     const SizedBox(height: 2),
-                    Text('Medical Director & Clinic Admin', style: GoogleFonts.inter(fontSize: 11.5, color: colors.textMuted)),
+                    Text('Clinic Administrator', style: GoogleFonts.inter(fontSize: 11.5, color: colors.textMuted)),
                   ],
                 ),
               ),
@@ -796,7 +773,6 @@ class _ClinicDetailsViewState extends State<ClinicDetailsView> {
           _sectionHeader(colors, icon: Icons.shield_outlined, color: const Color(0xFF10B981), title: 'Platform Governance'),
           const SizedBox(height: 10),
           _metaRow(colors, 'Clinic Unique ID:', clinic.id, onCopy: () => _copyToClipboard(context, clinic.id, 'Clinic ID')),
-          _metaRow(colors, 'Security Policy:', 'Firebase Multi-Tenant Firestore Isolated'),
           _metaRow(colors, 'Billing Schedule:', '${clinic.planName} (${clinic.billingCadence})'),
           _metaRow(colors, 'Registration Status:', clinic.status),
         ],
@@ -1017,7 +993,12 @@ class _ClinicDetailsViewState extends State<ClinicDetailsView> {
 
   Future<void> _toggleClinicStatus(BuildContext context, TenantClinicEntity c) async {
     try {
-      await widget.repo.toggleStatus(c.id, c.isActive);
+      String? reason;
+      if (c.isActive) {
+        reason = await SuspendClinicDialog.show(context, c);
+        if (reason == null) return; // cancelled
+      }
+      await widget.repo.toggleStatus(c.id, c.isActive, reason: reason);
       if (context.mounted) {
         AppSnackBar.showSuccess(context, message: c.isActive ? 'Clinic paused.' : 'Clinic activated.');
       }

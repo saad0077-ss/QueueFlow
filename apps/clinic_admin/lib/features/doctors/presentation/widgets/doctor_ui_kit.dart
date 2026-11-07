@@ -164,7 +164,12 @@ class _DoctorAvatarState extends State<DoctorAvatar> {
       alignment: Alignment.center,
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: colors.surfaceSecondary,
+        // Only tint behind initials; a photo fills the whole container.
+        color: photo == null ? colors.surfaceSecondary : null,
+        borderRadius: BorderRadius.circular(widget.radius),
+      ),
+      // Border painted over the photo so it doesn't inset the image.
+      foregroundDecoration: BoxDecoration(
         borderRadius: BorderRadius.circular(widget.radius),
         border: Border.all(color: colors.border),
       ),

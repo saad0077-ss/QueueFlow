@@ -5,6 +5,14 @@ import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../domain/entities/billing_plan_tier_entity.dart';
 
 class SwitchPlanDialog {
+  /// Base plan charge for the billing period (annual = 12 months upfront).
+  static int baseAmount(BillingPlanTierEntity tier, String cadence) =>
+      cadence == 'annual' ? tier.annualPrice * 12 : tier.monthlyPrice;
+
+  /// Total payable (no GST).
+  static double payable(BillingPlanTierEntity tier, String cadence) =>
+      baseAmount(tier, cadence).toDouble();
+
   static void show(
     BuildContext context, {
     required BillingPlanTierEntity targetTier,
@@ -49,7 +57,7 @@ class SwitchPlanDialog {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('SELECTED TIER', style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w800, color: colors.primaryLight)),
+                      Text('SELECTED PLAN', style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w800, color: colors.primaryLight)),
                       const SizedBox(height: 4),
                       Text(targetTier.name, style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w800, color: colors.textPrimary)),
                       const SizedBox(height: 2),
@@ -61,8 +69,13 @@ class SwitchPlanDialog {
                   ),
                 ),
                 const SizedBox(height: 14),
+                _row(colors, isAnnual ? 'Plan (12 months)' : 'Plan (1 month)', '₹${baseAmount(targetTier, activeCadence)}'),
+                const SizedBox(height: 6),
+                Padding(padding: const EdgeInsets.symmetric(vertical: 8), child: Divider(height: 1, color: colors.border)),
+                _row(colors, 'Total payable', '₹${payable(targetTier, activeCadence).toStringAsFixed(0)}', bold: true),
+                const SizedBox(height: 12),
                 Text(
-                  'Your practice capacity limits will be adjusted immediately. The prorated difference will be charged to your primary Razorpay payment method.',
+                  'You will pay securely through Razorpay. Your plan changes only after the payment succeeds.',
                   style: GoogleFonts.inter(fontSize: 12.5, color: colors.textMuted, height: 1.4),
                 ),
                 const SizedBox(height: 22),
@@ -75,6 +88,7 @@ class SwitchPlanDialog {
                           foregroundColor: colors.textPrimary,
                           side: BorderSide(color: colors.border),
                           padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: const StadiumBorder(),
                         ),
                         child: const Text('Cancel'),
                       ),
@@ -90,8 +104,9 @@ class SwitchPlanDialog {
                           backgroundColor: colors.primary,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: const StadiumBorder(),
                         ),
-                        child: const Text('Confirm & Upgrade'),
+                        child: Text('Pay ₹${payable(targetTier, activeCadence).toStringAsFixed(0)}'),
                       ),
                     ),
                   ],
@@ -102,5 +117,14 @@ class SwitchPlanDialog {
         ),
       ),
     );
+  }
+
+  static Widget _row(AppColorsExtension colors, String l, String v, {bool bold = false}) {
+    final st = GoogleFonts.inter(
+      fontSize: bold ? 14 : 12.5,
+      fontWeight: bold ? FontWeight.w800 : FontWeight.w500,
+      color: bold ? colors.textPrimary : colors.textMuted,
+    );
+    return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(l, style: st), Text(v, style: st)]);
   }
 }

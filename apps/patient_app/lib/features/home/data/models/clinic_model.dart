@@ -121,8 +121,9 @@ class ClinicModel extends ClinicEntity {
       final monStr = monOpen ? '${mon['openTime']} – ${mon['closeTime']}' : 'Closed';
       if (monOpen && satOpen && !sunOpen) return 'Mon–Sat: $monStr · Sun: Closed';
       if (monOpen && !satOpen && !sunOpen) return 'Mon–Fri: $monStr · Sun: Closed';
-      return 'Standard OPD Schedule';
+      return '';
     }
-    return 'Mon–Sat, 09:00 AM – 08:00 PM';
+    // Not set in the clinic's settings: show nothing rather than made-up hours.
+    return '';
   }
 }

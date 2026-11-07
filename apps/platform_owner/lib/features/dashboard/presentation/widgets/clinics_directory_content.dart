@@ -1,6 +1,7 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
+import '../../../../core/utils/pdf_exporter.dart';
 import '../../data/repositories/tenant_repository_impl.dart';
 import '../../domain/entities/tenant_clinic_entity.dart';
 import '../bloc/clinics_directory_bloc.dart';
@@ -15,6 +16,7 @@ import 'delete_clinic_dialog.dart';
 import 'edit_clinic_modal.dart';
 import 'manage_subscription_modal.dart';
 import 'onboard_clinic_modal.dart';
+import 'suspend_clinic_dialog.dart';
 
 class ClinicsDirectoryContent extends StatelessWidget {
   final bool isDesktop;
@@ -46,7 +48,7 @@ class ClinicsDirectoryContent extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClinicsHeaderBar(
-            onExportCsv: () => AppSnackBar.showInfo(context, message: 'Exported clinics to CSV.'),
+            onExportPdf: () => PdfExporter.exportClinics(context, state.filteredClinics, appointments),
             onRefresh: () => AppSnackBar.showSuccess(context, message: 'Clinics refreshed.'),
             onOnboard: () => OnboardClinicModal.show(context),
             activeCount: state.activePractices,
@@ -83,7 +85,12 @@ class ClinicsDirectoryContent extends StatelessWidget {
             onManagePlan: (c) => ManageSubscriptionModal.show(context, c),
             onToggleStatus: (c) async {
               try {
-                await repo.toggleStatus(c.id, c.isActive);
+                String? reason;
+                if (c.isActive) {
+                  reason = await SuspendClinicDialog.show(context, c);
+                  if (reason == null) return; // cancelled
+                }
+                await repo.toggleStatus(c.id, c.isActive, reason: reason);
                 if (context.mounted) AppSnackBar.showSuccess(context, message: c.isActive ? 'Clinic paused.' : 'Clinic activated.');
               } catch (e) {
                 if (context.mounted) AppSnackBar.showWarning(context, message: e.toString().replaceFirst('Exception: ', ''));

@@ -1,4 +1,4 @@
-﻿import 'package:equatable/equatable.dart';
+import 'package:equatable/equatable.dart';
 
 /// Represents a billing invoice or receipt for a clinic subscription.
 class BillingInvoiceEntity extends Equatable {
@@ -12,6 +12,16 @@ class BillingInvoiceEntity extends Equatable {
   final String date;
   final String status; // 'completed' (Paid), 'pending', 'cancelled' (Overdue)
   final String method;
+  final DateTime? createdAt;
+  final String paymentId;
+  final String customerName;
+  final String customerEmail;
+  final String billingCycle;
+  final num subtotal;
+  final num tax;
+  final DateTime? paidAt;
+  final DateTime? startAt;
+  final DateTime? endAt;
 
   const BillingInvoiceEntity({
     required this.id,
@@ -24,6 +34,16 @@ class BillingInvoiceEntity extends Equatable {
     required this.date,
     required this.status,
     required this.method,
+    this.createdAt,
+    this.paymentId = '',
+    this.customerName = '',
+    this.customerEmail = '',
+    this.billingCycle = '',
+    this.subtotal = 0,
+    this.tax = 0,
+    this.paidAt,
+    this.startAt,
+    this.endAt,
   });
 
   bool get isPaid => status.toLowerCase() == 'completed';
@@ -42,5 +62,15 @@ class BillingInvoiceEntity extends Equatable {
     date,
     status,
     method,
+    createdAt,
+    paymentId,
+    customerName,
+    customerEmail,
+    billingCycle,
+    subtotal,
+    tax,
+    paidAt,
+    startAt,
+    endAt,
   ];
 }

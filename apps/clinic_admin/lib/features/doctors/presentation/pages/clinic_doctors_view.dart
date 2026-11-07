@@ -1,3 +1,4 @@
+import '../../../../core/layout/dashboard_chrome.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
@@ -140,6 +141,7 @@ class _ClinicDoctorsBody extends StatelessWidget {
       },
       builder: (context, state) {
         final bloc = context.read<ClinicDoctorsBloc>();
+        DashboardChrome.setDetailOpen('Doctors', state.selectedDoctor != null);
 
         if (state.selectedDoctor != null) {
           return DoctorDetailView(

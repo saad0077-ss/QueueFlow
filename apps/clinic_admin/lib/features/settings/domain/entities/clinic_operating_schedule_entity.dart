@@ -27,7 +27,8 @@ class ClinicOperatingScheduleEntity extends Equatable {
   }
 
   String get scheduleSummary {
-    if (days.isEmpty) return 'Mon–Sat: 9:00 AM – 8:00 PM · Sun: Closed';
+    // Nothing configured yet: don't publish made-up hours to patients.
+    if (days.isEmpty) return '';
     final mon = days['monday'];
     final sat = days['saturday'];
     final sun = days['sunday'];

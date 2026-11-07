@@ -30,11 +30,13 @@ class ClinicProfileHeader extends StatelessWidget {
     Widget image;
     final bytes = pickedBytes ?? imageBytes;
     if (bytes != null) {
-      image = Image.memory(bytes, fit: BoxFit.cover, gaplessPlayback: true);
+      image = Image.memory(bytes, fit: BoxFit.cover, width: double.infinity, height: double.infinity, gaplessPlayback: true);
     } else if (imageUrl.trim().isNotEmpty) {
       image = Image.network(
         imageUrl.trim(),
         fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
         errorBuilder: (context, error, stackTrace) => _initialAvatar(context, initial),
       );
     } else {
@@ -60,11 +62,15 @@ class ClinicProfileHeader extends StatelessWidget {
                 width: 88,
                 height: 88,
                 clipBehavior: Clip.antiAlias,
+                // No background colour: it showed as a dark fringe around the photo.
                 decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                foregroundDecoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: colors.accent.withAlpha(140), width: 2),
                 ),
-                child: image,
+                child: SizedBox.expand(child: image),
               ),
               if (isUploadingImage)
                 Positioned.fill(

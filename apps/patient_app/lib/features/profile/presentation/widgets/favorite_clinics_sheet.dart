@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+import '../../../clinic_details/presentation/pages/clinic_details_screen.dart';
+import '../../../home/data/repositories/home_repository_impl.dart';
+import '../../../home/domain/entities/clinic_entity.dart';
+import '../../../home/presentation/widgets/home_clinic_card.dart';
 import '../../domain/entities/favorite_clinic_entity.dart';
 
-class FavoriteClinicsSheet extends StatelessWidget {
+class FavoriteClinicsSheet extends StatefulWidget {
   final List<FavoriteClinicEntity> clinics;
   final ValueChanged<FavoriteClinicEntity>? onBookClinic;
 
@@ -29,8 +33,65 @@ class FavoriteClinicsSheet extends StatelessWidget {
   }
 
   @override
+  State<FavoriteClinicsSheet> createState() => _FavoriteClinicsSheetState();
+}
+
+class _FavoriteClinicsSheetState extends State<FavoriteClinicsSheet> {
+  /// Live clinic data (photo, open state, queue) keyed by clinic id.
+  Map<String, ClinicEntity> _live = const {};
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLiveClinics();
+  }
+
+  Future<void> _loadLiveClinics() async {
+    try {
+      final all = await HomeRepositoryImpl().getFeaturedClinics();
+      if (!mounted) return;
+      setState(() => _live = {for (final c in all) c.id: c});
+    } catch (_) {
+      // Fall back to the saved snapshot of each favorite.
+    }
+  }
+
+  /// Live clinic when available, otherwise rebuilt from the saved favorite.
+  ClinicEntity _resolve(FavoriteClinicEntity fav) {
+    final live = _live[fav.id];
+    if (live != null) return live;
+    return ClinicEntity(
+      id: fav.id,
+      name: fav.name,
+      initials: fav.initials,
+      category: fav.department,
+      rating: fav.rating,
+      reviewCount: fav.reviewsCount,
+      distance: '',
+      city: fav.address,
+      address: fav.address,
+      phone: '',
+      consultationFee: '',
+      openingHours: '',
+    );
+  }
+
+  Future<void> _open(FavoriteClinicEntity fav) async {
+    final clinic = _resolve(fav);
+    final booked = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(builder: (_) => ClinicDetailsScreen(clinic: clinic)),
+    );
+    if (booked == true && mounted) {
+      Navigator.of(context).pop();
+      widget.onBookClinic?.call(fav);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final clinics = widget.clinics;
 
     return Container(
       constraints: BoxConstraints(
@@ -81,149 +142,15 @@ class FavoriteClinicsSheet extends StatelessWidget {
           ),
           const SizedBox(height: 16),
 
-          // Clinics List
+          // Clinics list: same card as the home screen
           Expanded(
-            child: ListView.separated(
+            child: ListView.builder(
               itemCount: clinics.length,
-              separatorBuilder: (_, _) => const SizedBox(height: 12),
               itemBuilder: (context, index) {
-                final clinic = clinics[index];
-                return Container(
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: colors.surfaceSecondary,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: colors.border, width: 1),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Clinic initials box
-                          Container(
-                            width: 44,
-                            height: 44,
-                            decoration: BoxDecoration(
-                              color: Color(clinic.accentColorHex).withValues(alpha: 0.18),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            alignment: Alignment.center,
-                            child: Text(
-                              clinic.initials,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w800,
-                                color: Color(clinic.accentColorHex),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-
-                          // Name & department
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  clinic.name,
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w800,
-                                    color: colors.textPrimary,
-                                  ),
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  clinic.department,
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: colors.textMuted,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          // Rating pill
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                            decoration: BoxDecoration(
-                              color: colors.ratingGold.withValues(alpha: 0.12),
-                              borderRadius: BorderRadius.circular(999),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.star_rounded, size: 13, color: colors.ratingGold),
-                                const SizedBox(width: 3),
-                                Text(
-                                  clinic.rating.toStringAsFixed(1),
-                                  style: TextStyle(
-                                    fontSize: 11.5,
-                                    fontWeight: FontWeight.w700,
-                                    color: colors.ratingGold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-
-                      // Location text
-                      Row(
-                        children: [
-                          Icon(Icons.location_on_outlined, size: 14, color: colors.textSubtle),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              clinic.address,
-                              style: TextStyle(
-                                fontSize: 11.5,
-                                color: colors.textSubtle,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-
-                      // Actions row
-                      Row(
-                        children: [
-                          Expanded(
-                            child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                                onBookClinic?.call(clinic);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: colors.primary,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                padding: const EdgeInsets.symmetric(vertical: 9),
-                                elevation: 0,
-                              ),
-                              child: const Text(
-                                'Book Appointment',
-                                style: TextStyle(
-                                  fontSize: 12.5,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                final fav = clinics[index];
+                return HomeClinicCard(
+                  clinic: _resolve(fav),
+                  onTap: () => _open(fav),
                 );
               },
             ),

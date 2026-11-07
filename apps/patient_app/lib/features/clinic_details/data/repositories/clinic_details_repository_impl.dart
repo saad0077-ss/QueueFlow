@@ -37,7 +37,7 @@ class ClinicDetailsRepositoryImpl implements ClinicDetailsRepository {
           address: 'Main Road',
           phone: '+91 484 987 6543',
           consultationFee: '₹400',
-          openingHours: 'Mon–Sat, 9:00 AM – 8:00 PM',
+          openingHours: '',
         );
 
     String description = ClinicFallbackData.getDescription(clinic.name, clinic.category);
@@ -78,15 +78,39 @@ class ClinicDetailsRepositoryImpl implements ClinicDetailsRepository {
       final snap = await _firestore.collection('services').where('clinicId', isEqualTo: clinicId).get();
       if (snap.docs.isNotEmpty) return snap.docs.map(ClinicServiceModel.fromFirestore).toList();
     } catch (_) {}
-    return ClinicFallbackData.getServices(cat);
+    return const [];
   }
 
   Future<List<ClinicDoctorModel>> _fetchDoctors(String clinicId, String cat) async {
     try {
-      final snap = await _firestore.collection('staff').where('clinicId', isEqualTo: clinicId).get();
-      if (snap.docs.isNotEmpty) return snap.docs.map(ClinicDoctorModel.fromFirestore).toList();
-    } catch (_) {}
-    return ClinicFallbackData.getDoctors(cat);
+      final doctors = await ClinicDoctorModel.fetchForClinic(_firestore, clinicId);
+      final ratings = await _fetchDoctorRatings(clinicId);
+      return doctors.map((d) {
+        final r = ratings[d.id];
+        if (r == null || r.isEmpty) return d;
+        return d.withRating(rating: r.reduce((a, b) => a + b) / r.length, reviewCount: r.length);
+      }).toList();
+    } catch (e) {
+      debugPrint('Error fetching doctors: $e');
+    }
+    return const [];
+  }
+
+  /// Star ratings per doctor id; empty if none or unreadable.
+  Future<Map<String, List<int>>> _fetchDoctorRatings(String clinicId) async {
+    final out = <String, List<int>>{};
+    try {
+      final snap = await _firestore.collection('doctor_reviews').where('clinicId', isEqualTo: clinicId).get();
+      for (final d in snap.docs) {
+        final data = d.data();
+        final id = (data['doctorId'] ?? '').toString();
+        final r = (data['rating'] as num?)?.toInt() ?? 0;
+        if (id.isNotEmpty && r > 0) out.putIfAbsent(id, () => []).add(r.clamp(1, 5));
+      }
+    } catch (e) {
+      debugPrint('Error fetching doctor ratings: $e');
+    }
+    return out;
   }
 
   Future<List<ClinicReviewModel>> _fetchReviews(String clinicId) async {
@@ -164,6 +188,27 @@ class ClinicDetailsRepositoryImpl implements ClinicDetailsRepository {
   }
 
   @override
+  Future<void> submitDoctorReview({
+    required String clinicId,
+    required String doctorId,
+    required int rating,
+    required String comment,
+  }) async {
+    final user = _auth.currentUser;
+    if (user == null) throw Exception('Please sign in to rate this doctor.');
+    final name = user.displayName?.trim() ?? '';
+    await _firestore.collection('doctor_reviews').doc('${doctorId}_${user.uid}').set({
+      'clinicId': clinicId,
+      'doctorId': doctorId,
+      'patientId': user.uid,
+      'patientName': name.isNotEmpty ? name : 'Verified Patient',
+      'rating': rating.clamp(1, 5),
+      'comment': comment,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  @override
   Future<void> markReviewHelpful(String reviewId) async {
     try {
       await _firestore.collection('reviews').doc(reviewId).update({'helpfulCount': FieldValue.increment(1)});
@@ -171,5 +216,43 @@ class ClinicDetailsRepositoryImpl implements ClinicDetailsRepository {
   }
 
   @override
-  Future<bool> toggleFavoriteClinic(String clinicId) async => true;
+  Future<bool> isClinicFavorite(String clinicId) async {
+    final user = _auth.currentUser;
+    if (user == null) return false;
+    try {
+      final data = (await _firestore.collection('users').doc(user.uid).get()).data();
+      final favs = data?['favoriteClinics'];
+      return favs is Map && favs.containsKey(clinicId);
+    } catch (e) {
+      debugPrint('Error reading favorite state: $e');
+      return false;
+    }
+  }
+
+  @override
+  Future<void> setClinicFavorite(ClinicEntity clinic, bool favorite) async {
+    final user = _auth.currentUser;
+    if (user == null) throw Exception('Please sign in to save clinics.');
+    final ref = _firestore.collection('users').doc(user.uid);
+    if (favorite) {
+      await ref.set({
+        'favoriteClinics': {
+          clinic.id: {
+            'id': clinic.id,
+            'name': clinic.name,
+            'department': clinic.category,
+            'rating': clinic.rating,
+            'reviewsCount': clinic.reviewCount,
+            'address': clinic.address,
+            'initials': clinic.initials,
+            'savedAt': FieldValue.serverTimestamp(),
+          },
+        },
+      }, SetOptions(merge: true));
+    } else {
+      await ref.set({
+        'favoriteClinics': {clinic.id: FieldValue.delete()},
+      }, SetOptions(merge: true));
+    }
+  }
 }

@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+import '../../../../core/widgets/doctor_avatar.dart';
 import '../../domain/entities/clinic_doctor_item.dart';
 
 class ClinicDoctorItemTile extends StatelessWidget {
   final ClinicDoctorItem doctor;
   final VoidCallback? onTap;
+  final VoidCallback? onRate;
 
   const ClinicDoctorItemTile({
     super.key,
     required this.doctor,
     this.onTap,
+    this.onRate,
   });
 
   @override
@@ -33,10 +36,12 @@ class ClinicDoctorItemTile extends StatelessWidget {
             padding: const EdgeInsets.all(12),
             child: Row(
               children: [
-                CircleAvatar(
+                DoctorPhotoAvatar(
+                  photoUrl: doctor.photoUrl,
                   radius: 22,
                   backgroundColor: colors.primaryTint,
-                  child: Text(
+                  borderColor: colors.primary.withValues(alpha: 0.5),
+                  fallback: Text(
                     doctor.initials,
                     style: GoogleFonts.inter(
                       fontSize: 13,
@@ -58,21 +63,24 @@ class ClinicDoctorItemTile extends StatelessWidget {
                           color: colors.textPrimary,
                         ),
                       ),
-                      const SizedBox(height: 2),
-                      Text(
-                        doctor.title,
-                        style: GoogleFonts.inter(
-                          fontSize: 11.5,
-                          color: colors.textMuted,
+                      if (doctor.department.trim().isNotEmpty) ...[
+                        const SizedBox(height: 2),
+                        Text(
+                          doctor.department,
+                          style: GoogleFonts.inter(
+                            fontSize: 11.5,
+                            color: colors.textMuted,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+                      ],
                       const SizedBox(height: 6),
-                      _buildSchedulePill(doctor.schedule, colors),
+                      _buildAvailabilityPill(doctor.isAvailable, colors),
                     ],
                   ),
                 ),
+                if (onRate != null) _buildRateButton(colors),
               ],
             ),
           ),
@@ -81,11 +89,44 @@ class ClinicDoctorItemTile extends StatelessWidget {
     );
   }
 
-  Widget _buildSchedulePill(String schedule, AppColorsExtension colors) {
+  /// Star + average rating; tapping it opens the rating dialog.
+  Widget _buildRateButton(AppColorsExtension colors) {
+    final rated = doctor.reviewCount > 0;
+    return InkWell(
+      onTap: onRate,
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              rated ? Icons.star_rounded : Icons.star_outline_rounded,
+              color: colors.ratingGold,
+              size: 26,
+            ),
+            const SizedBox(height: 2),
+            Text(
+              rated ? doctor.rating.toStringAsFixed(1) : 'Rate',
+              style: GoogleFonts.inter(
+                fontSize: 10.5,
+                fontWeight: FontWeight.w700,
+                color: colors.textMuted,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAvailabilityPill(bool available, AppColorsExtension colors) {
+    final bg = available ? colors.badgeOpenBg : colors.surfaceSecondary;
+    final fg = available ? colors.badgeOpenText : colors.textMuted;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: colors.badgeOpenBg,
+        color: bg,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -94,18 +135,15 @@ class ClinicDoctorItemTile extends StatelessWidget {
           Container(
             width: 5,
             height: 5,
-            decoration: BoxDecoration(
-              color: colors.badgeOpenText,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: fg, shape: BoxShape.circle),
           ),
           const SizedBox(width: 5),
           Text(
-            schedule,
+            available ? 'Available' : 'Unavailable',
             style: GoogleFonts.inter(
               fontSize: 10.5,
               fontWeight: FontWeight.w700,
-              color: colors.badgeOpenText,
+              color: fg,
             ),
           ),
         ],

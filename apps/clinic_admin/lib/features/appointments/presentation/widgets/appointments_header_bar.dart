@@ -90,7 +90,7 @@ class AppointmentsHeaderBar extends StatelessWidget {
                 color: colors.textPrimary,
               ),
               label: Text(
-                'Export CSV',
+                'Export Report',
                 style: GoogleFonts.inter(
                   fontSize: 12.5,
                   fontWeight: FontWeight.w600,
@@ -105,7 +105,7 @@ class AppointmentsHeaderBar extends StatelessWidget {
                   vertical: 10,
                 ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(30),
                 ),
               ),
             ),
@@ -134,7 +134,7 @@ class AppointmentsHeaderBar extends StatelessWidget {
                 ),
                 elevation: 0,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(30),
                 ),
               ),
             ),

@@ -1,4 +1,4 @@
-﻿import 'package:equatable/equatable.dart';
+import 'package:equatable/equatable.dart';
 
 class PlatformTenantSubscriptionEntity extends Equatable {
   final String clinicId;
@@ -13,7 +13,7 @@ class PlatformTenantSubscriptionEntity extends Equatable {
   final String mrrAmount;
   final String status;
   final int practicingDoctors;
-  final String doctorLimitText;
+  final String imageUrl;
 
   const PlatformTenantSubscriptionEntity({
     required this.clinicId,
@@ -28,7 +28,7 @@ class PlatformTenantSubscriptionEntity extends Equatable {
     this.mrrAmount = '₹999/mo',
     this.status = 'ACTIVE',
     this.practicingDoctors = 1,
-    this.doctorLimitText = '1 Doctor Limit',
+    this.imageUrl = '',
   });
 
   bool get isActive => status.toUpperCase() == 'ACTIVE';
@@ -50,6 +50,6 @@ class PlatformTenantSubscriptionEntity extends Equatable {
     mrrAmount,
     status,
     practicingDoctors,
-    doctorLimitText,
+    imageUrl,
   ];
 }

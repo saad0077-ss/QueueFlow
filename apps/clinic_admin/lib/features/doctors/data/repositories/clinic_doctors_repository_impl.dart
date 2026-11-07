@@ -184,6 +184,7 @@ class ClinicDoctorsRepositoryImpl implements ClinicDoctorsRepository {
       // Listen for updates from Firestore
       final fs = _firestore;
       if (fs != null) {
+        _watchDoctorReviews(fs, _cachedClinicId);
         fs.collection('clinics').doc(_cachedClinicId).snapshots().listen((snap) {
           if (!snap.exists) return;
           _cachedClinicDoc = snap;
@@ -202,8 +203,53 @@ class ClinicDoctorsRepositoryImpl implements ClinicDoctorsRepository {
 
   void _emit() {
     if (!_doctorsStreamController.isClosed) {
-      _doctorsStreamController.add(List.unmodifiable(_cachedDoctors));
+      // Patient ratings live in `doctor_reviews`; overlay them at emit time so
+      // they are shown but never written back into the clinic's doctors array.
+      final withReviews = [
+        for (final d in _cachedDoctors)
+          (_reviewsByDoctor[d.id]?.isNotEmpty ?? false) ? d.copyWith(reviews: _reviewsByDoctor[d.id]) : d,
+      ];
+      _doctorsStreamController.add(List.unmodifiable(withReviews));
     }
+  }
+
+  final Map<String, List<DoctorReviewEntity>> _reviewsByDoctor = {};
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _reviewsSub;
+
+  static const _months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  /// Listens to ratings patients leave for this clinic's doctors.
+  void _watchDoctorReviews(FirebaseFirestore fs, String clinicId) {
+    _reviewsSub?.cancel();
+    _reviewsSub = fs.collection('doctor_reviews').where('clinicId', isEqualTo: clinicId).snapshots().listen((snap) {
+      final entries = <(DateTime?, String, DoctorReviewEntity)>[];
+      for (final doc in snap.docs) {
+        final m = doc.data();
+        final doctorId = (m['doctorId'] ?? '').toString();
+        if (doctorId.isEmpty) continue;
+        final ts = m['createdAt'];
+        final dt = ts is Timestamp ? ts.toDate() : null;
+        entries.add((
+          dt,
+          doctorId,
+          DoctorReviewEntity(
+            id: doc.id,
+            userName: (m['patientName'] ?? 'Verified Patient').toString(),
+            rating: (m['rating'] as num?)?.toDouble() ?? 0,
+            date: dt == null ? '' : '${dt.day.toString().padLeft(2, '0')} ${_months[dt.month - 1]} ${dt.year}',
+            service: '',
+            comment: (m['comment'] ?? '').toString(),
+          ),
+        ));
+      }
+      // Newest first.
+      entries.sort((a, b) => (b.$1 ?? DateTime(0)).compareTo(a.$1 ?? DateTime(0)));
+      _reviewsByDoctor.clear();
+      for (final e in entries) {
+        _reviewsByDoctor.putIfAbsent(e.$2, () => []).add(e.$3);
+      }
+      _emit();
+    }, onError: (_) {});
   }
 
   @override
@@ -347,6 +393,7 @@ class ClinicDoctorsRepositoryImpl implements ClinicDoctorsRepository {
     required String doctorId,
     required Map<String, DoctorDailySchedule> schedule,
     required int slotDuration,
+    List<String>? leaveDates,
   }) async {
     final index = _cachedDoctors.indexWhere((d) => d.id == doctorId);
     if (index != -1) {
@@ -359,6 +406,7 @@ class ClinicDoctorsRepositoryImpl implements ClinicDoctorsRepository {
 
       _cachedDoctors[index] = _cachedDoctors[index].copyWith(
         weeklySchedule: schedule,
+        leaveDates: leaveDates,
         slotDuration: slotDuration,
         schedule: summaryText,
       );

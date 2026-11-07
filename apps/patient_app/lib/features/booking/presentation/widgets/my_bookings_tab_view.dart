@@ -1,7 +1,15 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:patient_app/features/booking/data/repositories/booking_repository_impl.dart';
+import 'package:patient_app/features/booking/presentation/pages/booking_wizard_screen.dart';
+import 'package:patient_app/features/clinic_details/data/models/clinic_doctor_model.dart';
+import 'package:patient_app/features/clinic_details/data/repositories/clinic_details_repository_impl.dart';
+import 'package:patient_app/features/clinic_details/presentation/widgets/doctor_rate_dialog.dart';
+import 'package:patient_app/features/home/data/models/clinic_model.dart';
 import 'package:patient_app/features/booking/domain/entities/appointment_entity.dart';
 import 'package:patient_app/features/booking/domain/repositories/booking_repository.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
@@ -21,12 +29,30 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
   int _selectedFilterIndex = 0; // 0: Upcoming, 1: Completed, 2: Cancelled
   List<AppointmentEntity> _allAppointments = [];
   bool _isLoading = true;
+  StreamSubscription<List<AppointmentEntity>>? _sub;
 
   @override
   void initState() {
     super.initState();
     _repo = widget.repository ?? BookingRepositoryImpl();
     _loadAppointments();
+    // Live updates: clinic check-in / complete / cancel appear instantly.
+    _sub = _repo.watchUserAppointments().listen(
+      (list) {
+        if (!mounted) return;
+        setState(() {
+          _allAppointments = list;
+          _isLoading = false;
+        });
+      },
+      onError: (_) {},
+    );
+  }
+
+  @override
+  void dispose() {
+    _sub?.cancel();
+    super.dispose();
   }
 
   Future<void> _loadAppointments() async {
@@ -164,6 +190,65 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
           ),
         );
       }
+    }
+  }
+
+  void _toast(String msg, {Color? color}) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(msg), backgroundColor: color),
+    );
+  }
+
+  /// Rate the doctor who treated this (completed) appointment.
+  Future<void> _rateExperience(AppointmentEntity apt) async {
+    if (apt.doctorId.isEmpty) {
+      _toast('This visit has no doctor profile to rate.');
+      return;
+    }
+    final okColor = context.colors.success;
+    final errColor = context.colors.error;
+    await showDialog<void>(
+      context: context,
+      builder: (_) => DoctorRateDialog(
+        doctorName: apt.doctorName,
+        onSubmit: (rating, comment) async {
+          try {
+            await ClinicDetailsRepositoryImpl().submitDoctorReview(
+              clinicId: apt.clinicId,
+              doctorId: apt.doctorId,
+              rating: rating,
+              comment: comment,
+            );
+            _toast('Thank you! Your rating has been submitted.',
+                color: okColor);
+          } catch (e) {
+            _toast('Could not submit rating: $e', color: errColor);
+          }
+        },
+      ),
+    );
+  }
+
+  /// Opens the booking wizard for the same clinic (and doctor, if still there).
+  Future<void> _bookAgain(AppointmentEntity apt) async {
+    try {
+      final fs = FirebaseFirestore.instance;
+      final doc = await fs.collection('clinics').doc(apt.clinicId).get();
+      if (!doc.exists) {
+        _toast('This clinic is no longer available.');
+        return;
+      }
+      final clinic = ClinicModel.fromFirestore(doc);
+      ClinicDoctorModel? doctor;
+      try {
+        final doctors = await ClinicDoctorModel.fetchForClinic(fs, apt.clinicId);
+        doctor = doctors.where((d) => d.id == apt.doctorId).firstOrNull;
+      } catch (_) {}
+      if (!mounted) return;
+      await BookingWizardScreen.push(context, clinic: clinic, initialDoctor: doctor);
+    } catch (e) {
+      _toast('Could not open booking: $e');
     }
   }
 
@@ -704,6 +789,9 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
     if (apt.isCompleted) {
       statusColor = colors.success;
       statusLabel = 'COMPLETED';
+    } else if (apt.isCheckedIn) {
+      statusColor = colors.success;
+      statusLabel = 'CHECKED IN';
     } else if (apt.isCancelled) {
       statusColor = colors.error;
       statusLabel = 'CANCELLED';
@@ -861,7 +949,29 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
                 ),
               ],
             ),
-            if (apt.isUpcoming) ...[
+            if (apt.isCompleted) ...[
+              const SizedBox(height: 10),
+              Divider(color: colors.border, height: 1),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  _actionBtn(
+                    'Rate Experience',
+                    Icons.star_rounded,
+                    colors.ratingGold,
+                    () => _rateExperience(apt),
+                  ),
+                  const SizedBox(width: 12),
+                  _actionBtn(
+                    'Book Again',
+                    Icons.event_repeat_rounded,
+                    colors.textPrimary,
+                    () => _bookAgain(apt),
+                  ),
+                ],
+              ),
+            ],
+            if (apt.isUpcoming && !apt.isCheckedIn) ...[
               const SizedBox(height: 10),
               Divider(color: colors.border, height: 1),
               const SizedBox(height: 10),

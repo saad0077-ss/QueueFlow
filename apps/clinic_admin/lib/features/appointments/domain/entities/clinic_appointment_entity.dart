@@ -118,12 +118,16 @@ class ClinicAppointmentEntity extends Equatable {
   final String room;
   final AppointmentPaymentEntity payment;
 
+  /// Patient's profile photo (raw base64, data URI or http URL); empty if none.
+  final String customerPhoto;
+
   const ClinicAppointmentEntity({
     required this.id,
     required this.bookingId,
     required this.customerName,
-    this.phone = '+91 98765 43210',
-    this.email = 'patient@email.com',
+    this.customerPhoto = '',
+    this.phone = '',
+    this.email = '',
     required this.service,
     this.serviceCategory = 'General Medicine',
     this.departmentName = 'General Medicine',
@@ -162,6 +166,7 @@ class ClinicAppointmentEntity extends Equatable {
     String? id,
     String? bookingId,
     String? customerName,
+    String? customerPhoto,
     String? phone,
     String? email,
     String? service,
@@ -185,6 +190,7 @@ class ClinicAppointmentEntity extends Equatable {
       id: id ?? this.id,
       bookingId: bookingId ?? this.bookingId,
       customerName: customerName ?? this.customerName,
+      customerPhoto: customerPhoto ?? this.customerPhoto,
       phone: phone ?? this.phone,
       email: email ?? this.email,
       service: service ?? this.service,
@@ -211,6 +217,7 @@ class ClinicAppointmentEntity extends Equatable {
     id,
     bookingId,
     customerName,
+    customerPhoto,
     phone,
     email,
     service,

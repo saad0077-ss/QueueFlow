@@ -1,5 +1,6 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../domain/entities/platform_billing_kpis.dart';
 import '../../domain/entities/platform_invoice_entity.dart';
 import '../../domain/repositories/platform_billing_repository.dart';
 import 'platform_billing_event.dart';
@@ -14,7 +15,7 @@ class PlatformBillingBloc extends Bloc<PlatformBillingEvent, PlatformBillingStat
     on<PlatformBillingTabChanged>((e, emit) => emit(state.copyWith(activeTab: e.activeTab)));
     on<PlatformBillingSearchChanged>((e, emit) => emit(state.copyWith(searchQuery: e.query)));
     on<PlatformBillingInvoiceFilterChanged>((e, emit) => emit(state.copyWith(invoiceFilter: e.filter)));
-    on<PlatformBillingSubscriptionsStreamUpdated>((e, emit) => emit(state.copyWith(subscriptions: e.subscriptions)));
+    on<PlatformBillingSubscriptionsStreamUpdated>(_onSubscriptionsStreamUpdated);
     on<PlatformBillingIssueInvoiceSubmitted>(_onIssueInvoice);
     on<PlatformBillingSubscriptionUpdated>(_onUpdateSubscription);
     on<PlatformBillingPlanTierSaved>(_onSavePlanTier);
@@ -22,12 +23,23 @@ class PlatformBillingBloc extends Bloc<PlatformBillingEvent, PlatformBillingStat
     on<PlatformBillingFeedbackDismissed>((e, emit) => emit(state.copyWith(feedbackMessage: null, isError: false)));
   }
 
+  void _onSubscriptionsStreamUpdated(
+    PlatformBillingSubscriptionsStreamUpdated event,
+    Emitter<PlatformBillingState> emit,
+  ) {
+    final kpis = PlatformBillingKpis.compute(
+      subscriptions: event.subscriptions,
+      invoices: state.invoices,
+    );
+    emit(state.copyWith(subscriptions: event.subscriptions, kpis: kpis));
+  }
+
   Future<void> _onStarted(PlatformBillingStarted event, Emitter<PlatformBillingState> emit) async {
     emit(state.copyWith(status: PlatformBillingStatus.loading));
     try {
-      final kpis = await repository.getKpis();
       final tiers = await repository.getPlanTiers();
       final invoices = await repository.getInvoices();
+      final kpis = await repository.getKpis();
 
       await _subscriptionsSub?.cancel();
       _subscriptionsSub = repository.watchTenantSubscriptions().listen((subs) {
@@ -59,9 +71,14 @@ class PlatformBillingBloc extends Bloc<PlatformBillingEvent, PlatformBillingStat
         dueDate: event.dueDate,
       );
       final updatedInvoices = await repository.getInvoices();
+      final kpis = PlatformBillingKpis.compute(
+        subscriptions: state.subscriptions,
+        invoices: updatedInvoices,
+      );
       emit(state.copyWith(
         isSubmitting: false,
         invoices: updatedInvoices,
+        kpis: kpis,
         feedbackMessage: 'Invoice issued successfully to ${event.clinicName}.',
         isError: false,
       ));
@@ -132,8 +149,13 @@ class PlatformBillingBloc extends Bloc<PlatformBillingEvent, PlatformBillingStat
               )
             : i)
         .toList();
+    final kpis = PlatformBillingKpis.compute(
+      subscriptions: state.subscriptions,
+      invoices: invoices,
+    );
     emit(state.copyWith(
       invoices: invoices,
+      kpis: kpis,
       feedbackMessage: 'Invoice ${event.invoice.number} marked as paid.',
       isError: false,
     ));

@@ -45,7 +45,8 @@ abstract class TenantRepository {
     required String billingCadence,
     required String status,
   });
-  Future<void> toggleStatus(String clinicId, bool currentlyActive);
+  /// Suspends (with [reason], shown to the clinic admin) or reactivates a clinic.
+  Future<void> toggleStatus(String clinicId, bool currentlyActive, {String? reason});
   Future<void> deleteClinic(String clinicId, {String? adminEmail});
   Future<OnboardClinicResult> resendInvite({
     required String clinicId,

@@ -34,7 +34,7 @@ class PatientApp extends StatelessWidget {
   const PatientApp({
     super.key,
     this.home,
-    this.themeBloc,
+    this.themeBloc, 
   });
  
   @override

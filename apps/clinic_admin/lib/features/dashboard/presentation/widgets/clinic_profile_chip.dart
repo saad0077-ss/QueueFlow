@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -35,6 +36,7 @@ class _ClinicProfileChipState extends State<ClinicProfileChip> {
   String _clinicName = '';
   String _imageUrl = '';
   Uint8List? _imageBytes;
+  StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>? _sub;
 
   @override
   void initState() {
@@ -42,6 +44,14 @@ class _ClinicProfileChipState extends State<ClinicProfileChip> {
     _load();
   }
 
+  @override
+  void dispose() {
+    _sub?.cancel();
+    super.dispose();
+  }
+
+  /// Resolves the clinic once, then listens so saves made in Settings
+  /// (name or photo) show up in the top bar immediately.
   Future<void> _load() async {
     try {
       final db = FirebaseFirestore.instance;
@@ -49,7 +59,19 @@ class _ClinicProfileChipState extends State<ClinicProfileChip> {
         auth: FirebaseAuth.instance,
         firestore: db,
       );
-      if (doc == null) return;
+      if (doc == null || !mounted) return;
+      _sub = doc.reference.snapshots().listen(
+        (snap) => _apply(db, snap),
+        onError: (_) {},
+      );
+    } catch (_) {}
+  }
+
+  Future<void> _apply(
+    FirebaseFirestore db,
+    DocumentSnapshot<Map<String, dynamic>> doc,
+  ) async {
+    try {
       final data = doc.data() ?? const <String, dynamic>{};
       final name = (data['name'] as String? ?? '').trim();
       final url = (data['imageUrl'] as String? ?? '').trim();

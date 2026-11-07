@@ -147,20 +147,26 @@ class _BookingWizardViewState extends State<_BookingWizardView> {
                   child: CircularProgressIndicator(color: colors.primary),
                 )
               : SafeArea(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (state.step <= 4)
-                          BookingStepperHeader(
+                  child: Column(
+                    children: [
+                      if (state.step <= 4)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: BookingStepperHeader(
                             currentStep: state.step,
                             onStepTapped: (step) => bloc.add(GoToStep(step)),
                           ),
-                        const SizedBox(height: 8),
-                        _buildStepBody(context, state, bloc),
-                      ],
-                    ),
+                        ),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: _buildStepBody(context, state, bloc),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
         );
@@ -193,9 +199,11 @@ class _BookingWizardViewState extends State<_BookingWizardView> {
 
       case 3:
         return BookingStep3Schedule(
+          doctor: state.selectedDoctor,
           selectedDate: state.selectedDate,
           availableSlots: state.availableTimeSlots,
           selectedSlot: state.selectedTimeSlot,
+          bookedSlots: state.bookedSlots,
           payableFee: state.payableFee,
           onDateSelected: (date) => bloc.add(SelectDate(date)),
           onSlotSelected: (slot) => bloc.add(SelectTimeSlot(slot)),

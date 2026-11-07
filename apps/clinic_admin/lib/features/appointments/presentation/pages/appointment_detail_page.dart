@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../domain/entities/clinic_appointment_entity.dart';
+import '../../data/services/appointment_invoice_pdf.dart';
+import '../widgets/patient_avatar.dart';
 
 /// Full-screen appointment detail view (replaces the old slide-over drawer).
 class AppointmentDetailPage extends StatelessWidget {
@@ -109,26 +111,10 @@ class AppointmentDetailPage extends StatelessWidget {
 
     final identity = Row(
       children: [
-        Container(
-          width: 64,
-          height: 64,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: LinearGradient(
-              colors: [colors.primary, colors.accent],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-          child: Text(
-            a.initials,
-            style: GoogleFonts.inter(
-              fontSize: 22,
-              fontWeight: FontWeight.w800,
-              color: Colors.white,
-            ),
-          ),
+        PatientAvatar(
+          photo: a.customerPhoto,
+          initials: a.initials,
+          size: 64,
         ),
         const SizedBox(width: 16),
         Expanded(
@@ -244,7 +230,7 @@ class AppointmentDetailPage extends StatelessWidget {
       backgroundColor: bg,
       side: BorderSide(color: side),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
     );
 
     TextStyle label(Color c) => GoogleFonts.inter(
@@ -268,7 +254,7 @@ class AppointmentDetailPage extends StatelessWidget {
             elevation: 0,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(30),
             ),
           ),
         ),
@@ -294,7 +280,7 @@ class AppointmentDetailPage extends StatelessWidget {
           label: Text('Reschedule', style: label(colors.textPrimary)),
           style: outlined(colors.border, bg: colors.surfaceSecondary),
         ),
-      if (!a.isCancelled)
+      if (open)
         OutlinedButton.icon(
           onPressed: onCancel,
           icon: Icon(Icons.close_rounded, size: 17, color: colors.error),
@@ -648,11 +634,18 @@ class AppointmentDetailPage extends StatelessWidget {
           ],
           const SizedBox(height: 14),
           OutlinedButton.icon(
-            onPressed: () => AppSnackBar.showSuccess(
-              context,
-              message:
-                  'Official Invoice for #${appointment.bookingId} downloaded.',
-            ),
+            onPressed: () async {
+              try {
+                await AppointmentInvoicePdf.download(appointment);
+              } catch (e) {
+                if (context.mounted) {
+                  AppSnackBar.showError(
+                    context,
+                    message: 'Could not generate the invoice: $e',
+                  );
+                }
+              }
+            },
             icon: Icon(
               Icons.receipt_long_rounded,
               size: 16,
@@ -671,7 +664,7 @@ class AppointmentDetailPage extends StatelessWidget {
               backgroundColor: colors.surfaceSecondary,
               side: BorderSide(color: colors.border),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(30),
               ),
             ),
           ),

@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 
 import '../../domain/entities/clinic_doctor_profile_entity.dart';
+import '../../domain/entities/doctor_daily_schedule.dart';
 import '../bloc/clinic_doctors_bloc.dart';
 import '../bloc/clinic_doctors_event.dart';
 import 'doctor_detail_availability_card.dart';
@@ -176,6 +177,17 @@ class DoctorDetailView extends StatelessWidget {
     );
   }
 
+  void _updateLeave(BuildContext context, List<String> leaveDates) {
+    context.read<ClinicDoctorsBloc>().add(DoctorScheduleUpdated(
+          doctorId: doctor.id,
+          schedule: doctor.weeklySchedule.isNotEmpty
+              ? doctor.weeklySchedule
+              : DoctorDailySchedule.defaultWeekly(),
+          slotDuration: doctor.slotDuration,
+          leaveDates: leaveDates,
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
     final bloc = context.read<ClinicDoctorsBloc>();
@@ -233,6 +245,7 @@ class DoctorDetailView extends StatelessWidget {
                           DoctorDetailAvailabilityCard(
                             doctor: doctor,
                             onEditSchedule: () => _openManageSchedule(context),
+                            onLeaveChanged: (l) => _updateLeave(context, l),
                           ),
                           const SizedBox(height: 18),
                           DoctorDetailReviewsCard(doctor: doctor),
@@ -265,6 +278,7 @@ class DoctorDetailView extends StatelessWidget {
                     DoctorDetailAvailabilityCard(
                       doctor: doctor,
                       onEditSchedule: () => _openManageSchedule(context),
+                      onLeaveChanged: (l) => _updateLeave(context, l),
                     ),
                     const SizedBox(height: 18),
                     DoctorDetailReviewsCard(doctor: doctor),

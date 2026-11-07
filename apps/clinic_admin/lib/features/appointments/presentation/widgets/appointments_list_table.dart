@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../domain/entities/clinic_appointment_entity.dart';
+import 'patient_avatar.dart';
 
 class AppointmentsListTable extends StatelessWidget {
   final List<ClinicAppointmentEntity> appointments;
@@ -155,7 +156,7 @@ class AppointmentsListTable extends StatelessWidget {
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          _Avatar(initials: appt.initials),
+                          _Avatar(initials: appt.initials, photo: appt.customerPhoto),
                           const SizedBox(width: 10),
                           Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -225,12 +226,12 @@ class AppointmentsListTable extends StatelessWidget {
                     DataCell(
                       Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
+                          horizontal: 12,
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
                           color: colors.primaryTint,
-                          borderRadius: BorderRadius.circular(6),
+                          borderRadius: BorderRadius.circular(30),
                           border: Border.all(
                             color: colors.primary.withValues(alpha: 0.2),
                           ),
@@ -289,13 +290,13 @@ class AppointmentsListTable extends StatelessWidget {
                             backgroundColor: colors.surfaceSecondary,
                             side: BorderSide(color: colors.border),
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 7,
+                              horizontal: 16,
+                              vertical: 12,
                             ),
-                            minimumSize: Size.zero,
+                            minimumSize: const Size(0, 40),
                             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                              borderRadius: BorderRadius.circular(30),
                             ),
                           ),
                           child: Row(
@@ -401,10 +402,10 @@ class _PaymentCell extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           decoration: BoxDecoration(
             color: bg,
-            borderRadius: BorderRadius.circular(6),
+            borderRadius: BorderRadius.circular(30),
             border: Border.all(color: fg.withValues(alpha: 0.2)),
           ),
           child: Text(
@@ -502,31 +503,14 @@ class _StatusCell extends StatelessWidget {
 
 class _Avatar extends StatelessWidget {
   final String initials;
+  final String photo;
   final double size;
 
-  const _Avatar({required this.initials, this.size = 36});
+  const _Avatar({required this.initials, required this.photo, this.size = 36});
 
   @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-    return Container(
-      width: size,
-      height: size,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: LinearGradient(colors: [colors.primary, colors.accent]),
-      ),
-      child: Text(
-        initials,
-        style: GoogleFonts.inter(
-          fontSize: size * 0.36,
-          fontWeight: FontWeight.w800,
-          color: Colors.white,
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) =>
+      PatientAvatar(photo: photo, initials: initials, size: size);
 }
 
 class _AppointmentMobileCard extends StatelessWidget {
@@ -588,7 +572,7 @@ class _AppointmentMobileCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  _Avatar(initials: a.initials, size: 40),
+                  _Avatar(initials: a.initials, photo: a.customerPhoto, size: 40),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
