@@ -41,6 +41,9 @@ dependencies:
   shared_preferences: ^2.3.5
   queueflow_ui:
     path: ../../packages/queueflow_ui
+  cloud_functions: ^6.5.1
+  pdf: ^3.13.1
+  printing: ^5.15.1
 
 dev_dependencies:
   flutter_test:

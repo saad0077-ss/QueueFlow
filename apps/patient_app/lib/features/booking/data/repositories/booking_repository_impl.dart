@@ -6,12 +6,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:patient_app/core/utils/booking_date_formatter.dart';
 import 'package:patient_app/features/clinic_details/data/models/clinic_doctor_model.dart';
-import 'package:patient_app/features/clinic_details/data/models/clinic_fallback_data.dart';
 import 'package:patient_app/features/clinic_details/data/models/clinic_service_model.dart';
 import 'package:patient_app/features/clinic_details/domain/entities/clinic_doctor_item.dart';
 import 'package:patient_app/features/clinic_details/domain/entities/clinic_service_item.dart';
 import 'package:patient_app/features/booking/domain/entities/appointment_entity.dart';
-import 'package:patient_app/features/booking/domain/entities/payment_info_entity.dart';
 import 'package:patient_app/features/booking/domain/repositories/booking_repository.dart';
 import 'package:patient_app/features/booking/data/models/appointment_model.dart';
 
@@ -19,41 +17,8 @@ class BookingRepositoryImpl implements BookingRepository {
   final FirebaseFirestore? _firestore;
   final FirebaseAuth? _auth;
 
-  // In-memory appointments fallback & cache (session-persistent across views)
-  static final List<AppointmentEntity> _localCache = [
-    AppointmentEntity(
-      id: 'apt-seed-1',
-      bookingRef: 'QF-48210',
-      clinicId: 'smile-dental',
-      clinicName: 'Smile Dental Clinic',
-      clinicAddress: '14 MG Road, Kochi',
-      customerId: 'user-001',
-      customerName: 'Aisha Rahman',
-      customerPhone: '+91 98765 43210',
-      customerEmail: 'aisha@example.com',
-      doctorId: 'd-1',
-      doctorName: 'Dr. Rahul Menon',
-      doctorSpecialty: 'Orthodontics',
-      serviceId: 's-2',
-      serviceName: 'Teeth Cleaning & Polishing',
-      serviceDuration: 30,
-      servicePrice: 900,
-      dateRaw: BookingDateFormatter.formatRawDate(DateTime.now().add(const Duration(days: 2))),
-      timeRaw: '11:00 AM',
-      dateTime: BookingDateFormatter.formatDateTime(
-        DateTime.now().add(const Duration(days: 2)),
-        '11:00 AM',
-      ),
-      status: 'confirmed',
-      payment: const PaymentInfoEntity(
-        paymentId: 'pay_test_seeded12345',
-        amount: 900,
-        method: 'UPI (GPay)',
-        paidAt: '10:30 AM',
-      ),
-      createdAt: DateTime.now().subtract(const Duration(days: 1)),
-    ),
-  ];
+  // Session cache, only used when Firebase is unavailable.
+  static final List<AppointmentEntity> _localCache = [];
 
   final StreamController<List<AppointmentEntity>> _streamController =
       StreamController<List<AppointmentEntity>>.broadcast();
@@ -93,25 +58,19 @@ class BookingRepositoryImpl implements BookingRepository {
         debugPrint('Error fetching services from Firestore: $e');
       }
     }
-    return ClinicFallbackData.getServices(category);
+    return const [];
   }
 
   @override
   Future<List<ClinicDoctorItem>> getClinicDoctors(String clinicId, String category) async {
     if (_firestore != null) {
       try {
-        final snap = await _firestore
-            .collection('staff')
-            .where('clinicId', isEqualTo: clinicId)
-            .get();
-        if (snap.docs.isNotEmpty) {
-          return snap.docs.map(ClinicDoctorModel.fromFirestore).toList();
-        }
+        return await ClinicDoctorModel.fetchForClinic(_firestore, clinicId);
       } catch (e) {
-        debugPrint('Error fetching staff/doctors from Firestore: $e');
+        debugPrint('Error fetching doctors from Firestore: $e');
       }
     }
-    return ClinicFallbackData.getDoctors(category);
+    return const [];
   }
 
   @override
@@ -120,19 +79,72 @@ class BookingRepositoryImpl implements BookingRepository {
     required String doctorId,
     required DateTime date,
   }) async {
-    return const [
-      '09:30 AM',
-      '10:30 AM',
-      '11:00 AM',
-      '02:15 PM',
-      '03:30 PM',
-      '04:45 PM',
-      '06:00 PM',
-    ];
+    return const [];
+  }
+
+  static String _normSlot(String s) => s.trim().toUpperCase();
+
+  @override
+  Future<Set<String>> getBookedSlots({
+    required String clinicId,
+    required String doctorId,
+    required DateTime date,
+  }) async {
+    final dateRaw = BookingDateFormatter.formatRawDate(date);
+    final booked = <String>{};
+
+    for (final a in _localCache) {
+      if (a.doctorId == doctorId && a.dateRaw == dateRaw && a.status.toLowerCase() != 'cancelled') {
+        booked.add(_normSlot(a.timeRaw));
+      }
+    }
+
+    if (_firestore != null) {
+      try {
+        final snap = await _firestore
+            .collection('appointments')
+            .where('doctorId', isEqualTo: doctorId)
+            .where('dateRaw', isEqualTo: dateRaw)
+            .get();
+        for (final d in snap.docs) {
+          final m = d.data();
+          final status = (m['status'] ?? '').toString().toLowerCase();
+          if (status == 'cancelled' || status == 'canceled') continue;
+          final t = (m['timeRaw'] ?? '').toString();
+          if (t.isNotEmpty) booked.add(_normSlot(t));
+        }
+      } catch (e) {
+        debugPrint('Error fetching booked slots: $e');
+      }
+    }
+    return booked;
+  }
+
+  /// The patient's profile photo (base64), shown to the clinic on the booking.
+  Future<String> _customerPhoto(String customerId) async {
+    final fs = _firestore;
+    final uid = customerId.isNotEmpty ? customerId : (_auth?.currentUser?.uid ?? '');
+    if (fs == null || uid.isEmpty) return '';
+    try {
+      final doc = await fs.collection('users').doc(uid).get();
+      return (doc.data()?['photoBase64'] ?? '').toString();
+    } catch (_) {
+      return '';
+    }
   }
 
   @override
   Future<AppointmentEntity> createAppointment(AppointmentEntity appointment) async {
+    // Block double booking: the slot may have been taken since it was shown.
+    final taken = await getBookedSlots(
+      clinicId: appointment.clinicId,
+      doctorId: appointment.doctorId,
+      date: DateTime.tryParse(appointment.dateRaw) ?? DateTime.now(),
+    );
+    if (taken.contains(_normSlot(appointment.timeRaw))) {
+      throw Exception('This time slot was just booked by someone else. Please choose another slot.');
+    }
+
     // Generate bookingRef if missing
     String ref = appointment.bookingRef;
     if (ref.isEmpty || ref == 'QF-00000') {
@@ -144,8 +156,9 @@ class BookingRepositoryImpl implements BookingRepository {
 
     if (_firestore != null) {
       try {
-        final docRef = await _firestore.collection('appointments').add(
-              AppointmentModel(
+        final photo = await _customerPhoto(newAppointment.customerId);
+        final docRef = await _firestore.collection('appointments').add({
+              ...AppointmentModel(
                 id: newAppointment.id,
                 bookingRef: newAppointment.bookingRef,
                 clinicId: newAppointment.clinicId,
@@ -170,7 +183,8 @@ class BookingRepositoryImpl implements BookingRepository {
                 notes: newAppointment.notes,
                 createdAt: newAppointment.createdAt,
               ).toMap(),
-            );
+              if (photo.isNotEmpty) 'customerPhoto': photo,
+            });
 
         try {
           await _firestore.collection('notifications').add({
@@ -219,11 +233,9 @@ class BookingRepositoryImpl implements BookingRepository {
         }
 
         final snap = await query.get();
-        if (snap.docs.isNotEmpty) {
-          final list = snap.docs.map(AppointmentModel.fromFirestore).toList();
-          list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-          return list;
-        }
+        final list = snap.docs.map(AppointmentModel.fromFirestore).toList();
+        list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+        return list;
       } catch (e) {
         debugPrint('Error fetching user appointments from Firestore: $e');
       }
@@ -251,12 +263,9 @@ class BookingRepositoryImpl implements BookingRepository {
         }
 
         return query.snapshots().map((snap) {
-          if (snap.docs.isNotEmpty) {
-            final list = snap.docs.map(AppointmentModel.fromFirestore).toList();
-            list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-            return list;
-          }
-          return List.unmodifiable(_localCache);
+          final list = snap.docs.map(AppointmentModel.fromFirestore).toList();
+          list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+          return list;
         });
       } catch (_) {}
     }

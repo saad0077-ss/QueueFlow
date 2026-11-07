@@ -43,6 +43,21 @@ class MarkReviewHelpfulEvent extends ClinicDetailsEvent {
   List<Object?> get props => [reviewId];
 }
 
+class SubmitDoctorReviewEvent extends ClinicDetailsEvent {
+  final String doctorId;
+  final int rating;
+  final String comment;
+
+  const SubmitDoctorReviewEvent({
+    required this.doctorId,
+    required this.rating,
+    required this.comment,
+  });
+
+  @override
+  List<Object?> get props => [doctorId, rating, comment];
+}
+
 class SubmitClinicReviewEvent extends ClinicDetailsEvent {
   final int rating;
   final String comment;

@@ -7,10 +7,37 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    function isPlatformOwner() {
+      return request.auth != null
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'platform_owner';
+    }
+
     // 1. Clinics, Services & Doctors (Publicly viewable by patients)
+    // Subscription fields are written only by the activateSubscription Cloud
+    // Function (Admin SDK) or the platform owner, so a clinic cannot bypass the
+    // plan lock by writing them directly.
+    function touchesSubscription() {
+      return request.resource.data.diff(resource.data).affectedKeys().hasAny([
+        'planId', 'planName', 'billingCadence', 'amount',
+        'currentPeriodStart', 'currentPeriodEnd', 'periodEndAt', 'lastPaymentId'
+      ]);
+    }
+
     match /clinics/{clinicId} {
       allow read: if true;
-      allow write: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update: if isPlatformOwner() || (isAuthenticated() && !touchesSubscription());
+      allow delete: if isAuthenticated();
+      match /subscription_history/{entryId} {
+        allow read: if isAuthenticated();
+        allow write: if false;
+      }
+    }
+
+    // Verified Razorpay subscription payments (Cloud Function only).
+    match /subscription_payments/{paymentId} {
+      allow read: if isAuthenticated();
+      allow write: if false;
     }
     // Clinic photos stored as Base64 (kept apart from /clinics so list queries stay small).
     match /clinic_images/{clinicId} {
@@ -61,7 +88,28 @@ service cloud.firestore {
         && request.resource.data.rating <= 5;
       allow update: if isAuthenticated()
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['helpfulCount']);
-      allow delete: if false;
+      // Only the platform owner, when permanently deleting a clinic.
+      allow delete: if isPlatformOwner();
+    }
+
+    // 5b. Doctor ratings (public; doc id is `${doctorId}_${uid}`, so one per patient per doctor)
+    match /doctor_reviews/{reviewId} {
+      allow read: if true;
+      allow create, update: if isAuthenticated()
+        && request.resource.data.patientId == request.auth.uid
+        && reviewId == request.resource.data.doctorId + '_' + request.auth.uid
+        && request.resource.data.clinicId is string
+        && request.resource.data.rating is int
+        && request.resource.data.rating >= 1
+        && request.resource.data.rating <= 5;
+      allow delete: if isPlatformOwner();
+    }
+
+    // Subscription invoices & receipts (created by clinic admins after payment)
+    match /invoices/{invoiceId} {
+      allow read: if isAuthenticated();
+      // Paid invoices are created by the Cloud Function; the platform owner issues pending ones.
+      allow create, update, delete: if isPlatformOwner();
     }
 
     // 6. Rate limit tracking for emails (Cloud Functions access only)

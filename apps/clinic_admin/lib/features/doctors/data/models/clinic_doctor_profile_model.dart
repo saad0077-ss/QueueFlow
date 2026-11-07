@@ -29,6 +29,7 @@ class ClinicDoctorProfileModel extends ClinicDoctorProfileEntity {
     super.waitingCount,
     super.services,
     super.weeklySchedule,
+    super.leaveDates,
     super.reviews,
     super.totalAppointments,
     super.completedAppointments,
@@ -62,6 +63,7 @@ class ClinicDoctorProfileModel extends ClinicDoctorProfileEntity {
       waitingCount: d.waitingCount,
       services: d.services,
       weeklySchedule: d.weeklySchedule,
+      leaveDates: d.leaveDates,
       reviews: d.reviews,
       totalAppointments: d.totalAppointments,
       completedAppointments: d.completedAppointments,
@@ -75,7 +77,7 @@ class ClinicDoctorProfileModel extends ClinicDoctorProfileEntity {
   }) {
     final name = map['name']?.toString() ?? 'Dr. Specialist';
     final specialty = map['specialty']?.toString() ?? 'General Medicine';
-    final title = map['title']?.toString() ?? 'Consulting Physician';
+    final title = map['title']?.toString() ?? '';
     final scheduleText = map['schedule']?.toString() ?? 'Mon–Sat, 9:00 AM – 5:00 PM';
 
     // Parse weekly schedule map if present, else build from scheduleText or defaults
@@ -144,6 +146,7 @@ class ClinicDoctorProfileModel extends ClinicDoctorProfileEntity {
       waitingCount: (map['waitingCount'] as num?)?.toInt() ?? 0,
       services: (map['services'] as List<dynamic>? ?? []).map((e) => e.toString()).toList(),
       weeklySchedule: weekly,
+      leaveDates: (map['leaveDates'] as List<dynamic>? ?? []).map((e) => e.toString()).toList(),
       reviews: reviews,
       totalAppointments: (map['totalAppointments'] as num?)?.toInt() ?? 0,
       completedAppointments: (map['completedAppointments'] as num?)?.toInt() ?? 0,
@@ -203,6 +206,7 @@ class ClinicDoctorProfileModel extends ClinicDoctorProfileEntity {
       'nowServing': nowServing,
       'waitingCount': waitingCount,
       'services': services,
+      'leaveDates': leaveDates,
       'weeklySchedule': weeklySchedule.map(
         (k, v) => MapEntry(k, {
           'dayKey': v.dayKey,

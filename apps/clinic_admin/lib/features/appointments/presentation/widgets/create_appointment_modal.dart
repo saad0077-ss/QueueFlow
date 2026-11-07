@@ -597,7 +597,7 @@ class _CreateAppointmentModalState extends State<CreateAppointmentModal> {
                           side: BorderSide(color: colors.border),
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(30),
                           ),
                         ),
                         child: Text(
@@ -619,7 +619,7 @@ class _CreateAppointmentModalState extends State<CreateAppointmentModal> {
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           elevation: 0,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(30),
                           ),
                         ),
                         child: Text(

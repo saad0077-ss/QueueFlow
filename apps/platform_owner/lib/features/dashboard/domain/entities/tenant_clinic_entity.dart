@@ -1,20 +1,22 @@
-﻿import 'package:equatable/equatable.dart';
+import 'package:equatable/equatable.dart';
 
 class PracticingDoctorEntity extends Equatable {
   final String name;
   final String specialty;
   final String room;
   final bool isAvailable;
+  final String status;
 
   const PracticingDoctorEntity({
     required this.name,
     required this.specialty,
     required this.room,
     this.isAvailable = true,
+    this.status = 'available',
   });
 
   @override
-  List<Object?> get props => [name, specialty, room, isAvailable];
+  List<Object?> get props => [name, specialty, room, isAvailable, status];
 }
 
 class TenantClinicEntity extends Equatable {
@@ -28,7 +30,6 @@ class TenantClinicEntity extends Equatable {
   final String operatingHours;
   final int monthlyVisits;
   final int practicingDoctors;
-  final String doctorLimitText;
   final String planId;
   final String planName;
   final String billingCadence;
@@ -53,7 +54,6 @@ class TenantClinicEntity extends Equatable {
     this.operatingHours = '',
     this.monthlyVisits = 0,
     this.practicingDoctors = 0,
-    this.doctorLimitText = '1 Doctor Limit',
     required this.planId,
     this.planName = 'Solo Doctor Plan',
     this.billingCadence = 'Monthly Auto-Debit',

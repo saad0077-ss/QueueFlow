@@ -10,6 +10,7 @@ class ClinicServiceModel extends ClinicServiceItem {
     super.price,
     super.status,
     super.departmentName,
+    super.assignedStaff,
   });
 
   factory ClinicServiceModel.fromFirestore(DocumentSnapshot doc) {
@@ -26,6 +27,9 @@ class ClinicServiceModel extends ClinicServiceItem {
       price: (map['price'] as num?)?.toInt() ?? 500,
       status: (map['status'] ?? 'active').toString().toLowerCase(),
       departmentName: (map['departmentName'] ?? 'General').toString(),
+      assignedStaff: ((map['assignedStaff'] as List<dynamic>?) ?? const [])
+          .map((e) => e.toString())
+          .toList(),
     );
   }
 

@@ -89,33 +89,30 @@ class DepartmentsFilterRow extends StatelessWidget {
   }
 
   Widget _searchBox(AppColorsExtension colors) {
-    return Container(
+    OutlineInputBorder outline(Color c, [double w = 1]) => OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: c, width: w),
+        );
+    return SizedBox(
       height: 38,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(
-        color: colors.surfaceSecondary,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: colors.border),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.search_rounded, color: colors.primaryLight, size: 17),
-          const SizedBox(width: 8),
-          Expanded(
-            child: TextField(
-              onChanged: onSearch,
-              cursorColor: colors.primary,
-              style: GoogleFonts.inter(color: colors.textPrimary, fontSize: 12.5),
-              decoration: InputDecoration(
-                hintText: 'Search by name, code, doctor, specialty...',
-                hintStyle: GoogleFonts.inter(color: colors.textMuted, fontSize: 12.5),
-                border: InputBorder.none,
-                isDense: true,
-                contentPadding: const EdgeInsets.symmetric(vertical: 9),
-              ),
-            ),
-          ),
-        ],
+      child: TextField(
+        onChanged: onSearch,
+        cursorColor: colors.primary,
+        textAlignVertical: TextAlignVertical.center,
+        style: GoogleFonts.inter(color: colors.textPrimary, fontSize: 12.5),
+        decoration: InputDecoration(
+          isDense: true,
+          filled: true,
+          fillColor: colors.surfaceSecondary,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+          hintText: 'Search by name, code, doctor, specialty...',
+          hintStyle: GoogleFonts.inter(color: colors.textMuted, fontSize: 12.5),
+          prefixIcon: Icon(Icons.search_rounded, color: colors.textMuted, size: 18),
+          prefixIconConstraints: const BoxConstraints(minWidth: 38, minHeight: 38),
+          border: outline(colors.border),
+          enabledBorder: outline(colors.border),
+          focusedBorder: outline(colors.primary, 1.5),
+        ),
       ),
     );
   }

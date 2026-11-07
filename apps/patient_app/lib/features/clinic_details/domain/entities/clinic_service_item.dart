@@ -8,6 +8,7 @@ class ClinicServiceItem extends Equatable {
   final int price;
   final String status;
   final String departmentName;
+  final List<String> assignedStaff;
 
   const ClinicServiceItem({
     required this.id,
@@ -17,6 +18,7 @@ class ClinicServiceItem extends Equatable {
     this.price = 500,
     this.status = 'active',
     this.departmentName = 'General',
+    this.assignedStaff = const [],
   });
 
   String get formattedPrice => '₹${price.toString()}';
@@ -31,5 +33,6 @@ class ClinicServiceItem extends Equatable {
         price,
         status,
         departmentName,
+        assignedStaff,
       ];
 }

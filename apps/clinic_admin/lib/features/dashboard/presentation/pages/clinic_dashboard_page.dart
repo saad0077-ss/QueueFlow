@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../../core/layout/clinic_breakpoints.dart';
+import '../../../../core/layout/dashboard_chrome.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../data/repositories/clinic_dashboard_repository_impl.dart';
 import '../../domain/usecases/call_next_token_usecase.dart';
@@ -59,7 +60,9 @@ class _ClinicDashboardView extends StatelessWidget {
           } else {
             AppSnackBar.showSuccess(context, message: state.toastMessage!);
           }
-          context.read<ClinicDashboardBloc>().add(const DashboardClearFeedback());
+          context.read<ClinicDashboardBloc>().add(
+            const DashboardClearFeedback(),
+          );
         }
       },
       builder: (context, state) {
@@ -102,24 +105,55 @@ class _ClinicDashboardView extends StatelessWidget {
                 Expanded(
                   child: Column(
                     children: [
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: hPad, vertical: isMobile ? 10 : 14),
-                        decoration: BoxDecoration(
-                          color: colors.surface,
-                          border: Border(bottom: BorderSide(color: colors.border, width: 1)),
-                        ),
-                        child: Builder(
-                          builder: (scaffoldContext) => ClinicTopBar(
-                            compact: isMobile,
-                            onMenuTap: isMobile ? () => Scaffold.of(scaffoldContext).openDrawer() : null,
-                            onSearchChanged: (q) => bloc.add(DashboardSearchQueryChanged(q)),
-                          ),
-                        ),
+                      ValueListenableBuilder<String?>(
+                        valueListenable: DashboardChrome.detailOwner,
+                        builder: (context, owner, _) {
+                          // Detail screens (appointment / doctor) hide the top bar.
+                          if (owner != null && owner == state.activeNav) {
+                            return const SizedBox.shrink();
+                          }
+                          return Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: hPad,
+                              vertical: isMobile ? 10 : 14,
+                            ),
+                            decoration: BoxDecoration(
+                              color: colors.surface,
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: colors.border,
+                                  width: 1,
+                                ),
+                              ),
+                            ),
+                            child: Builder(
+                              builder: (scaffoldContext) => ClinicTopBar(
+                                compact: isMobile,
+                                onMenuTap: isMobile
+                                    ? () => Scaffold.of(
+                                        scaffoldContext,
+                                      ).openDrawer()
+                                    : null,
+                                onSearchChanged: (q) =>
+                                    bloc.add(DashboardSearchQueryChanged(q)),
+                              ),
+                            ),
+                          );
+                        },
                       ),
                       Expanded(
                         child: SingleChildScrollView(
-                          padding: EdgeInsets.fromLTRB(hPad, isMobile ? 16 : 22, hPad, 32),
-                          child: ClinicDashboardContentSwitcher(state: state, bloc: bloc, doctorName: doctorName),
+                          padding: EdgeInsets.fromLTRB(
+                            hPad,
+                            isMobile ? 16 : 22,
+                            hPad,
+                            32,
+                          ),
+                          child: ClinicDashboardContentSwitcher(
+                            state: state,
+                            bloc: bloc,
+                            doctorName: doctorName,
+                          ),
                         ),
                       ),
                     ],

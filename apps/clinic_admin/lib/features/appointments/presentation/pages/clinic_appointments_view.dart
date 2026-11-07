@@ -3,12 +3,14 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+import '../../../../core/layout/dashboard_chrome.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../services/data/repositories/clinic_services_repository_impl.dart';
 import '../../../services/domain/entities/clinic_doctor_entity.dart';
 import '../../../services/domain/entities/clinic_service_entity.dart';
 import '../../../services/domain/entities/service_department_entity.dart';
 import '../../data/repositories/clinic_appointments_repository_impl.dart';
+import '../../data/services/appointments_report_pdf.dart';
 import '../../domain/entities/clinic_appointment_entity.dart';
 import '../bloc/clinic_appointments_bloc.dart';
 import '../bloc/clinic_appointments_event.dart';
@@ -65,13 +67,24 @@ class _ClinicAppointmentsBody extends StatelessWidget {
   }
 
   void _exportCsv(BuildContext context, ClinicAppointmentsBloc bloc) async {
-    final csvData = await bloc.repository.exportAppointmentsCsv();
-    await Clipboard.setData(ClipboardData(text: csvData));
-    if (context.mounted) {
-      AppSnackBar.showSuccess(
-        context,
-        message: 'Appointments CSV exported and copied to clipboard!',
-      );
+    try {
+      await AppointmentsReportPdf.download(bloc.state.filteredAppointments);
+      if (context.mounted) {
+        AppSnackBar.showSuccess(
+          context,
+          message: 'Appointments report generated.',
+        );
+      }
+    } catch (_) {
+      // Fall back to copying the raw CSV if PDF generation fails.
+      final csvData = await bloc.repository.exportAppointmentsCsv();
+      await Clipboard.setData(ClipboardData(text: csvData));
+      if (context.mounted) {
+        AppSnackBar.showError(
+          context,
+          message: 'Could not build the PDF. CSV copied to clipboard instead.',
+        );
+      }
     }
   }
 
@@ -207,7 +220,7 @@ class _ClinicAppointmentsBody extends StatelessWidget {
               backgroundColor: colors.error,
               elevation: 0,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(30),
               ),
             ),
             child: Text(
@@ -230,6 +243,7 @@ class _ClinicAppointmentsBody extends StatelessWidget {
 
     return BlocBuilder<ClinicAppointmentsBloc, ClinicAppointmentsState>(
       builder: (context, state) {
+        DashboardChrome.setDetailOpen('Appointments', state.selectedAppointment != null);
         if (state.isLoading) {
           return Center(
             child: Padding(

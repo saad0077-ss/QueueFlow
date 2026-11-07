@@ -14,7 +14,18 @@ abstract class ClinicDetailsRepository {
     required List<String> tags,
   });
 
+  /// One rating per patient per doctor; rating again updates the earlier one.
+  Future<void> submitDoctorReview({
+    required String clinicId,
+    required String doctorId,
+    required int rating,
+    required String comment,
+  });
+
   Future<void> markReviewHelpful(String reviewId);
 
-  Future<bool> toggleFavoriteClinic(String clinicId);
+  Future<bool> isClinicFavorite(String clinicId);
+
+  /// Saves or removes the clinic from the signed-in patient's favorites.
+  Future<void> setClinicFavorite(ClinicEntity clinic, bool favorite);
 }

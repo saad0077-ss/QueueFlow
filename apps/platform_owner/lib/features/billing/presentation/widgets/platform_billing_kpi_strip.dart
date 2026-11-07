@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import '../../domain/entities/platform_billing_kpis.dart';
 import 'platform_billing_kpi_card.dart';
 
@@ -9,13 +9,17 @@ class PlatformBillingKpiStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final clinicPlural = kpis.activeSubscriptions == 1 ? 'partner clinic' : 'partner clinics';
+    final overdueSubtext = kpis.overdueCount > 0 ? '${kpis.overdueCount} awaiting payment' : 'All invoices settled';
+    final activeSubtext = kpis.activeSubscriptions > 0 ? 'All practices active' : 'No active subscriptions';
+
     final cards = [
       PlatformBillingKpiCard(
         tag: 'REVENUE STREAM',
         label: 'Monthly Recurring Revenue',
         value: kpis.totalMrr,
         trend: kpis.mrrTrend,
-        subtext: 'Across ${kpis.activeSubscriptions} partner clinics',
+        subtext: 'Across ${kpis.activeSubscriptions} $clinicPlural',
         icon: Icons.payments_outlined,
         themeColor: const Color(0xFF38BDF8),
       ),
@@ -24,7 +28,7 @@ class PlatformBillingKpiStrip extends StatelessWidget {
         label: 'Active Subscriptions',
         value: kpis.activeSubscriptions.toString(),
         trend: kpis.retentionRate,
-        subtext: '0 cancellations this quarter',
+        subtext: activeSubtext,
         icon: Icons.verified_outlined,
         themeColor: const Color(0xFF10B981),
       ),
@@ -33,7 +37,7 @@ class PlatformBillingKpiStrip extends StatelessWidget {
         label: 'Overdue / Pending Invoices',
         value: kpis.overdueCount.toString(),
         trend: kpis.overdueAmount,
-        subtext: 'Automated retries active',
+        subtext: overdueSubtext,
         icon: Icons.warning_amber_rounded,
         themeColor: const Color(0xFFEF4444),
       ),

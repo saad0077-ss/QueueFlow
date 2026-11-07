@@ -59,6 +59,21 @@ class _ProfileTabConsumer extends StatelessWidget {
 
   const _ProfileTabConsumer({this.onVisitsTap});
 
+  /// Re-reads favorites so clinics saved since the profile loaded show up.
+  Future<void> _openFavorites(BuildContext context) async {
+    final bloc = context.read<ProfileBloc>();
+    var clinics = bloc.state.favoriteClinics;
+    try {
+      clinics = await bloc.getFavoriteClinicsUseCase();
+    } catch (_) {}
+    if (!context.mounted) return;
+    FavoriteClinicsSheet.show(
+      context,
+      clinics: clinics,
+      onBookClinic: (_) => onVisitsTap?.call(),
+    );
+  }
+
   void _showLogoutDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -239,11 +254,7 @@ class _ProfileTabConsumer extends StatelessWidget {
                       favoritesCount: state.favoriteClinics.length,
                       onVisitsTap: () => onVisitsTap?.call(),
                       onFavoritesTap: () {
-                        FavoriteClinicsSheet.show(
-                          context,
-                          clinics: state.favoriteClinics,
-                          onBookClinic: (_) => onVisitsTap?.call(),
-                        );
+                        _openFavorites(context);
                       },
                     ),
 
@@ -319,11 +330,7 @@ class _ProfileTabConsumer extends StatelessWidget {
                             ],
                           ),
                           onTap: () {
-                            FavoriteClinicsSheet.show(
-                              context,
-                              clinics: state.favoriteClinics,
-                              onBookClinic: (_) => onVisitsTap?.call(),
-                            );
+                            _openFavorites(context);
                           },
                         ),
                       ],

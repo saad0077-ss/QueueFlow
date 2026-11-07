@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+import '../../domain/entities/billing_plan_tier_entity.dart';
 import '../../domain/entities/clinic_subscription_entity.dart';
 
 class BillingQuotasCard extends StatelessWidget {
   final ClinicSubscriptionEntity subscription;
 
-  const BillingQuotasCard({super.key, required this.subscription});
+  final BillingPlanTierEntity? currentTier;
+
+  const BillingQuotasCard({super.key, required this.subscription, this.currentTier});
 
   @override
   Widget build(BuildContext context) {
@@ -37,11 +40,6 @@ class BillingQuotasCard extends StatelessWidget {
                   Text('Real-time allocation against your current subscription limits', style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted)),
                 ],
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-                decoration: BoxDecoration(color: colors.surfaceSecondary, borderRadius: BorderRadius.circular(20)),
-                child: Text('Resets in 26 days', style: GoogleFonts.inter(fontSize: 11, color: colors.textMuted, fontWeight: FontWeight.w600)),
-              ),
             ],
           ),
           const SizedBox(height: 18),
@@ -54,48 +52,34 @@ class BillingQuotasCard extends StatelessWidget {
             ratio: docRatio,
             color: colors.success,
           ),
-          const SizedBox(height: 12),
-          _meterBox(
-            colors: colors,
-            icon: Icons.checklist_rounded,
-            title: 'Clinical Services Quota',
-            // Services are unlimited on every plan.
-            value: '${subscription.activeServices} Active (Unlimited Capacity)',
-            subtext: 'All plans • Unlimited Services Allowed',
-            ratio: 0.3,
-            color: colors.accent,
-          ),
-          const SizedBox(height: 12),
-          _meterBox(
-            colors: colors,
-            icon: Icons.meeting_room_outlined,
-            title: 'Consultation Rooms',
-            value: isDocUnlim ? 'Unlimited Consultation Rooms' : '${subscription.activeDoctors} Active Consultation Room',
-            subtext: 'Dr. Priya • Consultation Room 1',
-            ratio: 1.0,
-            color: colors.primary,
-          ),
-          const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            decoration: BoxDecoration(
-              color: colors.primaryTint,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: colors.primary.withAlpha(80), style: BorderStyle.solid),
-            ),
-            child: Row(
+          if (currentTier != null && currentTier!.features.isNotEmpty) ...[
+            const SizedBox(height: 18),
+            Text('INCLUDED IN YOUR PLAN', style: GoogleFonts.inter(fontSize: 10.5, fontWeight: FontWeight.w800, color: colors.textMuted, letterSpacing: 0.6)),
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 10,
+              runSpacing: 8,
               children: [
-                Icon(Icons.auto_awesome, size: 16, color: colors.primaryLight),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'QueueFlow Active: Full live queue management, doctor calling, walk-ins, and digital queue displays are active.',
-                    style: GoogleFonts.inter(fontSize: 12, color: colors.textPrimary, height: 1.4),
+                for (final f in currentTier!.features)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: colors.surfaceSecondary,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: colors.border),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.check_circle_rounded, size: 14, color: colors.success),
+                        const SizedBox(width: 6),
+                        Text(f, style: GoogleFonts.inter(fontSize: 11.5, color: colors.textPrimary)),
+                      ],
+                    ),
                   ),
-                ),
               ],
             ),
-          ),
+          ],
         ],
       ),
     );

@@ -6,7 +6,6 @@ class ClinicBillingHeader extends StatelessWidget {
   final String clinicName;
   final String planName;
   final String renewalDate;
-  final VoidCallback onDownloadReceipt;
   final VoidCallback onChangePlan;
 
   const ClinicBillingHeader({
@@ -14,7 +13,6 @@ class ClinicBillingHeader extends StatelessWidget {
     required this.clinicName,
     required this.planName,
     required this.renewalDate,
-    required this.onDownloadReceipt,
     required this.onChangePlan,
   });
 
@@ -62,7 +60,7 @@ class ClinicBillingHeader extends StatelessWidget {
                   Container(width: 6, height: 6, decoration: BoxDecoration(color: colors.success, shape: BoxShape.circle)),
                   const SizedBox(width: 6),
                   Text(
-                    '${planName.toUpperCase()} ACTIVE • AUTO-RENEWS $renewalDate',
+                    renewalDate.isEmpty ? '${planName.toUpperCase()} ACTIVE' : '${planName.toUpperCase()} ACTIVE • VALID TILL $renewalDate',
                     style: GoogleFonts.inter(fontSize: 10.5, fontWeight: FontWeight.w700, color: colors.badgeOpenText, letterSpacing: 0.4),
                   ),
                 ],
@@ -84,40 +82,11 @@ class ClinicBillingHeader extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Manage your practice plan tier, quota limits, payment methods, GST details and official tax invoices',
+                    'Manage your practice plan tier, quota limits, payment methods and official tax invoices',
                     style: GoogleFonts.inter(fontSize: 13, color: colors.textMuted),
                   ),
                 ],
               ),
-            ),
-            const SizedBox(width: 16),
-            Wrap(
-              spacing: 10,
-              children: [
-                OutlinedButton.icon(
-                  onPressed: onDownloadReceipt,
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: colors.textPrimary,
-                    side: BorderSide(color: colors.border),
-                    backgroundColor: colors.surface,
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                  ),
-                  icon: const Icon(Icons.download_rounded, size: 15),
-                  label: Text('Latest Receipt', style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w600)),
-                ),
-                ElevatedButton.icon(
-                  onPressed: onChangePlan,
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: colors.primary,
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                  ),
-                  icon: const Icon(Icons.upgrade_rounded, size: 16),
-                  label: Text('Change / Upgrade Plan', style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w600)),
-                ),
-              ],
             ),
           ],
         ),

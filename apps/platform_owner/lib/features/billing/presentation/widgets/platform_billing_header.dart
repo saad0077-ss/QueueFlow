@@ -4,14 +4,14 @@ import 'package:queueflow_ui/queueflow_ui.dart';
 
 class PlatformBillingHeader extends StatelessWidget {
   final VoidCallback onIssueInvoice;
-  final VoidCallback onExportCsv;
-  final VoidCallback onSync;
+  final VoidCallback onExportPdf;
+  final VoidCallback? onSync;
 
   const PlatformBillingHeader({
     super.key,
     required this.onIssueInvoice,
-    required this.onExportCsv,
-    required this.onSync,
+    required this.onExportPdf,
+    this.onSync,
   });
 
   @override
@@ -39,30 +39,6 @@ class PlatformBillingHeader extends StatelessWidget {
                   Container(width: 6, height: 6, decoration: BoxDecoration(color: colors.success, shape: BoxShape.circle)),
                   const SizedBox(width: 6),
                   Text('ENTERPRISE REVENUE ENGINE • ACTIVE', style: GoogleFonts.inter(fontSize: 10.5, fontWeight: FontWeight.w700, color: colors.primaryLight, letterSpacing: 0.5)),
-                ],
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              decoration: BoxDecoration(
-                color: colors.surfaceSecondary,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: colors.border),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.receipt_long_outlined, size: 13, color: colors.textMuted),
-                  const SizedBox(width: 6),
-                  RichText(
-                    text: TextSpan(
-                      text: 'MRR Collection: ',
-                      style: GoogleFonts.inter(fontSize: 10.5, color: colors.textMuted),
-                      children: [
-                        TextSpan(text: '94.2% On Time', style: TextStyle(fontWeight: FontWeight.bold, color: colors.textPrimary)),
-                      ],
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -98,7 +74,7 @@ class PlatformBillingHeader extends StatelessWidget {
                   label: Text('Issue Invoice', style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w600)),
                 ),
                 OutlinedButton.icon(
-                  onPressed: onExportCsv,
+                  onPressed: onExportPdf,
                   style: OutlinedButton.styleFrom(
                     foregroundColor: colors.textPrimary,
                     side: BorderSide(color: colors.border),
@@ -107,19 +83,7 @@ class PlatformBillingHeader extends StatelessWidget {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   ),
                   icon: const Icon(Icons.download_rounded, size: 15),
-                  label: Text('Export CSV', style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w600)),
-                ),
-                OutlinedButton.icon(
-                  onPressed: onSync,
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: colors.textPrimary,
-                    side: BorderSide(color: colors.border),
-                    backgroundColor: colors.surface,
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                  ),
-                  icon: const Icon(Icons.sync_rounded, size: 15),
-                  label: Text('Sync', style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w600)),
+                  label: Text('Export PDF', style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w600)),
                 ),
               ],
             ),

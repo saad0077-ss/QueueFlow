@@ -4,11 +4,11 @@ import 'package:queueflow_ui/queueflow_ui.dart';
 
 class DepartmentsHeaderBar extends StatelessWidget {
   final int activeCount;
-  final VoidCallback onExportCsv;
+  final VoidCallback onExportPdf;
   final VoidCallback onRefresh;
   final VoidCallback onAddDepartment;
 
-  const DepartmentsHeaderBar({super.key, required this.activeCount, required this.onExportCsv, required this.onRefresh, required this.onAddDepartment});
+  const DepartmentsHeaderBar({super.key, required this.activeCount, required this.onExportPdf, required this.onRefresh, required this.onAddDepartment});
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +64,7 @@ class DepartmentsHeaderBar extends StatelessWidget {
           runSpacing: 8,
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
-            _secondaryBtn(colors, '📥 Export CSV', onExportCsv),
+            _secondaryBtn(colors, '📥 Export PDF', onExportPdf),
             _secondaryBtn(colors, '🔄 Refresh', onRefresh),
             ElevatedButton(
               style: ElevatedButton.styleFrom(

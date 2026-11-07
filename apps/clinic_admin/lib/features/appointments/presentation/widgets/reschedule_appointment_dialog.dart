@@ -230,7 +230,7 @@ class _RescheduleAppointmentDialogState
                         side: BorderSide(color: colors.border),
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(30),
                         ),
                       ),
                       child: Text(
@@ -255,7 +255,7 @@ class _RescheduleAppointmentDialogState
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         elevation: 0,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(30),
                         ),
                       ),
                       child: Text(

@@ -1,4 +1,4 @@
-﻿import '../entities/billing_invoice_entity.dart';
+import '../entities/billing_invoice_entity.dart';
 import '../entities/billing_plan_tier_entity.dart';
 import '../entities/clinic_subscription_entity.dart';
 
@@ -13,16 +13,13 @@ abstract class ClinicBillingRepository {
   /// Loads invoice receipts history for the current clinic.
   Future<List<BillingInvoiceEntity>> getInvoices();
 
-  /// Updates the clinic subscription plan tier.
-  Future<void> updatePlan({
+  /// Asks the backend to verify the Razorpay payment and activate the plan.
+  /// Throws a user-readable [Exception] when the backend rejects the request.
+  Future<void> activateSubscription({
     required String planId,
-    required String planName,
     required String billingCycle,
-    required String amount,
+    required String paymentId,
   });
-
-  /// Toggles billing cadence between 'monthly' and 'annual'.
-  Future<void> toggleBillingCycle(String newCycle);
 
   /// Updates GST tax and legal billing contact information.
   Future<void> updateBillingContact(ClinicBillingContactEntity contact);

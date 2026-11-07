@@ -1,4 +1,4 @@
-﻿import 'package:equatable/equatable.dart';
+import 'package:equatable/equatable.dart';
 import '../../domain/entities/billing_plan_tier_entity.dart';
 import '../../domain/entities/clinic_subscription_entity.dart';
 
@@ -25,14 +25,16 @@ class ClinicBillingCadenceToggled extends ClinicBillingEvent {
 class ClinicBillingPlanChangeRequested extends ClinicBillingEvent {
   final BillingPlanTierEntity targetTier;
   final String billingCadence;
+  final String paymentId;
 
   const ClinicBillingPlanChangeRequested({
     required this.targetTier,
     required this.billingCadence,
+    required this.paymentId,
   });
 
   @override
-  List<Object?> get props => [targetTier, billingCadence];
+  List<Object?> get props => [targetTier, billingCadence, paymentId];
 }
 
 class ClinicBillingContactUpdated extends ClinicBillingEvent {

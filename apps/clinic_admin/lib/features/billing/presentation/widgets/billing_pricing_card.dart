@@ -10,6 +10,10 @@ class BillingPricingCard extends StatelessWidget {
   final bool isUpgrade;
   final String activeCadence;
   final VoidCallback onSelectPlan;
+  /// Non-null while the clinic's paid period is running; every plan change is disabled.
+  final String? lockedUntil;
+  /// The paid period ended, so the current plan can be renewed.
+  final bool canRenew;
   /// Fill the parent's height and pin the button to the bottom (equal-height desktop row).
   final bool expand;
 
@@ -20,6 +24,8 @@ class BillingPricingCard extends StatelessWidget {
     required this.isUpgrade,
     required this.activeCadence,
     required this.onSelectPlan,
+    this.lockedUntil,
+    this.canRenew = false,
     this.expand = false,
   });
 
@@ -81,7 +87,7 @@ class BillingPricingCard extends StatelessWidget {
             ],
           ),
           Text(
-            isAnnual ? '/ month • billed annually (₹${formatInr(price * 12)}/yr) + 18% GST' : '/ month • billed monthly + 18% GST',
+            isAnnual ? '/ month • billed annually (₹${formatInr(price * 12)}/yr)' : '/ month • billed monthly',
             style: GoogleFonts.inter(fontSize: 11, color: colors.textMuted),
           ),
           const SizedBox(height: 14),
@@ -175,14 +181,38 @@ class BillingPricingCard extends StatelessWidget {
   }
 
   Widget _actionButton(AppColorsExtension colors) {
+    final locked = lockedUntil != null;
+    final renew = isCurrent && canRenew;
+    if (locked && !isCurrent) {
+      return Container(
+        height: 40,
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        decoration: BoxDecoration(
+          color: colors.surfaceSecondary,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: colors.border),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.lock_outline_rounded, size: 13, color: colors.textMuted),
+            const SizedBox(width: 6),
+            Flexible(child: Text('Available after $lockedUntil', overflow: TextOverflow.ellipsis, style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: colors.textMuted))),
+          ],
+        ),
+      );
+    }
     final label = Text(
-      isCurrent ? '✓ Current Active Plan' : '${isUpgrade ? 'Upgrade' : 'Switch'} to ${tier.name} →',
+      renew ? 'Renew this plan →' : isCurrent ? '✓ Current Active Plan' : '${isUpgrade ? 'Upgrade' : 'Switch'} to ${tier.name} →',
       textAlign: TextAlign.center,
-      style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w700, color: isCurrent ? colors.badgeOpenText : Colors.white),
+      style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w700, color: isCurrent && !renew ? colors.badgeOpenText : Colors.white),
     );
 
     final BoxDecoration decoration;
-    if (isCurrent) {
+    if (renew) {
+      decoration = BoxDecoration(color: colors.primary, borderRadius: BorderRadius.circular(10));
+    } else if (isCurrent) {
       decoration = BoxDecoration(
         color: colors.badgeOpenBg,
         borderRadius: BorderRadius.circular(10),
@@ -205,7 +235,7 @@ class BillingPricingCard extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: isCurrent ? null : onSelectPlan,
+        onTap: (isCurrent && !renew) ? null : onSelectPlan,
         borderRadius: BorderRadius.circular(10),
         child: Ink(
           height: 40,

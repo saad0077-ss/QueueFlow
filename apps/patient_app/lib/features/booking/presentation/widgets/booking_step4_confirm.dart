@@ -280,32 +280,6 @@ class BookingStep4Confirm extends StatelessWidget {
                   ),
                 ],
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: colors.primaryTint,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.sms_rounded,
-                      size: 12,
-                      color: colors.primary,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      'SMS Alert Ready',
-                      style: GoogleFonts.inter(
-                        fontSize: 10.5,
-                        fontWeight: FontWeight.w700,
-                        color: colors.primary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ],
           ),
         ),

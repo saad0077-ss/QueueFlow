@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 
 import '../../domain/entities/platform_tenant_subscription_entity.dart';
+import '../../../dashboard/presentation/widgets/clinic_photo_avatar.dart';
 
 class PlatformTenantSubscriptionsView extends StatelessWidget {
   final List<PlatformTenantSubscriptionEntity> subscriptions;
@@ -191,22 +192,17 @@ class PlatformTenantSubscriptionsView extends StatelessWidget {
             flex: 30,
             child: Row(
               children: [
-                Container(
-                  width: 36,
-                  height: 36,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: _avatarColors[index % _avatarColors.length],
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Text(
-                    _initials(s.clinicName),
-                    style: GoogleFonts.inter(
-                      fontSize: 12.5,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.white,
-                    ),
-                  ),
+                ClinicPhotoAvatar(
+                  clinicId: s.clinicId,
+                  name: s.clinicName,
+                  imageUrl: s.imageUrl,
+                  size: 36,
+                  radius: 10,
+                  fontSize: 12.5,
+                  gradient: [
+                    _avatarColors[index % _avatarColors.length],
+                    _avatarColors[(index + 1) % _avatarColors.length],
+                  ],
                 ),
                 const SizedBox(width: 10),
                 Expanded(
@@ -304,16 +300,7 @@ class PlatformTenantSubscriptionsView extends StatelessWidget {
     );
   }
 
-  String _initials(String name) {
-    final parts = name
-        .trim()
-        .split(RegExp(r'\s+'))
-        .where((p) => p.isNotEmpty)
-        .toList();
-    if (parts.isEmpty) return '?';
-    if (parts.length == 1) return parts.first.substring(0, 1).toUpperCase();
-    return (parts[0][0] + parts[1][0]).toUpperCase();
-  }
+
 
   Widget _actionButton(AppColorsExtension colors, String label, VoidCallback onTap) {
     return OutlinedButton(

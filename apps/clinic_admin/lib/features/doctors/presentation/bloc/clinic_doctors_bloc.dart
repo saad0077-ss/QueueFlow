@@ -172,6 +172,7 @@ class ClinicDoctorsBloc extends Bloc<ClinicDoctorsEvent, ClinicDoctorsState> {
         doctorId: event.doctorId,
         schedule: event.schedule,
         slotDuration: event.slotDuration,
+        leaveDates: event.leaveDates,
       );
 
       final current = state.selectedDoctor;
@@ -180,8 +181,9 @@ class ClinicDoctorsBloc extends Bloc<ClinicDoctorsEvent, ClinicDoctorsState> {
           selectedDoctor: current.copyWith(
             weeklySchedule: event.schedule,
             slotDuration: event.slotDuration,
+            leaveDates: event.leaveDates,
           ),
-          toastMessage: 'Weekly schedule and slot duration updated.',
+          toastMessage: 'Availability updated.',
           isErrorToast: false,
         ));
       } else {

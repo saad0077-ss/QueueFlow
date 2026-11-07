@@ -83,12 +83,14 @@ class ClinicHeaderInfo extends StatelessWidget {
           color: colors.primary,
           isBold: true,
         ),
-        const SizedBox(height: 5),
-        _buildInfoRow(
-          icon: Icons.access_time_rounded,
-          text: clinic.openingHours,
-          color: colors.textMuted,
-        ),
+        if (clinic.openingHours.trim().isNotEmpty) ...[
+          const SizedBox(height: 5),
+          _buildInfoRow(
+            icon: Icons.access_time_rounded,
+            text: clinic.openingHours,
+            color: colors.textMuted,
+          ),
+        ],
         if (holidayNotice != null && holidayNotice!.isNotEmpty) ...[
           const SizedBox(height: 10),
           _buildHolidayNotice(holidayNotice!, colors),

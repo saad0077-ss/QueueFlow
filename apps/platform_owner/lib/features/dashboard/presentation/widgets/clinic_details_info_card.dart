@@ -80,7 +80,7 @@ class FacilityInfoCard extends StatelessWidget {
           _row(colors, Icons.person_outline_rounded, 'Medical Director:', '${clinic.adminName} (${clinic.adminEmail})'),
           _row(colors, Icons.phone_outlined, 'Phone Contact:', clinic.phone),
           _row(colors, Icons.access_time_rounded, 'Operating Hours:', clinic.operatingHours),
-          _row(colors, Icons.medical_services_outlined, 'Doctor Capacity:', '${clinic.practicingDoctors} Doctors active • ${clinic.doctorLimitText}'),
+          _row(colors, Icons.medical_services_outlined, 'Doctor Capacity:', '${clinic.practicingDoctors} Doctors active'),
           _row(colors, Icons.confirmation_number_outlined, 'Live Queue Activity:', '${clinic.queueStatus} • Token ${clinic.servingToken} (Avg: ${clinic.avgWaitTime})'),
           _row(colors, Icons.star_rounded, 'Patient Reviews:', '★ ${clinic.rating} / 5.0 (Patient Rating)'),
           _row(colors, Icons.calendar_today_outlined, 'Monthly Appointments:', '${clinic.monthlyVisits} visits this month'),

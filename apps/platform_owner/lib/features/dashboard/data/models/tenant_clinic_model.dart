@@ -1,4 +1,4 @@
-﻿import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../domain/entities/tenant_clinic_entity.dart';
 
 class TenantClinicModel extends TenantClinicEntity {
@@ -13,7 +13,6 @@ class TenantClinicModel extends TenantClinicEntity {
     super.operatingHours,
     super.monthlyVisits,
     super.practicingDoctors,
-    super.doctorLimitText,
     required super.planId,
     super.planName,
     super.billingCadence,
@@ -38,12 +37,16 @@ class TenantClinicModel extends TenantClinicEntity {
 
     final doctorsList = ((d['doctors'] as List<dynamic>?) ?? [])
         .whereType<Map<String, dynamic>>()
-        .map((m) => PracticingDoctorEntity(
-              name: (m['name'] ?? '').toString(),
-              specialty: (m['specialty'] ?? '').toString(),
-              room: (m['room'] ?? '').toString(),
-              isAvailable: m['isAvailable'] == true,
-            ))
+        .map((m) {
+          final st = (m['status'] ?? 'available').toString().toLowerCase();
+          return PracticingDoctorEntity(
+            name: (m['name'] ?? '').toString(),
+            specialty: (m['specialty'] ?? '').toString(),
+            room: (m['room'] ?? '').toString(),
+            isAvailable: st == 'available',
+            status: st,
+          );
+        })
         .toList();
 
     final rawDeptIds = (d['departmentIds'] as List<dynamic>?) ?? [];
@@ -63,7 +66,6 @@ class TenantClinicModel extends TenantClinicEntity {
       operatingHours: _parseHours(d),
       monthlyVisits: (d['monthlyVisits'] as num?)?.toInt() ?? 0,
       practicingDoctors: doctorsList.length,
-      doctorLimitText: (d['doctorLimitText'] ?? '1 Doctor Limit').toString(),
       planId: plan,
       planName: (d['planName'] ?? pName).toString(),
       billingCadence: (d['billingCadence'] ?? 'Monthly Auto-Debit').toString(),
@@ -114,6 +116,6 @@ class TenantClinicModel extends TenantClinicEntity {
       if (monOpen && !satOpen && !sunOpen) return 'Mon–Fri: $monStr · Sun: Closed';
       return 'Standard OPD Schedule';
     }
-    return 'Mon–Sat: 9:00 AM – 8:00 PM';
+    return '';
   }
 }

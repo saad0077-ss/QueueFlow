@@ -253,37 +253,6 @@ class BookingStep5Receipt extends StatelessWidget {
 
         const SizedBox(height: 14),
 
-        // SMS & Push alert notice strip
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-          decoration: BoxDecoration(
-            color: colors.primaryTint,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: colors.borderSubtle,
-            ),
-          ),
-          child: Row(
-            children: [
-              Icon(
-                Icons.notifications_active_outlined,
-                size: 16,
-                color: colors.primary,
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  'Confirmation SMS and reminder alerts dispatched to ${appointment.customerPhone.isNotEmpty ? appointment.customerPhone : 'your mobile'}.',
-                  style: GoogleFonts.inter(
-                    fontSize: 11.5,
-                    color: colors.primary,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-
         const SizedBox(height: 24),
 
         // Action Buttons

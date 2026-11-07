@@ -1,3 +1,4 @@
+import 'clinic_photo_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 
@@ -200,24 +201,11 @@ class _ClinicRowState extends State<_ClinicRow> {
   }
 
   Widget _facilityCell(AppColorsExtension colors, TenantClinicEntity c) {
-    final initials = c.name.trim().split(RegExp(r'\s+')).where((w) => w.isNotEmpty).take(2).map((w) => w[0].toUpperCase()).join();
     final location = [c.address, c.city].where((s) => s.trim().isNotEmpty).join(', ');
 
     return Row(
       children: [
-        Container(
-          width: 42,
-          height: 42,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(colors: widget.gradient, begin: Alignment.topLeft, end: Alignment.bottomRight),
-            borderRadius: BorderRadius.circular(11),
-          ),
-          child: Text(
-            initials.isEmpty ? 'C' : initials,
-            style: const TextStyle(fontSize: 13.5, color: Colors.white, fontWeight: FontWeight.w800),
-          ),
-        ),
+        ClinicPhotoAvatar(clinicId: c.id, name: c.name, gradient: widget.gradient),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
@@ -277,13 +265,6 @@ class _ClinicRowState extends State<_ClinicRow> {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(color: colors.primaryLight, fontSize: 11, fontWeight: FontWeight.w600),
             ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            c.doctorLimitText,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(color: colors.textMuted, fontSize: 10.5),
           ),
         ],
       ),

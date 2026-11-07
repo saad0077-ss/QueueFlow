@@ -1,4 +1,5 @@
-﻿import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../../../core/services/current_clinic_resolver.dart';
 import '../../domain/entities/billing_invoice_entity.dart';
@@ -56,40 +57,32 @@ class ClinicBillingRepositoryImpl implements ClinicBillingRepository {
     final snap = await _firestore
         .collection('invoices')
         .where('clinicId', isEqualTo: clinicId)
-        .limit(20)
+        .limit(50)
         .get();
 
-    return snap.docs
+    final list = snap.docs
         .map((d) => BillingInvoiceModel.fromMap(d.id, d.data()))
         .toList();
+    // Newest first (sorted here to avoid needing a composite index).
+    list.sort((a, b) => (b.createdAt ?? DateTime(2000)).compareTo(a.createdAt ?? DateTime(2000)));
+    return list;
   }
 
   @override
-  Future<void> updatePlan({
+  Future<void> activateSubscription({
     required String planId,
-    required String planName,
     required String billingCycle,
-    required String amount,
+    required String paymentId,
   }) async {
-    final doc = await _clinicDoc();
-    final clinicId = doc.id;
-    await _firestore.collection('clinics').doc(clinicId).set({
-      'planId': planId,
-      'planName': planName,
-      'billingCadence': billingCycle,
-      'amount': amount,
-      'updatedAt': FieldValue.serverTimestamp(),
-    }, SetOptions(merge: true));
-  }
-
-  @override
-  Future<void> toggleBillingCycle(String newCycle) async {
-    final doc = await _clinicDoc();
-    final clinicId = doc.id;
-    await _firestore.collection('clinics').doc(clinicId).set({
-      'billingCadence': newCycle,
-      'updatedAt': FieldValue.serverTimestamp(),
-    }, SetOptions(merge: true));
+    try {
+      await FirebaseFunctions.instance.httpsCallable('activateSubscription').call({
+        'planId': planId,
+        'billingCadence': billingCycle,
+        'paymentId': paymentId,
+      });
+    } on FirebaseFunctionsException catch (e) {
+      throw Exception(e.message ?? 'Could not activate the subscription.');
+    }
   }
 
   @override

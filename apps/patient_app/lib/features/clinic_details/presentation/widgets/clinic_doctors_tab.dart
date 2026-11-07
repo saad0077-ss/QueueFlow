@@ -6,11 +6,13 @@ import 'clinic_doctor_item_tile.dart';
 class ClinicDoctorsTab extends StatelessWidget {
   final List<ClinicDoctorItem> doctors;
   final ValueChanged<ClinicDoctorItem>? onDoctorSelected;
+  final ValueChanged<ClinicDoctorItem>? onRateDoctor;
 
   const ClinicDoctorsTab({
     super.key,
     required this.doctors,
     this.onDoctorSelected,
+    this.onRateDoctor,
   });
 
   @override
@@ -38,6 +40,7 @@ class ClinicDoctorsTab extends StatelessWidget {
         return ClinicDoctorItemTile(
           doctor: doctor,
           onTap: () => onDoctorSelected?.call(doctor),
+          onRate: onRateDoctor == null ? null : () => onRateDoctor!(doctor),
         );
       },
     );

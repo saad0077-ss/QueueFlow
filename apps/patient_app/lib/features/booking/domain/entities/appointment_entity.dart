@@ -56,11 +56,20 @@ class AppointmentEntity extends Equatable {
       status.toLowerCase() == 'confirmed' ||
       status.toLowerCase() == 'upcoming' ||
       status.toLowerCase() == 'scheduled' ||
-      status.toLowerCase() == 'checkedin' ||
+      isCheckedIn ||
       status.toLowerCase() == 'rescheduled' ||
       status.toLowerCase() == 'pending';
 
-  bool get isPaid => payment != null && payment!.status.toLowerCase() == 'paid';
+  /// The clinic has checked the patient in at the front desk.
+  bool get isCheckedIn =>
+      status.toLowerCase() == 'checkedin' ||
+      status.toLowerCase() == 'checked-in';
+
+  /// Money was collected (a refunded booking was paid before the refund).
+  bool get isPaid =>
+      payment != null &&
+      (payment!.status.toLowerCase() == 'paid' ||
+          payment!.status.toLowerCase() == 'refunded');
 
   /// Upcoming booking that is unpaid or explicitly pending.
   bool get isPending =>

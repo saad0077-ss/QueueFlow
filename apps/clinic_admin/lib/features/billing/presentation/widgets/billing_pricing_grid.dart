@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import '../../domain/entities/billing_plan_tier_entity.dart';
 import '../../domain/entities/clinic_subscription_entity.dart';
 import 'billing_pricing_card.dart';
@@ -25,6 +25,8 @@ class BillingPricingGrid extends StatelessWidget {
         bool isCurrent(BillingPlanTierEntity t) =>
             subscription.planId.toLowerCase() == t.id.toLowerCase() ||
             subscription.planName.toLowerCase().contains(t.id.toLowerCase());
+        final lockedUntil = subscription.isPlanLocked ? subscription.currentPeriodEnd : null;
+        final canRenew = subscription.isPlanExpired;
         final currentPrice = tiers.where(isCurrent).map((t) => t.monthlyPrice).firstOrNull ?? 0;
 
         if (isDesktop) {
@@ -42,6 +44,8 @@ class BillingPricingGrid extends StatelessWidget {
                       isUpgrade: tier.monthlyPrice > currentPrice,
                       activeCadence: activeCadence,
                       onSelectPlan: () => onSelectTier(tier),
+                      lockedUntil: lockedUntil,
+                      canRenew: canRenew,
                       expand: true,
                     ),
                   ),
@@ -61,6 +65,8 @@ class BillingPricingGrid extends StatelessWidget {
                 isUpgrade: tier.monthlyPrice > currentPrice,
                 activeCadence: activeCadence,
                 onSelectPlan: () => onSelectTier(tier),
+                lockedUntil: lockedUntil,
+                canRenew: canRenew,
               ),
             );
           }).toList(),

@@ -1,7 +1,9 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../data/repositories/clinic_billing_repository_impl.dart';
+import '../../data/services/billing_receipt_pdf.dart';
+import '../../data/services/razorpay_checkout.dart';
 import '../bloc/clinic_billing_bloc.dart';
 import '../bloc/clinic_billing_event.dart';
 import '../bloc/clinic_billing_state.dart';
@@ -59,40 +61,74 @@ class _ClinicBillingBody extends StatelessWidget {
               clinicName: sub.clinicName,
               planName: sub.planName,
               renewalDate: sub.currentPeriodEnd,
-              onDownloadReceipt: () => AppSnackBar.showInfo(context, message: 'Downloading latest receipt (QF-INV-2026-022.pdf)...'),
               onChangePlan: () {},
             ),
             const SizedBox(height: 24),
             BillingUpperSection(
               subscription: sub,
               currentTier: state.currentTier,
-              activeCadence: state.activeCadence,
-              onToggleCadence: () => bloc.add(ClinicBillingCadenceToggled(state.activeCadence == 'annual' ? 'monthly' : 'annual')),
-              onUpgrade: () {},
             ),
             const SizedBox(height: 36),
-            BillingCadenceToggle(
-              activeCadence: state.activeCadence,
-              onCadenceChanged: (cadence) => bloc.add(ClinicBillingCadenceToggled(cadence)),
+            Center(
+              child: BillingCadenceToggle(
+                activeCadence: state.activeCadence,
+                onCadenceChanged: (cadence) => bloc.add(ClinicBillingCadenceToggled(cadence)),
+              ),
             ),
             const SizedBox(height: 20),
             BillingPricingGrid(
               tiers: state.tiers,
               subscription: sub,
               activeCadence: state.activeCadence,
-              onSelectTier: (tier) => SwitchPlanDialog.show(
-                context,
-                targetTier: tier,
-                activeCadence: state.activeCadence,
-                onConfirm: () => bloc.add(ClinicBillingPlanChangeRequested(targetTier: tier, billingCadence: state.activeCadence)),
-              ),
+              onSelectTier: (tier) async {
+                // Re-read the subscription from the server so a stale screen can't bypass the lock.
+                final fresh = await bloc.repository.getClinicSubscription();
+                if (!context.mounted) return;
+                if (fresh.isPlanLocked) {
+                  AppSnackBar.showInfo(context, message: 'Your current plan is active until ${fresh.currentPeriodEnd}. You can change plans after that date.');
+                  return;
+                }
+                SwitchPlanDialog.show(
+                  context,
+                  targetTier: tier,
+                  activeCadence: state.activeCadence,
+                  onConfirm: () async {
+                    final result = await RazorpayCheckout.pay(
+                      amount: SwitchPlanDialog.payable(tier, state.activeCadence),
+                      description: '${tier.name} (${state.activeCadence == 'annual' ? 'Annual' : 'Monthly'})',
+                      reference: 'plan_${tier.id}_${DateTime.now().millisecondsSinceEpoch}',
+                      name: sub.billingContact.legalName,
+                      email: sub.billingContact.email,
+                      phone: sub.billingContact.phone,
+                      clinicId: sub.clinicId,
+                    );
+                    if (!context.mounted) return;
+                    if (result.success && (result.paymentId ?? '').isNotEmpty) {
+                      // The plan is activated by the backend only after it verifies this payment.
+                      bloc.add(ClinicBillingPlanChangeRequested(
+                        targetTier: tier,
+                        billingCadence: state.activeCadence,
+                        paymentId: result.paymentId!,
+                      ));
+                    } else {
+                      AppSnackBar.showError(context, message: result.message ?? 'Payment failed. No plan was activated.');
+                    }
+                  },
+                );
+              },
             ),
             const SizedBox(height: 32),
             BillingInvoicesTableCard(
               clinicName: sub.clinicName,
               invoices: state.invoices,
               onRefresh: () => bloc.add(const ClinicBillingInvoicesRefreshed()),
-              onDownloadInvoice: (inv) => AppSnackBar.showInfo(context, message: 'Downloading receipt for invoice ${inv.number}...'),
+              onDownloadInvoice: (inv) async {
+                try {
+                  await BillingReceiptPdf.download(inv);
+                } catch (_) {
+                  if (context.mounted) AppSnackBar.showError(context, message: 'Could not generate the receipt PDF.');
+                }
+              },
               // No Razorpay checkout is wired up yet; say so rather than pretend to charge.
               onPayInvoice: (inv) => AppSnackBar.showInfo(context, message: 'Online payment via Razorpay is not set up yet. Please contact QueueFlow support to pay invoice ${inv.number}.'),
             ),

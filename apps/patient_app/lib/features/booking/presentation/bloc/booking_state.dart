@@ -19,6 +19,7 @@ class BookingState extends Equatable {
   final DateTime selectedDate;
   final List<String> availableTimeSlots;
   final String selectedTimeSlot;
+  final Set<String> bookedSlots;
   final String patientName;
   final String patientPhone;
   final String patientEmail;
@@ -27,6 +28,7 @@ class BookingState extends Equatable {
   final String? errorMessage;
 
   const BookingState({
+    this.bookedSlots = const {},
     this.status = BookingStatus.initial,
     this.step = 1,
     this.clinic,
@@ -72,6 +74,7 @@ class BookingState extends Equatable {
     DateTime? selectedDate,
     List<String>? availableTimeSlots,
     String? selectedTimeSlot,
+    Set<String>? bookedSlots,
     String? patientName,
     String? patientPhone,
     String? patientEmail,
@@ -79,6 +82,7 @@ class BookingState extends Equatable {
     AppointmentEntity? confirmedAppointment,
     String? errorMessage,
     bool clearError = false,
+    bool clearSelectedDoctor = false,
   }) {
     return BookingState(
       status: status ?? this.status,
@@ -88,10 +92,12 @@ class BookingState extends Equatable {
       doctors: doctors ?? this.doctors,
       filteredDoctors: filteredDoctors ?? this.filteredDoctors,
       selectedService: selectedService ?? this.selectedService,
-      selectedDoctor: selectedDoctor ?? this.selectedDoctor,
+      selectedDoctor:
+          clearSelectedDoctor ? null : (selectedDoctor ?? this.selectedDoctor),
       selectedDate: selectedDate ?? this.selectedDate,
       availableTimeSlots: availableTimeSlots ?? this.availableTimeSlots,
       selectedTimeSlot: selectedTimeSlot ?? this.selectedTimeSlot,
+      bookedSlots: bookedSlots ?? this.bookedSlots,
       patientName: patientName ?? this.patientName,
       patientPhone: patientPhone ?? this.patientPhone,
       patientEmail: patientEmail ?? this.patientEmail,
@@ -114,6 +120,7 @@ class BookingState extends Equatable {
         selectedDate,
         availableTimeSlots,
         selectedTimeSlot,
+        bookedSlots,
         patientName,
         patientPhone,
         patientEmail,

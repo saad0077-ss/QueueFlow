@@ -109,7 +109,7 @@ class BillingInvoicesTableCard extends StatelessWidget {
   }
 
   Widget _headerRow(AppColorsExtension colors) {
-    const labels = ['INVOICE NUMBER', 'BILLING DATE', 'PLAN TIER', 'PAYMENT METHOD', 'AMOUNT', 'STATUS', 'ACTIONS'];
+    const labels = ['RECEIPT NUMBER', 'BILLING DATE', 'PLAN', 'PAYMENT METHOD', 'AMOUNT', 'STATUS', 'ACTIONS'];
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       child: Row(
@@ -246,7 +246,7 @@ class _InvoiceRowState extends State<_InvoiceRow> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
-      child: Text('View PDF', style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w700)),
+      child: Text('Download Receipt', style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w700)),
     );
   }
 }

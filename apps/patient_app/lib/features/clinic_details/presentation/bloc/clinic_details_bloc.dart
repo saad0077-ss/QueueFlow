@@ -14,6 +14,27 @@ class ClinicDetailsBloc extends Bloc<ClinicDetailsEvent, ClinicDetailsState> {
     on<ToggleClinicFavorite>(_onToggleClinicFavorite);
     on<MarkReviewHelpfulEvent>(_onMarkReviewHelpful);
     on<SubmitClinicReviewEvent>(_onSubmitClinicReview);
+    on<SubmitDoctorReviewEvent>(_onSubmitDoctorReview);
+  }
+
+  Future<void> _onSubmitDoctorReview(
+    SubmitDoctorReviewEvent event,
+    Emitter<ClinicDetailsState> emit,
+  ) async {
+    final details = state.details;
+    if (details == null) return;
+    try {
+      await repository.submitDoctorReview(
+        clinicId: details.clinic.id,
+        doctorId: event.doctorId,
+        rating: event.rating,
+        comment: event.comment,
+      );
+      final reloaded = await repository.getClinicDetails(details.clinic.id, details.clinic);
+      emit(state.copyWith(details: reloaded));
+    } catch (e) {
+      emit(state.copyWith(errorMessage: 'Failed to submit rating: $e'));
+    }
   }
 
   Future<void> _onLoadClinicDetails(
@@ -26,9 +47,11 @@ class ClinicDetailsBloc extends Bloc<ClinicDetailsEvent, ClinicDetailsState> {
         event.clinicId,
         event.initialClinic,
       );
+      final fav = await repository.isClinicFavorite(event.clinicId);
       emit(state.copyWith(
         status: ClinicDetailsStatus.loaded,
         details: details,
+        isFavorite: fav,
       ));
     } catch (e) {
       emit(state.copyWith(
@@ -49,10 +72,14 @@ class ClinicDetailsBloc extends Bloc<ClinicDetailsEvent, ClinicDetailsState> {
     ToggleClinicFavorite event,
     Emitter<ClinicDetailsState> emit,
   ) async {
-    final nextFav = !state.isFavorite;
-    emit(state.copyWith(isFavorite: nextFav));
-    if (state.details != null) {
-      await repository.toggleFavoriteClinic(state.details!.clinic.id);
+    final details = state.details;
+    if (details == null) return;
+    final prev = state.isFavorite;
+    emit(state.copyWith(isFavorite: !prev));
+    try {
+      await repository.setClinicFavorite(details.clinic, !prev);
+    } catch (e) {
+      emit(state.copyWith(isFavorite: prev, errorMessage: 'Could not update favorites: $e'));
     }
   }
 

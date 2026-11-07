@@ -1,4 +1,4 @@
-﻿import '../../domain/entities/platform_tenant_subscription_entity.dart';
+import '../../domain/entities/platform_tenant_subscription_entity.dart';
 
 class PlatformTenantSubscriptionModel extends PlatformTenantSubscriptionEntity {
   const PlatformTenantSubscriptionModel({
@@ -14,7 +14,7 @@ class PlatformTenantSubscriptionModel extends PlatformTenantSubscriptionEntity {
     super.mrrAmount,
     super.status,
     super.practicingDoctors,
-    super.doctorLimitText,
+    super.imageUrl,
   });
 
   factory PlatformTenantSubscriptionModel.fromMap(String id, Map<String, dynamic> data) {
@@ -29,7 +29,8 @@ class PlatformTenantSubscriptionModel extends PlatformTenantSubscriptionEntity {
         (isEnterprise ? 'Unlimited Doctors Plan' : (isMulti ? 'Multi-Doctor Clinic Plan' : 'Solo Doctor Plan'));
 
     final mrr = isEnterprise ? '₹6,999/mo' : (isMulti ? '₹2,999/mo' : '₹999/mo');
-    final docLimit = isEnterprise ? 'Unlimited Doctors' : (isMulti ? '10 Doctors Limit' : '1 Doctor Limit');
+
+    final rawImage = (data['imageUrl'] as String? ?? data['image'] as String? ?? '').trim();
 
     return PlatformTenantSubscriptionModel(
       clinicId: id,
@@ -44,7 +45,7 @@ class PlatformTenantSubscriptionModel extends PlatformTenantSubscriptionEntity {
       mrrAmount: data['amount'] as String? ?? mrr,
       status: (data['status'] as String? ?? 'ACTIVE').toUpperCase(),
       practicingDoctors: docCount,
-      doctorLimitText: docLimit,
+      imageUrl: rawImage,
     );
   }
 }

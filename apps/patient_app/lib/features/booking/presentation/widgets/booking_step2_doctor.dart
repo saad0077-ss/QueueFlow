@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:patient_app/core/widgets/doctor_avatar.dart';
 import 'package:patient_app/core/widgets/gradient_button.dart';
 import 'package:patient_app/features/clinic_details/domain/entities/clinic_doctor_item.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
@@ -145,12 +146,16 @@ class BookingStep2Doctor extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
             child: Row(
               children: [
-                CircleAvatar(
+                DoctorPhotoAvatar(
+                  photoUrl: doctor.photoUrl,
                   radius: 24,
                   backgroundColor: isSelected
                       ? colors.primary.withValues(alpha: 0.25)
                       : colors.primary.withValues(alpha: 0.12),
-                  child: Text(
+                  borderColor: isSelected
+                      ? colors.primary
+                      : colors.primary.withValues(alpha: 0.5),
+                  fallback: Text(
                     doctor.initials,
                     style: GoogleFonts.inter(
                       fontSize: 14,

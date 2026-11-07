@@ -77,7 +77,7 @@ class DoctorDetailReviewsCard extends StatelessWidget {
                           return Icon(
                             Icons.star_rounded,
                             size: 18,
-                            color: colors.ratingGold,
+                            color: index < avgRating.round() ? colors.ratingGold : colors.border,
                           );
                         }),
                       ),

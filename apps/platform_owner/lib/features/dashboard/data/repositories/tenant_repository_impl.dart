@@ -1,7 +1,8 @@
-﻿import 'dart:convert';
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import '../../domain/entities/tenant_clinic_entity.dart';
 import '../../domain/repositories/tenant_repository.dart';
 
@@ -29,9 +30,16 @@ class TenantRepositoryImpl implements TenantRepository {
     'Metro Diagnostics Center',
   };
 
+  static bool isDummyClinicName(String name, String email) {
+    final e = email.toLowerCase().trim();
+    final n = name.toLowerCase().trim();
+    if (e.isNotEmpty && dummyEmails.any((de) => de.toLowerCase() == e)) return true;
+    if (n.isNotEmpty && dummyClinicNames.any((dn) => dn.toLowerCase() == n)) return true;
+    return false;
+  }
+
   static bool isDummyClinic(TenantClinicEntity clinic) {
-    return dummyEmails.contains(clinic.adminEmail.toLowerCase().trim()) ||
-        dummyClinicNames.contains(clinic.name.trim());
+    return isDummyClinicName(clinic.name, clinic.adminEmail);
   }
 
   @override
@@ -125,13 +133,10 @@ class TenantRepositoryImpl implements TenantRepository {
     } catch (_) {}
 
     String pName = 'Solo Doctor Plan';
-    String doctorLimitText = '1 Doctor Limit';
     if (planId == 'multi') {
       pName = 'Multi-Doctor Clinic Plan';
-      doctorLimitText = 'Up to 10 Doctors';
     } else if (planId == 'enterprise') {
       pName = 'Unlimited Doctors Plan';
-      doctorLimitText = 'Unlimited Doctors';
     }
 
     final category = departmentNames.isNotEmpty
@@ -151,7 +156,6 @@ class TenantRepositoryImpl implements TenantRepository {
       'status': 'INVITED',
       'rating': 5.0,
       'monthlyVisits': 0,
-      'doctorLimitText': doctorLimitText,
       'practicingDoctors': 0,
       'doctors': const [],
       'queueStatus': 'Queue Open (0 in line)',
@@ -257,13 +261,10 @@ class TenantRepositoryImpl implements TenantRepository {
     final cleanCity = city.trim().isEmpty ? 'Kochi' : city.trim();
 
     String pName = 'Solo Doctor Plan';
-    String doctorLimitText = '1 Doctor Limit';
     if (planId == 'multi') {
       pName = 'Multi-Doctor Clinic Plan';
-      doctorLimitText = 'Up to 10 Doctors';
     } else if (planId == 'enterprise') {
       pName = 'Unlimited Doctors Plan';
-      doctorLimitText = 'Unlimited Doctors';
     }
 
     final category = departmentNames.isNotEmpty
@@ -278,7 +279,6 @@ class TenantRepositoryImpl implements TenantRepository {
       'adminName': cleanAdmin,
       'planId': planId,
       'planName': pName,
-      'doctorLimitText': doctorLimitText,
       'category': category,
       'departmentIds': departmentIds,
       'departments': departmentNames,
@@ -346,7 +346,7 @@ class TenantRepositoryImpl implements TenantRepository {
   }
 
   @override
-  Future<void> toggleStatus(String clinicId, bool currentlyActive) async {
+  Future<void> toggleStatus(String clinicId, bool currentlyActive, {String? reason}) async {
     final doc = await _firestore.collection('clinics').doc(clinicId).get();
     final currentStatus = (doc.data()?['status'] ?? '').toString().toUpperCase();
     if (currentStatus == 'INVITED') {
@@ -354,6 +354,8 @@ class TenantRepositoryImpl implements TenantRepository {
     }
     await _firestore.collection('clinics').doc(clinicId).update({
       'status': currentlyActive ? 'SUSPENDED' : 'ACTIVE',
+      'suspensionReason': currentlyActive ? (reason?.trim() ?? '') : FieldValue.delete(),
+      'suspendedAt': currentlyActive ? FieldValue.serverTimestamp() : FieldValue.delete(),
       'updatedAt': FieldValue.serverTimestamp(),
     });
   }
@@ -563,7 +565,42 @@ class TenantRepositoryImpl implements TenantRepository {
       }
     }
 
-    // 10. Delete the clinic facility document itself
+    // 10. Erase everything else that belongs to the clinic
+    for (final collection in const ['reviews', 'doctor_reviews', 'appointments', 'staff']) {
+      await _deleteWhereClinicId(collection, clinicId);
+    }
+    try {
+      await _firestore.collection('clinic_images').doc(clinicId).delete();
+    } catch (e) {
+      debugPrint('Error erasing clinic image: $e');
+    }
+
+    // 11. Delete the clinic facility document itself
     await _firestore.collection('clinics').doc(clinicId).delete();
+
+    // 12. Delete the admin's Firebase Authentication account (needs the Admin SDK,
+    //     so it runs in a Cloud Function). Failure here must not undo the delete.
+    if (cleanEmail != null && cleanEmail.isNotEmpty) {
+      try {
+        await FirebaseFunctions.instance.httpsCallable('deleteClinicAdminAccount').call({'email': cleanEmail});
+      } catch (e) {
+        debugPrint('Error deleting auth user for $cleanEmail: $e');
+        throw Exception(
+          'Clinic data was deleted, but the login account for $cleanEmail could not be removed from Firebase Authentication ($e). '
+          'Make sure the deleteClinicAdminAccount Cloud Function is deployed.',
+        );
+      }
+    }
+  }
+
+  Future<void> _deleteWhereClinicId(String collection, String clinicId) async {
+    try {
+      final snap = await _firestore.collection(collection).where('clinicId', isEqualTo: clinicId).get();
+      for (final doc in snap.docs) {
+        await doc.reference.delete();
+      }
+    } catch (e) {
+      debugPrint('Error erasing $collection: $e');
+    }
   }
 }

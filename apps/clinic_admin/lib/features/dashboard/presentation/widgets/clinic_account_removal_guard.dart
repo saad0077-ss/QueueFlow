@@ -67,9 +67,15 @@ class _ClinicAccountRemovalGuardState extends State<ClinicAccountRemovalGuard> {
 
         if (snapshot.docs.isNotEmpty) {
           _hadActiveClinic = true;
-          final status = (snapshot.docs.first.data()['status'] ?? '').toString().toUpperCase();
+          final data = snapshot.docs.first.data();
+          final status = (data['status'] ?? '').toString().toUpperCase();
           if (status == 'REMOVED' || status == 'DELETED') {
             _showRemovalDialog('The platform owner has removed your clinic facility and account.');
+          } else if (status == 'SUSPENDED') {
+            _showRemovalDialog(
+              (data['suspensionReason'] ?? '').toString().trim(),
+              suspended: true,
+            );
           }
         } else {
           // If clinics query is empty:
@@ -101,7 +107,9 @@ class _ClinicAccountRemovalGuardState extends State<ClinicAccountRemovalGuard> {
     } catch (_) {}
   }
 
-  void _showRemovalDialog(String reason) {
+  /// Locks the portal with a non-dismissible dialog. [suspended] shows the
+  /// suspension notice with [reason]; otherwise the account-removed notice.
+  void _showRemovalDialog(String reason, {bool suspended = false}) {
     if (_dialogShown || !mounted) return;
     _dialogShown = true;
 
@@ -162,7 +170,7 @@ class _ClinicAccountRemovalGuardState extends State<ClinicAccountRemovalGuard> {
                     ),
                     const SizedBox(height: 20),
                     Text(
-                      'Clinic Account Removed',
+                      suspended ? 'Clinic Suspended' : 'Clinic Account Removed',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.inter(
                         fontSize: 18.5,
@@ -172,7 +180,9 @@ class _ClinicAccountRemovalGuardState extends State<ClinicAccountRemovalGuard> {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      'The platform owner has removed your clinic facility and account.\n\nAll clinic records, live queues, tickets, and services have been erased from the system.\n\nYou have been logged out of the clinic portal.',
+                      suspended
+                          ? 'Your clinic has been suspended by the platform owner.\n\n${reason.isEmpty ? 'No reason was provided. Please contact QueueFlow support.' : 'Reason: $reason'}\n\nYou cannot use the clinic portal until the suspension is lifted.'
+                          : 'The platform owner has removed your clinic facility and account.\n\nAll clinic records, live queues, tickets, and services have been erased from the system.\n\nYou have been logged out of the clinic portal.',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.inter(
                         fontSize: 13.5,
@@ -198,7 +208,7 @@ class _ClinicAccountRemovalGuardState extends State<ClinicAccountRemovalGuard> {
                           await FirebaseAuth.instance.signOut();
                         },
                         child: Text(
-                          'Acknowledge & Sign Out',
+                          suspended ? 'Sign Out' : 'Acknowledge & Sign Out',
                           style: GoogleFonts.inter(
                             fontSize: 13.5,
                             fontWeight: FontWeight.bold,

@@ -1,4 +1,4 @@
-﻿import 'package:equatable/equatable.dart';
+import 'package:equatable/equatable.dart';
 
 /// Payment method details for clinic auto-debit.
 class ClinicPaymentMethodEntity extends Equatable {
@@ -68,6 +68,10 @@ class ClinicSubscriptionEntity extends Equatable {
   final String amount;
   final String status;
   final String currentPeriodEnd;
+
+  /// Exact end of the paid period; plan changes are locked until then.
+  final DateTime? periodEndAt;
+  final DateTime? periodStartAt;
   final bool autoRenew;
   final ClinicPaymentMethodEntity paymentMethod;
   final ClinicBillingContactEntity billingContact;
@@ -85,6 +89,8 @@ class ClinicSubscriptionEntity extends Equatable {
     this.amount = '₹999',
     this.status = 'active',
     this.currentPeriodEnd = '',
+    this.periodEndAt,
+    this.periodStartAt,
     this.autoRenew = true,
     this.paymentMethod = const ClinicPaymentMethodEntity(),
     this.billingContact = const ClinicBillingContactEntity(),
@@ -93,6 +99,9 @@ class ClinicSubscriptionEntity extends Equatable {
     this.activeServices = 1,
     this.serviceLimit = 1,
   });
+
+  bool get isPlanExpired => periodEndAt != null && !DateTime.now().isBefore(periodEndAt!);
+  bool get isPlanLocked => periodEndAt != null && DateTime.now().isBefore(periodEndAt!);
 
   bool get isAnnual => billingCycle.toLowerCase() == 'annual';
   bool get isDoctorUnlimited => doctorLimit >= 999;
@@ -108,6 +117,8 @@ class ClinicSubscriptionEntity extends Equatable {
     amount,
     status,
     currentPeriodEnd,
+    periodEndAt,
+    periodStartAt,
     autoRenew,
     paymentMethod,
     billingContact,

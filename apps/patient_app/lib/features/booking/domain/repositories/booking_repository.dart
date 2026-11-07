@@ -13,6 +13,13 @@ abstract class BookingRepository {
     required DateTime date,
   });
 
+  /// Time slots ('hh:mm AM') already taken for [doctorId] on [date].
+  Future<Set<String>> getBookedSlots({
+    required String clinicId,
+    required String doctorId,
+    required DateTime date,
+  });
+
   Future<AppointmentEntity> createAppointment(AppointmentEntity appointment);
 
   Future<List<AppointmentEntity>> getUserAppointments({
