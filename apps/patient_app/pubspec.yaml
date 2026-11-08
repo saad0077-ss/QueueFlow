@@ -11,18 +11,31 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # Cloud Firestore: Real-time database for booking queues, live token status, and clinic info
   cloud_firestore: ^6.10.0
+  # Firebase Core: Required SDK to connect and initialize all Firebase features
   firebase_core: ^4.15.0
+  # Flutter BLoC: Predictable state management library for UI and business logic
   flutter_bloc: ^8.1.6
+  # Equatable: Simplifies object equality comparison for BLoC states and events
   equatable: ^2.0.5
+  # Firebase Auth: User authentication (phone, email, or social accounts)
   firebase_auth: ^6.1.1
+  # Google Sign-In: OAuth integration enabling patients to sign in using Google accounts
   google_sign_in: ^6.2.2
+  # Google Fonts: Dynamically downloads and applies Google typography styles
   google_fonts: ^6.2.1
+  # HTTP: REST client for sending network requests to backend services
   http: ^1.2.0
+  # Razorpay Flutter: Payment gateway SDK to process online consultation/booking fees
   razorpay_flutter: ^1.4.7
+  # Image Picker: Allows patients to capture or upload profile and medical images
   image_picker: ^1.2.4
+  # File Picker: Enables uploading medical reports and documents (PDF, images, etc.)
   file_picker: ^13.3.2
+  # Shared Preferences: Persistent key-value storage for local session tokens and preferences
   shared_preferences: ^2.3.5
+  # QueueFlow UI: Shared internal UI components and theme library
   queueflow_ui:
     path: ../../packages/queueflow_ui
 
@@ -30,6 +43,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  # Flutter Lints: Recommended lint rules for Dart and Flutter code quality
   flutter_lints: ^5.0.0
 
 flutter:

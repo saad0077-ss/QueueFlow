@@ -9,10 +9,15 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
+  # Flutter BLoC: Core business logic and shared reactive state management
   flutter_bloc: ^8.1.6
+  # Equatable: Enables value-based equality comparisons on models, entities, and states
   equatable: ^2.0.5
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  # Flutter Lints: Recommended lint rules for Dart and Flutter code quality
   flutter_lints: ^6.0.0

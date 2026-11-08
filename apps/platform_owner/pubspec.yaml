@@ -31,29 +31,37 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # Cloud Firestore: Real-time NoSQL cloud database for platform-wide analytics and clinic management
   cloud_firestore: ^6.10.0
+  # Firebase Core: Core SDK to initialize and configure Firebase services across the app
   firebase_core: ^4.15.0
+  # Firebase Auth: Authenticates platform super-admins and managers
   firebase_auth: ^6.1.1
+  # Google Fonts: Dynamic font typography for the platform owner dashboard UI
   google_fonts: ^6.2.1
+  # Flutter BLoC: State management library ensuring predictable state transitions
   flutter_bloc: ^8.1.6
+  # Equatable: Simplifies object comparison for Dart classes, events, and states
   equatable: ^2.0.5
+  # HTTP: Composable HTTP client for consuming REST APIs and backend microservices
   http: ^1.2.0
+  # Shared Preferences: Persistent key-value storage for dashboard settings and admin session cache
   shared_preferences: ^2.3.5
+  # QueueFlow UI: Shared internal UI component library and design system
   queueflow_ui:
     path: ../../packages/queueflow_ui
+  # Cloud Functions: Client SDK to invoke Firebase serverless cloud functions
   cloud_functions: ^6.5.1
+  # PDF: Document creation library for generating platform reports, invoices, and summaries
   pdf: ^3.13.1
+  # Printing: Native document printing and PDF layout previewing support
   printing: ^5.15.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
+  # Flutter Lints: Recommended lint rules to enforce Dart/Flutter coding standards
   flutter_lints: ^6.0.0
 
 # For information on the generic Dart part of this file, see the
