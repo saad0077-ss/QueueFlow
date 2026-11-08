@@ -31,32 +31,43 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # Cloud Firestore: Real-time NoSQL cloud database for syncing clinic queues & appointments
   cloud_firestore: ^6.1.0
+  # Firebase Core: Core SDK required to initialize and connect Firebase services
   firebase_core: ^4.1.0
+  # Firebase Auth: User authentication and role-based session management
   firebase_auth: ^6.1.1
+  # Google Fonts: Provides custom fonts and typography for clinic UI styling
   google_fonts: ^6.2.1
+  # Flutter BLoC: State management library for reactive and predictable UI logic
   flutter_bloc: ^8.1.6  
+  # Equatable: Compares Dart objects and BLoC states by value without boilerplate
   equatable: ^2.0.5
+  # Image Picker: Selects images from the gallery or captures photos via device camera
   image_picker: ^1.2.4
+  # Geolocator: Accesses device GPS location for clinic proximity and location features
   geolocator: ^13.0.2
+  # URL Launcher: Opens external web links, telephone calls, maps, and emails
   url_launcher: ^6.3.1
+  # HTTP: Makes REST API network requests to backend services
   http: ^1.6.0
+  # Shared Preferences: Stores persistent key-value pairs locally on the device (user settings/cache)
   shared_preferences: ^2.3.5
+  # QueueFlow UI: Shared internal design system and UI component package
   queueflow_ui:
     path: ../../packages/queueflow_ui
+  # PDF: Creates and generates PDF documents (e.g., patient queue slips, reports)
   pdf: ^3.13.1
+  # Printing: Handles document printing and PDF layout previewing
   printing: ^5.15.1
+  # Cloud Functions: Invokes Firebase callable cloud functions for server-side logic
   cloud_functions: ^6.5.1
 
 dev_dependencies: 
   flutter_test:
     sdk: flutter
 
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
+  # Flutter Lints: Recommended lint rules to enforce Dart/Flutter coding standards
   flutter_lints: ^6.0.0
 
 # For information on the generic Dart part of this file, see the

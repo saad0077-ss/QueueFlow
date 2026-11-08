@@ -9,7 +9,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
+  # Flutter BLoC: Manages state for UI widgets and theme switching (light/dark mode)
   flutter_bloc: ^8.1.6
+  # Equatable: Compares theme states and UI widget props without object identity issues
   equatable: ^2.0.5
+  # Google Fonts: Unified typography and fonts for shared design system components
   google_fonts: ^6.2.1
+  # Shared Preferences: Persists user appearance/theme preferences locally
   shared_preferences: ^2.3.5
