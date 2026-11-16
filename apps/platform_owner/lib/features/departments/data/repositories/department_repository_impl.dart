@@ -110,12 +110,17 @@ class DepartmentRepositoryImpl implements DepartmentRepository {
 
   @override
   Future<void> seedDepartmentsIfEmpty() async {
-    final snap = await _firestore.collection('departments').limit(1).get();
-    if (snap.docs.isEmpty) {
-      // Starter catalog only; counts and clinic links come from live data
+    // Ensures the built-in departments exist (created once, never overwritten)
+    try {
       for (final d in sampleDepartmentsSeed) {
-        await _firestore.collection('departments').add({...d, 'doctorCount': 0, 'totalVisits': 0, 'assignedClinics': <String>[]});
+        final id = d['id'] as String;
+        final ref = _firestore.collection('departments').doc(id);
+        if ((await ref.get()).exists) continue;
+        final data = {...d}..remove('id');
+        await ref.set({...data, 'doctorCount': 0, 'totalVisits': 0, 'assignedClinics': <String>[]});
       }
+    } catch (e) {
+      debugPrint('Department seeding failed: $e');
     }
   }
 
@@ -154,6 +159,9 @@ class DepartmentRepositoryImpl implements DepartmentRepository {
 
   @override
   Future<void> deleteDepartment(String id) async {
+    if (id.startsWith(defaultDepartmentIdPrefix)) {
+      throw StateError('Default departments cannot be deleted.');
+    }
     await _firestore.collection('departments').doc(id).delete();
   }
 

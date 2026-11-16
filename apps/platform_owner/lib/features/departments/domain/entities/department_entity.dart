@@ -30,17 +30,20 @@ class DepartmentEntity extends Equatable {
     this.assignedClinics = const [],
     this.standardServices = const [],
   });
+ 
+  /// Built-in departments (fixed `default-` IDs) cannot be deleted.
+  bool get isDefault => id.startsWith('default-');
 
-  bool get isActive => status.toLowerCase() == 'active';
+  bool get isActive => status.toLowerCase() == 'active'; 
 
   DepartmentEntity copyWith({
     String? name,
     String? code,
-    String? icon,
+    String? icon, 
     String? color,
     String? description,
     String? avgConsultationTime,
-    String? status,
+    String? status, 
     int? doctorCount,
     int? totalVisits,
     List<String>? assignedClinics,

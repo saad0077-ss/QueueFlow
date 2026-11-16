@@ -77,7 +77,7 @@ class SignUpForm extends StatelessWidget {
         // 1. Full name
         CustomTextField(
           label: 'Full name',
-          hintText: 'Muhammed saad',
+          hintText: 'Enter your full name',
           prefixIcon: Icons.person_outline_rounded,
           textInputAction: TextInputAction.next,
           autofillHints: const [AutofillHints.name],
@@ -89,7 +89,7 @@ class SignUpForm extends StatelessWidget {
         // 2. Email address with helper/error
         CustomTextField(
           label: 'Email address',
-          hintText: 'you@example.com',
+          hintText: 'Enter your email ID',
           prefixIcon: Icons.mail_outline_rounded,
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.next,
@@ -104,7 +104,7 @@ class SignUpForm extends StatelessWidget {
         // 3. Phone number
         CustomTextField(
           label: 'Phone number',
-          hintText: '+91 9876543510',
+          hintText: 'Enter your phone number',
           prefixIcon: Icons.phone_outlined,
           keyboardType: TextInputType.phone,
           textInputAction: TextInputAction.next,
@@ -117,7 +117,7 @@ class SignUpForm extends StatelessWidget {
         // 4. Password with helper requirements
         CustomTextField(
           label: 'Password',
-          hintText: 'Create a password',
+          hintText: 'Create your password',
           prefixIcon: Icons.lock_outline_rounded,
           obscureText: state.isPasswordObscured,
           textInputAction: TextInputAction.next,

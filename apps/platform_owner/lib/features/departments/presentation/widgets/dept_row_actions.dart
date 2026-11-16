@@ -12,7 +12,7 @@ class DeptRowActions extends StatelessWidget {
   final VoidCallback onDelete;
 
   const DeptRowActions({
-    super.key,
+    super.key, 
     required this.department,
     required this.onDetails,
     required this.onEdit,
@@ -63,7 +63,10 @@ class DeptRowActions extends StatelessWidget {
           onTap: onToggleStatus,
         ),
         const SizedBox(width: 6),
-        _iconButton(icon: Icons.delete_outline_rounded, color: colors.error, tooltip: 'Delete department', onTap: onDelete),
+        if (department.isDefault)
+          _iconButton(icon: Icons.lock_outline_rounded, color: colors.textMuted, tooltip: 'Default department cannot be deleted', onTap: () {})
+        else
+          _iconButton(icon: Icons.delete_outline_rounded, color: colors.error, tooltip: 'Delete department', onTap: onDelete),
       ],
     );
   }

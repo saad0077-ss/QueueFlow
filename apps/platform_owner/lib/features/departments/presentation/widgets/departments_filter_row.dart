@@ -5,34 +5,18 @@ import 'package:queueflow_ui/queueflow_ui.dart';
 class DepartmentsFilterRow extends StatelessWidget {
   final String searchQuery;
   final String selectedStatus;
-  final String selectedClinic;
-  final int count;
-  final int total;
   final ValueChanged<String> onSearch;
   final ValueChanged<String> onStatusChanged;
-  final ValueChanged<String> onClinicChanged;
   final VoidCallback onReset;
 
   const DepartmentsFilterRow({
     super.key,
     required this.searchQuery,
     required this.selectedStatus,
-    required this.selectedClinic,
-    required this.count,
-    required this.total,
     required this.onSearch,
     required this.onStatusChanged,
-    required this.onClinicChanged,
     required this.onReset,
   });
-
-  static const _clinicsMap = {
-    'All Clinics': 'all',
-    'Sunrise Health Clinic': 'sunrise-health',
-    'Smile Dental Clinic': 'smile-dental',
-    'CityCare General Clinic': 'citycare',
-    'Wellness Skin Studio': 'wellness-skin',
-  };
 
   @override
   Widget build(BuildContext context) {
@@ -43,20 +27,16 @@ class DepartmentsFilterRow extends StatelessWidget {
         final isCompact = constraints.maxWidth < 900;
         final searchBox = _searchBox(colors);
         final statusDropdown = _dropdown(colors, selectedStatus, const ['All Statuses', 'Active Specialties', 'Inactive'], onStatusChanged);
-        // State stores the clinic id, so map it back to its display name for the dropdown.
-        final clinicName = _clinicsMap.entries.firstWhere((e) => e.value == selectedClinic, orElse: () => _clinicsMap.entries.first).key;
-        final clinicDropdown = _dropdown(colors, clinicName, _clinicsMap.keys.toList(), (name) => onClinicChanged(_clinicsMap[name] ?? 'all'));
         final resetBtn = _resetPill(colors);
-        final countText = Text('Showing $count of $total departments', style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted));
 
         final compactContent = Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             searchBox,
             const SizedBox(height: 10),
-            Row(children: [Expanded(child: statusDropdown), const SizedBox(width: 8), Expanded(child: clinicDropdown)]),
+            statusDropdown,
             const SizedBox(height: 10),
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [countText, resetBtn]),
+            Align(alignment: Alignment.centerRight, child: resetBtn),
           ],
         );
 
@@ -66,10 +46,7 @@ class DepartmentsFilterRow extends StatelessWidget {
             const SizedBox(width: 10),
             Expanded(flex: 3, child: statusDropdown),
             const SizedBox(width: 10),
-            Expanded(flex: 3, child: clinicDropdown),
             const SizedBox(width: 14),
-            countText,
-            const SizedBox(width: 10),
             resetBtn,
           ],
         );

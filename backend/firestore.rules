@@ -116,5 +116,38 @@ service cloud.firestore {
     match /email_send_log/{uid} {
       allow read, write: if false; 
     }
+
+    // 7. Removed clinic tombstones (used to notify clinic staff when removed)
+    match /removed_clinics/{docId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+
+    // 8. Staff / clinic invites
+    match /invites/{inviteId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // 9. Platform department catalog and clinic requests
+    match /departments/{deptId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+    match /department_requests/{reqId} {
+      allow read, write: if isAuthenticated();
+    }
+    match /service_requests/{reqId} {
+      allow read, write: if isAuthenticated();
+    }
+    match /plan_tiers/{tierId} {
+      allow read: if true;
+      allow write: if isPlatformOwner();
+    }
+    match /notifications/{notifId} {
+      allow read, write: if isAuthenticated();
+    }
+    match /staff/{staffId} {
+      allow read, write: if isAuthenticated();
+    }
   }
 }

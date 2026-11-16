@@ -69,7 +69,7 @@ class SignInForm extends StatelessWidget {
       children: [
         CustomTextField(
           label: 'Email address',
-          hintText: 'you@example.com',
+          hintText: 'Enter your email ID',
           prefixIcon: Icons.mail_outline_rounded,
           keyboardType: TextInputType.emailAddress,
           textInputAction: TextInputAction.next,

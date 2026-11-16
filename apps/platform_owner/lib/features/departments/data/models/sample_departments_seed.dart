@@ -1,5 +1,9 @@
-﻿const sampleDepartmentsSeed = [
+﻿/// Built-in departments. Fixed doc IDs (prefix `default-`) mark them as non-deletable.
+const defaultDepartmentIdPrefix = 'default-';
+
+const sampleDepartmentsSeed = [
   {
+    'id': 'default-general',
     'name': 'General Medicine',
     'code': 'GEN',
     'icon': '🩺',
@@ -36,6 +40,7 @@
     ],
   },
   {
+    'id': 'default-dental',
     'name': 'Dental & Oral Surgery',
     'code': 'DENT',
     'icon': '🦷',
@@ -55,6 +60,7 @@
     ],
   },
   {
+    'id': 'default-pediatrics',
     'name': 'Pediatrics & Child Care',
     'code': 'PEDI',
     'icon': '👶',
@@ -72,6 +78,7 @@
     ],
   },
   {
+    'id': 'default-dermatology',
     'name': 'Dermatology & Cosmetology',
     'code': 'DERM',
     'icon': '✨',
@@ -86,54 +93,6 @@
       {'id': 's13', 'name': 'Clinical Dermatology Consultation', 'duration': 20, 'suggestedPrice': 700, 'description': 'Skin prescription & review.'},
       {'id': 's14', 'name': 'Laser Skin Rejuvenation', 'duration': 45, 'suggestedPrice': 2200, 'description': 'Laser skin resurfacing.'},
       {'id': 's15', 'name': 'Acne Clear Treatment', 'duration': 30, 'suggestedPrice': 1200, 'description': 'Deep pore therapy.'},
-    ],
-  },
-  {
-    'name': 'Cardiology & Vascular',
-    'code': 'CARD',
-    'icon': '❤️',
-    'color': '#EF4444',
-    'description': 'Cardiovascular health diagnostics, 12-lead ECG review, and hypertension control.',
-    'avgConsultationTime': '30 mins',
-    'status': 'active',
-    'doctorCount': 2,
-    'totalVisits': 410,
-    'assignedClinics': ['sunrise-health', 'sunrise-health'],
-    'standardServices': [
-      {'id': 's16', 'name': 'Cardiology Consultation', 'duration': 30, 'suggestedPrice': 1000, 'description': 'Cardiovascular risk evaluation.'},
-      {'id': 's17', 'name': '12-Lead ECG Evaluation', 'duration': 20, 'suggestedPrice': 600, 'description': 'Resting ECG rhythm check.'},
-    ],
-  },
-  {
-    'name': 'Orthopedics & Sports Rehab',
-    'code': 'ORTHO',
-    'icon': '🦴',
-    'color': '#8B5CF6',
-    'description': 'Bone joint disorders, sports injury triage, and post-fracture physical rehabilitation.',
-    'avgConsultationTime': '20 mins',
-    'status': 'active',
-    'doctorCount': 1,
-    'totalVisits': 310,
-    'assignedClinics': ['sunrise-health', 'sunrise-health'],
-    'standardServices': [
-      {'id': 's18', 'name': 'Orthopedic Pain & Joint Assessment', 'duration': 25, 'suggestedPrice': 800, 'description': 'Spine & knee evaluation.'},
-      {'id': 's19', 'name': 'Post-Fracture Rehab', 'duration': 30, 'suggestedPrice': 600, 'description': 'Mobility exercises.'},
-    ],
-  },
-  {
-    'name': 'Ear, Nose & Throat (ENT)',
-    'code': 'ENT',
-    'icon': '👂',
-    'color': '#06B6D4',
-    'description': 'Sinusitis diagnosis, audiometry screening, allergic rhinitis, and throat care.',
-    'avgConsultationTime': '15 mins',
-    'status': 'active',
-    'doctorCount': 2,
-    'totalVisits': 280,
-    'assignedClinics': ['sunrise-health'],
-    'standardServices': [
-      {'id': 's20', 'name': 'ENT Diagnostic Consultation', 'duration': 15, 'suggestedPrice': 500, 'description': 'Otoscopic exam & care.'},
-      {'id': 's21', 'name': 'Audiometry Screen', 'duration': 20, 'suggestedPrice': 450, 'description': 'Hearing sensitivity test.'},
     ],
   },
 ];

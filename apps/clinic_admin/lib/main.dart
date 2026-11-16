@@ -20,6 +20,12 @@ void main() async {
   } catch (e) { 
     debugPrint('Firebase already initialized: $e');
   }
+  // Always require a fresh login on app start / hot restart.
+  try {
+    await FirebaseAuth.instance.signOut();
+  } catch (e) {
+    debugPrint('Startup sign-out failed: $e'); 
+  }
   runApp(const ClinicAdminApp());
 }
 
