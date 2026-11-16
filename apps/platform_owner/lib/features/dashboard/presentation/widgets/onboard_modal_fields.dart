@@ -35,25 +35,31 @@ class OnboardTextField extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 6),
-        Container(
-          height: 42,
-          decoration: BoxDecoration(
-            color: colors.surfaceSecondary,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: colors.border),
+        TextFormField(
+          controller: controller,
+          readOnly: readOnly,
+          style: GoogleFonts.inter(
+            color: readOnly ? colors.textMuted : colors.textPrimary,
+            fontSize: 13,
           ),
-          child: TextField(
-            controller: controller,
-            readOnly: readOnly,
-            style: GoogleFonts.inter(
-              color: readOnly ? colors.textMuted : colors.textPrimary,
-              fontSize: 13,
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: GoogleFonts.inter(color: colors.textMuted, fontSize: 13),
+            filled: true,
+            fillColor: colors.surfaceSecondary,
+            isDense: true,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: colors.border),
             ),
-            decoration: InputDecoration(
-              hintText: hint,
-              hintStyle: GoogleFonts.inter(color: colors.textMuted, fontSize: 13),
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: colors.border),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: colors.primary, width: 1.5),
             ),
           ),
         ),

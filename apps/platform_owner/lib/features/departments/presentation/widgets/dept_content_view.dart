@@ -75,12 +75,8 @@ class DeptContentView extends StatelessWidget {
               DepartmentsFilterRow(
                 searchQuery: state.searchQuery,
                 selectedStatus: state.selectedStatusFilter,
-                selectedClinic: state.selectedClinicFilter,
-                count: state.filteredDepartments.length,
-                total: state.totalDepartments,
                 onSearch: (q) => context.read<DepartmentsBloc>().add(DepartmentSearchQueryChanged(q)),
                 onStatusChanged: (s) => context.read<DepartmentsBloc>().add(DepartmentStatusFilterChanged(s)),
-                onClinicChanged: (c) => context.read<DepartmentsBloc>().add(DepartmentClinicFilterChanged(c)),
                 onReset: () => context.read<DepartmentsBloc>().add(const DepartmentsResetFilters()),
               ),
               const SizedBox(height: 18),

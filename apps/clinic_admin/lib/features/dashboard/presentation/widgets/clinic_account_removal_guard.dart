@@ -96,14 +96,9 @@ class _ClinicAccountRemovalGuardState extends State<ClinicAccountRemovalGuard> {
 
   Future<void> _checkIfRemovedTombstoneExists(String email) async {
     try {
-      final removedDoc = await FirebaseFirestore.instance
-          .collection('removed_clinics')
-          .doc(email)
-          .get();
       if (!mounted || _dialogShown) return;
-      if (removedDoc.exists) {
-        _showRemovalDialog('The platform owner has removed your clinic facility and account.');
-      }
+      // Tombstone present, or the clinic no longer exists at all -> removed.
+      _showRemovalDialog('The platform owner has removed your clinic facility and account.');
     } catch (_) {}
   }
 

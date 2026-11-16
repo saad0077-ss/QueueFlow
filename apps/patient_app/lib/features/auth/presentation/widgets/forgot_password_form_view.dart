@@ -79,7 +79,7 @@ class ForgotPasswordFormView extends StatelessWidget {
           // Email Field
           CustomTextField(
             label: 'Email address',
-            hintText: 'you@example.com',
+            hintText: 'Enter your email ID',
             controller: _effectiveController,
             prefixIcon: Icons.mail_outline_rounded,
             keyboardType: TextInputType.emailAddress,
