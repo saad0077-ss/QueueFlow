@@ -28,7 +28,7 @@ class _HomeTabViewState extends State<HomeTabView> {
   }
 
   void _openSearchScreen(BuildContext context, HomeState state) async {
-    final result = await Navigator.of(context).push<bool>(
+    final result = await Navigator.of(context).push<dynamic>(
       MaterialPageRoute(
         builder: (_) => PatientSearchScreen(
           allClinics: state.allClinics,
@@ -37,8 +37,13 @@ class _HomeTabViewState extends State<HomeTabView> {
         ),
       ),
     );
-    if (result == true && context.mounted) {
-      context.read<HomeBloc>().add(const HomeNavTabChanged(2));
+    if (context.mounted) {
+      if (result == 'open_queue' || result == 'joined_queue') {
+        context.read<HomeBloc>().add(const HomeRefreshRequested());
+        context.read<HomeBloc>().add(const HomeNavTabChanged(1));
+      } else if (result == true) {
+        context.read<HomeBloc>().add(const HomeNavTabChanged(2));
+      }
     }
   }
 
@@ -240,14 +245,19 @@ class _HomeTabViewState extends State<HomeTabView> {
 
   void _showClinicDetailsModal(BuildContext context, dynamic clinic) async {
     if (clinic is ClinicEntity) {
-      final result = await Navigator.push<bool>(
+      final result = await Navigator.push<dynamic>(
         context,
         MaterialPageRoute(
           builder: (_) => ClinicDetailsScreen(clinic: clinic),
         ),
       );
-      if (result == true && context.mounted) {
-        context.read<HomeBloc>().add(const HomeNavTabChanged(2));
+      if (context.mounted) {
+        if (result == 'open_queue' || result == 'joined_queue') {
+          context.read<HomeBloc>().add(const HomeRefreshRequested());
+          context.read<HomeBloc>().add(const HomeNavTabChanged(1));
+        } else if (result == true) {
+          context.read<HomeBloc>().add(const HomeNavTabChanged(2));
+        }
       }
     }
   }

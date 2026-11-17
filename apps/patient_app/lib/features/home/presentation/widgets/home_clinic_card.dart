@@ -1,7 +1,9 @@
+import '../../../../core/widgets/clinic_open_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../../core/widgets/clinic_dept_chip.dart';
+import '../../../../core/widgets/distance_builder.dart';
 import '../../../../core/widgets/clinic_photo.dart';
 import '../../domain/entities/clinic_entity.dart';
 
@@ -105,7 +107,13 @@ class HomeClinicCard extends StatelessWidget {
   }
 
   Widget _buildStatusPill(AppColorsExtension colors) {
-    final isOpen = clinic.isOpen;
+    return ClinicOpenBuilder(
+      clinic: clinic,
+      builder: (context, isOpen) => _statusPill(colors, isOpen),
+    );
+  }
+
+  Widget _statusPill(AppColorsExtension colors, bool isOpen) {
     final color = isOpen ? colors.badgeOpenText : colors.error;
     final bgColor = isOpen ? colors.badgeOpenBg : colors.errorTint;
 
@@ -273,14 +281,17 @@ class HomeClinicCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Expanded(
-                            child: Text(
-                              '${clinic.distance} · ${clinic.city}',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 11.5,
-                                fontWeight: FontWeight.w500,
-                                color: colors.textSubtle,
+                            child: DistanceBuilder(
+                              clinic: clinic,
+                              builder: (_, dist) => Text(
+                                dist.isEmpty ? clinic.city : '$dist · ${clinic.city}',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 11.5,
+                                  fontWeight: FontWeight.w500,
+                                  color: colors.textSubtle,
+                                ),
                               ),
                             ),
                           ),

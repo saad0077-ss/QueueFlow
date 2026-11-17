@@ -32,7 +32,7 @@ class ClinicDetailsRepositoryImpl implements ClinicDetailsRepository {
           category: 'General',
           rating: 0,
           reviewCount: 0,
-          distance: '1.2 km',
+          distance: '',
           city: 'Kochi',
           address: 'Main Road',
           phone: '+91 484 987 6543',
@@ -41,7 +41,7 @@ class ClinicDetailsRepositoryImpl implements ClinicDetailsRepository {
         );
 
     String description = ClinicFallbackData.getDescription(clinic.name, clinic.category);
-    List<String> features = ClinicFallbackData.getFeatures(clinic.category);
+    List<String> features = const [];
     String? holidayNotice;
 
     try {
@@ -49,7 +49,7 @@ class ClinicDetailsRepositoryImpl implements ClinicDetailsRepository {
       if (doc.exists) {
         final d = doc.data() ?? {};
         if ((d['description'] ?? '').toString().isNotEmpty) description = d['description'].toString();
-        if (d['features'] is List) features = (d['features'] as List).map((e) => e.toString()).toList();
+        features = _featuresFrom(d);
         if ((d['holidayNotice'] ?? '').toString().isNotEmpty) holidayNotice = d['holidayNotice'].toString();
       }
     } catch (e) {
@@ -71,6 +71,28 @@ class ClinicDetailsRepositoryImpl implements ClinicDetailsRepository {
       doctors: doctors,
       reviews: reviews,
     );
+  }
+
+  /// Only what the clinic admin actually selected in Clinic Settings:
+  /// parking choice (+ wheelchair access) and the emergency on-call switch.
+  static List<String> _featuresFrom(Map<String, dynamic> d) {
+    final out = <String>[];
+    final loc = d['location'] is Map ? Map<String, dynamic>.from(d['location'] as Map) : const <String, dynamic>{};
+    final parking = (loc['parking'] ?? '').toString().toLowerCase();
+    if (parking.isNotEmpty) {
+      if (parking.startsWith('free parking')) {
+        out.add('Free parking');
+      } else if (parking.startsWith('paid parking')) {
+        out.add('Paid parking');
+      } else if (parking.startsWith('street parking')) {
+        out.add('Street parking');
+      }
+      if (parking.contains('wheelchair accessible') && !parking.contains('not wheelchair')) {
+        out.add('Wheelchair access');
+      }
+    }
+    if (d['emergencyOnCall'] == true) out.add('Emergency on-call');
+    return out;
   }
 
   Future<List<ClinicServiceModel>> _fetchServices(String clinicId, String cat) async {

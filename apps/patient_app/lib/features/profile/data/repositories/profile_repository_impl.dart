@@ -48,9 +48,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
     }
 
     final user = _auth?.currentUser;
-    String name = 'Aisha Rahman';
-    String email = 'aisha.rahman@email.com';
-    String phone = '+91 98765 43210';
+    String name = '';
+    String email = '';
+    String phone = '';
     String id = user?.uid ?? 'user-1';
 
     if (user != null) {
@@ -223,7 +223,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
     if (_cachedReviews != null) {
       return _cachedReviews!;
     }
-    _cachedReviews = List.from(PatientReviewModel.defaultReviews);
+    _cachedReviews = <PatientReviewModel>[];
     return _cachedReviews!;
   }
 

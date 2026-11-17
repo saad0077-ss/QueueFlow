@@ -32,6 +32,12 @@ class ClinicSettingsRepositoryImpl implements ClinicSettingsRepository {
     final doc = await CurrentClinicResolver.require(auth: _auth, firestore: _firestore);
     final data = doc.data() ?? <String, dynamic>{};
     final settings = ClinicSettingsMapper.fromFirestore(doc.id, data);
+    // Publish the schedule the admin sees so patients get real Open/Closed times.
+    if (data['operatingHours'] is! Map) {
+      try {
+        await saveOperatingSchedule(settings.schedule);
+      } catch (_) {}
+    }
     if (((data['imageVersion'] as num?)?.toInt() ?? 0) <= 0) return settings;
 
     final imageBytes = await _loadImage(doc.id);

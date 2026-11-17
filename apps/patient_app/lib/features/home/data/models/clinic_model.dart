@@ -10,6 +10,8 @@ class ClinicModel extends ClinicEntity {
     required super.rating,
     required super.reviewCount,
     required super.distance,
+    super.latitude,
+    super.longitude,
     required super.city,
     required super.address,
     required super.phone,
@@ -23,6 +25,7 @@ class ClinicModel extends ClinicEntity {
     super.imageVersion = 0,
     super.departmentIds = const [],
     super.departments = const [],
+    super.schedule = const {},
   });
 
   factory ClinicModel.fromFirestore(DocumentSnapshot doc) {
@@ -47,7 +50,7 @@ class ClinicModel extends ClinicEntity {
 
     final statusStr = (map['status'] ?? 'ACTIVE').toString().toUpperCase();
     final queueStatusStr = (map['queueStatus'] ?? '').toString();
-    final bool isOpen = (statusStr == 'ACTIVE' || statusStr == 'OPEN') &&
+    final bool isOpen = (statusStr == 'ACTIVE' || statusStr == 'ACTIVATED' || statusStr == 'OPEN') &&
         !statusStr.contains('CLOSED') &&
         !statusStr.contains('SUSPENDED');
 
@@ -79,7 +82,9 @@ class ClinicModel extends ClinicEntity {
       category: category,
       rating: reviews > 0 ? ratingVal.clamp(0, 5).toDouble() : 0,
       reviewCount: reviews < 0 ? 0 : reviews,
-      distance: (map['distance'] ?? '1.2 km').toString(),
+      distance: '',
+      latitude: _coord(map, 'latitude'),
+      longitude: _coord(map, 'longitude'),
       city: (map['city'] ?? 'Kochi').toString(),
       address: _parseAddress(map),
       phone: (map['phone'] ?? '+91 484 987 6543').toString(),
@@ -93,7 +98,18 @@ class ClinicModel extends ClinicEntity {
       imageVersion: (map['imageVersion'] as num?)?.toInt() ?? 0,
       departmentIds: deptIds,
       departments: depts,
+      schedule: map['operatingHours'] is Map
+          ? Map<String, dynamic>.from(map['operatingHours'] as Map)
+          : const {},
     );
+  }
+
+  /// Clinic GPS saved under `location` (strings from the admin form) or top level.
+  static double? _coord(Map<String, dynamic> m, String key) {
+    final loc = m['location'];
+    final raw = (loc is Map ? loc[key] : null) ?? m[key];
+    final v = raw is num ? raw.toDouble() : double.tryParse('${raw ?? ''}'.trim());
+    return v;
   }
 
   static String _parseAddress(Map<String, dynamic> m) {

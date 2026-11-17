@@ -193,7 +193,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     Emitter<ProfileState> emit,
   ) async {
     try {
-      final senderName = state.profile?.name ?? 'Aisha Rahman';
+      final senderName = state.profile?.name ?? 'Patient';
       final updated = await sendTicketReplyUseCase(
         ticketId: event.ticketId,
         text: event.text,

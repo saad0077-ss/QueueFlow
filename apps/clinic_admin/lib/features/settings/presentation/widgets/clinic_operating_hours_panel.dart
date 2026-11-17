@@ -90,6 +90,8 @@ class _ClinicOperatingHoursPanelState extends State<ClinicOperatingHoursPanel> {
           totalWeeklyHours: widget.schedule.totalWeeklyHours,
           isEmergencyOnCall: _emergency,
           scheduleSummary: widget.schedule.scheduleSummary,
+          statusBuilder: () => widget.schedule.statusAt(DateTime.now()) ??
+              (isOpen: false, label: 'NOT SET'),
         ),
         const SizedBox(height: 12),
         HoursPresetsToolbar(

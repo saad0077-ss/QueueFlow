@@ -47,29 +47,4 @@ class PatientReviewModel extends PatientReviewEntity {
       'date': date,
     };
   }
-
-  static List<PatientReviewModel> get defaultReviews => [
-        const PatientReviewModel(
-          id: 'rev-1',
-          clinicId: 'smile-dental',
-          clinicName: 'Smile Dental Clinic',
-          doctorName: 'Dr. Rahul Menon',
-          rating: 5,
-          tags: ['Zero Wait Time', 'Friendly Doctor'],
-          comment: 'Consultation was on time! The live queue notified me 10 mins before.',
-          isAnonymous: false,
-          date: 'Yesterday',
-        ),
-        const PatientReviewModel(
-          id: 'rev-2',
-          clinicId: 'sunrise-health',
-          clinicName: 'Sunrise Health Clinic',
-          doctorName: 'Dr. Priya Sharma',
-          rating: 5,
-          tags: ['Clean & Sanitized', 'Accurate Diagnosis'],
-          comment: 'Remarkable digital triage flow. Never waited in the crowded lobby.',
-          isAnonymous: false,
-          date: '18 May 2026',
-        ),
-      ];
 }

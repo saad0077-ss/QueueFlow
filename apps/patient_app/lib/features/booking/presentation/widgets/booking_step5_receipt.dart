@@ -9,13 +9,22 @@ class BookingStep5Receipt extends StatelessWidget {
   final AppointmentEntity appointment;
   final VoidCallback onViewMyBookings;
   final VoidCallback onBackToHome;
+  final VoidCallback? onTrackLiveQueue;
 
   const BookingStep5Receipt({
     super.key,
     required this.appointment,
     required this.onViewMyBookings,
     required this.onBackToHome,
+    this.onTrackLiveQueue,
   });
+
+  bool get _isToday {
+    final now = DateTime.now();
+    final todayIso =
+        '${now.year.toString().padLeft(4, '0')}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+    return appointment.dateRaw == todayIso;
+  }
 
   void _copyReference(BuildContext context) {
     final colors = context.colors;
@@ -256,6 +265,43 @@ class BookingStep5Receipt extends StatelessWidget {
         const SizedBox(height: 24),
 
         // Action Buttons
+        if (_isToday || onTrackLiveQueue != null) ...[
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              gradient: AppColors.primaryGradient,
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: [
+                BoxShadow(
+                  color: colors.primary.withValues(alpha: 0.35),
+                  blurRadius: 14,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: ElevatedButton.icon(
+              onPressed: onTrackLiveQueue ?? onBackToHome,
+              icon: const Icon(Icons.bolt_rounded, color: Colors.white, size: 20),
+              label: Text(
+                'Track Live Queue Spot Now',
+                style: GoogleFonts.inter(
+                  fontSize: 14.5,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+                padding: const EdgeInsets.symmetric(vertical: 13),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+        ],
         GradientButton(
           text: 'View in My Bookings',
           onPressed: onViewMyBookings,

@@ -41,8 +41,8 @@ class PatientProfileModel extends PatientProfileEntity {
     String? email,
     String? phone,
   }) {
-    final finalName = name ?? 'Aisha Rahman';
-    String initials = 'AR';
+    final finalName = name ?? '';
+    String initials = '';
     final parts = finalName.trim().split(RegExp(r'\s+')).where((s) => s.isNotEmpty).toList();
     if (parts.isNotEmpty) {
       if (parts.length > 1) {
@@ -56,8 +56,8 @@ class PatientProfileModel extends PatientProfileEntity {
       id: id ?? 'user-1',
       name: finalName,
       initials: initials,
-      email: email ?? 'aisha.rahman@email.com',
-      phone: phone ?? '+91 98765 43210',
+      email: email ?? '',
+      phone: phone ?? '',
       healthId: 'QF-IND-88219',
       bloodGroup: null,
       dob: '14 Aug 1994',
@@ -93,10 +93,10 @@ class PatientProfileModel extends PatientProfileEntity {
 
     return PatientProfileModel(
       id: docId ?? json['id'] as String? ?? 'user-1',
-      name: json['name'] as String? ?? json['fullName'] as String? ?? 'Aisha Rahman',
-      initials: json['initials'] as String? ?? 'AR',
-      email: json['email'] as String? ?? 'aisha.rahman@email.com',
-      phone: json['phone'] as String? ?? json['phoneNumber'] as String? ?? '+91 98765 43210',
+      name: json['name'] as String? ?? json['fullName'] as String? ?? '',
+      initials: json['initials'] as String? ?? '',
+      email: json['email'] as String? ?? '',
+      phone: json['phone'] as String? ?? json['phoneNumber'] as String? ?? '',
       healthId: json['healthId'] as String? ?? 'QF-IND-88219',
       bloodGroup: json['bloodGroup'] as String?,
       photoBase64: json['photoBase64'] as String?,

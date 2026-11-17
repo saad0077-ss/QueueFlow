@@ -284,19 +284,15 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
 
     // 3. Quick Filters
     if (_activeQuickFilters.contains('open')) {
-      result = result.where((c) => c.isOpen).toList();
+      result = result.where((c) => c.isOpenNow).toList();
     }
     if (_activeQuickFilters.contains('rating')) {
       result = result.where((c) => c.rating >= 4.5).toList();
     }
     if (_activeQuickFilters.contains('near')) {
       result = result.where((c) {
-        final match = RegExp(r'([\d\.]+)').firstMatch(c.distance);
-        if (match != null) {
-          final dist = double.tryParse(match.group(1) ?? '999');
-          return dist != null && dist <= 2.0;
-        }
-        return true;
+        final km = c.distanceKm;
+        return km != null && km <= 2.0;
       }).toList();
     }
     if (_activeQuickFilters.contains('queue')) {

@@ -24,7 +24,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     required this.cancelTicketUseCase,
     FirebaseAuth? firebaseAuth,
   })  : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
-        super(const HomeState()) {
+        super(_initialState(firebaseAuth ?? FirebaseAuth.instance)) {
     on<HomeInitialDataRequested>(_onInitialDataRequested);
     on<HomeClinicsUpdated>(_onClinicsUpdated);
     on<HomeRefreshRequested>(_onRefreshRequested);
@@ -35,27 +35,38 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<HomeCancelTicketRequested>(_onCancelTicketRequested);
   }
 
+  static HomeState _initialState(FirebaseAuth auth) {
+    final id = _identityFor(auth.currentUser);
+    return HomeState(userName: id.name, userInitials: id.initials);
+  }
+
+  /// Display name + initials of the signed-in user; empty when unknown (no mock data).
+  static ({String name, String initials}) _identityFor(User? user) {
+    final display = user?.displayName?.trim() ?? '';
+    if (display.isNotEmpty) {
+      final parts = display.split(RegExp(r'\s+'));
+      final initials = parts.length >= 2 && parts[1].isNotEmpty
+          ? '${parts[0][0]}${parts[1][0]}'
+          : parts[0].substring(0, parts[0].length >= 2 ? 2 : 1);
+      return (name: parts[0], initials: initials.toUpperCase());
+    }
+    final handle = (user?.email ?? '').split('@').first;
+    if (handle.isNotEmpty) {
+      return (
+        name: handle[0].toUpperCase() + handle.substring(1),
+        initials: handle.substring(0, handle.length >= 2 ? 2 : 1).toUpperCase(),
+      );
+    }
+    return (name: '', initials: '');
+  }
+
   Future<void> _onInitialDataRequested(
     HomeInitialDataRequested event,
     Emitter<HomeState> emit,
   ) async {
-    final user = _firebaseAuth.currentUser;
-    String name = 'Aisha';
-    String initials = 'AR';
-
-    if (user?.displayName != null && user!.displayName!.trim().isNotEmpty) {
-      final parts = user.displayName!.trim().split(RegExp(r'\s+'));
-      name = parts[0];
-      if (parts.length >= 2 && parts[1].isNotEmpty) {
-        initials = '${parts[0][0]}${parts[1][0]}'.toUpperCase();
-      } else {
-        initials = parts[0].substring(0, parts[0].length >= 2 ? 2 : 1).toUpperCase();
-      }
-    } else if (user?.email != null && user!.email!.isNotEmpty) {
-      final handle = user.email!.split('@')[0];
-      name = handle[0].toUpperCase() + handle.substring(1);
-      initials = handle.substring(0, handle.length >= 2 ? 2 : 1).toUpperCase();
-    }
+    final identity = _identityFor(_firebaseAuth.currentUser);
+    final name = identity.name;
+    final initials = identity.initials;
 
     // Cancel any previous stream
     await _clinicsSubscription?.cancel();
