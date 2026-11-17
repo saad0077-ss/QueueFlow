@@ -26,6 +26,21 @@ class ClinicOperatingScheduleEntity extends Equatable {
     return (totalMinutes / 60.0).round();
   }
 
+  /// Today's hours as of [now]: null when nothing is configured.
+  /// Returns (isOpenNow, label) e.g. (true, 'OPEN NOW · CLOSES 20:00').
+  ({bool isOpen, String label})? statusAt(DateTime now) {
+    if (days.isEmpty) return null;
+    const keys = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    final d = days[keys[now.weekday - 1]];
+    if (d == null || !d.isOpen) return (isOpen: false, label: 'CLOSED TODAY');
+    final cur = now.hour * 60 + now.minute;
+    final o = OperatingHoursDayEntity.parseMinutes(d.openTime);
+    final c = OperatingHoursDayEntity.parseMinutes(d.closeTime);
+    final open = c > o ? (cur >= o && cur < c) : (cur >= o || cur < c);
+    if (open) return (isOpen: true, label: 'OPEN NOW · CLOSES ${d.closeTime}');
+    return (isOpen: false, label: cur < o ? 'CLOSED · OPENS ${d.openTime}' : 'CLOSED · OPENS TOMORROW');
+  }
+
   String get scheduleSummary {
     // Nothing configured yet: don't publish made-up hours to patients.
     if (days.isEmpty) return '';

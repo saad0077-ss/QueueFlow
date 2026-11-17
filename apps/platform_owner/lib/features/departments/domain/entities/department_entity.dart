@@ -24,7 +24,7 @@ class DepartmentEntity extends Equatable {
     this.color = '#2563EB',
     required this.description,
     this.avgConsultationTime = '20 mins',
-    this.status = 'active',
+    this.status = 'active', 
     this.doctorCount = 0,
     this.totalVisits = 0,
     this.assignedClinics = const [],

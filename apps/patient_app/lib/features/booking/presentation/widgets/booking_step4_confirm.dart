@@ -90,7 +90,7 @@ class BookingStep4Confirm extends StatelessWidget {
                         Text(
                           clinic.address.isNotEmpty
                               ? clinic.address
-                              : '${clinic.distance} • ${clinic.city}',
+                              : (clinic.distanceLabel.isEmpty ? clinic.city : '${clinic.distanceLabel} • ${clinic.city}'),
                           style: GoogleFonts.inter(
                             fontSize: 11.5,
                             color: colors.textMuted,

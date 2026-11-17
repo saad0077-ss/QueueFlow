@@ -1,7 +1,9 @@
+import '../../../../core/widgets/clinic_open_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../../core/widgets/clinic_dept_chip.dart';
+import '../../../../core/widgets/distance_builder.dart';
 import '../../../home/domain/entities/clinic_entity.dart';
 import 'clinic_status_pill.dart';
 
@@ -37,7 +39,10 @@ class ClinicHeaderInfo extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-            ClinicStatusPill(isOpen: clinic.isOpen),
+            ClinicOpenBuilder(
+              clinic: clinic,
+              builder: (_, isOpen) => ClinicStatusPill(isOpen: isOpen),
+            ),
           ],
         ),
         const SizedBox(height: 6),
@@ -71,10 +76,23 @@ class ClinicHeaderInfo extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 8),
-        _buildInfoRow(
-          icon: Icons.location_on_outlined,
-          text: '${clinic.address} · ${clinic.distance} away',
+        _ExpandableAddress(
+          address: clinic.address,
           color: colors.textMuted,
+          moreColor: colors.primary,
+        ),
+        DistanceBuilder(
+          clinic: clinic,
+          builder: (_, dist) => dist.isEmpty
+              ? const SizedBox.shrink()
+              : Padding(
+                  padding: const EdgeInsets.only(top: 5),
+                  child: _buildInfoRow(
+                    icon: Icons.directions_walk_rounded,
+                    text: '$dist away',
+                    color: colors.textMuted,
+                  ),
+                ),
         ),
         const SizedBox(height: 5),
         _buildInfoRow(
@@ -141,6 +159,92 @@ class ClinicHeaderInfo extends StatelessWidget {
           fontWeight: FontWeight.w500,
         ),
       ),
+    );
+  }
+}
+
+/// Address that clamps to one line and expands/collapses on tap when it is long.
+class _ExpandableAddress extends StatefulWidget {
+  final String address;
+  final Color color;
+  final Color moreColor;
+
+  const _ExpandableAddress({
+    required this.address,
+    required this.color,
+    required this.moreColor,
+  });
+
+  @override
+  State<_ExpandableAddress> createState() => _ExpandableAddressState();
+}
+
+class _ExpandableAddressState extends State<_ExpandableAddress> {
+  bool _expanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final style = GoogleFonts.inter(fontSize: 12.5, color: widget.color);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Room left for the icon (14) and gap (6) before the text.
+        final textWidth = constraints.maxWidth - 20;
+        final painter = TextPainter(
+          text: TextSpan(text: widget.address, style: style),
+          maxLines: 1,
+          textDirection: Directionality.of(context),
+        )..layout(maxWidth: textWidth);
+        final overflows = painter.didExceedMaxLines;
+
+        return InkWell(
+          onTap: overflows ? () => setState(() => _expanded = !_expanded) : null,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 2),
+                child: Icon(Icons.location_on_outlined, size: 14, color: widget.color),
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: AnimatedSize(
+                  duration: const Duration(milliseconds: 180),
+                  alignment: Alignment.topLeft,
+                  child: Text.rich(
+                    TextSpan(
+                      style: style,
+                      children: [
+                        TextSpan(text: widget.address),
+                        if (overflows && _expanded)
+                          TextSpan(
+                            text: '  less',
+                            style: style.copyWith(
+                              color: widget.moreColor,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                      ],
+                    ),
+                    maxLines: _expanded || !overflows ? null : 1,
+                    overflow: TextOverflow.clip,
+                  ),
+                ),
+              ),
+              if (overflows && !_expanded)
+                Padding(
+                  padding: const EdgeInsets.only(left: 6),
+                  child: Text(
+                    'more',
+                    style: style.copyWith(
+                      color: widget.moreColor,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

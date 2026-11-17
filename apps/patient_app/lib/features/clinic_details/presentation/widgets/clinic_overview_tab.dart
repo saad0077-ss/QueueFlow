@@ -27,12 +27,13 @@ class ClinicOverviewTab extends StatelessWidget {
             color: colors.textMuted,
           ),
         ),
-        const SizedBox(height: 14),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: features.map((f) => _buildChip(f, colors)).toList(),
-        ),
+        if (features.isNotEmpty) const SizedBox(height: 14),
+        if (features.isNotEmpty)
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: features.map((f) => _buildChip(f, colors)).toList(),
+          ),
       ],
     );
   }
@@ -40,9 +41,7 @@ class ClinicOverviewTab extends StatelessWidget {
   Widget _buildChip(String label, AppColorsExtension colors) {
     final isEmergency = label.contains('24/7') || label.contains('Emergency');
     final color = isEmergency ? colors.accent : colors.textMuted;
-    final bg = isEmergency
-        ? colors.accentTint
-        : colors.surfaceSecondary;
+    final bg = isEmergency ? colors.accentTint : colors.surfaceSecondary;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),

@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:patient_app/features/booking/data/repositories/booking_repository_impl.dart';
 import 'package:patient_app/features/booking/presentation/pages/booking_wizard_screen.dart';
@@ -10,6 +12,8 @@ import 'package:patient_app/features/clinic_details/data/models/clinic_doctor_mo
 import 'package:patient_app/features/clinic_details/data/repositories/clinic_details_repository_impl.dart';
 import 'package:patient_app/features/clinic_details/presentation/widgets/doctor_rate_dialog.dart';
 import 'package:patient_app/features/home/data/models/clinic_model.dart';
+import 'package:patient_app/features/home/presentation/bloc/home_bloc.dart';
+import 'package:patient_app/features/home/presentation/bloc/home_event.dart';
 import 'package:patient_app/features/booking/domain/entities/appointment_entity.dart';
 import 'package:patient_app/features/booking/domain/repositories/booking_repository.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
@@ -17,8 +21,14 @@ import 'package:queueflow_ui/queueflow_ui.dart';
 class MyBookingsTabView extends StatefulWidget {
   final BookingRepository? repository;
   final VoidCallback? onExploreClinics;
+  final VoidCallback? onTrackLiveQueue;
 
-  const MyBookingsTabView({super.key, this.repository, this.onExploreClinics});
+  const MyBookingsTabView({
+    super.key,
+    this.repository,
+    this.onExploreClinics,
+    this.onTrackLiveQueue,
+  });
 
   @override
   State<MyBookingsTabView> createState() => _MyBookingsTabViewState();
@@ -249,6 +259,56 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
       await BookingWizardScreen.push(context, clinic: clinic, initialDoctor: doctor);
     } catch (e) {
       _toast('Could not open booking: $e');
+    }
+  }
+
+  bool _isTodayApt(AppointmentEntity apt) {
+    final now = DateTime.now();
+    final todayIso =
+        '${now.year.toString().padLeft(4, '0')}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+    return apt.dateRaw == todayIso;
+  }
+
+  Future<void> _handleTrackLiveQueue(AppointmentEntity apt) async {
+    // If not checked in, update appointment status to checkedin
+    if (!apt.isCheckedIn) {
+      try {
+        await FirebaseFirestore.instance.collection('appointments').doc(apt.id).update({
+          'status': 'checkedin',
+          'checkedInAt': FieldValue.serverTimestamp(),
+        });
+      } catch (_) {}
+    }
+    // Also ensure active ticket is in HomeBloc / HomeRepository
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      final rawToken = apt.bookingRef.replaceAll(RegExp(r'\D'), '');
+      final tokenNum = rawToken.length >= 3 ? rawToken.substring(rawToken.length - 3) : rawToken.padLeft(3, '0');
+      final token = 'A-${tokenNum.isNotEmpty ? tokenNum : "026"}';
+
+      await FirebaseFirestore.instance.collection('tickets').doc(apt.id).set({
+        'token': token,
+        'clinicId': apt.clinicId,
+        'clinicName': apt.clinicName,
+        'serviceName': apt.serviceName,
+        'doctorName': apt.doctorName,
+        'patientName': apt.customerName,
+        'patientEmail': (apt.customerEmail.isNotEmpty ? apt.customerEmail : user?.email ?? '').trim().toLowerCase(),
+        'position': 1,
+        'estWaitMin': 12,
+        'nowServing': 'A-023',
+        'status': 'waiting',
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+    } catch (_) {}
+
+    if (mounted) {
+      if (widget.onTrackLiveQueue != null) {
+        widget.onTrackLiveQueue!();
+      } else {
+        context.read<HomeBloc>().add(const HomeRefreshRequested());
+        context.read<HomeBloc>().add(const HomeNavTabChanged(1));
+      }
     }
   }
 
@@ -971,31 +1031,72 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
                 ],
               ),
             ],
-            if (apt.isUpcoming && !apt.isCheckedIn) ...[
+            if (apt.isUpcoming) ...[
               const SizedBox(height: 10),
               Divider(color: colors.border, height: 1),
               const SizedBox(height: 10),
-              Row(
-                children: [
-                  _actionBtn(
-                    'Reschedule',
-                    Icons.event_repeat_rounded,
-                    colors.primary,
-                    () => ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Rescheduling is coming soon.'),
+              if (apt.isCheckedIn || _isTodayApt(apt)) ...[
+                Container(
+                  width: double.infinity,
+                  margin: const EdgeInsets.only(bottom: 10),
+                  decoration: BoxDecoration(
+                    gradient: AppColors.primaryGradient,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: colors.primary.withValues(alpha: 0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: ElevatedButton.icon(
+                    onPressed: () => _handleTrackLiveQueue(apt),
+                    icon: const Icon(Icons.bolt_rounded, size: 18, color: Colors.white),
+                    label: Text(
+                      apt.isCheckedIn
+                          ? 'Track in Live Queue (Token Active)'
+                          : 'Check-In to Live Queue Now',
+                      style: GoogleFonts.inter(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  _actionBtn(
-                    'Cancel',
-                    Icons.close_rounded,
-                    colors.error,
-                    () => _confirmCancelAppointment(apt),
-                  ),
-                ],
-              ),
+                ),
+              ],
+              if (!apt.isCheckedIn) ...[
+                Row(
+                  children: [
+                    _actionBtn(
+                      'Reschedule',
+                      Icons.event_repeat_rounded,
+                      colors.primary,
+                      () => ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Rescheduling is coming soon.'),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    _actionBtn(
+                      'Cancel',
+                      Icons.close_rounded,
+                      colors.error,
+                      () => _confirmCancelAppointment(apt),
+                    ),
+                  ],
+                ),
+              ],
             ],
           ],
         ),

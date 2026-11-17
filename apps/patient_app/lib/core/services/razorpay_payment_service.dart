@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:patient_app/core/constants/payment_constants.dart';
 import 'package:patient_app/features/booking/domain/entities/payment_info_entity.dart';
-import 'package:patient_app/features/booking/presentation/widgets/razorpay_checkout_dialog.dart';
 
 /// Callback type when payment succeeds
 typedef PaymentSuccessCallback = void Function(PaymentInfoEntity paymentInfo);
@@ -25,10 +24,11 @@ class RazorpayPaymentService {
   ExternalWalletCallback? _activeWalletCallback;
   double _activeAmount = 0.0;
 
+  /// razorpay_flutter supports Android, iOS and Web (via checkout.js).
   bool get isSupportedNativePlatform =>
-      !kIsWeb &&
-      (defaultTargetPlatform == TargetPlatform.android ||
-          defaultTargetPlatform == TargetPlatform.iOS);
+      kIsWeb ||
+      defaultTargetPlatform == TargetPlatform.android ||
+      defaultTargetPlatform == TargetPlatform.iOS;
 
   /// Initializes event listeners for Razorpay Native Checkout
   void initialize() {
@@ -110,24 +110,14 @@ class RazorpayPaymentService {
 
       try {
         _razorpay!.open(options);
-        return;
       } catch (e) {
-        debugPrint('[RazorpayPaymentService] Native open failed: $e, falling back to modal UI');
+        debugPrint('[RazorpayPaymentService] open failed: $e');
+        onFailure('Could not open Razorpay checkout. Please try again.', null);
       }
+      return;
     }
 
-    // Fallback for Web/Desktop environments or simulator fallbacks
-    if (context.mounted) {
-      await RazorpayCheckoutDialog.show(
-        context,
-        title: bookingTitle,
-        orderRef: bookingRef,
-        amount: amount,
-        onSuccess: (paymentInfo) {
-          _activeSuccessCallback?.call(paymentInfo);
-        },
-      );
-    }
+    onFailure('Razorpay checkout is not supported on this platform.', null);
   }
 
   void _handleNativePaymentSuccess(PaymentSuccessResponse response) {

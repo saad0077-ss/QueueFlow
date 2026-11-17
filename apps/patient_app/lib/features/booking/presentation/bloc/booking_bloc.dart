@@ -68,9 +68,9 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
 
       // Prepopulate logged in user info
       final currentUser = _firebaseAuth?.currentUser;
-      String pName = 'Aisha Rahman';
-      String pPhone = '+91 98765 43210';
-      String pEmail = 'aisha@example.com';
+      String pName = '';
+      String pPhone = '';
+      String pEmail = '';
 
       if (currentUser?.displayName != null && currentUser!.displayName!.trim().isNotEmpty) {
         pName = currentUser.displayName!.trim();

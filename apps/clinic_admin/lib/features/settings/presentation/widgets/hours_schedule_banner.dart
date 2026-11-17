@@ -1,22 +1,55 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 
-class HoursScheduleBanner extends StatelessWidget {
+class HoursScheduleBanner extends StatefulWidget {
   final int totalWeeklyHours;
   final bool isEmergencyOnCall;
   final String scheduleSummary;
+
+  /// Live open/closed state for today; null when no schedule is configured.
+  final ({bool isOpen, String label}) Function()? statusBuilder;
 
   const HoursScheduleBanner({
     super.key,
     required this.totalWeeklyHours,
     required this.isEmergencyOnCall,
     this.scheduleSummary = 'Mon–Sat: 9:00 AM – 8:00 PM · Sun: Closed',
+    this.statusBuilder,
   });
+
+  @override
+  State<HoursScheduleBanner> createState() => _HoursScheduleBannerState();
+}
+
+class _HoursScheduleBannerState extends State<HoursScheduleBanner> {
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(seconds: 30), (_) {
+      if (mounted) setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  int get totalWeeklyHours => widget.totalWeeklyHours;
+  bool get isEmergencyOnCall => widget.isEmergencyOnCall;
+  String get scheduleSummary => widget.scheduleSummary;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final status = widget.statusBuilder?.call();
+    final pillColor = status == null || !status.isOpen ? colors.warning : colors.badgeOpenText;
+    final pillBg = status == null || !status.isOpen ? colors.warningTint : colors.badgeOpenBg;
 
     return Container(
       padding: const EdgeInsets.all(18),
@@ -28,8 +61,11 @@ class HoursScheduleBanner extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 12,
+            runSpacing: 10,
             children: [
               Wrap(
                 crossAxisAlignment: WrapCrossAlignment.center,
@@ -42,16 +78,16 @@ class HoursScheduleBanner extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: colors.warningTint,
+                      color: pillBg,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: colors.warning),
+                      border: Border.all(color: pillColor),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Container(width: 6, height: 6, decoration: BoxDecoration(color: colors.warning, shape: BoxShape.circle)),
+                        Container(width: 6, height: 6, decoration: BoxDecoration(color: pillColor, shape: BoxShape.circle)),
                         const SizedBox(width: 6),
-                        Text('OPENS AT 9:00 AM', style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.bold, color: colors.warning)),
+                        Text(status?.label ?? 'NOT SET', style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.bold, color: pillColor)),
                       ],
                     ),
                   ),

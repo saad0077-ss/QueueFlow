@@ -82,10 +82,12 @@ class HomeRepositoryImpl implements HomeRepository {
   Future<ActiveTicketEntity?> getActiveTicket() async {
     final user = _auth.currentUser;
     if (user != null && user.email != null) {
+      final emailLower = user.email!.trim().toLowerCase();
       try {
+        // 1. Check direct tickets collection
         final snap = await _firestore
             .collection('tickets')
-            .where('patientEmail', isEqualTo: user.email!.trim().toLowerCase())
+            .where('patientEmail', isEqualTo: emailLower)
             .where('status', whereIn: ['waiting', 'called', 'active'])
             .limit(1)
             .get();
@@ -93,6 +95,43 @@ class HomeRepositoryImpl implements HomeRepository {
         if (snap.docs.isNotEmpty) {
           final doc = snap.docs.first;
           _cachedTicket = ActiveTicketModel.fromMap(doc.data(), id: doc.id);
+          return _cachedTicket;
+        }
+
+        // 2. Also check appointments collection for checked-in or today's active appointments
+        final aptSnap = await _firestore
+            .collection('appointments')
+            .where('customerEmail', isEqualTo: emailLower)
+            .where('status', whereIn: ['checkedin', 'checked-in', 'called', 'waiting'])
+            .limit(1)
+            .get();
+
+        if (aptSnap.docs.isNotEmpty) {
+          final doc = aptSnap.docs.first;
+          final d = doc.data();
+          final rawToken = d['token'] ?? d['queueToken'] ?? d['bookingRef'] ?? 'A-026';
+          String token = rawToken.toString();
+          if (!token.startsWith('A-') && !token.startsWith('B-') && !token.startsWith('C-')) {
+            final digits = token.replaceAll(RegExp(r'\D'), '');
+            final numPart = digits.length >= 3 ? digits.substring(digits.length - 3) : digits.padLeft(3, '0');
+            token = 'A-${numPart.isNotEmpty ? numPart : "026"}';
+          }
+          final clinicName = (d['clinicName'] ?? 'Clinic').toString();
+          final isCalled = (d['status'] ?? '').toString().toLowerCase() == 'called';
+
+          _cachedTicket = ActiveTicketModel(
+            id: doc.id,
+            token: token,
+            clinicId: (d['clinicId'] ?? '').toString(),
+            clinicName: clinicName,
+            serviceName: (d['serviceName'] ?? 'General Consultation').toString(),
+            doctorName: (d['doctorName'] ?? 'Attending Doctor').toString(),
+            position: (d['position'] is int) ? d['position'] as int : 1,
+            estWaitMin: (d['estWaitMin'] is int) ? d['estWaitMin'] as int : 12,
+            nowServing: (d['nowServing'] ?? 'A-023').toString(),
+            status: isCalled ? 'called' : 'waiting',
+            joinedAt: DateTime.now(),
+          );
           return _cachedTicket;
         }
       } catch (e) {
@@ -159,5 +198,11 @@ class HomeRepositoryImpl implements HomeRepository {
     } catch (e) {
       debugPrint('Error cancelling ticket $ticketId: $e');
     }
+    try {
+      await _firestore.collection('appointments').doc(ticketId).update({
+        'status': 'cancelled',
+        'cancelledAt': FieldValue.serverTimestamp(),
+      });
+    } catch (_) {}
   }
 }

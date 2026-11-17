@@ -16,9 +16,10 @@ import '../../domain/usecases/join_queue_usecase.dart';
 import '../bloc/home_bloc.dart';
 import '../bloc/home_event.dart';
 import '../bloc/home_state.dart';
-import '../widgets/empty_tab_view.dart';
 import '../widgets/home_greet_header.dart';
+import '../../../../core/services/user_location_service.dart';
 import '../widgets/home_tab_view.dart';
+import '../widgets/live_queue_tab_view.dart';
 import '../widgets/patient_bottom_nav_bar.dart';
 
 /// Patient Home Portal driven cleanly by BLoC state management (< 150 lines).
@@ -34,12 +35,15 @@ class PatientHomeScreen extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (_) => HomeBloc(
+          create: (_) {
+            UserLocationService.refresh();
+            return HomeBloc(
             getFeaturedClinicsUseCase: GetFeaturedClinicsUseCase(repo),
             getActiveTicketUseCase: GetActiveTicketUseCase(repo),
             joinQueueUseCase: JoinQueueUseCase(repo),
             cancelTicketUseCase: CancelTicketUseCase(repo),
-          )..add(const HomeInitialDataRequested()),
+            )..add(const HomeInitialDataRequested());
+          },
         ),
         // Provided here so the greeting header and the Profile tab share the
         // same profile (and therefore the same photo).
@@ -94,17 +98,18 @@ class _PatientHomeView extends StatelessWidget {
                 )
               : null,
           body: SafeArea(
-            top: state.currentTabIndex != 0,
+            top: state.currentTabIndex > 1,
             child: IndexedStack(
               index: state.currentTabIndex,
               children: [
                 const HomeTabView(),
-                const EmptyTabView(
-                  title: 'Live Queue Tracker',
-                  subtitle: 'Real-time queue tracking & token status will appear here.',
-                ),
+                const LiveQueueTabView(),
                 MyBookingsTabView(
                   onExploreClinics: () => bloc.add(const HomeNavTabChanged(0)),
+                  onTrackLiveQueue: () {
+                    bloc.add(const HomeRefreshRequested());
+                    bloc.add(const HomeNavTabChanged(1));
+                  },
                 ),
                 ProfileTabView(
                   onVisitsTap: () => bloc.add(const HomeNavTabChanged(2)),

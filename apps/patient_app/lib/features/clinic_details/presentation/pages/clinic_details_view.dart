@@ -1,7 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../booking/presentation/pages/booking_wizard_screen.dart';
+import '../../../home/data/repositories/home_repository_impl.dart';
+import '../../../home/presentation/widgets/join_queue_dialog.dart';
 import '../../domain/entities/clinic_doctor_item.dart';
 import '../../domain/entities/clinic_service_item.dart';
 import '../../../home/domain/entities/clinic_entity.dart';
@@ -34,9 +37,32 @@ class ClinicDetailsView extends StatelessWidget {
       initialService: initialService,
       initialDoctor: initialDoctor,
     );
-    if (result == true && context.mounted) {
-      Navigator.of(context).pop(true);
+    if (context.mounted && result != null && result != false) {
+      Navigator.of(context).pop(result);
     }
+  }
+
+  void _handleJoinQueue(BuildContext context, ClinicEntity clinic) {
+    JoinQueueDialog.show(
+      context,
+      clinic: clinic,
+      onJoinSuccess: () async {
+        try {
+          final user = FirebaseAuth.instance.currentUser;
+          final repo = HomeRepositoryImpl();
+          await repo.joinQueue(
+            clinicId: clinic.id,
+            clinicName: clinic.name,
+            patientName: user?.displayName ?? 'Patient',
+            currentWaitingCount: clinic.waitingCount,
+            currentToken: clinic.currentToken,
+          );
+        } catch (_) {}
+        if (context.mounted) {
+          Navigator.of(context).pop('joined_queue');
+        }
+      },
+    );
   }
 
   @override
@@ -96,9 +122,9 @@ class ClinicDetailsView extends StatelessWidget {
               _buildActiveTab(context, state, clinic),
               const SizedBox(height: 8),
               ClinicBottomActions(
-                isQueueOpen: clinic.isQueueOpen,
+                isQueueOpen: clinic.isQueueOpen && clinic.isOpenNow,
                 onBookAppointment: () => _startBooking(context, clinic: clinic),
-                onJoinQueue: () => _showActionSnack(context, 'Joining live queue at ${clinic.name}...'),
+                onJoinQueue: () => _handleJoinQueue(context, clinic),
               ),
             ],
           ),
@@ -170,13 +196,6 @@ class ClinicDetailsView extends StatelessWidget {
         clinicName: clinicName,
         onSubmit: (r, c, t) => bloc.add(SubmitClinicReviewEvent(rating: r, comment: c, tags: t)),
       ),
-    );
-  }
-
-  void _showActionSnack(BuildContext context, String message) {
-    final colors = context.colors;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: colors.primary),
     );
   }
 }

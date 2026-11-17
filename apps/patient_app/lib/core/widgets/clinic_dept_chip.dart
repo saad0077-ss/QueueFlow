@@ -7,7 +7,13 @@ import 'clinic_departments_dialog.dart';
 class ClinicDeptChip extends StatelessWidget {
   final ClinicEntity clinic;
 
-  const ClinicDeptChip({super.key, required this.clinic});
+  final EdgeInsetsGeometry margin;
+
+  const ClinicDeptChip({
+    super.key,
+    required this.clinic,
+    this.margin = const EdgeInsets.only(left: 4),
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +30,8 @@ class ClinicDeptChip extends StatelessWidget {
         showClinicDepartmentsDialog(context, clinic: clinic);
       },
       child: Container(
-        margin: const EdgeInsets.only(left: 4),
-        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+        margin: margin,
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
         decoration: BoxDecoration(
           color: colors.primaryTint,
           borderRadius: BorderRadius.circular(9999),
