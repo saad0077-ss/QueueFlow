@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../../../core/services/current_clinic_resolver.dart';
@@ -31,7 +31,8 @@ class ClinicDoctorsRepositoryImpl implements ClinicDoctorsRepository {
     }
   }
 
-  final StreamController<List<ClinicDoctorProfileEntity>> _doctorsStreamController =
+  final StreamController<List<ClinicDoctorProfileEntity>>
+  _doctorsStreamController =
       StreamController<List<ClinicDoctorProfileEntity>>.broadcast();
 
   List<ClinicDoctorProfileEntity> _cachedDoctors = [];
@@ -70,11 +71,16 @@ class ClinicDoctorsRepositoryImpl implements ClinicDoctorsRepository {
       employmentType: 'Full-time',
       consultationFee: 500,
       slotDuration: 20,
-      bio: 'Dr. Priya is a chief medical officer focused on general & family medicine, evidence-based outpatient care and clear patient communication.',
+      bio:
+          'Dr. Priya is a chief medical officer focused on general & family medicine, evidence-based outpatient care and clear patient communication.',
       initials: 'DP',
       nowServing: 'A-021',
       waitingCount: 1,
-      services: const ['General Consultation', 'Health Checkup', 'Follow-up Visit & Review'],
+      services: const [
+        'General Consultation',
+        'Health Checkup',
+        'Follow-up Visit & Review',
+      ],
       weeklySchedule: DoctorDailySchedule.defaultWeekly(),
       reviews: const [
         DoctorReviewEntity(
@@ -83,7 +89,8 @@ class ClinicDoctorsRepositoryImpl implements ClinicDoctorsRepository {
           rating: 5.0,
           date: '10 Jun 2026',
           service: 'General Consultation',
-          comment: 'Dr. Priya was exceptionally attentive. The digital queue made sure I didn\'t spend even 5 minutes in a crowded waiting room! Very clean clinic.',
+          comment:
+              'Dr. Priya was exceptionally attentive. The digital queue made sure I didn\'t spend even 5 minutes in a crowded waiting room! Very clean clinic.',
           tags: ['Friendly Doctor', 'Clean Facility', 'Zero Wait Time'],
         ),
         DoctorReviewEntity(
@@ -92,7 +99,8 @@ class ClinicDoctorsRepositoryImpl implements ClinicDoctorsRepository {
           rating: 5.0,
           date: '02 Jun 2026',
           service: 'Health Checkup',
-          comment: 'Outstanding experience. Transparent wait time estimates and exceptional care from Dr. Priya.',
+          comment:
+              'Outstanding experience. Transparent wait time estimates and exceptional care from Dr. Priya.',
           tags: ['Accurate Diagnosis', 'Polite Staff'],
         ),
       ],
@@ -105,8 +113,8 @@ class ClinicDoctorsRepositoryImpl implements ClinicDoctorsRepository {
   ClinicDoctorsRepositoryImpl({
     FirebaseFirestore? firestore,
     FirebaseAuth? auth,
-  })  : _explicitFirestore = firestore,
-        _explicitAuth = auth {
+  }) : _explicitFirestore = firestore,
+       _explicitAuth = auth {
     _cachedDoctors = <ClinicDoctorProfileEntity>[];
   }
 
@@ -120,10 +128,7 @@ class ClinicDoctorsRepositoryImpl implements ClinicDoctorsRepository {
     if (fs == null || au == null) return null;
 
     try {
-      final doc = await CurrentClinicResolver.resolve(
-        auth: au,
-        firestore: fs,
-      );
+      final doc = await CurrentClinicResolver.resolve(auth: au, firestore: fs);
       if (doc != null && doc.exists) {
         _cachedClinicDoc = doc;
         _cachedClinicId = doc.id;
@@ -145,7 +150,10 @@ class ClinicDoctorsRepositoryImpl implements ClinicDoctorsRepository {
         return _cachedClinicDoc;
       }
 
-      final docDirect = await fs.collection('clinics').doc('sunrise-health').get();
+      final docDirect = await fs
+          .collection('clinics')
+          .doc('sunrise-health')
+          .get();
       if (docDirect.exists) {
         _cachedClinicDoc = docDirect;
         _cachedClinicId = docDirect.id;
@@ -172,7 +180,10 @@ class ClinicDoctorsRepositoryImpl implements ClinicDoctorsRepository {
       if (rawDocs.isNotEmpty) {
         _cachedDoctors = <ClinicDoctorProfileEntity>[
           for (final m in rawDocs.whereType<Map<String, dynamic>>())
-            ClinicDoctorProfileModel.fromMap(m, defaultClinicId: _cachedClinicId)
+            ClinicDoctorProfileModel.fromMap(
+              m,
+              defaultClinicId: _cachedClinicId,
+            ),
         ];
       } else {
         // Fresh clinic: when clinic admin logs in for the first time, start fresh with no doctors.
@@ -185,13 +196,18 @@ class ClinicDoctorsRepositoryImpl implements ClinicDoctorsRepository {
       final fs = _firestore;
       if (fs != null) {
         _watchDoctorReviews(fs, _cachedClinicId);
-        fs.collection('clinics').doc(_cachedClinicId).snapshots().listen((snap) {
+        fs.collection('clinics').doc(_cachedClinicId).snapshots().listen((
+          snap,
+        ) {
           if (!snap.exists) return;
           _cachedClinicDoc = snap;
           final docsList = (snap.data()?['doctors'] as List<dynamic>? ?? []);
           _cachedDoctors = <ClinicDoctorProfileEntity>[
             for (final m in docsList.whereType<Map<String, dynamic>>())
-              ClinicDoctorProfileModel.fromMap(m, defaultClinicId: _cachedClinicId)
+              ClinicDoctorProfileModel.fromMap(
+                m,
+                defaultClinicId: _cachedClinicId,
+              ),
           ];
           _emit();
         }, onError: (_) {});
@@ -207,7 +223,9 @@ class ClinicDoctorsRepositoryImpl implements ClinicDoctorsRepository {
       // they are shown but never written back into the clinic's doctors array.
       final withReviews = [
         for (final d in _cachedDoctors)
-          (_reviewsByDoctor[d.id]?.isNotEmpty ?? false) ? d.copyWith(reviews: _reviewsByDoctor[d.id]) : d,
+          (_reviewsByDoctor[d.id]?.isNotEmpty ?? false)
+              ? d.copyWith(reviews: _reviewsByDoctor[d.id])
+              : d,
       ];
       _doctorsStreamController.add(List.unmodifiable(withReviews));
     }
@@ -216,40 +234,61 @@ class ClinicDoctorsRepositoryImpl implements ClinicDoctorsRepository {
   final Map<String, List<DoctorReviewEntity>> _reviewsByDoctor = {};
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _reviewsSub;
 
-  static const _months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  static const _months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
 
   /// Listens to ratings patients leave for this clinic's doctors.
   void _watchDoctorReviews(FirebaseFirestore fs, String clinicId) {
     _reviewsSub?.cancel();
-    _reviewsSub = fs.collection('doctor_reviews').where('clinicId', isEqualTo: clinicId).snapshots().listen((snap) {
-      final entries = <(DateTime?, String, DoctorReviewEntity)>[];
-      for (final doc in snap.docs) {
-        final m = doc.data();
-        final doctorId = (m['doctorId'] ?? '').toString();
-        if (doctorId.isEmpty) continue;
-        final ts = m['createdAt'];
-        final dt = ts is Timestamp ? ts.toDate() : null;
-        entries.add((
-          dt,
-          doctorId,
-          DoctorReviewEntity(
-            id: doc.id,
-            userName: (m['patientName'] ?? 'Verified Patient').toString(),
-            rating: (m['rating'] as num?)?.toDouble() ?? 0,
-            date: dt == null ? '' : '${dt.day.toString().padLeft(2, '0')} ${_months[dt.month - 1]} ${dt.year}',
-            service: '',
-            comment: (m['comment'] ?? '').toString(),
-          ),
-        ));
-      }
-      // Newest first.
-      entries.sort((a, b) => (b.$1 ?? DateTime(0)).compareTo(a.$1 ?? DateTime(0)));
-      _reviewsByDoctor.clear();
-      for (final e in entries) {
-        _reviewsByDoctor.putIfAbsent(e.$2, () => []).add(e.$3);
-      }
-      _emit();
-    }, onError: (_) {});
+    _reviewsSub = fs
+        .collection('doctor_reviews')
+        .where('clinicId', isEqualTo: clinicId)
+        .snapshots()
+        .listen((snap) {
+          final entries = <(DateTime?, String, DoctorReviewEntity)>[];
+          for (final doc in snap.docs) {
+            final m = doc.data();
+            final doctorId = (m['doctorId'] ?? '').toString();
+            if (doctorId.isEmpty) continue;
+            final ts = m['createdAt'];
+            final dt = ts is Timestamp ? ts.toDate() : null;
+            entries.add((
+              dt,
+              doctorId,
+              DoctorReviewEntity(
+                id: doc.id,
+                userName: (m['patientName'] ?? 'Verified Patient').toString(),
+                rating: (m['rating'] as num?)?.toDouble() ?? 0,
+                date: dt == null
+                    ? ''
+                    : '${dt.day.toString().padLeft(2, '0')} ${_months[dt.month - 1]} ${dt.year}',
+                service: '',
+                comment: (m['comment'] ?? '').toString(),
+              ),
+            ));
+          }
+          // Newest first.
+          entries.sort(
+            (a, b) => (b.$1 ?? DateTime(0)).compareTo(a.$1 ?? DateTime(0)),
+          );
+          _reviewsByDoctor.clear();
+          for (final e in entries) {
+            _reviewsByDoctor.putIfAbsent(e.$2, () => []).add(e.$3);
+          }
+          _emit();
+        }, onError: (_) {});
   }
 
   @override
@@ -320,18 +359,22 @@ class ClinicDoctorsRepositoryImpl implements ClinicDoctorsRepository {
             final data = doc.data();
             final deptName = (data['name'] as String?)?.trim();
             if (deptName == null || deptName.isEmpty) continue;
-            final deptStatus =
-                (data['status'] ?? 'active').toString().toLowerCase();
+            final deptStatus = (data['status'] ?? 'active')
+                .toString()
+                .toLowerCase();
             if (deptStatus != 'active') continue;
 
             final assignedClinics =
-                (data['assignedClinics'] as List<dynamic>? ?? [])
-                    .map((e) => e.toString().trim().toLowerCase());
+                (data['assignedClinics'] as List<dynamic>? ?? []).map(
+                  (e) => e.toString().trim().toLowerCase(),
+                );
             final clinicDeptIds =
-                ((clinicData['departmentIds'] as List<dynamic>?) ?? [])
-                    .map((e) => e.toString().trim());
+                ((clinicData['departmentIds'] as List<dynamic>?) ?? []).map(
+                  (e) => e.toString().trim(),
+                );
 
-            final isAssigned = assignedClinics.any(
+            final isAssigned =
+                assignedClinics.any(
                   (k) =>
                       k == clinicId.toLowerCase() ||
                       (k.isNotEmpty &&
@@ -371,7 +414,8 @@ class ClinicDoctorsRepositoryImpl implements ClinicDoctorsRepository {
 
   @override
   Future<void> addDoctor(ClinicDoctorProfileEntity doctor) async {
-    final updatedList = List<ClinicDoctorProfileEntity>.from(_cachedDoctors)..add(doctor);
+    final updatedList = List<ClinicDoctorProfileEntity>.from(_cachedDoctors)
+      ..add(doctor);
     _cachedDoctors = updatedList;
     _emit();
 
@@ -401,7 +445,8 @@ class ClinicDoctorsRepositoryImpl implements ClinicDoctorsRepository {
       final activeDays = schedule.values.where((d) => d.enabled).toList();
       String summaryText = 'No schedule set';
       if (activeDays.isNotEmpty) {
-        summaryText = '${activeDays.first.shortName}–${activeDays.last.shortName}, ${activeDays.first.start} – ${activeDays.first.end}';
+        summaryText =
+            '${activeDays.first.shortName}–${activeDays.last.shortName}, ${activeDays.first.start} – ${activeDays.first.end}';
       }
 
       _cachedDoctors[index] = _cachedDoctors[index].copyWith(
@@ -416,10 +461,15 @@ class ClinicDoctorsRepositoryImpl implements ClinicDoctorsRepository {
   }
 
   @override
-  Future<void> setDoctorAccountStatus(String doctorId, String accountStatus) async {
+  Future<void> setDoctorAccountStatus(
+    String doctorId,
+    String accountStatus,
+  ) async {
     final index = _cachedDoctors.indexWhere((d) => d.id == doctorId);
     if (index != -1) {
-      _cachedDoctors[index] = _cachedDoctors[index].copyWith(accountStatus: accountStatus);
+      _cachedDoctors[index] = _cachedDoctors[index].copyWith(
+        accountStatus: accountStatus,
+      );
       _emit();
       await _syncToDoctorsFirestore();
     }
@@ -453,8 +503,12 @@ class ClinicDoctorsRepositoryImpl implements ClinicDoctorsRepository {
         if (queueSnap.exists) {
           final data = queueSnap.data()!;
           final waiting = data['waitingCount'] as int? ?? 0;
-          final currentNum = int.tryParse(
-                (data['currentToken'] as String? ?? 'A-000').replaceAll('A-', ''),
+          final currentNum =
+              int.tryParse(
+                (data['currentToken'] as String? ?? 'A-000').replaceAll(
+                  'A-',
+                  '',
+                ),
               ) ??
               0;
 
@@ -468,7 +522,9 @@ class ClinicDoctorsRepositoryImpl implements ClinicDoctorsRepository {
             });
 
             // Update doctor's nowServing
-            final docIndex = _cachedDoctors.indexWhere((d) => d.name == doctorName);
+            final docIndex = _cachedDoctors.indexWhere(
+              (d) => d.name == doctorName,
+            );
             if (docIndex != -1) {
               _cachedDoctors[docIndex] = _cachedDoctors[docIndex].copyWith(
                 nowServing: nextToken,
@@ -490,7 +546,8 @@ class ClinicDoctorsRepositoryImpl implements ClinicDoctorsRepository {
     final docIndex = _cachedDoctors.indexWhere((d) => d.name == doctorName);
     if (docIndex != -1) {
       final currentServing = _cachedDoctors[docIndex].nowServing ?? 'A-021';
-      final numPart = int.tryParse(currentServing.replaceAll(RegExp(r'[^0-9]'), '')) ?? 21;
+      final numPart =
+          int.tryParse(currentServing.replaceAll(RegExp(r'[^0-9]'), '')) ?? 21;
       final nextToken = 'A-${(numPart + 1).toString().padLeft(3, '0')}';
       final currentWait = _cachedDoctors[docIndex].waitingCount;
       _cachedDoctors[docIndex] = _cachedDoctors[docIndex].copyWith(
@@ -509,7 +566,10 @@ class ClinicDoctorsRepositoryImpl implements ClinicDoctorsRepository {
     final fs = _firestore;
     if (fs != null) {
       try {
-        final queueDoc = await fs.collection('queues').doc(_cachedClinicId).get();
+        final queueDoc = await fs
+            .collection('queues')
+            .doc(_cachedClinicId)
+            .get();
         if (queueDoc.exists) {
           return (queueDoc.data()?['waitingCount'] as num?)?.toInt() ?? 0;
         }

@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+
 import '../../../home/domain/entities/clinic_entity.dart';
 import 'clinic_doctor_item.dart';
 import 'clinic_review_item.dart';
@@ -12,6 +13,7 @@ class ClinicDetailsEntity extends Equatable {
   final List<ClinicServiceItem> services;
   final List<ClinicDoctorItem> doctors;
   final List<ClinicReviewItem> reviews;
+
   /// Share of reviews per star, ordered 5★ → 1★ (each 0–100).
   final List<int> starPercents;
   final bool isFavorite;
@@ -54,14 +56,14 @@ class ClinicDetailsEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        clinic,
-        description,
-        features,
-        holidayNotice,
-        services,
-        doctors,
-        reviews,
-        starPercents,
-        isFavorite,
-      ];
+    clinic,
+    description,
+    features,
+    holidayNotice,
+    services,
+    doctors,
+    reviews,
+    starPercents,
+    isFavorite,
+  ];
 }

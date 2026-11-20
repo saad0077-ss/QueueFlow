@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../domain/usecases/sign_up_usecase.dart';
 import 'sign_up_event.dart';
 import 'sign_up_state.dart';
@@ -12,11 +13,13 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     });
 
     on<SignUpEmailChanged>((event, emit) {
-      emit(state.copyWith(
-        email: event.email,
-        clearEmailError: true,
-        clearErrorMessage: true,
-      ));
+      emit(
+        state.copyWith(
+          email: event.email,
+          clearEmailError: true,
+          clearErrorMessage: true,
+        ),
+      );
     });
 
     on<SignUpPhoneChanged>((event, emit) {
@@ -28,11 +31,13 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
     });
 
     on<SignUpConfirmPasswordChanged>((event, emit) {
-      emit(state.copyWith(
-        confirmPassword: event.confirmPassword,
-        clearConfirmError: true,
-        clearErrorMessage: true,
-      ));
+      emit(
+        state.copyWith(
+          confirmPassword: event.confirmPassword,
+          clearConfirmError: true,
+          clearErrorMessage: true,
+        ),
+      );
     });
 
     on<SignUpTogglePasswordVisibility>((event, emit) {

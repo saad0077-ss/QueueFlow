@@ -39,7 +39,14 @@ class HoursPoliciesCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Queue & Slot Policies', style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.bold, color: colors.textPrimary)),
+          Text(
+            'Queue & Slot Policies',
+            style: GoogleFonts.inter(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: colors.textPrimary,
+            ),
+          ),
           const SizedBox(height: 16),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -47,15 +54,31 @@ class HoursPoliciesCard extends StatelessWidget {
               Expanded(
                 child: HoursPolicyDropdown(
                   title: 'Live Queue Token Cutoff',
-                  subtitle: 'Stop issuing walk-in & online tokens before closing',
+                  subtitle:
+                      'Stop issuing walk-in & online tokens before closing',
                   icon: Icons.timer_outlined,
                   value: cutoffMin,
                   items: const [
-                    DropdownMenuItem(value: 15, child: Text('15 mins before closing')),
-                    DropdownMenuItem(value: 30, child: Text('30 mins before closing')),
-                    DropdownMenuItem(value: 45, child: Text('45 mins before closing')),
-                    DropdownMenuItem(value: 60, child: Text('60 mins before closing')),
-                    DropdownMenuItem(value: 0, child: Text('At exact closing time')),
+                    DropdownMenuItem(
+                      value: 15,
+                      child: Text('15 mins before closing'),
+                    ),
+                    DropdownMenuItem(
+                      value: 30,
+                      child: Text('30 mins before closing'),
+                    ),
+                    DropdownMenuItem(
+                      value: 45,
+                      child: Text('45 mins before closing'),
+                    ),
+                    DropdownMenuItem(
+                      value: 60,
+                      child: Text('60 mins before closing'),
+                    ),
+                    DropdownMenuItem(
+                      value: 0,
+                      child: Text('At exact closing time'),
+                    ),
                   ],
                   onChanged: onCutoffChanged,
                 ),
@@ -68,12 +91,30 @@ class HoursPoliciesCard extends StatelessWidget {
                   icon: Icons.access_time_rounded,
                   value: slotMin,
                   items: const [
-                    DropdownMenuItem(value: 10, child: Text('10 minutes per patient')),
-                    DropdownMenuItem(value: 15, child: Text('15 minutes per patient')),
-                    DropdownMenuItem(value: 20, child: Text('20 minutes per patient')),
-                    DropdownMenuItem(value: 30, child: Text('30 minutes per patient')),
-                    DropdownMenuItem(value: 45, child: Text('45 minutes per patient')),
-                    DropdownMenuItem(value: 60, child: Text('60 minutes per patient')),
+                    DropdownMenuItem(
+                      value: 10,
+                      child: Text('10 minutes per patient'),
+                    ),
+                    DropdownMenuItem(
+                      value: 15,
+                      child: Text('15 minutes per patient'),
+                    ),
+                    DropdownMenuItem(
+                      value: 20,
+                      child: Text('20 minutes per patient'),
+                    ),
+                    DropdownMenuItem(
+                      value: 30,
+                      child: Text('30 minutes per patient'),
+                    ),
+                    DropdownMenuItem(
+                      value: 45,
+                      child: Text('45 minutes per patient'),
+                    ),
+                    DropdownMenuItem(
+                      value: 60,
+                      child: Text('60 minutes per patient'),
+                    ),
                   ],
                   onChanged: onSlotChanged,
                 ),
@@ -87,19 +128,37 @@ class HoursPoliciesCard extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('24/7 Emergency On-Call Duty', style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.bold, color: colors.textPrimary)),
+                  Text(
+                    '24/7 Emergency On-Call Duty',
+                    style: GoogleFonts.inter(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: colors.textPrimary,
+                    ),
+                  ),
                   const SizedBox(height: 2),
-                  Text('Mark clinic as available for urgent triage during off-hours', style: GoogleFonts.inter(fontSize: 11, color: colors.textMuted)),
+                  Text(
+                    'Mark clinic as available for urgent triage during off-hours',
+                    style: GoogleFonts.inter(
+                      fontSize: 11,
+                      color: colors.textMuted,
+                    ),
+                  ),
                 ],
               ),
-              Switch(value: emergencyOnCall, activeTrackColor: colors.success, onChanged: onEmergencyToggled),
+              Switch(
+                value: emergencyOnCall,
+                activeTrackColor: colors.success,
+                onChanged: onEmergencyToggled,
+              ),
             ],
           ),
           if (emergencyOnCall) ...[
             const SizedBox(height: 12),
             _inputField(
               context: context,
-              title: 'Emergency Hotline Number (Displayed to patients when clinic is closed)',
+              title:
+                  'Emergency Hotline Number (Displayed to patients when clinic is closed)',
               controller: emergencyPhoneCtrl,
               icon: Icons.phone_in_talk_rounded,
             ),
@@ -108,7 +167,8 @@ class HoursPoliciesCard extends StatelessWidget {
           _inputField(
             context: context,
             title: 'Holiday / Special Notice for Patients (Optional banner)',
-            subtitle: 'Visible at the top of the clinic profile in the Patient Mobile App',
+            subtitle:
+                'Visible at the top of the clinic profile in the Patient Mobile App',
             controller: holidayNoticeCtrl,
             maxLines: 2,
           ),
@@ -130,10 +190,20 @@ class HoursPoliciesCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: colors.textMuted)),
+        Text(
+          title,
+          style: GoogleFonts.inter(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: colors.textMuted,
+          ),
+        ),
         if (subtitle != null) ...[
           const SizedBox(height: 2),
-          Text(subtitle, style: GoogleFonts.inter(fontSize: 10.5, color: colors.textSubtle)),
+          Text(
+            subtitle,
+            style: GoogleFonts.inter(fontSize: 10.5, color: colors.textSubtle),
+          ),
         ],
         const SizedBox(height: 6),
         TextField(
@@ -143,11 +213,25 @@ class HoursPoliciesCard extends StatelessWidget {
           decoration: InputDecoration(
             filled: true,
             fillColor: colors.surface,
-            prefixIcon: icon != null ? Icon(icon, size: 16, color: colors.info) : null,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: colors.border)),
-            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: colors.border)),
-            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: colors.primary)),
+            prefixIcon: icon != null
+                ? Icon(icon, size: 16, color: colors.info)
+                : null,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: 10,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: colors.border),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: colors.border),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: colors.primary),
+            ),
           ),
         ),
       ],

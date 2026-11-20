@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../domain/repositories/auth_repository.dart';
 import '../../../domain/usecases/sign_in_usecase.dart';
 import 'sign_in_event.dart';
@@ -8,23 +9,20 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
   final SignInUseCase signInUseCase;
   final AuthRepository authRepository;
 
-  SignInBloc({
-    required this.signInUseCase,
-    required this.authRepository,
-  }) : super(const SignInState()) {
+  SignInBloc({required this.signInUseCase, required this.authRepository})
+    : super(const SignInState()) {
     on<SignInEmailChanged>((event, emit) {
-      emit(state.copyWith(
-        email: event.email,
-        clearEmailError: true,
-        clearErrorMessage: true,
-      ));
+      emit(
+        state.copyWith(
+          email: event.email,
+          clearEmailError: true,
+          clearErrorMessage: true,
+        ),
+      );
     });
 
     on<SignInPasswordChanged>((event, emit) {
-      emit(state.copyWith(
-        password: event.password,
-        clearErrorMessage: true,
-      ));
+      emit(state.copyWith(password: event.password, clearErrorMessage: true));
     });
 
     on<SignInTogglePasswordVisibility>((event, emit) {
@@ -47,10 +45,7 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
 
     emit(state.copyWith(isLoading: true, clearErrorMessage: true));
     try {
-      final user = await signInUseCase(
-        email: email,
-        password: state.password,
-      );
+      final user = await signInUseCase(email: email, password: state.password);
       emit(state.copyWith(isLoading: false, user: user));
     } catch (e) {
       emit(state.copyWith(isLoading: false, errorMessage: e.toString()));

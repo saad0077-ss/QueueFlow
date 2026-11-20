@@ -1,4 +1,4 @@
-﻿import '../../domain/entities/billing_plan_tier_entity.dart';
+import '../../domain/entities/billing_plan_tier_entity.dart';
 import 'billing_plan_tier_model.dart';
 
 class BillingSampleData {
@@ -6,7 +6,8 @@ class BillingSampleData {
     BillingPlanTierModel(
       id: 'solo',
       name: 'Solo Doctor Plan',
-      tagline: 'For small clinics & solo doctors (1 Doctor · Unlimited Services)',
+      tagline:
+          'For small clinics & solo doctors (1 Doctor · Unlimited Services)',
       monthlyPrice: 999,
       annualPrice: 799,
       badge: 'Solo Doctor',
@@ -14,7 +15,8 @@ class BillingSampleData {
       doctorLimit: 1,
       serviceLimit: 1,
       staffLimit: 1,
-      description: 'Designed for small home clinics and single-practitioner practices. Full live queue management for 1 doctor with unlimited clinical services.',
+      description:
+          'Designed for small home clinics and single-practitioner practices. Full live queue management for 1 doctor with unlimited clinical services.',
       features: [
         '1 Doctor queue management',
         'Unlimited Clinical Services catalog',
@@ -27,7 +29,8 @@ class BillingSampleData {
     BillingPlanTierModel(
       id: 'multi',
       name: 'Multi-Doctor Clinic Plan',
-      tagline: 'For polyclinics & group practices (Up to 10 Doctors · Unlimited Services)',
+      tagline:
+          'For polyclinics & group practices (Up to 10 Doctors · Unlimited Services)',
       monthlyPrice: 2999,
       annualPrice: 2399,
       badge: 'Most Popular',
@@ -35,7 +38,8 @@ class BillingSampleData {
       doctorLimit: 10,
       serviceLimit: 10,
       staffLimit: 5,
-      description: 'Built for polyclinics and medium clinics with multiple doctors managing separate consultation rooms and unlimited treatment services.',
+      description:
+          'Built for polyclinics and medium clinics with multiple doctors managing separate consultation rooms and unlimited treatment services.',
       features: [
         'Up to 10 Doctors queue management',
         'Unlimited Clinical Services catalog',
@@ -56,7 +60,8 @@ class BillingSampleData {
       doctorLimit: 999,
       serviceLimit: 999,
       staffLimit: 20,
-      description: 'Comprehensive queue infrastructure with unlimited doctors, unlimited clinical services, multi-department triage, and priority platform support.',
+      description:
+          'Comprehensive queue infrastructure with unlimited doctors, unlimited clinical services, multi-department triage, and priority platform support.',
       features: [
         'Unlimited Doctors queue management',
         'Unlimited Clinical Services catalog',

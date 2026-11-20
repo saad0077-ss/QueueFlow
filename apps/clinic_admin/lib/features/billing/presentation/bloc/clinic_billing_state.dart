@@ -1,4 +1,4 @@
-﻿import 'package:equatable/equatable.dart';
+import 'package:equatable/equatable.dart';
 import '../../domain/entities/billing_invoice_entity.dart';
 import '../../domain/entities/billing_plan_tier_entity.dart';
 import '../../domain/entities/clinic_subscription_entity.dart';
@@ -32,7 +32,9 @@ class ClinicBillingState extends Equatable {
     if (subscription == null || tiers.isEmpty) return null;
     final planId = subscription!.planId.toLowerCase();
     return tiers.firstWhere(
-      (t) => t.id.toLowerCase() == planId || subscription!.planName.toLowerCase().contains(t.id),
+      (t) =>
+          t.id.toLowerCase() == planId ||
+          subscription!.planName.toLowerCase().contains(t.id),
       orElse: () => tiers.first,
     );
   }

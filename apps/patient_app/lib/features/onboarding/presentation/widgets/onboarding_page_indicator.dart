@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 
 class OnboardingPageIndicator extends StatelessWidget {
   final int currentPage;
-  final int totalPages; 
+  final int totalPages;
 
   const OnboardingPageIndicator({
     super.key,
     required this.currentPage,
     this.totalPages = 2,
-  }); 
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Row( 
+    return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(totalPages, (index) {
         final bool isActive = index == currentPage;

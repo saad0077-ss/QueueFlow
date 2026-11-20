@@ -20,9 +20,9 @@ class ClinicBillingView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => ClinicBillingBloc(
-        repository: ClinicBillingRepositoryImpl(),
-      )..add(const ClinicBillingStarted()),
+      create: (_) =>
+          ClinicBillingBloc(repository: ClinicBillingRepositoryImpl())
+            ..add(const ClinicBillingStarted()),
       child: const _ClinicBillingBody(),
     );
   }
@@ -41,16 +41,28 @@ class _ClinicBillingBody extends StatelessWidget {
           } else {
             AppSnackBar.showSuccess(context, message: state.feedbackMessage!);
           }
-          context.read<ClinicBillingBloc>().add(const ClinicBillingFeedbackDismissed());
+          context.read<ClinicBillingBloc>().add(
+            const ClinicBillingFeedbackDismissed(),
+          );
         }
       },
       builder: (context, state) {
         if (state.isLoading) {
-          return const Center(child: Padding(padding: EdgeInsets.all(40), child: CircularProgressIndicator()));
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(40),
+              child: CircularProgressIndicator(),
+            ),
+          );
         }
         final sub = state.subscription;
         if (sub == null) {
-          return const Center(child: Text('Subscription details could not be loaded.', style: TextStyle(color: Colors.white70)));
+          return const Center(
+            child: Text(
+              'Subscription details could not be loaded.',
+              style: TextStyle(color: Colors.white70),
+            ),
+          );
         }
         final bloc = context.read<ClinicBillingBloc>();
 
@@ -72,7 +84,8 @@ class _ClinicBillingBody extends StatelessWidget {
             Center(
               child: BillingCadenceToggle(
                 activeCadence: state.activeCadence,
-                onCadenceChanged: (cadence) => bloc.add(ClinicBillingCadenceToggled(cadence)),
+                onCadenceChanged: (cadence) =>
+                    bloc.add(ClinicBillingCadenceToggled(cadence)),
               ),
             ),
             const SizedBox(height: 20),
@@ -85,7 +98,11 @@ class _ClinicBillingBody extends StatelessWidget {
                 final fresh = await bloc.repository.getClinicSubscription();
                 if (!context.mounted) return;
                 if (fresh.isPlanLocked) {
-                  AppSnackBar.showInfo(context, message: 'Your current plan is active until ${fresh.currentPeriodEnd}. You can change plans after that date.');
+                  AppSnackBar.showInfo(
+                    context,
+                    message:
+                        'Your current plan is active until ${fresh.currentPeriodEnd}. You can change plans after that date.',
+                  );
                   return;
                 }
                 SwitchPlanDialog.show(
@@ -94,9 +111,14 @@ class _ClinicBillingBody extends StatelessWidget {
                   activeCadence: state.activeCadence,
                   onConfirm: () async {
                     final result = await RazorpayCheckout.pay(
-                      amount: SwitchPlanDialog.payable(tier, state.activeCadence),
-                      description: '${tier.name} (${state.activeCadence == 'annual' ? 'Annual' : 'Monthly'})',
-                      reference: 'plan_${tier.id}_${DateTime.now().millisecondsSinceEpoch}',
+                      amount: SwitchPlanDialog.payable(
+                        tier,
+                        state.activeCadence,
+                      ),
+                      description:
+                          '${tier.name} (${state.activeCadence == 'annual' ? 'Annual' : 'Monthly'})',
+                      reference:
+                          'plan_${tier.id}_${DateTime.now().millisecondsSinceEpoch}',
                       name: sub.billingContact.legalName,
                       email: sub.billingContact.email,
                       phone: sub.billingContact.phone,
@@ -105,13 +127,20 @@ class _ClinicBillingBody extends StatelessWidget {
                     if (!context.mounted) return;
                     if (result.success && (result.paymentId ?? '').isNotEmpty) {
                       // The plan is activated by the backend only after it verifies this payment.
-                      bloc.add(ClinicBillingPlanChangeRequested(
-                        targetTier: tier,
-                        billingCadence: state.activeCadence,
-                        paymentId: result.paymentId!,
-                      ));
+                      bloc.add(
+                        ClinicBillingPlanChangeRequested(
+                          targetTier: tier,
+                          billingCadence: state.activeCadence,
+                          paymentId: result.paymentId!,
+                        ),
+                      );
                     } else {
-                      AppSnackBar.showError(context, message: result.message ?? 'Payment failed. No plan was activated.');
+                      AppSnackBar.showError(
+                        context,
+                        message:
+                            result.message ??
+                            'Payment failed. No plan was activated.',
+                      );
                     }
                   },
                 );
@@ -126,11 +155,20 @@ class _ClinicBillingBody extends StatelessWidget {
                 try {
                   await BillingReceiptPdf.download(inv);
                 } catch (_) {
-                  if (context.mounted) AppSnackBar.showError(context, message: 'Could not generate the receipt PDF.');
+                  if (context.mounted) {
+                    AppSnackBar.showError(
+                      context,
+                      message: 'Could not generate the receipt PDF.',
+                    );
+                  }
                 }
               },
               // No Razorpay checkout is wired up yet; say so rather than pretend to charge.
-              onPayInvoice: (inv) => AppSnackBar.showInfo(context, message: 'Online payment via Razorpay is not set up yet. Please contact QueueFlow support to pay invoice ${inv.number}.'),
+              onPayInvoice: (inv) => AppSnackBar.showInfo(
+                context,
+                message:
+                    'Online payment via Razorpay is not set up yet. Please contact QueueFlow support to pay invoice ${inv.number}.',
+              ),
             ),
           ],
         );

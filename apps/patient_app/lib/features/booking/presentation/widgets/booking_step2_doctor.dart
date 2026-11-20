@@ -39,10 +39,7 @@ class BookingStep2Doctor extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           'Select your preferred medical practitioner for consultation.',
-          style: GoogleFonts.inter(
-            fontSize: 12.5,
-            color: colors.textMuted,
-          ),
+          style: GoogleFonts.inter(fontSize: 12.5, color: colors.textMuted),
         ),
         const SizedBox(height: 16),
         if (doctors.isEmpty)
@@ -51,10 +48,7 @@ class BookingStep2Doctor extends StatelessWidget {
             child: Center(
               child: Text(
                 'No doctors currently available for this service.',
-                style: GoogleFonts.inter(
-                  color: colors.textMuted,
-                  fontSize: 13,
-                ),
+                style: GoogleFonts.inter(color: colors.textMuted, fontSize: 13),
               ),
             ),
           )
@@ -65,8 +59,10 @@ class BookingStep2Doctor extends StatelessWidget {
             itemCount: doctors.length,
             itemBuilder: (context, index) {
               final doctor = doctors[index];
-              final isSelected = selectedDoctor?.id == doctor.id ||
-                  (selectedDoctor?.name == doctor.name && selectedDoctor != null);
+              final isSelected =
+                  selectedDoctor?.id == doctor.id ||
+                  (selectedDoctor?.name == doctor.name &&
+                      selectedDoctor != null);
 
               return _buildDoctorCard(context, doctor, isSelected);
             },
@@ -179,7 +175,9 @@ class BookingStep2Doctor extends StatelessWidget {
                       ),
                       const SizedBox(height: 3),
                       Text(
-                        doctor.title.isNotEmpty ? doctor.title : doctor.specialty,
+                        doctor.title.isNotEmpty
+                            ? doctor.title
+                            : doctor.specialty,
                         style: GoogleFonts.inter(
                           fontSize: 12,
                           color: colors.textMuted,
@@ -189,7 +187,10 @@ class BookingStep2Doctor extends StatelessWidget {
                       ),
                       const SizedBox(height: 6),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
                         decoration: BoxDecoration(
                           color: colors.success.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(10),

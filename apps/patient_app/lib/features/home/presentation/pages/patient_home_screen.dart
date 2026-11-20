@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../booking/presentation/widgets/my_bookings_tab_view.dart';
 import '../../../profile/data/repositories/profile_repository_impl.dart';
@@ -38,10 +39,10 @@ class PatientHomeScreen extends StatelessWidget {
           create: (_) {
             UserLocationService.refresh();
             return HomeBloc(
-            getFeaturedClinicsUseCase: GetFeaturedClinicsUseCase(repo),
-            getActiveTicketUseCase: GetActiveTicketUseCase(repo),
-            joinQueueUseCase: JoinQueueUseCase(repo),
-            cancelTicketUseCase: CancelTicketUseCase(repo),
+              getFeaturedClinicsUseCase: GetFeaturedClinicsUseCase(repo),
+              getActiveTicketUseCase: GetActiveTicketUseCase(repo),
+              joinQueueUseCase: JoinQueueUseCase(repo),
+              cancelTicketUseCase: CancelTicketUseCase(repo),
             )..add(const HomeInitialDataRequested());
           },
         ),
@@ -92,7 +93,11 @@ class _PatientHomeView extends StatelessWidget {
               ? HomeGreetHeader(
                   userName: state.userName,
                   userInitials: state.userInitials,
-                  photoBase64: context.watch<ProfileBloc>().state.profile?.photoBase64,
+                  photoBase64: context
+                      .watch<ProfileBloc>()
+                      .state
+                      .profile
+                      ?.photoBase64,
                   unreadNotifications: state.unreadNotificationsCount,
                   onAvatarTap: () => bloc.add(const HomeNavTabChanged(3)),
                 )
@@ -113,10 +118,14 @@ class _PatientHomeView extends StatelessWidget {
                 ),
                 ProfileTabView(
                   onVisitsTap: () => bloc.add(const HomeNavTabChanged(2)),
+                  onTrackLiveQueue: () {
+                    bloc.add(const HomeRefreshRequested());
+                    bloc.add(const HomeNavTabChanged(1));
+                  },
                 ),
               ],
             ),
-          ), 
+          ),
           bottomNavigationBar: PatientBottomNavBar(
             currentIndex: state.currentTabIndex,
             hasActiveQueueTicket: state.activeTicket?.isActive ?? false,

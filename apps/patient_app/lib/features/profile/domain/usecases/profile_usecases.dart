@@ -1,5 +1,7 @@
 import '../entities/favorite_clinic_entity.dart';
+import '../entities/patient_payment_item_entity.dart';
 import '../entities/patient_profile_entity.dart';
+import '../entities/patient_queue_history_entity.dart';
 import '../entities/patient_review_entity.dart';
 import '../entities/support_ticket_entity.dart';
 import '../repositories/profile_repository.dart';
@@ -42,7 +44,8 @@ class ToggleDarkModeUseCase {
   final ProfileRepository repository;
   ToggleDarkModeUseCase(this.repository);
 
-  Future<PatientProfileEntity> call(bool enabled) => repository.toggleDarkMode(enabled);
+  Future<PatientProfileEntity> call(bool enabled) =>
+      repository.toggleDarkMode(enabled);
 }
 
 class GetFavoriteClinicsUseCase {
@@ -148,4 +151,28 @@ class DeleteAccountUseCase {
   DeleteAccountUseCase(this.repository);
 
   Future<void> call() => repository.deleteAccount();
+}
+
+class GetQueueHistoryUseCase {
+  final ProfileRepository repository;
+  GetQueueHistoryUseCase(this.repository);
+
+  Future<List<PatientQueueHistoryEntity>> call() =>
+      repository.getQueueHistory();
+}
+
+class WatchQueueHistoryUseCase {
+  final ProfileRepository repository;
+  WatchQueueHistoryUseCase(this.repository);
+
+  Stream<List<PatientQueueHistoryEntity>> call() =>
+      repository.watchQueueHistory();
+}
+
+class GetPaymentHistoryUseCase {
+  final ProfileRepository repository;
+  GetPaymentHistoryUseCase(this.repository);
+
+  Future<List<PatientPaymentItemEntity>> call() =>
+      repository.getPaymentHistory();
 }

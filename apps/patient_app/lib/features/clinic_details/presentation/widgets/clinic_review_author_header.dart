@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../domain/entities/clinic_review_item.dart';
 
 class ClinicReviewAuthorHeader extends StatelessWidget {
@@ -43,7 +44,10 @@ class ClinicReviewAuthorHeader extends StatelessWidget {
                 if (review.verified) ...[
                   const SizedBox(width: 6),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 5,
+                      vertical: 1.5,
+                    ),
                     decoration: BoxDecoration(
                       color: colors.badgeOpenBg,
                       borderRadius: BorderRadius.circular(4),
@@ -63,10 +67,7 @@ class ClinicReviewAuthorHeader extends StatelessWidget {
             const SizedBox(height: 2),
             Text(
               review.date,
-              style: GoogleFonts.inter(
-                fontSize: 11,
-                color: colors.textSubtle,
-              ),
+              style: GoogleFonts.inter(fontSize: 11, color: colors.textSubtle),
             ),
           ],
         ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../clinic_details/domain/entities/clinic_doctor_item.dart';
 import '../../../clinic_details/domain/entities/clinic_service_item.dart';
 import '../../../home/domain/entities/clinic_entity.dart';
@@ -58,16 +59,17 @@ class BookingWizardScreen extends StatelessWidget {
     final repo = bookingRepository ?? BookingRepositoryImpl();
 
     return BlocProvider(
-      create: (_) => BookingBloc(
-        bookingRepository: repo,
-        createAppointmentUseCase: CreateAppointmentUseCase(repo),
-      )..add(
-          InitBookingWizard(
-            clinic: clinic,
-            preselectedService: initialService,
-            preselectedDoctor: initialDoctor,
+      create: (_) =>
+          BookingBloc(
+            bookingRepository: repo,
+            createAppointmentUseCase: CreateAppointmentUseCase(repo),
+          )..add(
+            InitBookingWizard(
+              clinic: clinic,
+              preselectedService: initialService,
+              preselectedDoctor: initialDoctor,
+            ),
           ),
-        ),
       child: const _BookingWizardView(),
     );
   }
@@ -138,14 +140,10 @@ class _BookingWizardViewState extends State<_BookingWizardView> {
                 color: colors.textPrimary,
               ),
             ),
-            actions: const [
-              SizedBox(width: 48),
-            ],
+            actions: const [SizedBox(width: 48)],
           ),
           body: state.status == BookingStatus.loading
-              ? Center(
-                  child: CircularProgressIndicator(color: colors.primary),
-                )
+              ? Center(child: CircularProgressIndicator(color: colors.primary))
               : SafeArea(
                   child: Column(
                     children: [
@@ -159,7 +157,10 @@ class _BookingWizardViewState extends State<_BookingWizardView> {
                         ),
                       Expanded(
                         child: SingleChildScrollView(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
                           child: SizedBox(
                             width: double.infinity,
                             child: _buildStepBody(context, state, bloc),
@@ -256,7 +257,8 @@ class _BookingWizardViewState extends State<_BookingWizardView> {
     final cleanTitle = sName.toLowerCase().contains('consultation')
         ? sName
         : '$sName Consultation';
-    final ref = '${state.clinic?.name ?? 'Clinic'} • ${state.selectedDoctor?.name ?? 'Doctor'}';
+    final ref =
+        '${state.clinic?.name ?? 'Clinic'} • ${state.selectedDoctor?.name ?? 'Doctor'}';
 
     _razorpayService.openPayment(
       context: context,

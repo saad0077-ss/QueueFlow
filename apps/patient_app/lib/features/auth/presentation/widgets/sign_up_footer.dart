@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../pages/sign_in_screen.dart';
 
 class SignUpFooter extends StatelessWidget {
@@ -13,19 +14,14 @@ class SignUpFooter extends StatelessWidget {
             Navigator.of(context).pop();
           } else {
             Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (_) => const SignInScreen(),
-              ),
+              MaterialPageRoute(builder: (_) => const SignInScreen()),
             );
           }
         },
         child: RichText(
           text: const TextSpan(
             text: 'Already have an account ? ',
-            style: TextStyle(
-              color: Color(0xFF94A3B8),
-              fontSize: 13,
-            ),
+            style: TextStyle(color: Color(0xFF94A3B8), fontSize: 13),
             children: [
               TextSpan(
                 text: 'Sign in',

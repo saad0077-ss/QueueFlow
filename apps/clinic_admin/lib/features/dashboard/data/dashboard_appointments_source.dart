@@ -12,7 +12,11 @@ class DashboardAppointmentsSource {
   /// [departmentOfService] maps a service id / name to its department name.
   Stream<List<ClinicAppointmentEntity>> watch({
     required String clinicId,
-    required String Function(String serviceId, String serviceName, String specialty)
+    required String Function(
+      String serviceId,
+      String serviceName,
+      String specialty,
+    )
     departmentOfService,
   }) {
     return _firestore
@@ -40,7 +44,8 @@ class DashboardAppointmentsSource {
     final serviceName = _s(m, 'serviceName').isNotEmpty
         ? _s(m, 'serviceName')
         : _s(m, 'service');
-    final price = (m['servicePrice'] as num?)?.toDouble() ??
+    final price =
+        (m['servicePrice'] as num?)?.toDouble() ??
         (pay['amount'] as num?)?.toDouble() ??
         0.0;
     final status = _s(m, 'status').toLowerCase();

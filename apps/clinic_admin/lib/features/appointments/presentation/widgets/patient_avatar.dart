@@ -77,6 +77,8 @@ class PatientAvatar extends StatelessWidget {
       );
     }
     if (image == null) return fallback;
-    return ClipOval(child: SizedBox(width: size, height: size, child: image));
+    return ClipOval(
+      child: SizedBox(width: size, height: size, child: image),
+    );
   }
 }

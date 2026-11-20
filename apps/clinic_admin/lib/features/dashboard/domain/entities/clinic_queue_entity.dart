@@ -18,10 +18,10 @@ class ClinicQueueEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        currentToken,
-        totalIssued,
-        waitingCount,
-        status,
-        isPaused,
-      ];
+    currentToken,
+    totalIssued,
+    waitingCount,
+    status,
+    isPaused,
+  ];
 }

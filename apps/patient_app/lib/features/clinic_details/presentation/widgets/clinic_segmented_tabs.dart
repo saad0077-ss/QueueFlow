@@ -61,9 +61,7 @@ class ClinicSegmentedTabs extends StatelessWidget {
                           style: GoogleFonts.inter(
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
-                            color: isActive
-                                ? Colors.white
-                                : colors.textMuted,
+                            color: isActive ? Colors.white : colors.textMuted,
                           ),
                         ),
                       ),

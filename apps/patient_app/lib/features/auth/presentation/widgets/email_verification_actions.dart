@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../../core/widgets/gradient_button.dart';
 
 class EmailVerificationActions extends StatelessWidget {
@@ -58,9 +59,7 @@ class EmailVerificationActions extends StatelessWidget {
                 ? 'Resend email in ${resendCooldown}s'
                 : 'Resend Verification Email',
             style: TextStyle(
-              color: resendCooldown > 0
-                  ? colors.textSubtle
-                  : colors.primary,
+              color: resendCooldown > 0 ? colors.textSubtle : colors.primary,
               fontWeight: FontWeight.w600,
               fontSize: 14,
             ),
@@ -74,10 +73,7 @@ class EmailVerificationActions extends StatelessWidget {
           children: [
             Text(
               'Wrong email? ',
-              style: TextStyle(
-                color: colors.textMuted,
-                fontSize: 13.5,
-              ),
+              style: TextStyle(color: colors.textMuted, fontSize: 13.5),
             ),
             GestureDetector(
               onTap: onSignOutAndSwitch,

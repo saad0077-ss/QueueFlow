@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../../domain/entities/patient_profile_entity.dart';
 
 class PatientProfileModel extends PatientProfileEntity {
@@ -43,12 +44,18 @@ class PatientProfileModel extends PatientProfileEntity {
   }) {
     final finalName = name ?? '';
     String initials = '';
-    final parts = finalName.trim().split(RegExp(r'\s+')).where((s) => s.isNotEmpty).toList();
+    final parts = finalName
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((s) => s.isNotEmpty)
+        .toList();
     if (parts.isNotEmpty) {
       if (parts.length > 1) {
         initials = '${parts[0][0]}${parts[parts.length - 1][0]}'.toUpperCase();
       } else {
-        initials = parts[0].substring(0, parts[0].length >= 2 ? 2 : 1).toUpperCase();
+        initials = parts[0]
+            .substring(0, parts[0].length >= 2 ? 2 : 1)
+            .toUpperCase();
       }
     }
 
@@ -85,7 +92,10 @@ class PatientProfileModel extends PatientProfileEntity {
     );
   }
 
-  factory PatientProfileModel.fromJson(Map<String, dynamic> json, {String? docId}) {
+  factory PatientProfileModel.fromJson(
+    Map<String, dynamic> json, {
+    String? docId,
+  }) {
     final emergency = json['emergencyContact'] as Map<String, dynamic>? ?? {};
     final vitals = json['vitals'] as Map<String, dynamic>? ?? {};
     final insurance = json['insurance'] as Map<String, dynamic>? ?? {};
@@ -101,25 +111,57 @@ class PatientProfileModel extends PatientProfileEntity {
       bloodGroup: json['bloodGroup'] as String?,
       photoBase64: json['photoBase64'] as String?,
       dob: json['dob'] as String? ?? '14 Aug 1994',
-      age: json['age'] is int ? json['age'] as int : int.tryParse(json['age']?.toString() ?? ''),
+      age: json['age'] is int
+          ? json['age'] as int
+          : int.tryParse(json['age']?.toString() ?? ''),
       gender: json['gender'] as String?,
       memberSince: json['memberSince'] as String? ?? 'Jan 2026',
       loyaltyCredits: json['loyaltyCredits'] as int? ?? 450,
-      emergencyContactName: emergency['name'] as String? ?? json['emergencyContactName'] as String? ?? 'Farhan Rahman',
-      emergencyContactRelation: emergency['relation'] as String? ?? json['emergencyContactRelation'] as String? ?? 'Spouse',
-      emergencyContactPhone: emergency['phone'] as String? ?? json['emergencyContactPhone'] as String? ?? '+91 98470 11223',
+      emergencyContactName:
+          emergency['name'] as String? ??
+          json['emergencyContactName'] as String? ??
+          'Farhan Rahman',
+      emergencyContactRelation:
+          emergency['relation'] as String? ??
+          json['emergencyContactRelation'] as String? ??
+          'Spouse',
+      emergencyContactPhone:
+          emergency['phone'] as String? ??
+          json['emergencyContactPhone'] as String? ??
+          '+91 98470 11223',
       bp: vitals['bp'] as String? ?? json['bp'] as String? ?? '120/80 mmHg',
-      sugar: vitals['sugar'] as String? ?? json['sugar'] as String? ?? '95 mg/dL',
-      weight: vitals['weight'] as String? ?? json['weight'] as String? ?? '62 kg',
-      height: vitals['height'] as String? ?? json['height'] as String? ?? '165 cm',
+      sugar:
+          vitals['sugar'] as String? ?? json['sugar'] as String? ?? '95 mg/dL',
+      weight:
+          vitals['weight'] as String? ?? json['weight'] as String? ?? '62 kg',
+      height:
+          vitals['height'] as String? ?? json['height'] as String? ?? '165 cm',
       bmi: vitals['bmi'] as String? ?? json['bmi'] as String? ?? '22.8 Normal',
-      allergies: (json['allergies'] as List<dynamic>?)?.map((e) => e.toString()).toList() ??
+      allergies:
+          (json['allergies'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
           const ['Penicillin', 'Dust Mites', 'Peanuts'],
-      insuranceProvider: insurance['provider'] as String? ?? json['insuranceProvider'] as String? ?? 'Star Health Premier',
-      insurancePolicyNo: insurance['policyNo'] as String? ?? json['insurancePolicyNo'] as String? ?? 'SH-901824901',
-      insuranceValidTill: insurance['validTill'] as String? ?? json['insuranceValidTill'] as String? ?? '31 Mar 2027',
-      insuranceCoverage: insurance['coverage'] as String? ?? json['insuranceCoverage'] as String? ?? '₹10,00,000',
-      darkMode: preferences['darkMode'] as bool? ?? json['darkMode'] as bool? ?? false,
+      insuranceProvider:
+          insurance['provider'] as String? ??
+          json['insuranceProvider'] as String? ??
+          'Star Health Premier',
+      insurancePolicyNo:
+          insurance['policyNo'] as String? ??
+          json['insurancePolicyNo'] as String? ??
+          'SH-901824901',
+      insuranceValidTill:
+          insurance['validTill'] as String? ??
+          json['insuranceValidTill'] as String? ??
+          '31 Mar 2027',
+      insuranceCoverage:
+          insurance['coverage'] as String? ??
+          json['insuranceCoverage'] as String? ??
+          '₹10,00,000',
+      darkMode:
+          preferences['darkMode'] as bool? ??
+          json['darkMode'] as bool? ??
+          false,
       visitsCount: json['visitsCount'] as int? ?? 0,
       favoritesCount: json['favoritesCount'] as int? ?? 0,
       reviewsCount: json['reviewsCount'] as int? ?? 2,
@@ -165,9 +207,7 @@ class PatientProfileModel extends PatientProfileEntity {
         'validTill': insuranceValidTill,
         'coverage': insuranceCoverage,
       },
-      'preferences': {
-        'darkMode': darkMode,
-      },
+      'preferences': {'darkMode': darkMode},
       'visitsCount': visitsCount,
       'favoritesCount': favoritesCount,
       'reviewsCount': reviewsCount,

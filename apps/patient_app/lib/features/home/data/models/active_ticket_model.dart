@@ -8,10 +8,10 @@ class ActiveTicketModel extends ActiveTicketEntity {
     required super.clinicId,
     required super.clinicName,
     super.serviceName = 'General Consultation',
-    super.doctorName = 'Dr. Priya',
-    super.position = 3,
-    super.estWaitMin = 15,
-    super.nowServing = 'A-021',
+    super.doctorName = '',
+    super.position = 0,
+    super.estWaitMin = 0,
+    super.nowServing = '',
     super.status = 'waiting',
     super.joinedAt,
   });
@@ -24,9 +24,9 @@ class ActiveTicketModel extends ActiveTicketEntity {
       clinicName: map['clinicName'] ?? '',
       serviceName: map['serviceName'] ?? 'General Consultation',
       doctorName: map['doctorName'] ?? 'Attending Doctor',
-      position: (map['position'] as num?)?.toInt() ?? 1,
-      estWaitMin: (map['estWaitMin'] as num?)?.toInt() ?? 10,
-      nowServing: map['nowServing'] ?? '---',
+      position: (map['position'] as num?)?.toInt() ?? 0,
+      estWaitMin: (map['estWaitMin'] as num?)?.toInt() ?? 0,
+      nowServing: map['nowServing'] ?? '',
       status: map['status'] ?? 'waiting',
       joinedAt: map['joinedAt'] != null
           ? DateTime.tryParse(map['joinedAt'].toString())

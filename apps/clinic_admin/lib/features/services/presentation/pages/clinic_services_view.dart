@@ -74,7 +74,9 @@ class _ClinicServicesBody extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 48),
                 child: Center(
-                  child: CircularProgressIndicator(color: context.colors.primary),
+                  child: CircularProgressIndicator(
+                    color: context.colors.primary,
+                  ),
                 ),
               )
             else
@@ -96,13 +98,15 @@ class _ClinicServicesBody extends StatelessWidget {
     );
   }
 
-  Future<void> _openServiceModal(  
+  Future<void> _openServiceModal(
     BuildContext context,
     ClinicServicesState state,
     ClinicServiceEntity? service,
   ) async {
     final repo = ClinicServicesRepositoryImpl();
-    final freshDoctors = await repo.getDoctors().catchError((_) => state.doctors);
+    final freshDoctors = await repo.getDoctors().catchError(
+      (_) => state.doctors,
+    );
     if (!context.mounted) return;
 
     ServiceEditDialog.show(

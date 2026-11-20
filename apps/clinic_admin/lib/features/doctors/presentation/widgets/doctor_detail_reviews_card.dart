@@ -47,7 +47,10 @@ class DoctorDetailReviewsCard extends StatelessWidget {
               ),
               Text(
                 '${reviews.length} review${reviews.length == 1 ? '' : 's'}',
-                style: GoogleFonts.inter(fontSize: 12.5, color: colors.textMuted),
+                style: GoogleFonts.inter(
+                  fontSize: 12.5,
+                  color: colors.textMuted,
+                ),
               ),
             ],
           ),
@@ -77,14 +80,19 @@ class DoctorDetailReviewsCard extends StatelessWidget {
                           return Icon(
                             Icons.star_rounded,
                             size: 18,
-                            color: index < avgRating.round() ? colors.ratingGold : colors.border,
+                            color: index < avgRating.round()
+                                ? colors.ratingGold
+                                : colors.border,
                           );
                         }),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         'Based on ${reviews.length} verified review${reviews.length == 1 ? '' : 's'}',
-                        style: GoogleFonts.inter(fontSize: 11.5, color: colors.textMuted),
+                        style: GoogleFonts.inter(
+                          fontSize: 11.5,
+                          color: colors.textMuted,
+                        ),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ],
@@ -174,7 +182,9 @@ class DoctorDetailReviewsCard extends StatelessWidget {
                               return Icon(
                                 Icons.star_rounded,
                                 size: 13,
-                                color: filled ? colors.ratingGold : colors.border,
+                                color: filled
+                                    ? colors.ratingGold
+                                    : colors.border,
                               );
                             }),
                           ),

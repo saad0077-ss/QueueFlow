@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../../core/widgets/clinic_photo.dart';
 
 class ClinicCoverHero extends StatelessWidget {
@@ -47,10 +48,7 @@ class ClinicCoverHero extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _actionButton(
-                    icon: Icons.arrow_back_rounded,
-                    onTap: onBack,
-                  ),
+                  _actionButton(icon: Icons.arrow_back_rounded, onTap: onBack),
                   _actionButton(
                     icon: isFavorite
                         ? Icons.favorite_rounded
@@ -77,7 +75,9 @@ class ClinicCoverHero extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: context.isDarkMode ? 0.35 : 0.08),
+                    color: Colors.black.withValues(
+                      alpha: context.isDarkMode ? 0.35 : 0.08,
+                    ),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),

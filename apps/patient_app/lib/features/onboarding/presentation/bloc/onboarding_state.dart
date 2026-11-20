@@ -6,9 +6,7 @@ class OnboardingState extends Equatable {
   const OnboardingState({this.currentPage = 0});
 
   OnboardingState copyWith({int? currentPage}) {
-    return OnboardingState(
-      currentPage: currentPage ?? this.currentPage,
-    );
+    return OnboardingState(currentPage: currentPage ?? this.currentPage);
   }
 
   @override

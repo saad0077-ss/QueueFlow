@@ -9,7 +9,8 @@ class ClinicSecurityPanel extends StatefulWidget {
     required String currentPassword,
     required String newPassword,
     required bool requireTwoFactor,
-  }) onSave;
+  })
+  onSave;
 
   const ClinicSecurityPanel({
     super.key,
@@ -48,7 +49,12 @@ class _ClinicSecurityPanelState extends State<ClinicSecurityPanel> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _field(context, 'Current password', _currentPassCtrl, 'Enter current password'),
+        _field(
+          context,
+          'Current password',
+          _currentPassCtrl,
+          'Enter current password',
+        ),
         const SizedBox(height: 14),
         _field(context, 'New password', _newPassCtrl, 'Enter new password'),
         const SizedBox(height: 18),
@@ -66,9 +72,22 @@ class _ClinicSecurityPanelState extends State<ClinicSecurityPanel> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Require Two-Factor Authentication', style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.bold, color: colors.textPrimary)),
+                  Text(
+                    'Require Two-Factor Authentication',
+                    style: GoogleFonts.inter(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: colors.textPrimary,
+                    ),
+                  ),
                   const SizedBox(height: 2),
-                  Text('Adds phone verification at staff login', style: GoogleFonts.inter(fontSize: 11.5, color: colors.textMuted)),
+                  Text(
+                    'Adds phone verification at staff login',
+                    style: GoogleFonts.inter(
+                      fontSize: 11.5,
+                      color: colors.textMuted,
+                    ),
+                  ),
                 ],
               ),
               Switch(
@@ -94,21 +113,38 @@ class _ClinicSecurityPanelState extends State<ClinicSecurityPanel> {
             backgroundColor: colors.primary,
             foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
-          child: Text('Update Security Settings', style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w600)),
+          child: Text(
+            'Update Security Settings',
+            style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w600),
+          ),
         ),
       ],
     );
   }
 
-  Widget _field(BuildContext context, String label, TextEditingController ctrl, String hint) {
+  Widget _field(
+    BuildContext context,
+    String label,
+    TextEditingController ctrl,
+    String hint,
+  ) {
     final colors = context.colors;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: colors.textMuted)),
+        Text(
+          label,
+          style: GoogleFonts.inter(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: colors.textMuted,
+          ),
+        ),
         const SizedBox(height: 6),
         TextField(
           controller: ctrl,
@@ -119,10 +155,22 @@ class _ClinicSecurityPanelState extends State<ClinicSecurityPanel> {
             hintStyle: TextStyle(color: colors.textMuted, fontSize: 12),
             filled: true,
             fillColor: colors.surfaceSecondary,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: colors.border)),
-            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: colors.border)),
-            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide(color: colors.primary)),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: 10,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: colors.border),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: colors.border),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(color: colors.primary),
+            ),
           ),
         ),
       ],

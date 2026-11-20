@@ -8,192 +8,50 @@ import '../../domain/usecases/profile_usecases.dart';
 import '../bloc/profile_bloc.dart';
 import '../bloc/profile_event.dart';
 import '../bloc/profile_state.dart';
-import 'digital_health_pass_sheet.dart';
 import '../pages/edit_profile_screen.dart';
-import 'favorite_clinics_sheet.dart';
-import 'my_reviews_sheet.dart';
 import 'profile_chips_row.dart';
 import 'profile_hero_card.dart';
-import 'profile_menu_section.dart';
 import 'profile_stats_strip.dart';
+import 'profile_tab/profile_account_menu_section.dart';
+import 'profile_tab/profile_activity_menu_section.dart';
+import 'profile_tab/profile_dialogs.dart';
+import 'profile_tab/profile_preferences_menu_section.dart';
+import 'profile_tab/profile_support_legal_menu_section.dart';
 
 class ProfileTabView extends StatelessWidget {
   final VoidCallback? onVisitsTap;
+  final VoidCallback? onTrackLiveQueue;
 
   const ProfileTabView({
     super.key,
     this.onVisitsTap,
+    this.onTrackLiveQueue,
   });
 
   @override
   Widget build(BuildContext context) {
-    // If a ProfileBloc is already provided by a parent, use it; otherwise provide a fresh one.
-    try {
-      context.read<ProfileBloc>();
-      return _ProfileTabConsumer(onVisitsTap: onVisitsTap);
-    } catch (_) {}
-
-    final repo = ProfileRepositoryImpl();
-    return BlocProvider(
-      create: (_) => ProfileBloc(
-        getProfileUseCase: GetProfileUseCase(repo),
-        updateProfileUseCase: UpdateProfileUseCase(repo),
-        toggleDarkModeUseCase: ToggleDarkModeUseCase(repo),
-        getFavoriteClinicsUseCase: GetFavoriteClinicsUseCase(repo),
-        getUserReviewsUseCase: GetUserReviewsUseCase(repo),
-        addReviewUseCase: AddReviewUseCase(repo),
-        deleteReviewUseCase: DeleteReviewUseCase(repo),
-        getSupportTicketsUseCase: GetSupportTicketsUseCase(repo),
-        createSupportTicketUseCase: CreateSupportTicketUseCase(repo),
-        sendTicketReplyUseCase: SendTicketReplyUseCase(repo),
-        logoutUseCase: LogoutUseCase(repo),
-        deleteAccountUseCase: DeleteAccountUseCase(repo),
-      )..add(const ProfileLoadRequested()),
-      child: _ProfileTabConsumer(onVisitsTap: onVisitsTap),
-    );
-  }
-}
-
-class _ProfileTabConsumer extends StatelessWidget {
-  final VoidCallback? onVisitsTap;
-
-  const _ProfileTabConsumer({this.onVisitsTap});
-
-  /// Re-reads favorites so clinics saved since the profile loaded show up.
-  Future<void> _openFavorites(BuildContext context) async {
-    final bloc = context.read<ProfileBloc>();
-    var clinics = bloc.state.favoriteClinics;
-    try {
-      clinics = await bloc.getFavoriteClinicsUseCase();
-    } catch (_) {}
-    if (!context.mounted) return;
-    FavoriteClinicsSheet.show(
-      context,
-      clinics: clinics,
-      onBookClinic: (_) => onVisitsTap?.call(),
-    );
-  }
-
-  void _showLogoutDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (dialogCtx) => AlertDialog(
-        backgroundColor: context.colors.surfaceElevated,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-          side: BorderSide(color: context.colors.border, width: 1),
-        ),
-        title: Text(
-          'Log out',
-          style: TextStyle(color: context.colors.textPrimary, fontWeight: FontWeight.w800),
-        ),
-        content: Text(
-          'Are you sure you want to log out of your QueueFlow account?',
-          style: TextStyle(color: context.colors.textMuted, fontSize: 13),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogCtx).pop(),
-            child: Text('Cancel', style: TextStyle(color: context.colors.textMuted)),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(dialogCtx).pop();
-              context.read<ProfileBloc>().add(const ProfileLogoutRequested());
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.error,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            ),
-            child: const Text('Log out', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showDeleteAccountDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (dialogCtx) => AlertDialog(
-        backgroundColor: context.colors.surfaceElevated,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-          side: BorderSide(color: context.colors.border, width: 1),
-        ),
-        title: Row(
-          children: [
-            Icon(Icons.warning_amber_rounded, color: AppColors.error, size: 22),
-            SizedBox(width: 8),
-            Text(
-              'Delete Account',
-              style: TextStyle(color: context.colors.textPrimary, fontWeight: FontWeight.w800),
-            ),
-          ],
-        ),
-        content: Text(
-          'Are you sure you want to permanently delete your account? All your queue history and tokens will be reset.',
-          style: TextStyle(color: context.colors.textMuted, fontSize: 13),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogCtx).pop(),
-            child: Text('Cancel', style: TextStyle(color: context.colors.textMuted)),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(dialogCtx).pop();
-              context.read<ProfileBloc>().add(const ProfileDeleteAccountRequested());
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.error,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            ),
-            child: const Text('Delete Permanently', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showComingSoon(BuildContext context, String feature) {
-    AppSnackBar.showInfo(context, message: '$feature is coming soon');
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocConsumer<ProfileBloc, ProfileState>(
+    final consumer = BlocConsumer<ProfileBloc, ProfileState>(
       listener: (context, state) {
-        if (state.successMessage != null) {
-          AppSnackBar.showSuccess(context, message: state.successMessage!);
-        }
-        if (state.errorMessage != null) {
-          AppSnackBar.showError(context, message: state.errorMessage!);
-        }
         if (state.isLoggedOut) {
           Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(builder: (_) => const WelcomeScreen()),
             (route) => false,
           );
+        } else if (state.error != null) {
+          AppSnackBar.showError(context, message: state.error!);
         }
       },
       builder: (context, state) {
         final profile = state.profile;
-        if (state.status == ProfileStatus.loading && profile == null) {
-          return const Center(
-            child: CircularProgressIndicator(color: AppColors.primary),
-          );
+        if (state.isLoading && profile == null) {
+          return const Center(child: CircularProgressIndicator(color: AppColors.primary));
         }
-
         if (profile == null) {
           return Center(
             child: Column(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  'Could not load profile',
-                  style: TextStyle(color: context.colors.textPrimary, fontSize: 15, fontWeight: FontWeight.w700),
-                ),
+                const Text('Failed to load profile', style: TextStyle(fontWeight: FontWeight.w600)),
                 const SizedBox(height: 12),
                 ElevatedButton(
                   onPressed: () => context.read<ProfileBloc>().add(const ProfileLoadRequested()),
@@ -208,9 +66,7 @@ class _ProfileTabConsumer extends StatelessWidget {
         final bloc = context.read<ProfileBloc>();
 
         return RefreshIndicator(
-          onRefresh: () async {
-            bloc.add(const ProfileLoadRequested());
-          },
+          onRefresh: () async => bloc.add(const ProfileLoadRequested()),
           color: AppColors.primary,
           backgroundColor: context.colors.surfaceElevated,
           child: SingleChildScrollView(
@@ -222,191 +78,27 @@ class _ProfileTabConsumer extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Hero Card
                     ProfileHeroCard(
                       profile: profile,
-                      onEditProfile: () {
-                        EditProfileScreen.open(
-                          context,
-                          profile: profile,
-                          onSave: ({required name, required email, required phone, required initials, age, gender, bloodGroup, photoBase64}) {
-                            bloc.add(ProfileUpdated(
-                              name: name,
-                              email: email,
-                              phone: phone,
-                              initials: initials,
-                              age: age,
-                              gender: gender,
-                              bloodGroup: bloodGroup,
-                              photoBase64: photoBase64,
-                            ));
-                          },
-                        );
-                      },
-                      onDigitalHealthPass: () {
-                        DigitalHealthPassSheet.show(context, profile: profile);
-                      },
+                      onEditProfile: () => EditProfileScreen.open(
+                        context,
+                        profile: profile,
+                        onSave: ({required name, required email, required phone, required initials, age, gender, bloodGroup, photoBase64}) {
+                          bloc.add(ProfileUpdated(name: name, email: email, phone: phone, initials: initials, age: age, gender: gender, bloodGroup: bloodGroup, photoBase64: photoBase64));
+                        },
+                      ),
                     ),
-
-                    // Stats Strip
                     ProfileStatsStrip(
                       visitsCount: profile.visitsCount,
                       favoritesCount: state.favoriteClinics.length,
                       onVisitsTap: () => onVisitsTap?.call(),
-                      onFavoritesTap: () {
-                        _openFavorites(context);
-                      },
+                      onFavoritesTap: () => ProfileDialogs.showComingSoon(context, 'Favorite Clinics'),
                     ),
-
-                    // Health Snapshot Chips
-                    ProfileChipsRow(
-                      bloodGroup: profile.bloodGroup,
-                      age: profile.age,
-                      gender: profile.gender,
-                    ),
-
-                    // Activity Section
-                    ProfileMenuSection(
-                      title: 'Activity',
-                      items: [
-                        ProfileMenuItem(
-                          icon: const Text('⭐', style: TextStyle(fontSize: 16)),
-                          iconBgColor: const Color(0xFFF59E0B).withValues(alpha: 0.15),
-                          title: 'My Ratings & Reviews',
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFF59E0B).withValues(alpha: 0.12),
-                                  borderRadius: BorderRadius.circular(999),
-                                ),
-                                child: Text(
-                                  '${state.userReviews.length} Reviews',
-                                  style: const TextStyle(
-                                    fontSize: 11.5,
-                                    fontWeight: FontWeight.w700,
-                                    color: Color(0xFFF59E0B),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: 4),
-                              Icon(
-                                Icons.chevron_right_rounded,
-                                size: 18,
-                                color: context.colors.textSubtle,
-                              ),
-                            ],
-                          ),
-                          onTap: () {
-                            MyReviewsSheet.show(
-                              context,
-                              reviews: state.userReviews,
-                              onDeleteReview: (id) => bloc.add(ProfileReviewDeleted(id)),
-                            );
-                          },
-                        ),
-                        ProfileMenuItem(
-                          icon: const Icon(Icons.favorite_rounded, size: 18, color: Color(0xFF14B8A6)),
-                          iconBgColor: const Color(0xFF14B8A6).withValues(alpha: 0.15),
-                          title: 'Favorite clinics',
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                '${state.favoriteClinics.length} Clinics',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: context.colors.textMuted,
-                                ),
-                              ),
-                              SizedBox(width: 4),
-                              Icon(
-                                Icons.chevron_right_rounded,
-                                size: 18,
-                                color: context.colors.textSubtle,
-                              ),
-                            ],
-                          ),
-                          onTap: () {
-                            _openFavorites(context);
-                          },
-                        ),
-                      ],
-                    ),
-
-                    // Preferences Section
-                    ProfileMenuSection(
-                      title: 'Preferences',
-                      items: [
-                        ProfileMenuItem(
-                          icon: const Icon(Icons.dark_mode_rounded, size: 18, color: Color(0xFF7C3AED)),
-                          iconBgColor: const Color(0xFF7C3AED).withValues(alpha: 0.15),
-                          title: 'Dark mode',
-                          trailing: Switch.adaptive(
-                            value: (context.watch<ThemeBloc?>()?.state.isDark) ?? profile.darkMode,
-                            activeTrackColor: const Color(0xFF7C3AED),
-                            onChanged: (val) {
-                              context.read<ThemeBloc?>()?.add(ThemeModeChanged(val ? ThemeMode.dark : ThemeMode.light));
-                              bloc.add(ProfileDarkModeToggled(val));
-                            },
-                          ),
-                          onTap: () {
-                            final currentIsDark = (context.read<ThemeBloc?>()?.state.isDark) ?? profile.darkMode;
-                            final nextVal = !currentIsDark;
-                            context.read<ThemeBloc?>()?.add(ThemeModeChanged(nextVal ? ThemeMode.dark : ThemeMode.light));
-                            bloc.add(ProfileDarkModeToggled(nextVal));
-                          },
-                        ),
-                      ],
-                    ),
-
-                    // Support & Legal Section
-                    ProfileMenuSection(
-                      title: 'Support & Legal',
-                      items: [
-                        ProfileMenuItem(
-                          icon: const Icon(Icons.headset_mic_rounded, size: 18, color: Color(0xFF10B981)),
-                          iconBgColor: const Color(0xFF10B981).withValues(alpha: 0.15),
-                          title: 'Help & Support',
-                          onTap: () => _showComingSoon(context, 'Help & Support'),
-                        ),
-                        ProfileMenuItem(
-                          icon: const Icon(Icons.shield_outlined, size: 18, color: Color(0xFF3B82F6)),
-                          iconBgColor: const Color(0xFF3B82F6).withValues(alpha: 0.15),
-                          title: 'Privacy Policy',
-                          onTap: () => _showComingSoon(context, 'Privacy Policy'),
-                        ),
-                        ProfileMenuItem(
-                          icon: const Icon(Icons.description_outlined, size: 18, color: Color(0xFF94A3B8)),
-                          iconBgColor: const Color(0xFF64748B).withValues(alpha: 0.15),
-                          title: 'Terms of Service',
-                          onTap: () => _showComingSoon(context, 'Terms of Service'),
-                        ),
-                      ],
-                    ),
-
-                    // Account Section
-                    ProfileMenuSection(
-                      bottomMargin: 28,
-                      items: [
-                        ProfileMenuItem(
-                          icon: const Icon(Icons.logout_rounded, size: 18, color: AppColors.error),
-                          iconBgColor: AppColors.error.withValues(alpha: 0.12),
-                          title: 'Log out',
-                          titleColor: AppColors.error,
-                          onTap: () => _showLogoutDialog(context),
-                        ),
-                        ProfileMenuItem(
-                          icon: Icon(Icons.delete_outline_rounded, size: 18, color: AppColors.error.withValues(alpha: 0.85)),
-                          iconBgColor: AppColors.error.withValues(alpha: 0.06),
-                          title: 'Delete account',
-                          titleColor: AppColors.error.withValues(alpha: 0.85),
-                          onTap: () => _showDeleteAccountDialog(context),
-                        ),
-                      ],
-                    ),
+                    ProfileChipsRow(bloodGroup: profile.bloodGroup, age: profile.age, gender: profile.gender),
+                    ProfileActivityMenuSection(state: state, onVisitsTap: onVisitsTap, onTrackLiveQueue: onTrackLiveQueue),
+                    ProfilePreferencesMenuSection(state: state),
+                    const ProfileSupportLegalMenuSection(),
+                    const ProfileAccountMenuSection(),
                   ],
                 ),
               ),
@@ -415,5 +107,29 @@ class _ProfileTabConsumer extends StatelessWidget {
         );
       },
     );
+
+    try {
+      context.read<ProfileBloc>();
+      return consumer;
+    } catch (_) {
+      final repo = ProfileRepositoryImpl();
+      return BlocProvider(
+        create: (_) => ProfileBloc(
+          getProfileUseCase: GetProfileUseCase(repo),
+          updateProfileUseCase: UpdateProfileUseCase(repo),
+          toggleDarkModeUseCase: ToggleDarkModeUseCase(repo),
+          getFavoriteClinicsUseCase: GetFavoriteClinicsUseCase(repo),
+          getUserReviewsUseCase: GetUserReviewsUseCase(repo),
+          addReviewUseCase: AddReviewUseCase(repo),
+          deleteReviewUseCase: DeleteReviewUseCase(repo),
+          getSupportTicketsUseCase: GetSupportTicketsUseCase(repo),
+          createSupportTicketUseCase: CreateSupportTicketUseCase(repo),
+          sendTicketReplyUseCase: SendTicketReplyUseCase(repo),
+          logoutUseCase: LogoutUseCase(repo),
+          deleteAccountUseCase: DeleteAccountUseCase(repo),
+        )..add(const ProfileLoadRequested()),
+        child: consumer,
+      );
+    }
   }
 }

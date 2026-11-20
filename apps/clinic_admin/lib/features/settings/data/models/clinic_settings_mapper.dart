@@ -1,4 +1,4 @@
-﻿import '../../domain/entities/clinic_location_entity.dart';
+import '../../domain/entities/clinic_location_entity.dart';
 import '../../domain/entities/clinic_operating_schedule_entity.dart';
 import '../../domain/entities/clinic_profile_entity.dart';
 import '../../domain/entities/clinic_queue_rules_entity.dart';
@@ -8,14 +8,21 @@ import 'clinic_schedule_defaults.dart';
 
 class ClinicSettingsMapper {
   /// Reads a field as text, tolerating numbers (e.g. coordinates saved as doubles).
-  static String _str(Map<String, dynamic> m, String key, [String fallback = '']) {
+  static String _str(
+    Map<String, dynamic> m,
+    String key, [
+    String fallback = '',
+  ]) {
     final v = m[key];
     if (v == null) return fallback;
     final s = v.toString().trim();
     return s.isEmpty ? fallback : s;
   }
 
-  static ClinicSettingsEntity fromFirestore(String clinicId, Map<String, dynamic> data) {
+  static ClinicSettingsEntity fromFirestore(
+    String clinicId,
+    Map<String, dynamic> data,
+  ) {
     final profile = ClinicProfileEntity(
       name: _str(data, 'name'),
       address: _str(data, 'address'),
@@ -26,7 +33,9 @@ class ClinicSettingsMapper {
     );
 
     final rawLoc = data['location'];
-    final locData = rawLoc is Map ? Map<String, dynamic>.from(rawLoc) : <String, dynamic>{};
+    final locData = rawLoc is Map
+        ? Map<String, dynamic>.from(rawLoc)
+        : <String, dynamic>{};
     final location = ClinicLocationEntity(
       building: _str(locData, 'building'),
       street: _str(locData, 'street'),
@@ -75,7 +84,8 @@ class ClinicSettingsMapper {
 
     final queueRules = ClinicQueueRulesEntity(
       maxQueueCapacity: (data['maxQueueCapacity'] as num?)?.toInt() ?? 30,
-      avgConsultationTimeMin: (data['avgConsultationTimeMin'] as num?)?.toInt() ?? 20,
+      avgConsultationTimeMin:
+          (data['avgConsultationTimeMin'] as num?)?.toInt() ?? 20,
       allowWalkIns: data['allowWalkIns'] as bool? ?? true,
     );
 
@@ -85,7 +95,9 @@ class ClinicSettingsMapper {
       location: location,
       schedule: schedule,
       queueRules: queueRules,
-      security: ClinicSecuritySettingsEntity(requireTwoFactor: data['requireTwoFactor'] as bool? ?? true),
+      security: ClinicSecuritySettingsEntity(
+        requireTwoFactor: data['requireTwoFactor'] as bool? ?? true,
+      ),
       planName: _str(data, 'planName'),
       renewalDate: _str(data, 'currentPeriodEnd'),
     );

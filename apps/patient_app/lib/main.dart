@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import 'firebase_options.dart';
 import 'features/splash/presentation/pages/splash_screen.dart';
 
@@ -31,12 +32,8 @@ class PatientApp extends StatelessWidget {
   final Widget? home;
   final ThemeBloc? themeBloc;
 
-  const PatientApp({
-    super.key,
-    this.home,
-    this.themeBloc, 
-  });
- 
+  const PatientApp({super.key, this.home, this.themeBloc}); 
+  
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -46,7 +43,7 @@ class PatientApp extends StatelessWidget {
           return MaterialApp(
             title: 'QueueFlow',
             debugShowCheckedModeBanner: false,
-            theme: AppTheme.lightTheme,     
+            theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             themeMode: themeState.themeMode,
             themeAnimationDuration: Duration.zero,

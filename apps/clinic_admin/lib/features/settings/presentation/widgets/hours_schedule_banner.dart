@@ -48,8 +48,12 @@ class _HoursScheduleBannerState extends State<HoursScheduleBanner> {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final status = widget.statusBuilder?.call();
-    final pillColor = status == null || !status.isOpen ? colors.warning : colors.badgeOpenText;
-    final pillBg = status == null || !status.isOpen ? colors.warningTint : colors.badgeOpenBg;
+    final pillColor = status == null || !status.isOpen
+        ? colors.warning
+        : colors.badgeOpenText;
+    final pillBg = status == null || !status.isOpen
+        ? colors.warningTint
+        : colors.badgeOpenBg;
 
     return Container(
       padding: const EdgeInsets.all(18),
@@ -73,10 +77,17 @@ class _HoursScheduleBannerState extends State<HoursScheduleBanner> {
                 children: [
                   Text(
                     'Clinic Operating Schedule',
-                    style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.bold, color: colors.textPrimary),
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: colors.textPrimary,
+                    ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: pillBg,
                       borderRadius: BorderRadius.circular(12),
@@ -85,9 +96,23 @@ class _HoursScheduleBannerState extends State<HoursScheduleBanner> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Container(width: 6, height: 6, decoration: BoxDecoration(color: pillColor, shape: BoxShape.circle)),
+                        Container(
+                          width: 6,
+                          height: 6,
+                          decoration: BoxDecoration(
+                            color: pillColor,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
                         const SizedBox(width: 6),
-                        Text(status?.label ?? 'NOT SET', style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.bold, color: pillColor)),
+                        Text(
+                          status?.label ?? 'NOT SET',
+                          style: GoogleFonts.inter(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: pillColor,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -97,21 +122,33 @@ class _HoursScheduleBannerState extends State<HoursScheduleBanner> {
                 children: [
                   if (isEmergencyOnCall) ...[
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
                       decoration: BoxDecoration(
                         color: colors.badgeOpenBg,
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: colors.badgeOpenText.withAlpha(120)),
+                        border: Border.all(
+                          color: colors.badgeOpenText.withAlpha(120),
+                        ),
                       ),
                       child: Text(
                         '⚡ 24/7 Triage On-Call',
-                        style: GoogleFonts.inter(fontSize: 11.5, fontWeight: FontWeight.w700, color: colors.badgeOpenText),
+                        style: GoogleFonts.inter(
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.w700,
+                          color: colors.badgeOpenText,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 10),
                   ],
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 5,
+                    ),
                     decoration: BoxDecoration(
                       color: colors.primaryTint,
                       borderRadius: BorderRadius.circular(8),
@@ -119,7 +156,11 @@ class _HoursScheduleBannerState extends State<HoursScheduleBanner> {
                     ),
                     child: Text(
                       '$totalWeeklyHours Hrs / Week',
-                      style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w700, color: colors.primaryLight),
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: colors.primaryLight,
+                      ),
                     ),
                   ),
                 ],
@@ -127,7 +168,10 @@ class _HoursScheduleBannerState extends State<HoursScheduleBanner> {
             ],
           ),
           const SizedBox(height: 6),
-          Text(scheduleSummary, style: GoogleFonts.inter(fontSize: 12.5, color: colors.textMuted)),
+          Text(
+            scheduleSummary,
+            style: GoogleFonts.inter(fontSize: 12.5, color: colors.textMuted),
+          ),
         ],
       ),
     );

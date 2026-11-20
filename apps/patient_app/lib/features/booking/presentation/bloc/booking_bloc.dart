@@ -1,4 +1,5 @@
 import 'dart:math';
+
 import 'package:flutter/material.dart' show DateUtils;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -21,8 +22,8 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     required this.bookingRepository,
     required this.createAppointmentUseCase,
     FirebaseAuth? firebaseAuth,
-  })  : _firebaseAuth = firebaseAuth ?? _safeAuth(),
-        super(BookingState(selectedDate: DateTime.now())) {
+  }) : _firebaseAuth = firebaseAuth ?? _safeAuth(),
+       super(BookingState(selectedDate: DateTime.now())) {
     on<InitBookingWizard>(_onInitBookingWizard);
     on<SelectService>(_onSelectService);
     on<SelectDoctor>(_onSelectDoctor);
@@ -47,12 +48,14 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     InitBookingWizard event,
     Emitter<BookingState> emit,
   ) async {
-    emit(state.copyWith(
-      status: BookingStatus.loading,
-      clinic: event.clinic,
-      step: 1,
-      clearError: true,
-    ));
+    emit(
+      state.copyWith(
+        status: BookingStatus.loading,
+        clinic: event.clinic,
+        step: 1,
+        clearError: true,
+      ),
+    );
 
     try {
       final services = await bookingRepository.getClinicServices(
@@ -65,53 +68,71 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
         event.clinic.category,
       );
 
-
       // Prepopulate logged in user info
       final currentUser = _firebaseAuth?.currentUser;
       String pName = '';
       String pPhone = '';
       String pEmail = '';
 
-      if (currentUser?.displayName != null && currentUser!.displayName!.trim().isNotEmpty) {
+      if (currentUser?.displayName != null &&
+          currentUser!.displayName!.trim().isNotEmpty) {
         pName = currentUser.displayName!.trim();
       }
-      if (currentUser?.phoneNumber != null && currentUser!.phoneNumber!.trim().isNotEmpty) {
+      if (currentUser?.phoneNumber != null &&
+          currentUser!.phoneNumber!.trim().isNotEmpty) {
         pPhone = currentUser.phoneNumber!.trim();
       }
       if (currentUser?.email != null && currentUser!.email!.trim().isNotEmpty) {
         pEmail = currentUser.email!.trim();
       }
 
-      final initialService = event.preselectedService ?? (services.isNotEmpty ? services.first : null);
-      final initialFilteredDoctors = _filterDoctorsForService(doctors, initialService);
+      final initialService =
+          event.preselectedService ??
+          (services.isNotEmpty ? services.first : null);
+      final initialFilteredDoctors = _filterDoctorsForService(
+        doctors,
+        initialService,
+      );
       final preDoc = event.preselectedDoctor;
       final initialDoctor =
           preDoc != null && initialFilteredDoctors.any((d) => d.id == preDoc.id)
-              ? preDoc
-              : (initialFilteredDoctors.isNotEmpty ? initialFilteredDoctors.first : null);
+          ? preDoc
+          : (initialFilteredDoctors.isNotEmpty
+                ? initialFilteredDoctors.first
+                : null);
 
-      final schedule = _scheduleFor(initialDoctor, initialService, DateTime.now());
+      final schedule = _scheduleFor(
+        initialDoctor,
+        initialService,
+        DateTime.now(),
+      );
 
-      emit(state.copyWith(
-        status: BookingStatus.ready,
-        services: services,
-        doctors: doctors,
-        filteredDoctors: initialFilteredDoctors,
-        selectedService: initialService,
-        selectedDoctor: initialDoctor,
-        selectedDate: schedule.date,
-        availableTimeSlots: schedule.slots,
-        selectedTimeSlot: schedule.slots.isNotEmpty ? schedule.slots.first : '',
-        patientName: pName,
-        patientPhone: pPhone,
-        patientEmail: pEmail,
-      ));
+      emit(
+        state.copyWith(
+          status: BookingStatus.ready,
+          services: services,
+          doctors: doctors,
+          filteredDoctors: initialFilteredDoctors,
+          selectedService: initialService,
+          selectedDoctor: initialDoctor,
+          selectedDate: schedule.date,
+          availableTimeSlots: schedule.slots,
+          selectedTimeSlot: schedule.slots.isNotEmpty
+              ? schedule.slots.first
+              : '',
+          patientName: pName,
+          patientPhone: pPhone,
+          patientEmail: pEmail,
+        ),
+      );
       await _syncAvailability(emit);
     } catch (e) {
-      emit(state.copyWith(
-        status: BookingStatus.failure,
-        errorMessage: 'Failed to initialize booking flow: $e',
-      ));
+      emit(
+        state.copyWith(
+          status: BookingStatus.failure,
+          errorMessage: 'Failed to initialize booking flow: $e',
+        ),
+      );
     }
   }
 
@@ -121,21 +142,26 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
   ) async {
     final filtered = _filterDoctorsForService(state.doctors, event.service);
     final currentDoc = state.selectedDoctor;
-    final keep = currentDoc != null && filtered.any((d) => d.id == currentDoc.id);
+    final keep =
+        currentDoc != null && filtered.any((d) => d.id == currentDoc.id);
 
-    final doctor = keep ? currentDoc : (filtered.isNotEmpty ? filtered.first : null);
+    final doctor = keep
+        ? currentDoc
+        : (filtered.isNotEmpty ? filtered.first : null);
     final schedule = _scheduleFor(doctor, event.service, state.selectedDate);
 
-    emit(state.copyWith(
-      selectedService: event.service,
-      filteredDoctors: filtered,
-      selectedDoctor: doctor,
-      clearSelectedDoctor: doctor == null,
-      selectedDate: schedule.date,
-      availableTimeSlots: schedule.slots,
-      selectedTimeSlot: schedule.slots.isNotEmpty ? schedule.slots.first : '',
-      bookedSlots: const {},
-    ));
+    emit(
+      state.copyWith(
+        selectedService: event.service,
+        filteredDoctors: filtered,
+        selectedDoctor: doctor,
+        clearSelectedDoctor: doctor == null,
+        selectedDate: schedule.date,
+        availableTimeSlots: schedule.slots,
+        selectedTimeSlot: schedule.slots.isNotEmpty ? schedule.slots.first : '',
+        bookedSlots: const {},
+      ),
+    );
     await _syncAvailability(emit);
   }
 
@@ -143,14 +169,20 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     SelectDoctor event,
     Emitter<BookingState> emit,
   ) async {
-    final schedule = _scheduleFor(event.doctor, state.selectedService, state.selectedDate);
-    emit(state.copyWith(
-      selectedDoctor: event.doctor,
-      selectedDate: schedule.date,
-      availableTimeSlots: schedule.slots,
-      selectedTimeSlot: schedule.slots.isNotEmpty ? schedule.slots.first : '',
-      bookedSlots: const {},
-    ));
+    final schedule = _scheduleFor(
+      event.doctor,
+      state.selectedService,
+      state.selectedDate,
+    );
+    emit(
+      state.copyWith(
+        selectedDoctor: event.doctor,
+        selectedDate: schedule.date,
+        availableTimeSlots: schedule.slots,
+        selectedTimeSlot: schedule.slots.isNotEmpty ? schedule.slots.first : '',
+        bookedSlots: const {},
+      ),
+    );
     await _syncAvailability(emit);
   }
 
@@ -158,13 +190,20 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     SelectDate event,
     Emitter<BookingState> emit,
   ) async {
-    final slots = state.selectedDoctor?.slotsFor(event.date, state.selectedDoctor!.slotDuration) ?? const <String>[];
-    emit(state.copyWith(
-      selectedDate: event.date,
-      availableTimeSlots: slots,
-      selectedTimeSlot: slots.isNotEmpty ? slots.first : '',
-      bookedSlots: const {},
-    ));
+    final slots =
+        state.selectedDoctor?.slotsFor(
+          event.date,
+          state.selectedDoctor!.slotDuration,
+        ) ??
+        const <String>[];
+    emit(
+      state.copyWith(
+        selectedDate: event.date,
+        availableTimeSlots: slots,
+        selectedTimeSlot: slots.isNotEmpty ? slots.first : '',
+        bookedSlots: const {},
+      ),
+    );
     await _syncAvailability(emit);
   }
 
@@ -179,24 +218,38 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
 
     if (refreshDoctors) {
       try {
-        final fresh = await bookingRepository.getClinicDoctors(clinic.id, clinic.category);
+        final fresh = await bookingRepository.getClinicDoctors(
+          clinic.id,
+          clinic.category,
+        );
         if (fresh.isNotEmpty) {
           final cur = state.selectedDoctor;
           ClinicDoctorItem? doc;
           for (final d in fresh) {
             if (cur != null && d.id == cur.id) doc = d;
           }
-          final schedule = _scheduleFor(doc, state.selectedService, state.selectedDate);
-          emit(state.copyWith(
-            doctors: fresh,
-            filteredDoctors: _filterDoctorsForService(fresh, state.selectedService),
-            selectedDoctor: doc,
-            clearSelectedDoctor: doc == null,
-            selectedDate: schedule.date,
-            availableTimeSlots: schedule.slots,
-            selectedTimeSlot: schedule.slots.isNotEmpty ? schedule.slots.first : '',
-            bookedSlots: const {},
-          ));
+          final schedule = _scheduleFor(
+            doc,
+            state.selectedService,
+            state.selectedDate,
+          );
+          emit(
+            state.copyWith(
+              doctors: fresh,
+              filteredDoctors: _filterDoctorsForService(
+                fresh,
+                state.selectedService,
+              ),
+              selectedDoctor: doc,
+              clearSelectedDoctor: doc == null,
+              selectedDate: schedule.date,
+              availableTimeSlots: schedule.slots,
+              selectedTimeSlot: schedule.slots.isNotEmpty
+                  ? schedule.slots.first
+                  : '',
+              bookedSlots: const {},
+            ),
+          );
         }
       } catch (_) {}
     }
@@ -209,7 +262,8 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       doctorId: doctor.id,
       date: date,
     );
-    if (state.selectedDoctor?.id != doctor.id || !DateUtils.isSameDay(state.selectedDate, date)) {
+    if (state.selectedDoctor?.id != doctor.id ||
+        !DateUtils.isSameDay(state.selectedDate, date)) {
       return;
     }
     String pick = state.selectedTimeSlot;
@@ -247,10 +301,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     return (date: start, slots: const <String>[]);
   }
 
-  void _onSelectTimeSlot(
-    SelectTimeSlot event,
-    Emitter<BookingState> emit,
-  ) {
+  void _onSelectTimeSlot(SelectTimeSlot event, Emitter<BookingState> emit) {
     emit(state.copyWith(selectedTimeSlot: event.timeSlot));
   }
 
@@ -258,36 +309,29 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     UpdatePatientDetails event,
     Emitter<BookingState> emit,
   ) {
-    emit(state.copyWith(
-      patientName: event.name ?? state.patientName,
-      patientPhone: event.phone ?? state.patientPhone,
-      patientNotes: event.notes ?? state.patientNotes,
-    ));
+    emit(
+      state.copyWith(
+        patientName: event.name ?? state.patientName,
+        patientPhone: event.phone ?? state.patientPhone,
+        patientNotes: event.notes ?? state.patientNotes,
+      ),
+    );
   }
 
-  Future<void> _onNextStep(
-    NextStep event,
-    Emitter<BookingState> emit,
-  ) async {
+  Future<void> _onNextStep(NextStep event, Emitter<BookingState> emit) async {
     if (state.step < 4) {
       emit(state.copyWith(step: state.step + 1));
       if (state.step == 3) await _syncAvailability(emit, refreshDoctors: true);
     }
   }
 
-  void _onPreviousStep(
-    PreviousStep event,
-    Emitter<BookingState> emit,
-  ) {
+  void _onPreviousStep(PreviousStep event, Emitter<BookingState> emit) {
     if (state.step > 1) {
       emit(state.copyWith(step: state.step - 1));
     }
   }
 
-  Future<void> _onGoToStep(
-    GoToStep event,
-    Emitter<BookingState> emit,
-  ) async {
+  Future<void> _onGoToStep(GoToStep event, Emitter<BookingState> emit) async {
     if (event.step >= 1 && event.step <= 4) {
       emit(state.copyWith(step: event.step));
       if (event.step == 3) await _syncAvailability(emit, refreshDoctors: true);
@@ -305,10 +349,12 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     final doctor = state.selectedDoctor;
 
     if (clinic == null || service == null || doctor == null) {
-      emit(state.copyWith(
-        status: BookingStatus.failure,
-        errorMessage: 'Missing clinic, service, or doctor details.',
-      ));
+      emit(
+        state.copyWith(
+          status: BookingStatus.failure,
+          errorMessage: 'Missing clinic, service, or doctor details.',
+        ),
+      );
       return;
     }
 
@@ -348,28 +394,27 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
 
     try {
       final savedAppointment = await createAppointmentUseCase(appointment);
-      emit(state.copyWith(
-        status: BookingStatus.success,
-        step: 5,
-        confirmedAppointment: savedAppointment,
-      ));
+      emit(
+        state.copyWith(
+          status: BookingStatus.success,
+          step: 5,
+          confirmedAppointment: savedAppointment,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
-        status: BookingStatus.failure,
-        errorMessage: 'Error securing booking: $e',
-      ));
+      emit(
+        state.copyWith(
+          status: BookingStatus.failure,
+          errorMessage: 'Error securing booking: $e',
+        ),
+      );
     }
   }
 
-  void _onResetBooking(
-    ResetBooking event,
-    Emitter<BookingState> emit,
-  ) {
-    emit(state.copyWith(
-      step: 1,
-      status: BookingStatus.ready,
-      clearError: true,
-    ));
+  void _onResetBooking(ResetBooking event, Emitter<BookingState> emit) {
+    emit(
+      state.copyWith(step: 1, status: BookingStatus.ready, clearError: true),
+    );
   }
 
   /// Doctors who serve [service]: explicitly assigned to it, listed under it,

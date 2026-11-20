@@ -28,7 +28,10 @@ class ServicesViewHeader extends StatelessWidget {
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: colors.badgeOpenBg,
                     borderRadius: BorderRadius.circular(20),
@@ -69,10 +72,7 @@ class ServicesViewHeader extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               'Configure treatments, durations, pricing & clinical assignments (1 service per doctor limit)',
-              style: GoogleFonts.inter(
-                fontSize: 13.5,
-                color: colors.textMuted,
-              ),
+              style: GoogleFonts.inter(fontSize: 13.5, color: colors.textMuted),
             ),
           ],
         );

@@ -26,13 +26,13 @@ class ClinicServiceItem extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        name,
-        description,
-        duration,
-        price,
-        status,
-        departmentName,
-        assignedStaff,
-      ];
+    id,
+    name,
+    description,
+    duration,
+    price,
+    status,
+    departmentName,
+    assignedStaff,
+  ];
 }

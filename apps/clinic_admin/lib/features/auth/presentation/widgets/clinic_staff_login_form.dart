@@ -13,10 +13,7 @@ import 'clinic_input_field.dart';
 class ClinicStaffLoginForm extends StatelessWidget {
   final ClinicSignInState state;
 
-  const ClinicStaffLoginForm({
-    super.key,
-    required this.state,
-  });
+  const ClinicStaffLoginForm({super.key, required this.state});
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +72,8 @@ class ClinicStaffLoginForm extends StatelessWidget {
           Align(
             alignment: Alignment.centerRight,
             child: TextButton(
-              onPressed: () => bloc.add(const ClinicSignInForgotPasswordRequested()),
+              onPressed: () =>
+                  bloc.add(const ClinicSignInForgotPasswordRequested()),
               child: Text(
                 'Forgot password?',
                 style: GoogleFonts.inter(

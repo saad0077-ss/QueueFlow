@@ -5,6 +5,7 @@ class ProfileMenuItem {
   final Widget icon;
   final Color iconBgColor;
   final String title;
+  final String? subtitle;
   final Color? titleColor;
   final Widget? trailing;
   final VoidCallback? onTap;
@@ -13,6 +14,7 @@ class ProfileMenuItem {
     required this.icon,
     required this.iconBgColor,
     required this.title,
+    this.subtitle,
     this.titleColor,
     this.trailing,
     this.onTap,
@@ -72,7 +74,10 @@ class ProfileMenuSection extends StatelessWidget {
                     child: InkWell(
                       onTap: item.onTap,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 13,
+                        ),
                         child: Row(
                           children: [
                             // Icon Box
@@ -88,15 +93,34 @@ class ProfileMenuSection extends StatelessWidget {
                             ),
                             const SizedBox(width: 12),
 
-                            // Title Label
+                            // Title & Subtitle Label
                             Expanded(
-                              child: Text(
-                                item.title,
-                                style: TextStyle(
-                                  fontSize: 13.5,
-                                  fontWeight: FontWeight.w600,
-                                  color: item.titleColor ?? colors.textPrimary,
-                                ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    item.title,
+                                    style: TextStyle(
+                                      fontSize: 13.5,
+                                      fontWeight: FontWeight.w600,
+                                      color:
+                                          item.titleColor ?? colors.textPrimary,
+                                    ),
+                                  ),
+                                  if (item.subtitle != null &&
+                                      item.subtitle!.isNotEmpty) ...[
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      item.subtitle!,
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w500,
+                                        color: colors.textMuted,
+                                      ),
+                                    ),
+                                  ],
+                                ],
                               ),
                             ),
 

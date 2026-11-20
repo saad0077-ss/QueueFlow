@@ -75,8 +75,7 @@ class DoctorDetailContactCard extends StatelessWidget {
                 ],
               ),
             ),
-            if (i < rows.length - 1)
-              Divider(color: colors.border, height: 1),
+            if (i < rows.length - 1) Divider(color: colors.border, height: 1),
           ],
         ],
       ),

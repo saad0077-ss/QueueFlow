@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
@@ -18,14 +18,14 @@ class ClinicLocationPanel extends StatefulWidget {
     required this.clinicName,
     required this.location,
     required this.onSave,
-  });   
+  });
 
   @override
   State<ClinicLocationPanel> createState() => _ClinicLocationPanelState();
 }
 
 class _ClinicLocationPanelState extends State<ClinicLocationPanel> {
-  late final TextEditingController _buildingCtrl;  
+  late final TextEditingController _buildingCtrl;
   late final TextEditingController _streetCtrl;
   late final TextEditingController _areaCtrl;
   late final TextEditingController _cityCtrl;
@@ -56,7 +56,18 @@ class _ClinicLocationPanelState extends State<ClinicLocationPanel> {
     _parkingCtrl = TextEditingController(text: widget.location.parking);
     _directionsCtrl = TextEditingController(text: widget.location.directions);
 
-    for (final c in [_buildingCtrl, _streetCtrl, _areaCtrl, _cityCtrl, _stateCtrl, _pincodeCtrl, _landmarkCtrl, _mapsUrlCtrl, _latCtrl, _lngCtrl]) {
+    for (final c in [
+      _buildingCtrl,
+      _streetCtrl,
+      _areaCtrl,
+      _cityCtrl,
+      _stateCtrl,
+      _pincodeCtrl,
+      _landmarkCtrl,
+      _mapsUrlCtrl,
+      _latCtrl,
+      _lngCtrl,
+    ]) {
       c.addListener(() => setState(() {}));
     }
   }
@@ -70,6 +81,7 @@ class _ClinicLocationPanelState extends State<ClinicLocationPanel> {
     void sync(TextEditingController c, String v) {
       if (c.text != v) c.text = v;
     }
+
     sync(_buildingCtrl, l.building);
     sync(_streetCtrl, l.street);
     sync(_areaCtrl, l.area);
@@ -86,7 +98,20 @@ class _ClinicLocationPanelState extends State<ClinicLocationPanel> {
 
   @override
   void dispose() {
-    for (final c in [_buildingCtrl, _streetCtrl, _areaCtrl, _cityCtrl, _stateCtrl, _pincodeCtrl, _landmarkCtrl, _mapsUrlCtrl, _latCtrl, _lngCtrl, _parkingCtrl, _directionsCtrl]) {
+    for (final c in [
+      _buildingCtrl,
+      _streetCtrl,
+      _areaCtrl,
+      _cityCtrl,
+      _stateCtrl,
+      _pincodeCtrl,
+      _landmarkCtrl,
+      _mapsUrlCtrl,
+      _latCtrl,
+      _lngCtrl,
+      _parkingCtrl,
+      _directionsCtrl,
+    ]) {
       c.dispose();
     }
     super.dispose();
@@ -117,10 +142,23 @@ class _ClinicLocationPanelState extends State<ClinicLocationPanel> {
       final lngStr = pos.longitude.toStringAsFixed(6);
       _latCtrl.text = latStr;
       _lngCtrl.text = lngStr;
-      _mapsUrlCtrl.text = ClinicGpsService.buildMapsUrl(pos.latitude, pos.longitude);
-      if (mounted) AppSnackBar.showSuccess(context, message: 'GPS location detected: $latStr, $lngStr');
+      _mapsUrlCtrl.text = ClinicGpsService.buildMapsUrl(
+        pos.latitude,
+        pos.longitude,
+      );
+      if (mounted) {
+        AppSnackBar.showSuccess(
+          context,
+          message: 'GPS location detected: $latStr, $lngStr',
+        );
+      }
     } catch (e) {
-      if (mounted) AppSnackBar.showError(context, message: e.toString().replaceFirst('Exception: ', ''));
+      if (mounted) {
+        AppSnackBar.showError(
+          context,
+          message: e.toString().replaceFirst('Exception: ', ''),
+        );
+      }
       return;
     } finally {
       if (mounted) setState(() => _isDetectingGps = false);
@@ -132,7 +170,10 @@ class _ClinicLocationPanelState extends State<ClinicLocationPanel> {
     final lat = double.tryParse(_latCtrl.text.trim());
     final lng = double.tryParse(_lngCtrl.text.trim());
     if (lat == null || lng == null || lat.abs() > 90 || lng.abs() > 180) {
-      AppSnackBar.showError(context, message: 'Enter valid GPS latitude and longitude first.');
+      AppSnackBar.showError(
+        context,
+        message: 'Enter valid GPS latitude and longitude first.',
+      );
       return;
     }
 
@@ -142,16 +183,30 @@ class _ClinicLocationPanelState extends State<ClinicLocationPanel> {
       void fill(TextEditingController ctrl, String value) {
         if (value.isNotEmpty) ctrl.text = value;
       }
+
       fill(_buildingCtrl, result.building);
       fill(_streetCtrl, result.street);
       fill(_areaCtrl, result.area);
       fill(_cityCtrl, result.city);
       fill(_stateCtrl, result.state);
       fill(_pincodeCtrl, result.pincode);
-      if (_mapsUrlCtrl.text.trim().isEmpty) _mapsUrlCtrl.text = ClinicGpsService.buildMapsUrl(lat, lng);
-      if (mounted) AppSnackBar.showSuccess(context, message: 'Address auto-filled from coordinates. Please review before saving.');
+      if (_mapsUrlCtrl.text.trim().isEmpty) {
+        _mapsUrlCtrl.text = ClinicGpsService.buildMapsUrl(lat, lng);
+      }
+      if (mounted) {
+        AppSnackBar.showSuccess(
+          context,
+          message:
+              'Address auto-filled from coordinates. Please review before saving.',
+        );
+      }
     } catch (e) {
-      if (mounted) AppSnackBar.showError(context, message: e.toString().replaceFirst('Exception: ', ''));
+      if (mounted) {
+        AppSnackBar.showError(
+          context,
+          message: e.toString().replaceFirst('Exception: ', ''),
+        );
+      }
     } finally {
       if (mounted) setState(() => _isFillingAddress = false);
     }
@@ -162,7 +217,10 @@ class _ClinicLocationPanelState extends State<ClinicLocationPanel> {
     if (uri != null && await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else if (mounted) {
-      AppSnackBar.showError(context, message: 'Unable to open Maps navigation link.');
+      AppSnackBar.showError(
+        context,
+        message: 'Unable to open Maps navigation link.',
+      );
     }
   }
 
@@ -187,7 +245,9 @@ class _ClinicLocationPanelState extends State<ClinicLocationPanel> {
           directionsCtrl: _directionsCtrl,
           onTestLink: () => _launchUrl(_mapsUrlCtrl.text.trim()),
           onDetectGps: _isDetectingGps || _isFillingAddress ? null : _detectGps,
-          onFillAddress: _isDetectingGps || _isFillingAddress ? null : _fillAddressFromCoords,
+          onFillAddress: _isDetectingGps || _isFillingAddress
+              ? null
+              : _fillAddressFromCoords,
           isDetectingGps: _isDetectingGps,
           isFillingAddress: _isFillingAddress,
         ),
@@ -200,9 +260,16 @@ class _ClinicLocationPanelState extends State<ClinicLocationPanel> {
           mapsUrl: _mapsUrlCtrl.text,
           onCopyAddress: () {
             Clipboard.setData(ClipboardData(text: loc.fullAddress));
-            AppSnackBar.showSuccess(context, message: 'Formatted address copied to clipboard.');
+            AppSnackBar.showSuccess(
+              context,
+              message: 'Formatted address copied to clipboard.',
+            );
           },
-          onOpenMaps: () => _launchUrl(_mapsUrlCtrl.text.trim().isNotEmpty ? _mapsUrlCtrl.text.trim() : 'https://www.google.com/maps/search/?api=1&query=${_latCtrl.text.trim()},${_lngCtrl.text.trim()}'),
+          onOpenMaps: () => _launchUrl(
+            _mapsUrlCtrl.text.trim().isNotEmpty
+                ? _mapsUrlCtrl.text.trim()
+                : 'https://www.google.com/maps/search/?api=1&query=${_latCtrl.text.trim()},${_lngCtrl.text.trim()}',
+          ),
         ),
         const SizedBox(height: 24),
         ClinicLocationSaveButton(onSave: () => widget.onSave(loc)),

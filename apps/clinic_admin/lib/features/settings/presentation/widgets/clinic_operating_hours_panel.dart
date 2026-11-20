@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import '../../domain/entities/clinic_operating_schedule_entity.dart';
 import '../../domain/entities/operating_hours_day_entity.dart';
 import 'hours_action_footer.dart';
@@ -27,7 +27,8 @@ class ClinicOperatingHoursPanel extends StatefulWidget {
   });
 
   @override
-  State<ClinicOperatingHoursPanel> createState() => _ClinicOperatingHoursPanelState();
+  State<ClinicOperatingHoursPanel> createState() =>
+      _ClinicOperatingHoursPanelState();
 }
 
 class _ClinicOperatingHoursPanelState extends State<ClinicOperatingHoursPanel> {
@@ -90,7 +91,8 @@ class _ClinicOperatingHoursPanelState extends State<ClinicOperatingHoursPanel> {
           totalWeeklyHours: widget.schedule.totalWeeklyHours,
           isEmergencyOnCall: _emergency,
           scheduleSummary: widget.schedule.scheduleSummary,
-          statusBuilder: () => widget.schedule.statusAt(DateTime.now()) ??
+          statusBuilder: () =>
+              widget.schedule.statusAt(DateTime.now()) ??
               (isOpen: false, label: 'NOT SET'),
         ),
         const SizedBox(height: 12),
@@ -99,14 +101,16 @@ class _ClinicOperatingHoursPanelState extends State<ClinicOperatingHoursPanel> {
           onCopyMonday: widget.onCopyMonday,
         ),
         const SizedBox(height: 14),
-        ...widget.schedule.days.values.map((d) => Padding(
-          padding: const EdgeInsets.only(bottom: 10),
-          child: OperatingDayCard(
-            day: d,
-            onDayChanged: widget.onDayChanged,
-            onCopyDay: () => widget.onCopyMonday(),
+        ...widget.schedule.days.values.map(
+          (d) => Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: OperatingDayCard(
+              day: d,
+              onDayChanged: widget.onDayChanged,
+              onCopyDay: () => widget.onCopyMonday(),
+            ),
           ),
-        )),
+        ),
         const SizedBox(height: 20),
         HoursVisualTimeline(days: widget.schedule.days),
         const SizedBox(height: 20),

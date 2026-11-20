@@ -131,7 +131,10 @@ class _ClinicProfileChipState extends State<ClinicProfileChip> {
               const SizedBox(width: 10),
               Text(
                 'Profile Settings',
-                style: GoogleFonts.inter(fontSize: 13, color: colors.textPrimary),
+                style: GoogleFonts.inter(
+                  fontSize: 13,
+                  color: colors.textPrimary,
+                ),
               ),
             ],
           ),
@@ -141,18 +144,11 @@ class _ClinicProfileChipState extends State<ClinicProfileChip> {
           value: 'logout',
           child: Row(
             children: [
-              Icon(
-                Icons.logout_rounded,
-                color: colors.error,
-                size: 18,
-              ),
+              Icon(Icons.logout_rounded, color: colors.error, size: 18),
               const SizedBox(width: 10),
               Text(
                 'Sign Out',
-                style: GoogleFonts.inter(
-                  fontSize: 13,
-                  color: colors.error,
-                ),
+                style: GoogleFonts.inter(fontSize: 13, color: colors.error),
               ),
             ],
           ),
@@ -188,15 +184,15 @@ class _ClinicProfileChipState extends State<ClinicProfileChip> {
                   ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 160),
                     child: Text(
-                    name,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.inter(
-                      fontSize: 13.5,
-                      fontWeight: FontWeight.w700,
-                      color: colors.textPrimary,
+                      name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.inter(
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.w700,
+                        color: colors.textPrimary,
+                      ),
                     ),
-                  ),
                   ),
                   Text(
                     'Clinic Admin',

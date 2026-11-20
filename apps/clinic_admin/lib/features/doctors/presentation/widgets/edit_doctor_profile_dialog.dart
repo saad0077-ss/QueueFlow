@@ -41,7 +41,8 @@ class EditDoctorProfileDialog extends StatefulWidget {
   }
 
   @override
-  State<EditDoctorProfileDialog> createState() => _EditDoctorProfileDialogState();
+  State<EditDoctorProfileDialog> createState() =>
+      _EditDoctorProfileDialogState();
 }
 
 class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
@@ -72,16 +73,22 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
         .toList();
     _photoUrl = d.photoUrl;
     _photoBytes = _decodeDataUri(d.photoUrl);
-    _expController = TextEditingController(text: d.experienceYears > 0 ? d.experienceYears.toString() : '');
+    _expController = TextEditingController(
+      text: d.experienceYears > 0 ? d.experienceYears.toString() : '',
+    );
     _emailController = TextEditingController(text: d.email);
     _phoneController = TextEditingController(text: d.phone);
     _roomController = TextEditingController(text: d.room);
 
     _selectedDept = widget.departments.contains(d.department)
         ? d.department
-        : (widget.departments.isNotEmpty ? widget.departments.first : 'General Medicine');
+        : (widget.departments.isNotEmpty
+              ? widget.departments.first
+              : 'General Medicine');
 
-    _selectedEmployment = d.employmentType.isNotEmpty ? d.employmentType : 'Full-time';
+    _selectedEmployment = d.employmentType.isNotEmpty
+        ? d.employmentType
+        : 'Full-time';
   }
 
   @override
@@ -115,19 +122,24 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
     Navigator.of(context).pop();
   }
 
-  String? _required(String? v) => v == null || v.trim().isEmpty ? 'Required' : null;
+  String? _required(String? v) =>
+      v == null || v.trim().isEmpty ? 'Required' : null;
 
   String? _validateEmail(String? v) {
     final t = v?.trim() ?? '';
     if (t.isEmpty) return null;
-    return RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(t) ? null : 'Enter a valid email';
+    return RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(t)
+        ? null
+        : 'Enter a valid email';
   }
 
   String? _validatePhone(String? v) {
     final t = v?.trim() ?? '';
     if (t.isEmpty) return null;
     final digits = t.replaceAll(RegExp(r'\D'), '');
-    return digits.length >= 7 && digits.length <= 15 ? null : 'Enter a valid phone number';
+    return digits.length >= 7 && digits.length <= 15
+        ? null
+        : 'Enter a valid phone number';
   }
 
   String? _validateExperience(String? v) {
@@ -153,7 +165,12 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
       controller: controller,
       style: GoogleFonts.inter(fontSize: 13, color: colors.textPrimary),
       cursorColor: colors.info,
-      decoration: doctorInputDecoration(context: context, hint: hint, prefixIcon: icon, suffixText: suffix),
+      decoration: doctorInputDecoration(
+        context: context,
+        hint: hint,
+        prefixIcon: icon,
+        suffixText: suffix,
+      ),
       keyboardType: keyboardType,
       inputFormatters: formatters,
       validator: validator,
@@ -192,20 +209,31 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
                 isExpanded: true,
                 borderRadius: BorderRadius.circular(10),
                 dropdownColor: colors.surfaceElevated,
-                icon: Icon(Icons.keyboard_arrow_down_rounded, color: colors.textMuted),
-                style: GoogleFonts.inter(fontSize: 13, color: colors.textPrimary),
+                icon: Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  color: colors.textMuted,
+                ),
+                style: GoogleFonts.inter(
+                  fontSize: 13,
+                  color: colors.textPrimary,
+                ),
                 onChanged: (v) {
                   if (v != null) onChanged(v);
                 },
                 items: items
-                    .map((e) => DropdownMenuItem<String>(
-                          value: e,
-                          child: Text(
-                            e,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.inter(fontSize: 13, color: colors.textPrimary),
+                    .map(
+                      (e) => DropdownMenuItem<String>(
+                        value: e,
+                        child: Text(
+                          e,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.inter(
+                            fontSize: 13,
+                            color: colors.textPrimary,
                           ),
-                        ))
+                        ),
+                      ),
+                    )
                     .toList(),
               ),
             ),
@@ -220,7 +248,12 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
     final colors = context.colors;
     final depts = widget.departments.isNotEmpty
         ? widget.departments
-        : ['General Medicine', 'Dental & Oral Surgery', 'Pediatrics & Child Care', 'Cardiology'];
+        : [
+            'General Medicine',
+            'Dental & Oral Surgery',
+            'Pediatrics & Child Care',
+            'Cardiology',
+          ];
 
     const employmentTypes = [
       'Full-time',
@@ -229,7 +262,9 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
       'Contract',
     ];
 
-    final digitsOnly = <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly];
+    final digitsOnly = <TextInputFormatter>[
+      FilteringTextInputFormatter.digitsOnly,
+    ];
 
     return Dialog(
       backgroundColor: Colors.transparent,
@@ -240,7 +275,10 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
         curve: Curves.easeOutCubic,
         builder: (context, t, child) => Opacity(
           opacity: t,
-          child: Transform.translate(offset: Offset(0, 12 * (1 - t)), child: child),
+          child: Transform.translate(
+            offset: Offset(0, 12 * (1 - t)),
+            child: child,
+          ),
         ),
         child: Container(
           constraints: const BoxConstraints(maxWidth: 620, maxHeight: 760),
@@ -304,7 +342,8 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
                                     value: _selectedDept,
                                     items: depts,
                                     icon: Icons.apartment_rounded,
-                                    onChanged: (v) => setState(() => _selectedDept = v),
+                                    onChanged: (v) =>
+                                        setState(() => _selectedDept = v),
                                   ),
                                 ),
                               ),
@@ -333,7 +372,8 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
                                     value: _selectedEmployment,
                                     items: employmentTypes,
                                     icon: Icons.work_outline_rounded,
-                                    onChanged: (v) => setState(() => _selectedEmployment = v),
+                                    onChanged: (v) =>
+                                        setState(() => _selectedEmployment = v),
                                   ),
                                 ),
                               ),
@@ -365,7 +405,11 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
                                     icon: Icons.phone_outlined,
                                     hint: '+91 98450 00000',
                                     keyboardType: TextInputType.phone,
-                                    formatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9+\-\s()]'))],
+                                    formatters: [
+                                      FilteringTextInputFormatter.allow(
+                                        RegExp(r'[0-9+\-\s()]'),
+                                      ),
+                                    ],
                                     validator: _validatePhone,
                                   ),
                                 ),
@@ -402,9 +446,7 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
     final colors = context.colors;
     return Container(
       padding: const EdgeInsets.fromLTRB(24, 20, 16, 18),
-      decoration: BoxDecoration(
-        color: colors.surfaceElevated,
-      ),
+      decoration: BoxDecoration(color: colors.surfaceElevated),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -422,7 +464,11 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
                 ),
               ],
             ),
-            child: const Icon(Icons.edit_note_rounded, color: Colors.white, size: 24),
+            child: const Icon(
+              Icons.edit_note_rounded,
+              color: Colors.white,
+              size: 24,
+            ),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -441,7 +487,10 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
                 const SizedBox(height: 2),
                 Text(
                   'Update professional, contact and consultation details',
-                  style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted),
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    color: colors.textMuted,
+                  ),
                 ),
               ],
             ),
@@ -451,7 +500,9 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
             icon: Icon(Icons.close_rounded, size: 20, color: colors.textMuted),
             style: IconButton.styleFrom(
               backgroundColor: colors.surfaceSecondary,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
             onPressed: () => Navigator.of(context).pop(),
           ),
@@ -525,12 +576,16 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
                                 selectedColor: dialogColors.infoTint,
                                 backgroundColor: dialogColors.surfaceSecondary,
                                 side: BorderSide(
-                                  color: picked.contains(q) ? dialogColors.info : dialogColors.border,
+                                  color: picked.contains(q)
+                                      ? dialogColors.info
+                                      : dialogColors.border,
                                 ),
                                 labelStyle: GoogleFonts.inter(
                                   fontSize: 12.5,
                                   fontWeight: FontWeight.w600,
-                                  color: picked.contains(q) ? dialogColors.info : dialogColors.textPrimary,
+                                  color: picked.contains(q)
+                                      ? dialogColors.info
+                                      : dialogColors.textPrimary,
                                 ),
                                 onSelected: (on) => setLocal(() {
                                   on ? picked.add(q) : picked.remove(q);
@@ -546,15 +601,20 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
                       children: [
                         TextButton(
                           onPressed: () => Navigator.of(ctx).pop(),
-                          child: Text('Cancel', style: GoogleFonts.inter(color: dialogColors.textMuted)),
+                          child: Text(
+                            'Cancel',
+                            style: GoogleFonts.inter(
+                              color: dialogColors.textMuted,
+                            ),
+                          ),
                         ),
                         const SizedBox(width: 8),
                         DoctorGradientButton(
                           label: 'Done',
                           height: 38,
-                          onPressed: () => Navigator.of(ctx).pop(
-                            options.where(picked.contains).toList(),
-                          ),
+                          onPressed: () => Navigator.of(
+                            ctx,
+                          ).pop(options.where(picked.contains).toList()),
                         ),
                       ],
                     ),
@@ -590,7 +650,10 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
               child: _selectedQuals.isEmpty
                   ? Text(
                       'Select qualifications',
-                      style: GoogleFonts.inter(fontSize: 13, color: colors.textMuted),
+                      style: GoogleFonts.inter(
+                        fontSize: 13,
+                        color: colors.textMuted,
+                      ),
                     )
                   : Wrap(
                       spacing: 6,
@@ -598,7 +661,10 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
                       children: [
                         for (final q in _selectedQuals)
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 3,
+                            ),
                             decoration: BoxDecoration(
                               color: colors.infoTint,
                               borderRadius: BorderRadius.circular(6),
@@ -644,10 +710,14 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
       if (file == null) return;
       final bytes = await file.readAsBytes();
       if (bytes.length > 200 * 1024) {
-        _showPhotoError('Photo is too large (${(bytes.length / 1024).round()} KB). Choose one under 200 KB.');
+        _showPhotoError(
+          'Photo is too large (${(bytes.length / 1024).round()} KB). Choose one under 200 KB.',
+        );
         return;
       }
-      final ext = file.name.contains('.') ? file.name.split('.').last.toLowerCase() : 'jpg';
+      final ext = file.name.contains('.')
+          ? file.name.split('.').last.toLowerCase()
+          : 'jpg';
       final type = switch (ext) {
         'png' => 'image/png',
         'webp' => 'image/webp',
@@ -666,7 +736,9 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
 
   void _showPhotoError(String message) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   Widget _buildProfileStrip(BuildContext context) {
@@ -691,7 +763,13 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
               border: Border.all(color: colors.info.withValues(alpha: 0.35)),
             ),
             child: _photoBytes != null
-                ? Image.memory(_photoBytes!, width: 52, height: 52, fit: BoxFit.cover, gaplessPlayback: true)
+                ? Image.memory(
+                    _photoBytes!,
+                    width: 52,
+                    height: 52,
+                    fit: BoxFit.cover,
+                    gaplessPlayback: true,
+                  )
                 : Text(
                     widget.doctor.initials,
                     style: GoogleFonts.inter(
@@ -719,7 +797,10 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
                 const SizedBox(height: 3),
                 Text(
                   'JPG or PNG, max 200 KB',
-                  style: GoogleFonts.inter(fontSize: 11, color: colors.textSubtle),
+                  style: GoogleFonts.inter(
+                    fontSize: 11,
+                    color: colors.textSubtle,
+                  ),
                 ),
               ],
             ),
@@ -727,7 +808,11 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
           if (_photoBytes != null) ...[
             IconButton(
               tooltip: 'Remove photo',
-              icon: Icon(Icons.delete_outline_rounded, size: 18, color: colors.textMuted),
+              icon: Icon(
+                Icons.delete_outline_rounded,
+                size: 18,
+                color: colors.textMuted,
+              ),
               onPressed: () => setState(() {
                 _photoBytes = null;
                 _photoUrl = '';
@@ -740,14 +825,19 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
             icon: const Icon(Icons.upload_rounded, size: 15),
             label: Text(
               _photoBytes == null ? 'Upload photo' : 'Change photo',
-              style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600),
+              style: GoogleFonts.inter(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
             ),
             style: OutlinedButton.styleFrom(
               foregroundColor: colors.textPrimary,
               side: BorderSide(color: colors.border),
               backgroundColor: colors.surfaceElevated,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
           ),
         ],
@@ -825,7 +915,9 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
               side: BorderSide(color: colors.border),
               backgroundColor: colors.surfaceSecondary,
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
             child: Text(
               'Cancel',
@@ -852,13 +944,7 @@ class _EditDoctorProfileDialogState extends State<EditDoctorProfileDialog> {
     return LayoutBuilder(
       builder: (context, constraints) {
         if (constraints.maxWidth < 420) {
-          return Column(
-            children: [
-              left,
-              const SizedBox(height: 14),
-              right,
-            ],
-          );
+          return Column(children: [left, const SizedBox(height: 14), right]);
         }
         return Row(
           crossAxisAlignment: CrossAxisAlignment.start,

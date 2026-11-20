@@ -11,7 +11,8 @@ class ServiceCapacityQuotaCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final summary = '$currentCount Service${currentCount == 1 ? '' : 's'} Active (Unlimited Services)';
+    final summary =
+        '$currentCount Service${currentCount == 1 ? '' : 's'} Active (Unlimited Services)';
     const subText = 'All plans include unlimited clinical services.';
 
     final info = Row(
@@ -96,11 +97,7 @@ class ServiceCapacityQuotaCard extends StatelessWidget {
                 if (constraints.maxWidth < 640) {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      info,
-                      const SizedBox(height: 12),
-                      pill,
-                    ],
+                    children: [info, const SizedBox(height: 12), pill],
                   );
                 }
                 return Row(

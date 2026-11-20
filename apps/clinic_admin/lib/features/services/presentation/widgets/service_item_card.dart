@@ -93,10 +93,7 @@ class ServiceItemCard extends StatelessWidget {
               ),
               child: Text(
                 '⏳ Awaiting Super Admin review: Will activate once approved.',
-                style: GoogleFonts.inter(
-                  fontSize: 11,
-                  color: colors.warning,
-                ),
+                style: GoogleFonts.inter(fontSize: 11, color: colors.warning),
               ),
             ),
           ],
@@ -148,7 +145,11 @@ class ServiceItemCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusPill(BuildContext context, bool isPending, bool isRejected) {
+  Widget _buildStatusPill(
+    BuildContext context,
+    bool isPending,
+    bool isRejected,
+  ) {
     final colors = context.colors;
     final text = isPending
         ? '⏳ PENDING'

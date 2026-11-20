@@ -55,9 +55,7 @@ class ServiceDoctorCheckboxGroup extends StatelessWidget {
           decoration: BoxDecoration(
             color: colors.surfaceSecondary,
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              color: colors.border,
-            ),
+            border: Border.all(color: colors.border),
           ),
           child: availableDoctors.isEmpty
               ? Row(
@@ -83,7 +81,9 @@ class ServiceDoctorCheckboxGroup extends StatelessWidget {
               : Material(
                   type: MaterialType.transparency,
                   child: Column(
-                    children: availableDoctors.map((doc) => _buildDoctorRow(context, doc)).toList(),
+                    children: availableDoctors
+                        .map((doc) => _buildDoctorRow(context, doc))
+                        .toList(),
                   ),
                 ),
         ),

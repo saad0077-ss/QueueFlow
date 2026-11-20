@@ -1,4 +1,4 @@
-﻿import 'package:equatable/equatable.dart';
+import 'package:equatable/equatable.dart';
 
 class OperatingHoursDayEntity extends Equatable {
   final String dayKey;
@@ -21,7 +21,8 @@ class OperatingHoursDayEntity extends Equatable {
     this.breakEnd = '14:00',
   });
 
-  String get shortName => dayName.length >= 3 ? dayName.substring(0, 3) : dayName;
+  String get shortName =>
+      dayName.length >= 3 ? dayName.substring(0, 3) : dayName;
 
   static int parseMinutes(String timeStr) {
     final parts = timeStr.split(':');
@@ -46,7 +47,9 @@ class OperatingHoursDayEntity extends Equatable {
   String get netHoursText {
     if (!isOpen) return 'Closed';
     final hrs = netMinutes / 60.0;
-    return hrs == hrs.roundToDouble() ? '${hrs.toInt()} hrs' : '${hrs.toStringAsFixed(1)} hrs';
+    return hrs == hrs.roundToDouble()
+        ? '${hrs.toInt()} hrs'
+        : '${hrs.toStringAsFixed(1)} hrs';
   }
 
   OperatingHoursDayEntity copyWith({
@@ -72,5 +75,14 @@ class OperatingHoursDayEntity extends Equatable {
   }
 
   @override
-  List<Object?> get props => [dayKey, dayName, isOpen, openTime, closeTime, hasBreak, breakStart, breakEnd];
+  List<Object?> get props => [
+    dayKey,
+    dayName,
+    isOpen,
+    openTime,
+    closeTime,
+    hasBreak,
+    breakStart,
+    breakEnd,
+  ];
 }

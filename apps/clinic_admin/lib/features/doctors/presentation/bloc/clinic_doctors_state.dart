@@ -1,4 +1,4 @@
-﻿import 'package:equatable/equatable.dart';
+import 'package:equatable/equatable.dart';
 import '../../domain/entities/clinic_doctor_profile_entity.dart';
 import '../../domain/entities/doctor_plan_entity.dart';
 
@@ -25,9 +25,12 @@ class ClinicDoctorsState extends Equatable {
     this.isErrorToast = false,
   });
 
-  bool get isLimitReached => !plan.isUnlimited && doctors.length >= plan.doctorsLimit;
+  bool get isLimitReached =>
+      !plan.isUnlimited && doctors.length >= plan.doctorsLimit;
 
-  int get remainingSlots => plan.isUnlimited ? 999 : (plan.doctorsLimit - doctors.length).clamp(0, 999);
+  int get remainingSlots => plan.isUnlimited
+      ? 999
+      : (plan.doctorsLimit - doctors.length).clamp(0, 999);
 
   ClinicDoctorsState copyWith({
     DoctorsStatus? status,

@@ -1,4 +1,4 @@
-﻿import 'package:equatable/equatable.dart';
+import 'package:equatable/equatable.dart';
 import 'doctor_daily_schedule.dart';
 import 'doctor_review_entity.dart';
 
@@ -19,7 +19,8 @@ class ClinicDoctorProfileEntity extends Equatable {
   final String qualifications;
   final int experienceYears;
   final String registrationNo;
-  final String employmentType; // 'Full-time' | 'Part-time' | 'Visiting Consultant' | 'Contract'
+  final String
+  employmentType; // 'Full-time' | 'Part-time' | 'Visiting Consultant' | 'Contract'
   final int consultationFee;
   final int slotDuration; // in minutes
   final String bio;
@@ -68,18 +69,22 @@ class ClinicDoctorProfileEntity extends Equatable {
     this.totalAppointments = 0,
     this.completedAppointments = 0,
     this.upcomingAppointments = 0,
-  })  : department = department ?? specialty,
-        weeklySchedule = weeklySchedule ?? const {},
-        _initials = initials;
+  }) : department = department ?? specialty,
+       weeklySchedule = weeklySchedule ?? const {},
+       _initials = initials;
 
   String get initials => _initials ?? _deriveInitials(name);
 
   static String _deriveInitials(String fullName) {
-    final cleaned = fullName.replaceFirst(RegExp(r'^Dr\.\s*', caseSensitive: false), '').trim();
+    final cleaned = fullName
+        .replaceFirst(RegExp(r'^Dr\.\s*', caseSensitive: false), '')
+        .trim();
     if (cleaned.isEmpty) return 'DR';
     final parts = cleaned.split(RegExp(r'\s+'));
     if (parts.length == 1) {
-      return parts.first.substring(0, parts.first.length.clamp(1, 2)).toUpperCase();
+      return parts.first
+          .substring(0, parts.first.length.clamp(1, 2))
+          .toUpperCase();
     }
     return (parts.first[0] + parts.last[0]).toUpperCase();
   }
@@ -170,7 +175,8 @@ class ClinicDoctorProfileEntity extends Equatable {
       leaveDates: leaveDates ?? this.leaveDates,
       reviews: reviews ?? this.reviews,
       totalAppointments: totalAppointments ?? this.totalAppointments,
-      completedAppointments: completedAppointments ?? this.completedAppointments,
+      completedAppointments:
+          completedAppointments ?? this.completedAppointments,
       upcomingAppointments: upcomingAppointments ?? this.upcomingAppointments,
     );
   }

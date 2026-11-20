@@ -21,10 +21,14 @@ class BookingStep1Service extends StatelessWidget {
   IconData _getServiceIcon(String serviceName, String department) {
     final name = serviceName.toLowerCase();
     final dept = department.toLowerCase();
-    if (name.contains('tooth') || name.contains('dent') || dept.contains('dent')) {
+    if (name.contains('tooth') ||
+        name.contains('dent') ||
+        dept.contains('dent')) {
       return Icons.health_and_safety_outlined;
     }
-    if (name.contains('skin') || name.contains('derm') || dept.contains('derm')) {
+    if (name.contains('skin') ||
+        name.contains('derm') ||
+        dept.contains('derm')) {
       return Icons.water_drop_outlined;
     }
     if (name.contains('check') || name.contains('consult')) {
@@ -51,10 +55,7 @@ class BookingStep1Service extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           'Select the consultation or medical care you require.',
-          style: GoogleFonts.inter(
-            fontSize: 12.5,
-            color: colors.textMuted,
-          ),
+          style: GoogleFonts.inter(fontSize: 12.5, color: colors.textMuted),
         ),
         const SizedBox(height: 16),
         if (services.isEmpty)
@@ -63,10 +64,7 @@ class BookingStep1Service extends StatelessWidget {
             child: Center(
               child: Text(
                 'No services currently available for this clinic.',
-                style: GoogleFonts.inter(
-                  color: colors.textMuted,
-                  fontSize: 13,
-                ),
+                style: GoogleFonts.inter(color: colors.textMuted, fontSize: 13),
               ),
             ),
           )
@@ -77,8 +75,10 @@ class BookingStep1Service extends StatelessWidget {
             itemCount: services.length,
             itemBuilder: (context, index) {
               final service = services[index];
-              final isSelected = selectedService?.id == service.id ||
-                  (selectedService?.name == service.name && selectedService != null);
+              final isSelected =
+                  selectedService?.id == service.id ||
+                  (selectedService?.name == service.name &&
+                      selectedService != null);
 
               return _buildServiceCard(context, service, isSelected);
             },
@@ -216,7 +216,9 @@ class BookingStep1Service extends StatelessWidget {
                         gradient: isSelected ? AppColors.primaryGradient : null,
                         color: isSelected ? null : Colors.transparent,
                         border: Border.all(
-                          color: isSelected ? Colors.transparent : colors.border,
+                          color: isSelected
+                              ? Colors.transparent
+                              : colors.border,
                           width: 1.5,
                         ),
                       ),

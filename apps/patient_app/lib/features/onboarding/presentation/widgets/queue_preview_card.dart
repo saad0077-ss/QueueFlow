@@ -13,10 +13,7 @@ class QueuePreviewCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: const Color(0xFF141D2E),
             borderRadius: BorderRadius.circular(22),
-            border: Border.all(
-              color: const Color(0xFF1E2D44),
-              width: 1,
-            ),
+            border: Border.all(color: const Color(0xFF1E2D44), width: 1),
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(22),
@@ -53,7 +50,8 @@ class QueuePreviewCard extends StatelessWidget {
                                 shape: BoxShape.circle,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: const Color(0xFF3B82F6).withValues(alpha: 0.8),
+                                    color: const Color(0xFF3B82F6)
+                                        .withValues(alpha: 0.8),
                                     blurRadius: 6,
                                     spreadRadius: 1,
                                   ),
@@ -283,9 +281,6 @@ class _QueueStepTracker extends StatelessWidget {
   }
 
   Widget _buildLine({required Color color}) {
-    return Container(
-      height: 2.2,
-      color: color,
-    );
+    return Container(height: 2.2, color: color);
   }
 }

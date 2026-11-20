@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../../core/widgets/app_icon_badge.dart';
 import '../../../../core/widgets/app_logo.dart';
 import '../../../../main.dart';
@@ -18,9 +19,9 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => SplashBloc(
-        authRepository: AuthRepositoryImpl(),
-      )..add(const SplashCheckAuthEvent()),
+      create: (_) =>
+          SplashBloc(authRepository: AuthRepositoryImpl())
+            ..add(const SplashCheckAuthEvent()),
       child: const _SplashScreenView(),
     );
   }
@@ -86,9 +87,9 @@ class _SplashScreenViewState extends State<_SplashScreenView>
         if (state is SplashAuthenticated) {
           final currentUser = FirebaseAuth.instance.currentUser;
           if (currentUser != null && !currentUser.emailVerified) {
-            _navigateTo(EmailVerificationScreen(
-              email: currentUser.email ?? '',
-            ));
+            _navigateTo(
+              EmailVerificationScreen(email: currentUser.email ?? ''),
+            );
           } else {
             _navigateTo(const PatientHomeScreen());
           }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../../core/widgets/gradient_button.dart';
 
 class ForgotPasswordSuccessView extends StatelessWidget {
@@ -36,10 +37,7 @@ class ForgotPasswordSuccessView extends StatelessWidget {
           decoration: BoxDecoration(
             color: colors.primaryTint,
             shape: BoxShape.circle,
-            border: Border.all(
-              color: colors.border,
-              width: 2,
-            ),
+            border: Border.all(color: colors.border, width: 2),
             boxShadow: [
               BoxShadow(
                 color: colors.primary.withValues(alpha: 0.25),
@@ -75,10 +73,7 @@ class ForgotPasswordSuccessView extends StatelessWidget {
         Text(
           'We have sent a password reset link to:',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            color: colors.textMuted,
-            fontSize: 14.5,
-          ),
+          style: TextStyle(color: colors.textMuted, fontSize: 14.5),
         ),
         const SizedBox(height: 8),
 
@@ -143,9 +138,7 @@ class ForgotPasswordSuccessView extends StatelessWidget {
                 ? 'Resend email in ${resendCooldown}s'
                 : 'Resend reset email',
             style: TextStyle(
-              color: resendCooldown > 0
-                  ? colors.textSubtle
-                  : colors.primary,
+              color: resendCooldown > 0 ? colors.textSubtle : colors.primary,
               fontWeight: FontWeight.w600,
               fontSize: 14,
             ),

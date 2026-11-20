@@ -43,11 +43,11 @@ class PaymentInfoEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        paymentId,
-        status,
-        gateway,
-        amount,
-        method,
-        paidAt,
-      ];
+    paymentId,
+    status,
+    gateway,
+    amount,
+    method,
+    paidAt,
+  ];
 }

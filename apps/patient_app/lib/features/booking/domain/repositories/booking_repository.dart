@@ -3,9 +3,15 @@ import 'package:patient_app/features/clinic_details/domain/entities/clinic_servi
 import 'package:patient_app/features/booking/domain/entities/appointment_entity.dart';
 
 abstract class BookingRepository {
-  Future<List<ClinicServiceItem>> getClinicServices(String clinicId, String category);
+  Future<List<ClinicServiceItem>> getClinicServices(
+    String clinicId,
+    String category,
+  );
 
-  Future<List<ClinicDoctorItem>> getClinicDoctors(String clinicId, String category);
+  Future<List<ClinicDoctorItem>> getClinicDoctors(
+    String clinicId,
+    String category,
+  );
 
   Future<List<String>> getAvailableTimeSlots({
     required String clinicId,

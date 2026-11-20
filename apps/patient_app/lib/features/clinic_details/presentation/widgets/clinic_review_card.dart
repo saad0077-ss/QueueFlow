@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../domain/entities/clinic_review_item.dart';
 import 'clinic_review_author_header.dart';
 
@@ -103,7 +104,10 @@ class ClinicReviewCard extends StatelessWidget {
                 const SizedBox(width: 4),
                 Text(
                   'Helpful (${review.helpfulCount})',
-                  style: GoogleFonts.inter(fontSize: 11, color: colors.textSubtle),
+                  style: GoogleFonts.inter(
+                    fontSize: 11,
+                    color: colors.textSubtle,
+                  ),
                 ),
               ],
             ),
@@ -112,11 +116,18 @@ class ClinicReviewCard extends StatelessWidget {
         if (review.verified)
           Row(
             children: [
-              Icon(Icons.check_circle_rounded, size: 12, color: colors.badgeOpenText),
+              Icon(
+                Icons.check_circle_rounded,
+                size: 12,
+                color: colors.badgeOpenText,
+              ),
               const SizedBox(width: 4),
               Text(
                 'Verified patient',
-                style: GoogleFonts.inter(fontSize: 10.5, color: colors.badgeOpenText),
+                style: GoogleFonts.inter(
+                  fontSize: 10.5,
+                  color: colors.badgeOpenText,
+                ),
               ),
             ],
           ),

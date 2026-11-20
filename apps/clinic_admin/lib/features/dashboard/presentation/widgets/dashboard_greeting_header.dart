@@ -28,11 +28,27 @@ class _DashboardGreetingHeaderState extends State<DashboardGreetingHeader> {
   String _selectedPeriod = 'today';
 
   static const _weekdays = [
-    'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday',
   ];
   static const _months = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
   ];
 
   @override
@@ -171,11 +187,7 @@ class _DashboardGreetingHeaderState extends State<DashboardGreetingHeader> {
         if (isCompact) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              infoSection,
-              const SizedBox(height: 14),
-              periodFilter,
-            ],
+            children: [infoSection, const SizedBox(height: 14), periodFilter],
           );
         }
 

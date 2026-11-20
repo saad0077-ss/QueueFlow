@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../../core/widgets/app_logo.dart';
 import '../widgets/onboarding_auth_buttons.dart';
 import '../widgets/ticket_preview_card.dart';

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../../core/widgets/gradient_button.dart';
 import '../../../auth/presentation/pages/sign_in_screen.dart';
 import '../../../auth/presentation/pages/sign_up_screen.dart';
@@ -14,9 +15,8 @@ class OnboardingAuthButtons extends StatelessWidget {
         GradientButton(
           text: 'Create account',
           onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(builder: (_) => const SignUpScreen()),
-            );
+            Navigator.of(context)
+                .push(MaterialPageRoute(builder: (_) => const SignUpScreen()));
           },
         ),
         const SizedBox(height: 12),
@@ -25,16 +25,13 @@ class OnboardingAuthButtons extends StatelessWidget {
           height: 54,
           child: OutlinedButton(
             onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const SignInScreen()),
-              );
+              Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (_) => const SignInScreen()));
             },
             style: OutlinedButton.styleFrom(
               backgroundColor: const Color(0xFF0B1220),
-              side: const BorderSide(
-                color: Color(0xFF24324A),
-                width: 1.5,
-              ),
+              side: const BorderSide(color: Color(0xFF24324A), width: 1.5),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(27),
               ),

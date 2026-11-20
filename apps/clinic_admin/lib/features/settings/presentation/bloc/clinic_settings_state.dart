@@ -1,4 +1,4 @@
-﻿import 'package:equatable/equatable.dart';
+import 'package:equatable/equatable.dart';
 import '../../domain/entities/clinic_settings_entity.dart';
 
 enum ClinicSettingsStatus { initial, loading, success, failure }
@@ -6,7 +6,8 @@ enum ClinicSettingsStatus { initial, loading, success, failure }
 class ClinicSettingsState extends Equatable {
   final ClinicSettingsStatus status;
   final ClinicSettingsEntity? settings;
-  final int activeTab; // 0: Profile, 1: Location, 2: Hours, 3: Rules, 4: Security
+  final int
+  activeTab; // 0: Profile, 1: Location, 2: Hours, 3: Rules, 4: Security
   final bool isSaving;
   final bool isUploadingImage;
   final String? feedbackMessage;

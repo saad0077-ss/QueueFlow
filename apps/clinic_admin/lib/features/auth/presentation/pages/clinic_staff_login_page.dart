@@ -46,7 +46,9 @@ class _ClinicStaffLoginView extends StatelessWidget {
               if (state.staff != null) {
                 AppSnackBar.showSuccess(context, message: 'Signed in.');
                 Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (_) => const ClinicDashboardPage()),
+                  MaterialPageRoute(
+                    builder: (_) => const ClinicDashboardPage(),
+                  ),
                 );
               }
               if (state.errorMessage != null) {
@@ -59,7 +61,8 @@ class _ClinicStaffLoginView extends StatelessWidget {
             builder: (context, state) {
               return Row(
                 children: [
-                  if (isDesktop) const Expanded(flex: 5, child: ClinicHeroBanner()),
+                  if (isDesktop)
+                    const Expanded(flex: 5, child: ClinicHeroBanner()),
                   Expanded(
                     flex: isDesktop ? 6 : 1,
                     child: Center(
@@ -76,11 +79,7 @@ class _ClinicStaffLoginView extends StatelessWidget {
               );
             },
           ),
-          const Positioned(
-            top: 20,
-            right: 20,
-            child: ThemeModeToggleButton(),
-          ),
+          const Positioned(top: 20, right: 20, child: ThemeModeToggleButton()),
         ],
       ),
     );

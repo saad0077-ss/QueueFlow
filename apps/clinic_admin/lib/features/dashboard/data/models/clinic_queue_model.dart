@@ -18,7 +18,8 @@ class ClinicQueueModel extends ClinicQueueEntity {
     }
     final data = doc.data() as Map<String, dynamic>;
     final rawToken = data['currentToken'] as String?;
-    final currentToken = (rawToken == null || rawToken.isEmpty || rawToken == '---')
+    final currentToken =
+        (rawToken == null || rawToken.isEmpty || rawToken == '---')
         ? '---'
         : rawToken;
     final totalIssued = data['totalIssued'] as int? ?? 0;

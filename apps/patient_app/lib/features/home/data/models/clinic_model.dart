@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../../domain/entities/clinic_entity.dart';
 
 class ClinicModel extends ClinicEntity {
@@ -33,11 +34,16 @@ class ClinicModel extends ClinicEntity {
     final name = (map['name'] ?? 'Clinic').toString().trim();
 
     String initials = 'CL';
-    final parts = name.split(RegExp(r'\s+')).where((p) => p.isNotEmpty).toList();
+    final parts = name
+        .split(RegExp(r'\s+'))
+        .where((p) => p.isNotEmpty)
+        .toList();
     if (parts.length >= 2) {
       initials = '${parts[0][0]}${parts[1][0]}'.toUpperCase();
     } else if (parts.isNotEmpty && parts[0].isNotEmpty) {
-      initials = parts[0].substring(0, parts[0].length >= 2 ? 2 : 1).toUpperCase();
+      initials = parts[0]
+          .substring(0, parts[0].length >= 2 ? 2 : 1)
+          .toUpperCase();
     }
 
     final rawDepts = (map['departments'] as List<dynamic>?) ?? [];
@@ -46,11 +52,16 @@ class ClinicModel extends ClinicEntity {
     final deptIds = rawDeptIds.map((e) => e.toString()).toList();
 
     String category = (map['category'] ?? '').toString().trim();
-    if (category.isEmpty) category = depts.isNotEmpty ? depts.join(', ') : 'General Medicine';
+    if (category.isEmpty) {
+      category = depts.isNotEmpty ? depts.join(', ') : 'General Medicine';
+    }
 
     final statusStr = (map['status'] ?? 'ACTIVE').toString().toUpperCase();
     final queueStatusStr = (map['queueStatus'] ?? '').toString();
-    final bool isOpen = (statusStr == 'ACTIVE' || statusStr == 'ACTIVATED' || statusStr == 'OPEN') &&
+    final bool isOpen =
+        (statusStr == 'ACTIVE' ||
+            statusStr == 'ACTIVATED' ||
+            statusStr == 'OPEN') &&
         !statusStr.contains('CLOSED') &&
         !statusStr.contains('SUSPENDED');
 
@@ -61,13 +72,19 @@ class ClinicModel extends ClinicEntity {
       isQueueOpen = map['hasLiveQueue'] as bool;
     } else if (queueStatusStr.isNotEmpty) {
       final qLower = queueStatusStr.toLowerCase();
-      isQueueOpen = qLower.contains('queue open') ||
-          (qLower.contains('open') && !qLower.contains('closed') && !qLower.contains('paused'));
+      isQueueOpen =
+          qLower.contains('queue open') ||
+          (qLower.contains('open') &&
+              !qLower.contains('closed') &&
+              !qLower.contains('paused'));
     }
 
     int waiting = (map['waitingCount'] as num?)?.toInt() ?? 0;
     if (waiting == 0 && queueStatusStr.isNotEmpty) {
-      final match = RegExp(r'(\d+)\s+in\s+line', caseSensitive: false).firstMatch(queueStatusStr);
+      final match = RegExp(
+        r'(\d+)\s+in\s+line',
+        caseSensitive: false,
+      ).firstMatch(queueStatusStr);
       if (match != null) waiting = int.tryParse(match.group(1) ?? '0') ?? 0;
     }
 
@@ -78,7 +95,10 @@ class ClinicModel extends ClinicEntity {
     return ClinicModel(
       id: doc.id,
       name: name,
-      initials: (map['initials'] != null && map['initials'].toString().isNotEmpty) ? map['initials'].toString() : initials,
+      initials:
+          (map['initials'] != null && map['initials'].toString().isNotEmpty)
+          ? map['initials'].toString()
+          : initials,
       category: category,
       rating: reviews > 0 ? ratingVal.clamp(0, 5).toDouble() : 0,
       reviewCount: reviews < 0 ? 0 : reviews,
@@ -92,7 +112,8 @@ class ClinicModel extends ClinicEntity {
       openingHours: _parseHours(map),
       isOpen: isOpen,
       isQueueOpen: isQueueOpen,
-      currentToken: (map['servingToken'] ?? map['currentToken'] ?? 'A-001').toString(),
+      currentToken: (map['servingToken'] ?? map['currentToken'] ?? 'A-001')
+          .toString(),
       waitingCount: waiting,
       imageUrl: map['imageUrl'] as String? ?? map['image'] as String?,
       imageVersion: (map['imageVersion'] as num?)?.toInt() ?? 0,
@@ -108,23 +129,36 @@ class ClinicModel extends ClinicEntity {
   static double? _coord(Map<String, dynamic> m, String key) {
     final loc = m['location'];
     final raw = (loc is Map ? loc[key] : null) ?? m[key];
-    final v = raw is num ? raw.toDouble() : double.tryParse('${raw ?? ''}'.trim());
+    final v = raw is num
+        ? raw.toDouble()
+        : double.tryParse('${raw ?? ''}'.trim());
     return v;
   }
 
   static String _parseAddress(Map<String, dynamic> m) {
-    if (m['address'] is String && (m['address'] as String).isNotEmpty) return m['address'] as String;
+    if (m['address'] is String && (m['address'] as String).isNotEmpty) {
+      return m['address'] as String;
+    }
     if (m['location'] is Map) {
       final loc = m['location'] as Map;
-      final parts = [loc['building'], loc['street'], loc['city']].whereType<String>().where((s) => s.trim().isNotEmpty).toList();
+      final parts = [
+        loc['building'],
+        loc['street'],
+        loc['city'],
+      ].whereType<String>().where((s) => s.trim().isNotEmpty).toList();
       if (parts.isNotEmpty) return parts.join(', ');
     }
     return 'Main Road, Kerala';
   }
 
   static String _parseHours(Map<String, dynamic> m) {
-    if (m['scheduleSummary'] is String && (m['scheduleSummary'] as String).isNotEmpty) return m['scheduleSummary'] as String;
-    if (m['openingHours'] is String && (m['openingHours'] as String).isNotEmpty) return m['openingHours'] as String;
+    if (m['scheduleSummary'] is String &&
+        (m['scheduleSummary'] as String).isNotEmpty) {
+      return m['scheduleSummary'] as String;
+    }
+    if (m['openingHours'] is String && (m['openingHours'] as String).isNotEmpty) {
+      return m['openingHours'] as String;
+    }
     final raw = m['operatingHours'];
     if (raw is String && raw.isNotEmpty) return raw;
     if (raw is Map) {
@@ -134,9 +168,15 @@ class ClinicModel extends ClinicEntity {
       final monOpen = mon is Map && mon['isOpen'] == true;
       final satOpen = sat is Map && sat['isOpen'] == true;
       final sunOpen = sun is Map && sun['isOpen'] == true;
-      final monStr = monOpen ? '${mon['openTime']} – ${mon['closeTime']}' : 'Closed';
-      if (monOpen && satOpen && !sunOpen) return 'Mon–Sat: $monStr · Sun: Closed';
-      if (monOpen && !satOpen && !sunOpen) return 'Mon–Fri: $monStr · Sun: Closed';
+      final monStr = monOpen
+          ? '${mon['openTime']} – ${mon['closeTime']}'
+          : 'Closed';
+      if (monOpen && satOpen && !sunOpen) {
+        return 'Mon–Sat: $monStr · Sun: Closed';
+      }
+      if (monOpen && !satOpen && !sunOpen) {
+        return 'Mon–Fri: $monStr · Sun: Closed';
+      }
       return '';
     }
     // Not set in the clinic's settings: show nothing rather than made-up hours.

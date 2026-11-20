@@ -16,7 +16,8 @@ class ClinicAccountRemovalGuard extends StatefulWidget {
   const ClinicAccountRemovalGuard({super.key, required this.child});
 
   @override
-  State<ClinicAccountRemovalGuard> createState() => _ClinicAccountRemovalGuardState();
+  State<ClinicAccountRemovalGuard> createState() =>
+      _ClinicAccountRemovalGuardState();
 }
 
 class _ClinicAccountRemovalGuardState extends State<ClinicAccountRemovalGuard> {
@@ -42,19 +43,22 @@ class _ClinicAccountRemovalGuardState extends State<ClinicAccountRemovalGuard> {
         .doc(email)
         .snapshots()
         .listen(
-      (snapshot) {
-        if (!mounted || _dialogShown) return;
-        if (snapshot.exists) {
-          final data = snapshot.data();
-          final message = data?['reason'] as String? ??
-              'The platform owner has removed your clinic facility and account.';
-          _showRemovalDialog(message);
-        }
-      },
-      onError: (e) {
-        debugPrint('ClinicAccountRemovalGuard removed_clinics listen error: $e');
-      },
-    );
+          (snapshot) {
+            if (!mounted || _dialogShown) return;
+            if (snapshot.exists) {
+              final data = snapshot.data();
+              final message =
+                  data?['reason'] as String? ??
+                  'The platform owner has removed your clinic facility and account.';
+              _showRemovalDialog(message);
+            }
+          },
+          onError: (e) {
+            debugPrint(
+              'ClinicAccountRemovalGuard removed_clinics listen error: $e',
+            );
+          },
+        );
 
     // 2. Listen to clinics collection where adminEmail == email
     _clinicsSub = FirebaseFirestore.instance
@@ -62,43 +66,49 @@ class _ClinicAccountRemovalGuardState extends State<ClinicAccountRemovalGuard> {
         .where('adminEmail', isEqualTo: email)
         .snapshots()
         .listen(
-      (snapshot) {
-        if (!mounted || _dialogShown) return;
+          (snapshot) {
+            if (!mounted || _dialogShown) return;
 
-        if (snapshot.docs.isNotEmpty) {
-          _hadActiveClinic = true;
-          final data = snapshot.docs.first.data();
-          final status = (data['status'] ?? '').toString().toUpperCase();
-          if (status == 'REMOVED' || status == 'DELETED') {
-            _showRemovalDialog('The platform owner has removed your clinic facility and account.');
-          } else if (status == 'SUSPENDED') {
-            _showRemovalDialog(
-              (data['suspensionReason'] ?? '').toString().trim(),
-              suspended: true,
-            );
-          }
-        } else {
-          // If clinics query is empty:
-          if (_hadActiveClinic) {
-            // It previously existed and was just erased by platform owner
-            _showRemovalDialog('The platform owner has removed your clinic facility and account.');
-          } else {
-            // Check if clinic was already removed
-            _checkIfRemovedTombstoneExists(email);
-          }
-        }
-      },
-      onError: (e) {
-        debugPrint('ClinicAccountRemovalGuard clinics listen error: $e');
-      },
-    );
+            if (snapshot.docs.isNotEmpty) {
+              _hadActiveClinic = true;
+              final data = snapshot.docs.first.data();
+              final status = (data['status'] ?? '').toString().toUpperCase();
+              if (status == 'REMOVED' || status == 'DELETED') {
+                _showRemovalDialog(
+                  'The platform owner has removed your clinic facility and account.',
+                );
+              } else if (status == 'SUSPENDED') {
+                _showRemovalDialog(
+                  (data['suspensionReason'] ?? '').toString().trim(),
+                  suspended: true,
+                );
+              }
+            } else {
+              // If clinics query is empty:
+              if (_hadActiveClinic) {
+                // It previously existed and was just erased by platform owner
+                _showRemovalDialog(
+                  'The platform owner has removed your clinic facility and account.',
+                );
+              } else {
+                // Check if clinic was already removed
+                _checkIfRemovedTombstoneExists(email);
+              }
+            }
+          },
+          onError: (e) {
+            debugPrint('ClinicAccountRemovalGuard clinics listen error: $e');
+          },
+        );
   }
 
   Future<void> _checkIfRemovedTombstoneExists(String email) async {
     try {
       if (!mounted || _dialogShown) return;
       // Tombstone present, or the clinic no longer exists at all -> removed.
-      _showRemovalDialog('The platform owner has removed your clinic facility and account.');
+      _showRemovalDialog(
+        'The platform owner has removed your clinic facility and account.',
+      );
     } catch (_) {}
   }
 
@@ -119,7 +129,10 @@ class _ClinicAccountRemovalGuardState extends State<ClinicAccountRemovalGuard> {
             filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
             child: Dialog(
               backgroundColor: Colors.transparent,
-              insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+              insetPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 24,
+              ),
               child: Container(
                 width: 440,
                 padding: const EdgeInsets.fromLTRB(26, 26, 26, 24),

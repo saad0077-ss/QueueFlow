@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../../core/widgets/app_logo.dart';
 import '../bloc/onboarding_bloc.dart';
 import '../bloc/onboarding_event.dart';
@@ -68,22 +69,20 @@ class _OnboardingScreenViewState extends State<_OnboardingScreenView> {
                   child: PageView(
                     controller: _pageController,
                     onPageChanged: (index) {
-                      context
-                          .read<OnboardingBloc>()
-                          .add(OnboardingPageChanged(index));
+                      context.read<OnboardingBloc>().add(
+                        OnboardingPageChanged(index),
+                      );
                     },
                     children: [
                       const OnboardingSlide(
                         card: CalendarPreviewCard(),
                         title: 'Book appointments in\nseconds',
-                        subtitle:
-                            'Pick a clinic, choose a time that works,\nand you\'re booked. No phone calls, no\nwaiting on hold.',
+                        subtitle: 'Pick a clinic, choose a time that works,\nand you\'re booked. No phone calls, no\nwaiting on hold.',
                       ),
                       const OnboardingSlide(
                         card: QueuePreviewCard(),
                         title: 'Know exactly when it\'s\nyour turn',
-                        subtitle:
-                            'Join the queue from anywhere and watch\nyour position update live, no need to sit in\na waiting room.',
+                        subtitle: 'Join the queue from anywhere and watch\nyour position update live, no need to sit in\na waiting room.',
                       ),
                       OnboardingSlide(
                         card: const TicketPreviewCard(),
@@ -108,8 +107,7 @@ class _OnboardingScreenViewState extends State<_OnboardingScreenView> {
                             ],
                           ),
                         ),
-                        subtitle:
-                            'Skip the waiting room. Book appointments\nand track your place in line, in real time.',
+                        subtitle: 'Skip the waiting room. Book appointments\nand track your place in line, in real time.',
                       ),
                     ],
                   ),

@@ -37,7 +37,9 @@ class HomeSearchBar extends StatelessWidget {
           border: Border.all(color: colors.border, width: 1.5),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: context.isDarkMode ? 0.15 : 0.04),
+              color: Colors.black.withValues(
+                alpha: context.isDarkMode ? 0.15 : 0.04,
+              ),
               blurRadius: 6,
               offset: const Offset(0, 2),
             ),
@@ -47,11 +49,7 @@ class HomeSearchBar extends StatelessWidget {
         margin: margin ?? const EdgeInsets.only(bottom: 16),
         child: Row(
           children: [
-            Icon(
-              Icons.search_rounded,
-              color: colors.textSubtle,
-              size: 20,
-            ),
+            Icon(Icons.search_rounded, color: colors.textSubtle, size: 20),
             const SizedBox(width: 10),
             Expanded(
               child: TextField(

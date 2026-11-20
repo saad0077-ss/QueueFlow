@@ -12,15 +12,13 @@ class DoctorDetailStatsRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final stats = [
-      (
-        'TOTAL APPOINTMENTS',
-        doctor.totalAppointments.toString(),
-        'All time',
-      ),
+      ('TOTAL APPOINTMENTS', doctor.totalAppointments.toString(), 'All time'),
       (
         'COMPLETED',
         doctor.completedAppointments.toString(),
-        doctor.totalAppointments > 0 ? '${doctor.completionRate}% of total' : '0% of total',
+        doctor.totalAppointments > 0
+            ? '${doctor.completionRate}% of total'
+            : '0% of total',
       ),
       (
         'UPCOMING',
@@ -29,7 +27,9 @@ class DoctorDetailStatsRow extends StatelessWidget {
       ),
       (
         'PATIENT RATING',
-        doctor.reviews.isNotEmpty ? doctor.averageRating.toStringAsFixed(1) : '—',
+        doctor.reviews.isNotEmpty
+            ? doctor.averageRating.toStringAsFixed(1)
+            : '—',
         doctor.reviews.isNotEmpty
             ? '${doctor.reviews.length} review${doctor.reviews.length == 1 ? '' : 's'}'
             : 'No reviews yet',
@@ -38,64 +38,67 @@ class DoctorDetailStatsRow extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-          final columns = constraints.maxWidth >= 900
-              ? 4
-              : (constraints.maxWidth >= 500 ? 2 : 1);
+        final columns = constraints.maxWidth >= 900
+            ? 4
+            : (constraints.maxWidth >= 500 ? 2 : 1);
 
-          return Wrap(
-            spacing: 14,
-            runSpacing: 14,
-            children: [
-              for (final (label, val, hint) in stats)
-                SizedBox(
-                  width: columns == 4
-                      ? (constraints.maxWidth - (14 * 3)) / 4
-                      : (columns == 2
+        return Wrap(
+          spacing: 14,
+          runSpacing: 14,
+          children: [
+            for (final (label, val, hint) in stats)
+              SizedBox(
+                width: columns == 4
+                    ? (constraints.maxWidth - (14 * 3)) / 4
+                    : (columns == 2
                           ? (constraints.maxWidth - 14) / 2
                           : constraints.maxWidth),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
-                    decoration: BoxDecoration(
-                      color: colors.surface,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: colors.border),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          label,
-                          style: GoogleFonts.inter(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.5,
-                            color: colors.textMuted,
-                          ),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 16,
+                  ),
+                  decoration: BoxDecoration(
+                    color: colors.surface,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: colors.border),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        label,
+                        style: GoogleFonts.inter(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.5,
+                          color: colors.textMuted,
                         ),
-                        const SizedBox(height: 6),
-                        Text(
-                          val,
-                          style: GoogleFonts.inter(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w800,
-                            color: colors.textPrimary,
-                          ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        val,
+                        style: GoogleFonts.inter(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w800,
+                          color: colors.textPrimary,
                         ),
-                        const SizedBox(height: 2),
-                        Text(
-                          hint,
-                          style: GoogleFonts.inter(
-                            fontSize: 12,
-                            color: colors.textSubtle,
-                          ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        hint,
+                        style: GoogleFonts.inter(
+                          fontSize: 12,
+                          color: colors.textSubtle,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
-            ],
-          );
-        },
-      );
+              ),
+          ],
+        );
+      },
+    );
   }
 }

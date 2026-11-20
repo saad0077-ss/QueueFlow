@@ -41,38 +41,75 @@ class ClinicLocationPreviewCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(children: [
-                Icon(Icons.location_on_rounded, size: 16, color: colors.info),
-                const SizedBox(width: 8),
-                Text(
-                  'Patient Location Preview',
-                  style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.bold, color: colors.textPrimary),
-                ),
-                const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(color: colors.infoTint, borderRadius: BorderRadius.circular(6)),
-                  child: Text('Live Sync', style: GoogleFonts.inter(fontSize: 9.5, fontWeight: FontWeight.bold, color: colors.info)),
-                ),
-              ]),
+              Row(
+                children: [
+                  Icon(Icons.location_on_rounded, size: 16, color: colors.info),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Patient Location Preview',
+                    style: GoogleFonts.inter(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: colors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: colors.infoTint,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      'Live Sync',
+                      style: GoogleFonts.inter(
+                        fontSize: 9.5,
+                        fontWeight: FontWeight.bold,
+                        color: colors.info,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
               OutlinedButton.icon(
                 onPressed: fullAddress.trim().isNotEmpty ? onCopyAddress : null,
                 style: OutlinedButton.styleFrom(
                   foregroundColor: colors.textPrimary,
                   side: BorderSide(color: colors.border),
                   backgroundColor: colors.surface,
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
                 icon: const Icon(Icons.copy_rounded, size: 12),
-                label: Text('Copy Formatted Address', style: GoogleFonts.inter(fontSize: 11)),
+                label: Text(
+                  'Copy Formatted Address',
+                  style: GoogleFonts.inter(fontSize: 11),
+                ),
               ),
             ],
           ),
           const SizedBox(height: 14),
-          _detailRow(context, 'Address:', fullAddress.trim().isNotEmpty ? fullAddress : 'No address specified yet'),
+          _detailRow(
+            context,
+            'Address:',
+            fullAddress.trim().isNotEmpty
+                ? fullAddress
+                : 'No address specified yet',
+          ),
           const SizedBox(height: 6),
-          _detailRow(context, 'Landmark:', landmark.trim().isNotEmpty ? landmark : 'None specified'),
+          _detailRow(
+            context,
+            'Landmark:',
+            landmark.trim().isNotEmpty ? landmark : 'None specified',
+          ),
           const SizedBox(height: 6),
           _detailRow(context, 'GPS:', coordText),
           const SizedBox(height: 6),
@@ -81,14 +118,28 @@ class ClinicLocationPreviewCard extends StatelessWidget {
             children: [
               SizedBox(
                 width: 80,
-                child: Text('Navigation:', style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted, fontWeight: FontWeight.w600)),
+                child: Text(
+                  'Navigation:',
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    color: colors.textMuted,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
               Expanded(
                 child: InkWell(
-                  onTap: hasCoords || mapsUrl.trim().isNotEmpty ? onOpenMaps : null,
+                  onTap: hasCoords || mapsUrl.trim().isNotEmpty
+                      ? onOpenMaps
+                      : null,
                   child: Text(
                     'Open in Google Maps ↗',
-                    style: GoogleFonts.inter(fontSize: 12, color: colors.info, fontWeight: FontWeight.w600, decoration: TextDecoration.underline),
+                    style: GoogleFonts.inter(
+                      fontSize: 12,
+                      color: colors.info,
+                      fontWeight: FontWeight.w600,
+                      decoration: TextDecoration.underline,
+                    ),
                   ),
                 ),
               ),
@@ -106,10 +157,24 @@ class ClinicLocationPreviewCard extends StatelessWidget {
       children: [
         SizedBox(
           width: 80,
-          child: Text(label, style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted, fontWeight: FontWeight.w600)),
+          child: Text(
+            label,
+            style: GoogleFonts.inter(
+              fontSize: 12,
+              color: colors.textMuted,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ),
         Expanded(
-          child: Text(value, style: GoogleFonts.inter(fontSize: 12, color: colors.textPrimary, height: 1.3)),
+          child: Text(
+            value,
+            style: GoogleFonts.inter(
+              fontSize: 12,
+              color: colors.textPrimary,
+              height: 1.3,
+            ),
+          ),
         ),
       ],
     );

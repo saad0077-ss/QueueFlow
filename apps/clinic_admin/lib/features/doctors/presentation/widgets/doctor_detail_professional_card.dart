@@ -15,7 +15,10 @@ class DoctorDetailProfessionalCard extends StatelessWidget {
       ('SPECIALIZATION', doctor.specialty),
       ('DEPARTMENT', doctor.department),
       ('QUALIFICATIONS', doctor.qualifications),
-      ('EXPERIENCE', doctor.experienceYears > 0 ? '${doctor.experienceYears} years' : ''),
+      (
+        'EXPERIENCE',
+        doctor.experienceYears > 0 ? '${doctor.experienceYears} years' : '',
+      ),
       ('EMPLOYMENT TYPE', doctor.employmentType),
     ];
 
@@ -51,7 +54,9 @@ class DoctorDetailProfessionalCard extends StatelessWidget {
           LayoutBuilder(
             builder: (context, constraints) {
               final isNarrow = constraints.maxWidth < 480;
-              final colWidth = isNarrow ? constraints.maxWidth : (constraints.maxWidth - 24) / 2;
+              final colWidth = isNarrow
+                  ? constraints.maxWidth
+                  : (constraints.maxWidth - 24) / 2;
 
               return Wrap(
                 spacing: 24,
@@ -79,7 +84,9 @@ class DoctorDetailProfessionalCard extends StatelessWidget {
                               fontSize: 13.5,
                               fontWeight: FontWeight.w600,
                               color: colors.textPrimary,
-                              letterSpacing: label.contains('REGISTRATION') ? 0.3 : 0,
+                              letterSpacing: label.contains('REGISTRATION')
+                                  ? 0.3
+                                  : 0,
                             ),
                           ),
                         ],

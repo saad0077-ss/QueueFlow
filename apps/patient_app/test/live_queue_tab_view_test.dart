@@ -32,6 +32,15 @@ void main() {
     openingHours: '08:00 AM - 09:00 PM',
     currentToken: 'A-027',
     waitingCount: 2,
+    schedule: {
+      'monday': {'isOpen': true, 'openTime': '00:00', 'closeTime': '23:59'},
+      'tuesday': {'isOpen': true, 'openTime': '00:00', 'closeTime': '23:59'},
+      'wednesday': {'isOpen': true, 'openTime': '00:00', 'closeTime': '23:59'},
+      'thursday': {'isOpen': true, 'openTime': '00:00', 'closeTime': '23:59'},
+      'friday': {'isOpen': true, 'openTime': '00:00', 'closeTime': '23:59'},
+      'saturday': {'isOpen': true, 'openTime': '00:00', 'closeTime': '23:59'},
+      'sunday': {'isOpen': true, 'openTime': '00:00', 'closeTime': '23:59'},
+    },
   );
 
   Widget createSubject(HomeState state) {

@@ -13,7 +13,10 @@ class OnboardingSlide extends StatelessWidget {
     this.title,
     this.titleWidget,
     required this.subtitle,
-  }) : assert(title != null || titleWidget != null, 'Provide either title or titleWidget');
+  }) : assert(
+         title != null || titleWidget != null,
+         'Provide either title or titleWidget',
+       );
 
   @override
   Widget build(BuildContext context) {

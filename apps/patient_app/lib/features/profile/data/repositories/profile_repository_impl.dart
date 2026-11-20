@@ -2,8 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
+
 import '../../domain/entities/favorite_clinic_entity.dart';
+import '../../domain/entities/patient_payment_item_entity.dart';
 import '../../domain/entities/patient_profile_entity.dart';
+import '../../domain/entities/patient_queue_history_entity.dart';
 import '../../domain/entities/patient_review_entity.dart';
 import '../../domain/entities/support_ticket_entity.dart';
 import '../../domain/repositories/profile_repository.dart';
@@ -21,11 +24,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
   List<PatientReviewModel>? _cachedReviews;
   List<SupportTicketModel>? _cachedTickets;
 
-  ProfileRepositoryImpl({
-    FirebaseFirestore? firestore,
-    FirebaseAuth? auth,
-  })  : _firestore = firestore ?? _safeFirestore(),
-        _auth = auth ?? _safeAuth();
+  ProfileRepositoryImpl({FirebaseFirestore? firestore, FirebaseAuth? auth})
+    : _firestore = firestore ?? _safeFirestore(),
+      _auth = auth ?? _safeAuth();
 
   static FirebaseFirestore? _safeFirestore() {
     try {
@@ -146,10 +147,10 @@ class ProfileRepositoryImpl implements ProfileRepository {
     if (user != null && _firestore != null) {
       try {
         await user.updateDisplayName(name);
-        await _firestore.collection('users').doc(user.uid).set(
-              model.toJson(),
-              SetOptions(merge: true),
-            );
+        await _firestore
+            .collection('users')
+            .doc(user.uid)
+            .set(model.toJson(), SetOptions(merge: true));
       } catch (e) {
         debugPrint('Error updating profile in Firestore: $e');
       }
@@ -203,12 +204,15 @@ class ProfileRepositoryImpl implements ProfileRepository {
     final user = _auth?.currentUser;
     if (user == null || _firestore == null) return const [];
     try {
-      final data = (await _firestore.collection('users').doc(user.uid).get()).data();
+      final data = (await _firestore.collection('users').doc(user.uid).get())
+          .data();
       final favs = data?['favoriteClinics'];
       if (favs is! Map) return const [];
       final list = <FavoriteClinicModel>[];
       for (final v in favs.values) {
-        if (v is Map) list.add(FavoriteClinicModel.fromJson(Map<String, dynamic>.from(v)));
+        if (v is Map) {
+          list.add(FavoriteClinicModel.fromJson(Map<String, dynamic>.from(v)));
+        }
       }
       list.sort((a, b) => a.name.compareTo(b.name));
       return list;
@@ -250,7 +254,10 @@ class ProfileRepositoryImpl implements ProfileRepository {
     );
 
     final currentReviews = await getUserReviews();
-    _cachedReviews = [newReview, ...currentReviews.map((r) => r as PatientReviewModel)];
+    _cachedReviews = [
+      newReview,
+      ...currentReviews.map((r) => r as PatientReviewModel),
+    ];
 
     // Update reviews count on cached profile
     if (_cachedProfile != null) {
@@ -267,7 +274,8 @@ class ProfileRepositoryImpl implements ProfileRepository {
         age: _cachedProfile!.age,
         gender: _cachedProfile!.gender,
         memberSince: _cachedProfile!.memberSince,
-        loyaltyCredits: _cachedProfile!.loyaltyCredits + 50, // bonus loyalty points!
+        loyaltyCredits:
+            _cachedProfile!.loyaltyCredits + 50, // bonus loyalty points!
         emergencyContactName: _cachedProfile!.emergencyContactName,
         emergencyContactRelation: _cachedProfile!.emergencyContactRelation,
         emergencyContactPhone: _cachedProfile!.emergencyContactPhone,
@@ -290,7 +298,10 @@ class ProfileRepositoryImpl implements ProfileRepository {
 
     if (_firestore != null) {
       try {
-        await _firestore.collection('reviews').doc(newReview.id).set(newReview.toJson());
+        await _firestore
+            .collection('reviews')
+            .doc(newReview.id)
+            .set(newReview.toJson());
       } catch (e) {
         debugPrint('Firestore review write skipped/failed: $e');
       }
@@ -386,7 +397,10 @@ class ProfileRepositoryImpl implements ProfileRepository {
     );
 
     final tickets = await getSupportTickets();
-    _cachedTickets = [newTicket, ...tickets.map((t) => t as SupportTicketModel)];
+    _cachedTickets = [
+      newTicket,
+      ...tickets.map((t) => t as SupportTicketModel),
+    ];
     return newTicket;
   }
 
@@ -439,6 +453,221 @@ class ProfileRepositoryImpl implements ProfileRepository {
     _cachedTickets = updatedList;
 
     return updatedTicket;
+  }
+
+  @override
+  Future<List<PatientQueueHistoryEntity>> getQueueHistory() async {
+    final user = _auth?.currentUser;
+    final email = user?.email;
+    final uid = user?.uid;
+
+    if (_firestore != null) {
+      try {
+        Query<Map<String, dynamic>> query = _firestore.collection('tickets');
+        if (email != null && email.isNotEmpty) {
+          query = query.where(
+            'userEmail',
+            isEqualTo: email.trim().toLowerCase(),
+          );
+        } else if (uid != null && uid.isNotEmpty) {
+          query = query.where('userId', isEqualTo: uid);
+        }
+        final snap = await query.get();
+        if (snap.docs.isNotEmpty) {
+          final list = snap.docs.map((d) {
+            final data = d.data();
+            final status = (data['status'] ?? 'waiting').toString();
+            final isActive = status != 'completed' && status != 'cancelled';
+            DateTime? joinedAt;
+            final ts = data['joinedAt'];
+            if (ts is Timestamp) {
+              joinedAt = ts.toDate();
+            } else if (ts is String) {
+              joinedAt = DateTime.tryParse(ts);
+            }
+            return PatientQueueHistoryEntity(
+              id: d.id,
+              token: (data['token'] ?? 'T-001').toString(),
+              clinicId: (data['clinicId'] ?? 'sunrise-health').toString(),
+              clinicName:
+                  (data['clinicName'] ?? 'Sunrise Health Clinic').toString(),
+              departmentName:
+                  (data['departmentName'] ?? 'General Medicine').toString(),
+              serviceName:
+                  (data['serviceName'] ?? 'General Consultation').toString(),
+              doctorName:
+                  (data['doctorName'] ?? 'Dr. Priya Sharma').toString(),
+              joinedTime: (data['joinedTime'] ?? '10:00 AM').toString(),
+              date: (data['date'] ?? 'Today').toString(),
+              waitTime: data['waitTime']?.toString(),
+              position: (data['position'] is num)
+                  ? (data['position'] as num).toInt()
+                  : 0,
+              estWaitMin: (data['estWaitMin'] is num)
+                  ? (data['estWaitMin'] as num).toInt()
+                  : 15,
+              status: status,
+              isActive: isActive,
+              joinedAt: joinedAt,
+            );
+          }).toList();
+          list.sort((a, b) {
+            if (a.isActive && !b.isActive) return -1;
+            if (!a.isActive && b.isActive) return 1;
+            if (a.joinedAt != null && b.joinedAt != null) {
+              return b.joinedAt!.compareTo(a.joinedAt!);
+            }
+            return 0;
+          });
+          return list;
+        }
+      } catch (e) {
+        debugPrint('Error fetching queue history from Firestore: $e');
+      }
+    }
+
+    return const [];
+  }
+
+  @override
+  Stream<List<PatientQueueHistoryEntity>> watchQueueHistory() {
+    final user = _auth?.currentUser;
+    final email = user?.email;
+    final uid = user?.uid;
+
+    if (_firestore != null) {
+      try {
+        Query<Map<String, dynamic>> query = _firestore.collection('tickets');
+        if (email != null && email.isNotEmpty) {
+          query = query.where(
+            'userEmail',
+            isEqualTo: email.trim().toLowerCase(),
+          );
+        } else if (uid != null && uid.isNotEmpty) {
+          query = query.where('userId', isEqualTo: uid);
+        }
+        return query.snapshots().map((snap) {
+          final list = snap.docs.map((d) {
+            final data = d.data();
+            final status = (data['status'] ?? 'waiting').toString();
+            final isActive = status != 'completed' && status != 'cancelled';
+            DateTime? joinedAt;
+            final ts = data['joinedAt'];
+            if (ts is Timestamp) {
+              joinedAt = ts.toDate();
+            }
+            return PatientQueueHistoryEntity(
+              id: d.id,
+              token: (data['token'] ?? 'T-001').toString(),
+              clinicId: (data['clinicId'] ?? 'sunrise-health').toString(),
+              clinicName:
+                  (data['clinicName'] ?? 'Sunrise Health Clinic').toString(),
+              departmentName:
+                  (data['departmentName'] ?? 'General Medicine').toString(),
+              serviceName:
+                  (data['serviceName'] ?? 'General Consultation').toString(),
+              doctorName:
+                  (data['doctorName'] ?? 'Dr. Priya Sharma').toString(),
+              joinedTime: (data['joinedTime'] ?? '10:00 AM').toString(),
+              date: (data['date'] ?? 'Today').toString(),
+              waitTime: data['waitTime']?.toString(),
+              position: (data['position'] is num)
+                  ? (data['position'] as num).toInt()
+                  : 0,
+              estWaitMin: (data['estWaitMin'] is num)
+                  ? (data['estWaitMin'] as num).toInt()
+                  : 15,
+              status: status,
+              isActive: isActive,
+              joinedAt: joinedAt,
+            );
+          }).toList();
+          list.sort((a, b) {
+            if (a.isActive && !b.isActive) return -1;
+            if (!a.isActive && b.isActive) return 1;
+            if (a.joinedAt != null && b.joinedAt != null) {
+              return b.joinedAt!.compareTo(a.joinedAt!);
+            }
+            return 0;
+          });
+          return list;
+        });
+      } catch (e) {
+        debugPrint('Error watching queue history: $e');
+      }
+    }
+
+    return Stream.value(const []);
+  }
+
+  @override
+  Future<List<PatientPaymentItemEntity>> getPaymentHistory() async {
+    final user = _auth?.currentUser;
+    final email = user?.email;
+    final uid = user?.uid;
+
+    if (_firestore != null) {
+      try {
+        Query<Map<String, dynamic>> query = _firestore.collection(
+          'appointments',
+        );
+        if (email != null && email.isNotEmpty) {
+          query = query.where(
+            'customerEmail',
+            isEqualTo: email.trim().toLowerCase(),
+          );
+        } else if (uid != null && uid.isNotEmpty) {
+          query = query.where('customerId', isEqualTo: uid);
+        }
+
+        final snap = await query.get();
+        final paid = snap.docs
+            .where((d) {
+              final p = d.data()['payment'];
+              return p != null &&
+                  p is Map &&
+                  (p['status'] == 'paid' || p['status'] == 'completed');
+            })
+            .map((d) {
+              final data = d.data();
+              final p = data['payment'] as Map;
+              return PatientPaymentItemEntity(
+                id: d.id,
+                receiptNo:
+                    (p['receiptNo'] ?? 'REC-2026-${d.id.substring(0, 5)}')
+                        .toString(),
+                bookingId: (data['bookingRef'] ?? 'QF-48210').toString(),
+                clinicId: (data['clinicId'] ?? 'sunrise-health').toString(),
+                clinicName:
+                    (data['clinicName'] ?? 'Sunrise Health Clinic').toString(),
+                department: (data['departmentName'] ??
+                        data['serviceCategory'] ??
+                        'General Medicine')
+                    .toString(),
+                service:
+                    (data['serviceName'] ?? 'General Consultation').toString(),
+                doctor: (data['doctorName'] ?? 'Dr. Priya').toString(),
+                amount: (p['amount'] is num)
+                    ? (p['amount'] as num).toDouble()
+                    : 500.0,
+                status: 'paid',
+                date: (p['paidAt'] ?? data['dateTime'] ?? '12 Jun 2026')
+                    .toString(),
+                method: (p['method'] ?? 'Razorpay UPI').toString(),
+                transactionId:
+                    (p['paymentId'] ?? 'pay_${d.id.substring(0, 8)}')
+                        .toString(),
+              );
+            })
+            .toList();
+
+        return paid;
+      } catch (e) {
+        debugPrint('Error fetching payment history: $e');
+      }
+    }
+
+    return const [];
   }
 
   @override

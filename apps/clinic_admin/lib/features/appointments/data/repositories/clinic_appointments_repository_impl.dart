@@ -18,8 +18,8 @@ class ClinicAppointmentsRepositoryImpl implements ClinicAppointmentsRepository {
   ClinicAppointmentsRepositoryImpl({
     FirebaseFirestore? firestore,
     FirebaseAuth? auth,
-  })  : _firestore = firestore ?? FirebaseFirestore.instance,
-        _auth = auth ?? FirebaseAuth.instance;
+  }) : _firestore = firestore ?? FirebaseFirestore.instance,
+       _auth = auth ?? FirebaseAuth.instance;
 
   CollectionReference<Map<String, dynamic>> get _col =>
       _firestore.collection('appointments');
@@ -43,9 +43,14 @@ class ClinicAppointmentsRepositoryImpl implements ClinicAppointmentsRepository {
       yield const [];
       return;
     }
-    yield* _col.where('clinicId', isEqualTo: clinic.id).snapshots().asyncMap((snap) async {
+    yield* _col.where('clinicId', isEqualTo: clinic.id).snapshots().asyncMap((
+      snap,
+    ) async {
       final docs = snap.docs.toList()
-        ..sort((a, b) => _createdMillis(b.data()).compareTo(_createdMillis(a.data())));
+        ..sort(
+          (a, b) =>
+              _createdMillis(b.data()).compareTo(_createdMillis(a.data())),
+        );
       final list = <ClinicAppointmentEntity>[];
       for (final d in docs) {
         var appt = _fromDoc(d.id, d.data());
@@ -101,30 +106,48 @@ class ClinicAppointmentsRepositoryImpl implements ClinicAppointmentsRepository {
   }
 
   static ClinicAppointmentEntity _fromDoc(String id, Map<String, dynamic> m) {
-    final price = (m['servicePrice'] as num?)?.toDouble() ??
+    final price =
+        (m['servicePrice'] as num?)?.toDouble() ??
         (m['price'] as num?)?.toDouble() ??
         0.0;
     final duration = m['serviceDuration'];
     final payMap = m['payment'] is Map
         ? Map<String, dynamic>.from(m['payment'] as Map)
         : <String, dynamic>{};
-    final paymentStatus = _s(payMap['status'], payMap.isEmpty ? 'pending' : 'paid');
+    final paymentStatus = _s(
+      payMap['status'],
+      payMap.isEmpty ? 'pending' : 'paid',
+    );
 
     return ClinicAppointmentEntity(
       id: id,
       bookingId: _s(m['bookingRef'] ?? m['bookingId'], id),
-      customerName: _s(m['customerName'] ?? m['patientName'] ?? m['customer'], 'Patient'),
+      customerName: _s(
+        m['customerName'] ?? m['patientName'] ?? m['customer'],
+        'Patient',
+      ),
       customerPhoto: _s(m['customerPhoto']),
       phone: _s(m['customerPhone'] ?? m['phone']),
       email: _s(m['customerEmail'] ?? m['email']),
       service: _s(m['serviceName'] ?? m['service'], 'Consultation'),
-      serviceCategory: _s(m['doctorSpecialty'] ?? m['specialty'], 'General Medicine'),
-      departmentName: _s(m['departmentName'] ?? m['doctorSpecialty'] ?? m['specialty'], 'General Medicine'),
-      serviceDuration: duration is num ? '${duration.toInt()} mins' : _s(duration, '20 mins'),
+      serviceCategory: _s(
+        m['doctorSpecialty'] ?? m['specialty'],
+        'General Medicine',
+      ),
+      departmentName: _s(
+        m['departmentName'] ?? m['doctorSpecialty'] ?? m['specialty'],
+        'General Medicine',
+      ),
+      serviceDuration: duration is num
+          ? '${duration.toInt()} mins'
+          : _s(duration, '20 mins'),
       servicePrice: price,
       serviceDescription: _s(m['serviceDescription']),
       doctor: _s(m['doctorName'] ?? m['doctor'], 'Doctor'),
-      doctorRole: _s(m['doctorSpecialty'] ?? m['specialty'], 'Consulting Physician'),
+      doctorRole: _s(
+        m['doctorSpecialty'] ?? m['specialty'],
+        'Consulting Physician',
+      ),
       dateTime: _s(m['dateTime']),
       dateRaw: _s(m['dateRaw'] ?? m['date']),
       timeRaw: _s(m['timeRaw'] ?? m['time'] ?? m['timeSlot']),
@@ -140,7 +163,10 @@ class ClinicAppointmentsRepositoryImpl implements ClinicAppointmentsRepository {
         method: _s(payMap['method'], 'Online'),
         paymentId: _s(payMap['paymentId']),
         orderId: _s(payMap['orderId']),
-        receiptNo: _s(payMap['receiptNo'], 'REC-${_s(m['bookingRef'] ?? m['bookingId'], id).replaceAll('QF-', '')}'),
+        receiptNo: _s(
+          payMap['receiptNo'],
+          'REC-${_s(m['bookingRef'] ?? m['bookingId'], id).replaceAll('QF-', '')}',
+        ),
         paidAt: _s(payMap['paidAt']),
         refundAmount: (payMap['refundAmount'] as num?)?.toDouble(),
         refundId: payMap['refundId']?.toString(),
@@ -152,21 +178,21 @@ class ClinicAppointmentsRepositoryImpl implements ClinicAppointmentsRepository {
   }
 
   static Map<String, dynamic> _paymentToMap(AppointmentPaymentEntity p) => {
-        'status': p.status,
-        'amount': p.amount,
-        'currency': p.currency,
-        'gateway': p.gateway,
-        'method': p.method,
-        'paymentId': p.paymentId,
-        'orderId': p.orderId,
-        'receiptNo': p.receiptNo,
-        'paidAt': p.paidAt,
-        if (p.refundAmount != null) 'refundAmount': p.refundAmount,
-        if (p.refundId != null) 'refundId': p.refundId,
-        if (p.refundedAt != null) 'refundedAt': p.refundedAt,
-        if (p.refundNote != null) 'refundNote': p.refundNote,
-        if (p.refundStatus != null) 'refundStatus': p.refundStatus,
-      };
+    'status': p.status,
+    'amount': p.amount,
+    'currency': p.currency,
+    'gateway': p.gateway,
+    'method': p.method,
+    'paymentId': p.paymentId,
+    'orderId': p.orderId,
+    'receiptNo': p.receiptNo,
+    'paidAt': p.paidAt,
+    if (p.refundAmount != null) 'refundAmount': p.refundAmount,
+    if (p.refundId != null) 'refundId': p.refundId,
+    if (p.refundedAt != null) 'refundedAt': p.refundedAt,
+    if (p.refundNote != null) 'refundNote': p.refundNote,
+    if (p.refundStatus != null) 'refundStatus': p.refundStatus,
+  };
 
   // ───────────────────────── Writes ─────────────────────────
 
@@ -174,7 +200,11 @@ class ClinicAppointmentsRepositoryImpl implements ClinicAppointmentsRepository {
   Future<void> addAppointment(ClinicAppointmentEntity a) async {
     final clinic = await _clinic();
     final clinicName = _s(clinic.data()?['name'], 'Clinic');
-    final minutes = int.tryParse(RegExp(r'\d+').firstMatch(a.serviceDuration)?.group(0) ?? '') ?? 20;
+    final minutes =
+        int.tryParse(
+          RegExp(r'\d+').firstMatch(a.serviceDuration)?.group(0) ?? '',
+        ) ??
+        20;
     await _col.add({
       'bookingRef': a.bookingId,
       'bookingId': a.bookingId,
@@ -240,44 +270,44 @@ class ClinicAppointmentsRepositoryImpl implements ClinicAppointmentsRepository {
 
   @override
   Future<void> checkInAppointment(String id) => _update(
-        id,
-        {'status': 'checkedin', 'checkedInAt': FieldValue.serverTimestamp()},
-        notifyTitle: 'Checked In',
-        notifyBody: (m) => 'You have been checked in for ${_what(m)}. Please wait to be called.',
-      );
+    id,
+    {'status': 'checkedin', 'checkedInAt': FieldValue.serverTimestamp()},
+    notifyTitle: 'Checked In',
+    notifyBody: (m) =>
+        'You have been checked in for ${_what(m)}. Please wait to be called.',
+  );
 
   @override
   Future<void> completeAppointment(String id) => _update(
-        id,
-        {
-          'status': 'completed',
-          'isCompleted': true,
-          'completedAt': FieldValue.serverTimestamp(),
-        },
-        notifyTitle: 'Appointment Completed',
-        notifyBody: (m) => 'Your visit for ${_what(m)} is complete. Thank you!',
-      );
+    id,
+    {
+      'status': 'completed',
+      'isCompleted': true,
+      'completedAt': FieldValue.serverTimestamp(),
+    },
+    notifyTitle: 'Appointment Completed',
+    notifyBody: (m) => 'Your visit for ${_what(m)} is complete. Thank you!',
+  );
 
   @override
   Future<void> rescheduleAppointment(
     String id,
     String newDate,
     String newTime,
-  ) =>
-      _update(
-        id,
-        {
-          'dateRaw': newDate,
-          'date': newDate,
-          'timeRaw': newTime,
-          'time': newTime,
-          'timeSlot': newTime,
-          'dateTime': '$newDate · $newTime',
-          'status': 'confirmed',
-        },
-        notifyTitle: 'Appointment Rescheduled',
-        notifyBody: (m) => 'Your ${_what(m)} has moved to $newDate · $newTime.',
-      );
+  ) => _update(
+    id,
+    {
+      'dateRaw': newDate,
+      'date': newDate,
+      'timeRaw': newTime,
+      'time': newTime,
+      'timeSlot': newTime,
+      'dateTime': '$newDate · $newTime',
+      'status': 'confirmed',
+    },
+    notifyTitle: 'Appointment Rescheduled',
+    notifyBody: (m) => 'Your ${_what(m)} has moved to $newDate · $newTime.',
+  );
 
   @override
   Future<void> cancelAppointment(
@@ -285,7 +315,8 @@ class ClinicAppointmentsRepositoryImpl implements ClinicAppointmentsRepository {
     String? reason,
     double? refundAmount,
   }) async {
-    final current = _appointments.where((a) => a.id == id).firstOrNull ??
+    final current =
+        _appointments.where((a) => a.id == id).firstOrNull ??
         _fromDoc(id, (await _col.doc(id).get()).data() ?? const {});
     final pay = current.payment;
     final AppointmentPaymentEntity updatedPayment;
@@ -310,7 +341,8 @@ class ClinicAppointmentsRepositoryImpl implements ClinicAppointmentsRepository {
         'status': 'cancelled',
         'cancelledAt': FieldValue.serverTimestamp(),
         'cancelledBy': 'clinic',
-        if (reason != null) 'notes': '${current.notes} [Cancellation Reason: $reason]'.trim(),
+        if (reason != null)
+          'notes': '${current.notes} [Cancellation Reason: $reason]'.trim(),
         'payment': _paymentToMap(updatedPayment),
       },
       notifyTitle: 'Appointment Cancelled',

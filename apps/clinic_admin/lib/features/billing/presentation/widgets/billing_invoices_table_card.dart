@@ -47,13 +47,25 @@ class BillingInvoicesTableCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Invoice History & Receipts', style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w800, color: colors.textPrimary)),
+                    Text(
+                      'Invoice History & Receipts',
+                      style: GoogleFonts.inter(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w800,
+                        color: colors.textPrimary,
+                      ),
+                    ),
                     const SizedBox(height: 2),
                     Text(
-                      name.isEmpty ? 'Past billing cycles and tax receipts' : 'Past billing cycles and tax receipts for $name',
+                      name.isEmpty
+                          ? 'Past billing cycles and tax receipts'
+                          : 'Past billing cycles and tax receipts for $name',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.inter(fontSize: 11.5, color: colors.primaryLight),
+                      style: GoogleFonts.inter(
+                        fontSize: 11.5,
+                        color: colors.primaryLight,
+                      ),
                     ),
                   ],
                 ),
@@ -64,11 +76,22 @@ class BillingInvoicesTableCard extends StatelessWidget {
                 style: OutlinedButton.styleFrom(
                   foregroundColor: colors.textPrimary,
                   side: BorderSide(color: colors.border),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
                 ),
                 icon: const Icon(Icons.refresh_rounded, size: 14),
-                label: Text('Refresh', style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w700)),
+                label: Text(
+                  'Refresh',
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
               ),
             ],
           ),
@@ -85,8 +108,13 @@ class BillingInvoicesTableCard extends StatelessWidget {
                     if (invoices.isEmpty)
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 28),
-                        child: Text('No invoices yet. Receipts appear here after each billing cycle.',
-                            style: GoogleFonts.inter(fontSize: 12.5, color: colors.textMuted)),
+                        child: Text(
+                          'No invoices yet. Receipts appear here after each billing cycle.',
+                          style: GoogleFonts.inter(
+                            fontSize: 12.5,
+                            color: colors.textMuted,
+                          ),
+                        ),
                       )
                     else
                       for (final inv in invoices)
@@ -100,7 +128,10 @@ class BillingInvoicesTableCard extends StatelessWidget {
                 ),
               );
               if (width <= constraints.maxWidth) return table;
-              return SingleChildScrollView(scrollDirection: Axis.horizontal, child: table);
+              return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: table,
+              );
             },
           ),
         ],
@@ -109,7 +140,15 @@ class BillingInvoicesTableCard extends StatelessWidget {
   }
 
   Widget _headerRow(AppColorsExtension colors) {
-    const labels = ['RECEIPT NUMBER', 'BILLING DATE', 'PLAN', 'PAYMENT METHOD', 'AMOUNT', 'STATUS', 'ACTIONS'];
+    const labels = [
+      'RECEIPT NUMBER',
+      'BILLING DATE',
+      'PLAN',
+      'PAYMENT METHOD',
+      'AMOUNT',
+      'STATUS',
+      'ACTIONS',
+    ];
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       child: Row(
@@ -119,8 +158,15 @@ class BillingInvoicesTableCard extends StatelessWidget {
               flex: _flex[i],
               child: Text(
                 labels[i],
-                textAlign: i == labels.length - 1 ? TextAlign.right : TextAlign.left,
-                style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w700, color: colors.textMuted, letterSpacing: 0.6),
+                textAlign: i == labels.length - 1
+                    ? TextAlign.right
+                    : TextAlign.left,
+                style: GoogleFonts.inter(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                  color: colors.textMuted,
+                  letterSpacing: 0.6,
+                ),
               ),
             ),
         ],
@@ -135,7 +181,12 @@ class _InvoiceRow extends StatefulWidget {
   final VoidCallback onDownload;
   final VoidCallback onPay;
 
-  const _InvoiceRow({required this.invoice, required this.flex, required this.onDownload, required this.onPay});
+  const _InvoiceRow({
+    required this.invoice,
+    required this.flex,
+    required this.onDownload,
+    required this.onPay,
+  });
 
   @override
   State<_InvoiceRow> createState() => _InvoiceRowState();
@@ -161,12 +212,65 @@ class _InvoiceRowState extends State<_InvoiceRow> {
         ),
         child: Row(
           children: [
-            _cell(f[0], Text(inv.number, style: GoogleFonts.jetBrainsMono(fontSize: 11.5, fontWeight: FontWeight.w700, color: colors.primaryLight))),
-            _cell(f[1], Text(inv.date, style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w500, color: colors.textPrimary))),
-            _cell(f[2], Align(alignment: Alignment.centerLeft, child: _planPill(inv.plan, colors))),
-            _cell(f[3], Text(inv.method, maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.inter(fontSize: 11.5, color: colors.textMuted))),
-            _cell(f[4], Text(inv.amount, style: GoogleFonts.jetBrainsMono(fontSize: 12, fontWeight: FontWeight.w800, color: colors.textPrimary))),
-            _cell(f[5], Align(alignment: Alignment.centerLeft, child: _statusPill(inv, colors))),
+            _cell(
+              f[0],
+              Text(
+                inv.number,
+                style: GoogleFonts.jetBrainsMono(
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w700,
+                  color: colors.primaryLight,
+                ),
+              ),
+            ),
+            _cell(
+              f[1],
+              Text(
+                inv.date,
+                style: GoogleFonts.inter(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: colors.textPrimary,
+                ),
+              ),
+            ),
+            _cell(
+              f[2],
+              Align(
+                alignment: Alignment.centerLeft,
+                child: _planPill(inv.plan, colors),
+              ),
+            ),
+            _cell(
+              f[3],
+              Text(
+                inv.method,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.inter(
+                  fontSize: 11.5,
+                  color: colors.textMuted,
+                ),
+              ),
+            ),
+            _cell(
+              f[4],
+              Text(
+                inv.amount,
+                style: GoogleFonts.jetBrainsMono(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w800,
+                  color: colors.textPrimary,
+                ),
+              ),
+            ),
+            _cell(
+              f[5],
+              Align(
+                alignment: Alignment.centerLeft,
+                child: _statusPill(inv, colors),
+              ),
+            ),
             Expanded(
               flex: f[6],
               child: Row(
@@ -186,7 +290,10 @@ class _InvoiceRowState extends State<_InvoiceRow> {
     );
   }
 
-  Widget _cell(int flex, Widget child) => Expanded(flex: flex, child: Padding(padding: const EdgeInsets.only(right: 10), child: child));
+  Widget _cell(int flex, Widget child) => Expanded(
+    flex: flex,
+    child: Padding(padding: const EdgeInsets.only(right: 10), child: child),
+  );
 
   Widget _planPill(String plan, AppColorsExtension colors) {
     return Container(
@@ -195,19 +302,42 @@ class _InvoiceRowState extends State<_InvoiceRow> {
         color: colors.primaryTint,
         borderRadius: BorderRadius.circular(6),
       ),
-      child: Text(plan, maxLines: 1, overflow: TextOverflow.ellipsis,
-          style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w700, color: colors.primaryLight)),
+      child: Text(
+        plan,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: GoogleFonts.inter(
+          fontSize: 10,
+          fontWeight: FontWeight.w700,
+          color: colors.primaryLight,
+        ),
+      ),
     );
   }
 
   Widget _statusPill(BillingInvoiceEntity inv, AppColorsExtension colors) {
-    final color = inv.isPaid ? colors.success : (inv.isPending ? colors.warning : colors.error);
-    final bgColor = inv.isPaid ? colors.successTint : (inv.isPending ? colors.warningTint : colors.errorTint);
+    final color = inv.isPaid
+        ? colors.success
+        : (inv.isPending ? colors.warning : colors.error);
+    final bgColor = inv.isPaid
+        ? colors.successTint
+        : (inv.isPending ? colors.warningTint : colors.errorTint);
     final label = inv.isPaid ? 'PAID' : (inv.isPending ? 'PENDING' : 'OVERDUE');
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(color: bgColor, borderRadius: BorderRadius.circular(6)),
-      child: Text(label, style: GoogleFonts.inter(fontSize: 9.5, fontWeight: FontWeight.w800, color: color, letterSpacing: 0.3)),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        label,
+        style: GoogleFonts.inter(
+          fontSize: 9.5,
+          fontWeight: FontWeight.w800,
+          color: color,
+          letterSpacing: 0.3,
+        ),
+      ),
     );
   }
 
@@ -220,16 +350,35 @@ class _InvoiceRowState extends State<_InvoiceRow> {
         child: Ink(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
           decoration: BoxDecoration(
-            gradient: const LinearGradient(colors: [Color(0xFF2563EB), Color(0xFF38BDF8)]),
+            gradient: const LinearGradient(
+              colors: [Color(0xFF2563EB), Color(0xFF38BDF8)],
+            ),
             borderRadius: BorderRadius.circular(20),
-            boxShadow: [BoxShadow(color: const Color(0xFF2563EB).withAlpha(70), blurRadius: 12, offset: const Offset(0, 4))],
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF2563EB).withAlpha(70),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.bolt_rounded, size: 12, color: Color(0xFFFB7185)),
+              const Icon(
+                Icons.bolt_rounded,
+                size: 12,
+                color: Color(0xFFFB7185),
+              ),
               const SizedBox(width: 4),
-              Text('Pay via Razorpay', style: GoogleFonts.inter(fontSize: 10.5, fontWeight: FontWeight.w700, color: Colors.white)),
+              Text(
+                'Pay via Razorpay',
+                style: GoogleFonts.inter(
+                  fontSize: 10.5,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                ),
+              ),
             ],
           ),
         ),
@@ -246,7 +395,10 @@ class _InvoiceRowState extends State<_InvoiceRow> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
-      child: Text('Download Receipt', style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w700)),
+      child: Text(
+        'Download Receipt',
+        style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w700),
+      ),
     );
   }
 }

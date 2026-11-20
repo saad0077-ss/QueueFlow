@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -29,7 +30,10 @@ class ClinicPhoto extends StatefulWidget {
   static Future<Uint8List?> _load(String clinicId, int version) {
     return _cache.putIfAbsent('$clinicId@$version', () async {
       try {
-        final doc = await FirebaseFirestore.instance.collection('clinic_images').doc(clinicId).get();
+        final doc = await FirebaseFirestore.instance
+            .collection('clinic_images')
+            .doc(clinicId)
+            .get();
         final data = doc.data()?['data'];
         return data is String && data.isNotEmpty ? base64Decode(data) : null;
       } catch (_) {
@@ -54,17 +58,26 @@ class _ClinicPhotoState extends State<ClinicPhoto> {
   @override
   void didUpdateWidget(covariant ClinicPhoto oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.clinicId != widget.clinicId || oldWidget.imageVersion != widget.imageVersion) _resolve();
+    if (oldWidget.clinicId != widget.clinicId ||
+        oldWidget.imageVersion != widget.imageVersion) {
+      _resolve();
+    }
   }
 
   void _resolve() {
-    _future = widget.imageVersion > 0 ? ClinicPhoto._load(widget.clinicId, widget.imageVersion) : null;
+    _future = widget.imageVersion > 0
+        ? ClinicPhoto._load(widget.clinicId, widget.imageVersion)
+        : null;
   }
 
   Widget _fallback() {
     final url = widget.imageUrl?.trim() ?? '';
     if (url.isEmpty) return widget.placeholder;
-    return Image.network(url, fit: widget.fit, errorBuilder: (_, _, _) => widget.placeholder);
+    return Image.network(
+      url,
+      fit: widget.fit,
+      errorBuilder: (_, _, _) => widget.placeholder,
+    );
   }
 
   @override
@@ -74,10 +87,17 @@ class _ClinicPhotoState extends State<ClinicPhoto> {
     return FutureBuilder<Uint8List?>(
       future: future,
       builder: (context, snap) {
-        if (snap.connectionState != ConnectionState.done) return widget.placeholder;
+        if (snap.connectionState != ConnectionState.done) {
+          return widget.placeholder;
+        }
         final bytes = snap.data;
         if (bytes == null) return _fallback();
-        return Image.memory(bytes, fit: widget.fit, gaplessPlayback: true, errorBuilder: (_, _, _) => widget.placeholder);
+        return Image.memory(
+          bytes,
+          fit: widget.fit,
+          gaplessPlayback: true,
+          errorBuilder: (_, _, _) => widget.placeholder,
+        );
       },
     );
   }

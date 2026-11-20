@@ -7,10 +7,7 @@ class TicketClipper extends CustomClipper<Path> {
   final double cornerRadius;
   final double notchRadius;
 
-  const TicketClipper({
-    this.cornerRadius = 16.0,
-    this.notchRadius = 14.0,
-  });
+  const TicketClipper({this.cornerRadius = 16.0, this.notchRadius = 14.0});
 
   @override
   Path getClip(Size size) {
@@ -126,20 +123,13 @@ class TicketPreviewCard extends StatelessWidget {
   final double width;
   final double height;
 
-  const TicketPreviewCard({
-    super.key,
-    this.width = 260,
-    this.height = 114,
-  });
+  const TicketPreviewCard({super.key, this.width = 260, this.height = 114});
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: ClipPath(
-        clipper: const TicketClipper(
-          cornerRadius: 18,
-          notchRadius: 14,
-        ),
+        clipper: const TicketClipper(cornerRadius: 18, notchRadius: 14),
         child: Container(
           width: width,
           height: height,
@@ -194,10 +184,7 @@ class TicketPreviewCard extends StatelessWidget {
               ),
 
               // Right Stub Section
-              const Expanded(
-                flex: 7,
-                child: SizedBox(),
-              ),
+              const Expanded(flex: 7, child: SizedBox()),
             ],
           ),
         ),

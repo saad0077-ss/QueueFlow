@@ -28,9 +28,8 @@ class ClinicBookingCatalog {
     return names;
   }
 
-  List<ClinicServiceEntity> servicesFor(String dept) => services
-      .where((s) => s.isActive && s.departmentName == dept)
-      .toList();
+  List<ClinicServiceEntity> servicesFor(String dept) =>
+      services.where((s) => s.isActive && s.departmentName == dept).toList();
 
   /// Doctors assigned to the service, else the department's doctors, else all.
   List<String> doctorsFor(String dept, ClinicServiceEntity? service) {

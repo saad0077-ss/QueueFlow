@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../../core/widgets/auth_back_header.dart';
 import '../../data/repositories/auth_repository_impl.dart';
@@ -44,18 +45,14 @@ class _SignUpView extends StatelessWidget {
             if (state.user != null) {
               Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
-                  builder: (_) => EmailVerificationScreen(
-                    email: state.user!.email,
-                  ),
+                  builder: (_) =>
+                      EmailVerificationScreen(email: state.user!.email),
                 ),
                 (route) => false,
               );
             }
             if (state.errorMessage != null) {
-              AppSnackBar.showError(
-                context,
-                message: state.errorMessage!,
-              );
+              AppSnackBar.showError(context, message: state.errorMessage!);
             }
           },
           builder: (context, state) {
@@ -94,10 +91,7 @@ class _SignUpView extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 12),
                                 const Spacer(),
-                                SignUpForm(
-                                  state: state,
-                                  labelSize: labelSize,
-                                ),
+                                SignUpForm(state: state, labelSize: labelSize),
                                 const SizedBox(height: 16),
                                 const Spacer(),
                                 const SignUpFooter(),

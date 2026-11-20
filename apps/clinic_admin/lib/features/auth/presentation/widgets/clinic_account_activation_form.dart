@@ -18,10 +18,7 @@ import 'terms_checkbox_row.dart';
 class ClinicAccountActivationForm extends StatelessWidget {
   final AccountActivationState state;
 
-  const ClinicAccountActivationForm({
-    super.key,
-    required this.state,
-  });
+  const ClinicAccountActivationForm({super.key, required this.state});
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +81,8 @@ class ClinicAccountActivationForm extends StatelessWidget {
             isValid: state.isConfirmValid,
             validText: 'Passwords match',
             onChanged: (v) => bloc.add(ActivationConfirmPasswordChanged(v)),
-            onToggleObscure: () => bloc.add(const ActivationToggleConfirmPassword()),
+            onToggleObscure: () =>
+                bloc.add(const ActivationToggleConfirmPassword()),
           ),
           const SizedBox(height: 16),
 
@@ -118,7 +116,10 @@ class ClinicAccountActivationForm extends StatelessWidget {
               ),
               child: Text(
                 'Already activated? Sign in to Clinic Portal',
-                style: GoogleFonts.inter(fontSize: 12, color: colors.primaryLight),
+                style: GoogleFonts.inter(
+                  fontSize: 12,
+                  color: colors.primaryLight,
+                ),
               ),
             ),
           ),

@@ -52,7 +52,10 @@ class UpcomingAppointmentsCard extends StatelessWidget {
                 onTap: onViewAll,
                 borderRadius: BorderRadius.circular(6),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 4,
+                    vertical: 2,
+                  ),
                   child: Row(
                     children: [
                       Text(
@@ -81,64 +84,73 @@ class UpcomingAppointmentsCard extends StatelessWidget {
           // Responsive Table
           Expanded(
             child: LayoutBuilder(
-            builder: (context, constraints) {
-              final tableContent = Column(
-                children: [
-                  // Table Header
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: Row(
-                      children: [
-                        _colHeader('TIME', flex: 2, colors: colors),
-                        _colHeader('CUSTOMER', flex: 4, colors: colors),
-                        _colHeader('SERVICE SELECTED', flex: 5, colors: colors),
-                        _colHeader('DOCTOR', flex: 3, colors: colors),
-                        _colHeader('PAYMENT', flex: 3, colors: colors),
-                        _colHeader('STATUS', flex: 3, colors: colors, alignRight: true),
-                      ],
+              builder: (context, constraints) {
+                final tableContent = Column(
+                  children: [
+                    // Table Header
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Row(
+                        children: [
+                          _colHeader('TIME', flex: 2, colors: colors),
+                          _colHeader('CUSTOMER', flex: 4, colors: colors),
+                          _colHeader(
+                            'SERVICE SELECTED',
+                            flex: 5,
+                            colors: colors,
+                          ),
+                          _colHeader('DOCTOR', flex: 3, colors: colors),
+                          _colHeader('PAYMENT', flex: 3, colors: colors),
+                          _colHeader(
+                            'STATUS',
+                            flex: 3,
+                            colors: colors,
+                            alignRight: true,
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
 
-                  Divider(height: 1, color: colors.border),
+                    Divider(height: 1, color: colors.border),
 
-                  if (apptList.isEmpty)
-                    Expanded(
-                      child: Center(
-                        child: Text(
-                          'No upcoming appointments.',
-                          style: GoogleFonts.inter(
-                            fontSize: 12.5,
-                            color: colors.textMuted,
+                    if (apptList.isEmpty)
+                      Expanded(
+                        child: Center(
+                          child: Text(
+                            'No upcoming appointments.',
+                            style: GoogleFonts.inter(
+                              fontSize: 12.5,
+                              color: colors.textMuted,
+                            ),
+                          ),
+                        ),
+                      )
+                    else
+                      Expanded(
+                        child: Scrollbar(
+                          child: ListView.separated(
+                            itemCount: apptList.length,
+                            separatorBuilder: (context, index) =>
+                                Divider(height: 1, color: colors.borderSubtle),
+                            itemBuilder: (context, index) {
+                              final a = apptList[index];
+                              return _AppointmentRowItem(
+                                appointment: a,
+                                onTap: () => onSelectAppointment?.call(a),
+                              );
+                            },
                           ),
                         ),
                       ),
-                    )
-                  else
-                    Expanded(
-                      child: Scrollbar(
-                        child: ListView.separated(
-                          itemCount: apptList.length,
-                          separatorBuilder: (context, index) =>
-                              Divider(height: 1, color: colors.borderSubtle),
-                          itemBuilder: (context, index) {
-                            final a = apptList[index];
-                            return _AppointmentRowItem(
-                              appointment: a,
-                              onTap: () => onSelectAppointment?.call(a),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                ],
-              );
+                  ],
+                );
 
-              if (constraints.maxWidth >= _minTableWidth) return tableContent;
-              return SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: SizedBox(width: _minTableWidth, child: tableContent),
-              );
-            },
+                if (constraints.maxWidth >= _minTableWidth) return tableContent;
+                return SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: SizedBox(width: _minTableWidth, child: tableContent),
+                );
+              },
             ),
           ),
         ],
@@ -172,10 +184,7 @@ class _AppointmentRowItem extends StatelessWidget {
   final ClinicAppointmentEntity appointment;
   final VoidCallback onTap;
 
-  const _AppointmentRowItem({
-    required this.appointment,
-    required this.onTap,
-  });
+  const _AppointmentRowItem({required this.appointment, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -253,7 +262,10 @@ class _AppointmentRowItem extends StatelessWidget {
                     crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 5,
+                          vertical: 1.5,
+                        ),
                         decoration: BoxDecoration(
                           color: colors.primaryTint,
                           borderRadius: BorderRadius.circular(4),
@@ -315,7 +327,10 @@ class _AppointmentRowItem extends StatelessWidget {
     );
   }
 
-  Widget _buildPaymentPill(BuildContext context, AppointmentPaymentEntity payment) {
+  Widget _buildPaymentPill(
+    BuildContext context,
+    AppointmentPaymentEntity payment,
+  ) {
     final colors = context.colors;
     Color bg;
     Color fg;

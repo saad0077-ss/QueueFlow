@@ -6,10 +6,7 @@ import 'package:queueflow_ui/queueflow_ui.dart';
 class CancelQueueDialog extends StatelessWidget {
   final VoidCallback onConfirmCancel;
 
-  const CancelQueueDialog({
-    super.key,
-    required this.onConfirmCancel,
-  });
+  const CancelQueueDialog({super.key, required this.onConfirmCancel});
 
   static Future<bool?> show(BuildContext context) {
     return showDialog<bool>(

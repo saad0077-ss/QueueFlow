@@ -35,10 +35,7 @@ class PasswordStrengthBar extends StatelessWidget {
         const SizedBox(height: 6),
         Text(
           'Password strength',
-          style: GoogleFonts.inter(
-            fontSize: 11,
-            color: colors.textMuted,
-          ),
+          style: GoogleFonts.inter(fontSize: 11, color: colors.textMuted),
         ),
       ],
     );

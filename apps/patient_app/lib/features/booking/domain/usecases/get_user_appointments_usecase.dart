@@ -6,14 +6,20 @@ class GetUserAppointmentsUseCase {
 
   GetUserAppointmentsUseCase(this.repository);
 
-  Future<List<AppointmentEntity>> call({String? customerId, String? customerEmail}) {
+  Future<List<AppointmentEntity>> call({
+    String? customerId,
+    String? customerEmail,
+  }) {
     return repository.getUserAppointments(
       customerId: customerId,
       customerEmail: customerEmail,
     );
   }
 
-  Stream<List<AppointmentEntity>> watch({String? customerId, String? customerEmail}) {
+  Stream<List<AppointmentEntity>> watch({
+    String? customerId,
+    String? customerEmail,
+  }) {
     return repository.watchUserAppointments(
       customerId: customerId,
       customerEmail: customerEmail,

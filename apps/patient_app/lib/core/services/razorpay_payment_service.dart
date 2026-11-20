@@ -8,7 +8,10 @@ import 'package:patient_app/features/booking/domain/entities/payment_info_entity
 typedef PaymentSuccessCallback = void Function(PaymentInfoEntity paymentInfo);
 
 /// Callback type when payment fails or is dismissed
-typedef PaymentFailureCallback = void Function(String errorMessage, int? errorCode);
+typedef PaymentFailureCallback = void Function(
+  String errorMessage,
+  int? errorCode,
+);
 
 /// Callback type when an external wallet is chosen
 typedef ExternalWalletCallback = void Function(String walletName);
@@ -17,7 +20,8 @@ typedef ExternalWalletCallback = void Function(String walletName);
 class RazorpayPaymentService {
   Razorpay? _razorpay;
 
-  RazorpayPaymentService({Razorpay? razorpayClient}) : _razorpay = razorpayClient;
+  RazorpayPaymentService({Razorpay? razorpayClient})
+    : _razorpay = razorpayClient;
 
   PaymentSuccessCallback? _activeSuccessCallback;
   PaymentFailureCallback? _activeFailureCallback;
@@ -34,9 +38,15 @@ class RazorpayPaymentService {
   void initialize() {
     if (isSupportedNativePlatform && _razorpay == null) {
       _razorpay = Razorpay();
-      _razorpay!.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handleNativePaymentSuccess);
+      _razorpay!.on(
+        Razorpay.EVENT_PAYMENT_SUCCESS,
+        _handleNativePaymentSuccess,
+      );
       _razorpay!.on(Razorpay.EVENT_PAYMENT_ERROR, _handleNativePaymentError);
-      _razorpay!.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleNativeExternalWallet);
+      _razorpay!.on(
+        Razorpay.EVENT_EXTERNAL_WALLET,
+        _handleNativeExternalWallet,
+      );
     }
   }
 
@@ -77,10 +87,12 @@ class RazorpayPaymentService {
       // Normalize phone number (digits only or default test phone)
       final cleanPhone = patientPhone.replaceAll(RegExp(r'[^0-9+]'), '');
       final prefillPhone = cleanPhone.isNotEmpty ? cleanPhone : '9876543210';
-      final prefillEmail =
-          patientEmail.trim().isNotEmpty ? patientEmail.trim() : 'test.patient@queueflow.in';
-      final prefillName =
-          patientName.trim().isNotEmpty ? patientName.trim() : 'QueueFlow Patient';
+      final prefillEmail = patientEmail.trim().isNotEmpty
+          ? patientEmail.trim()
+          : 'test.patient@queueflow.in';
+      final prefillName = patientName.trim().isNotEmpty
+          ? patientName.trim()
+          : 'QueueFlow Patient';
 
       // Amount in paise (1 INR = 100 paise)
       final amountInPaise = (amount * 100).round();
@@ -103,9 +115,7 @@ class RazorpayPaymentService {
           'env': 'test_mode',
           'gateway': 'razorpay',
         },
-        'theme': {
-          'color': RazorpayConstants.themeColor,
-        },
+        'theme': {'color': RazorpayConstants.themeColor},
       };
 
       try {
@@ -126,7 +136,8 @@ class RazorpayPaymentService {
         '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
 
     final payment = PaymentInfoEntity(
-      paymentId: response.paymentId ?? 'pay_${DateTime.now().millisecondsSinceEpoch}',
+      paymentId:
+          response.paymentId ?? 'pay_${DateTime.now().millisecondsSinceEpoch}',
       status: 'paid',
       gateway: 'Razorpay (Test Mode)',
       amount: _activeAmount,

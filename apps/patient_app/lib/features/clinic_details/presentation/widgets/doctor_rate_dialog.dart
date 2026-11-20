@@ -27,7 +27,14 @@ class _DoctorRateDialogState extends State<DoctorRateDialog> {
     super.dispose();
   }
 
-  static const _labels = ['Tap a star to rate', 'Poor', 'Fair', 'Good', 'Very good', 'Excellent'];
+  static const _labels = [
+    'Tap a star to rate',
+    'Poor',
+    'Fair',
+    'Good',
+    'Very good',
+    'Excellent',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +44,11 @@ class _DoctorRateDialogState extends State<DoctorRateDialog> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       title: Text(
         'Rate ${widget.doctorName}',
-        style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w800, color: colors.textPrimary),
+        style: GoogleFonts.inter(
+          fontSize: 17,
+          fontWeight: FontWeight.w800,
+          color: colors.textPrimary,
+        ),
       ),
       content: SingleChildScrollView(
         child: Column(
@@ -52,14 +63,19 @@ class _DoctorRateDialogState extends State<DoctorRateDialog> {
                   padding: EdgeInsets.zero,
                   onPressed: () => setState(() => _rating = star),
                   icon: Icon(
-                    star <= _rating ? Icons.star_rounded : Icons.star_outline_rounded,
+                    star <= _rating
+                        ? Icons.star_rounded
+                        : Icons.star_outline_rounded,
                     color: colors.ratingGold,
                     size: 36,
                   ),
                 );
               }),
             ),
-            Text(_labels[_rating], style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted)),
+            Text(
+              _labels[_rating],
+              style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted),
+            ),
             const SizedBox(height: 14),
             TextField(
               controller: _comment,
@@ -96,7 +112,9 @@ class _DoctorRateDialogState extends State<DoctorRateDialog> {
           style: ElevatedButton.styleFrom(
             backgroundColor: colors.primary,
             foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
           onPressed: _rating == 0
               ? null
@@ -104,7 +122,10 @@ class _DoctorRateDialogState extends State<DoctorRateDialog> {
                   widget.onSubmit(_rating, _comment.text.trim());
                   Navigator.pop(context);
                 },
-          child: const Text('Submit', style: TextStyle(fontWeight: FontWeight.w700)),
+          child: const Text(
+            'Submit',
+            style: TextStyle(fontWeight: FontWeight.w700),
+          ),
         ),
       ],
     );

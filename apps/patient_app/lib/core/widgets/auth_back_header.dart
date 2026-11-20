@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import 'app_logo.dart';
 
 class AuthBackHeader extends StatelessWidget {

@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+
 import '../../../auth/domain/entities/user_entity.dart';
 
 abstract class SplashState extends Equatable {

@@ -54,7 +54,9 @@ class _AccountActivationView extends StatelessWidget {
               if (state.activatedStaff != null) {
                 AppSnackBar.showSuccess(context, message: 'Account activated.');
                 Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (_) => const ClinicDashboardPage()),
+                  MaterialPageRoute(
+                    builder: (_) => const ClinicDashboardPage(),
+                  ),
                 );
               }
               if (state.errorMessage != null) {
@@ -63,7 +65,8 @@ class _AccountActivationView extends StatelessWidget {
             },
             builder: (context, state) => Row(
               children: [
-                if (isDesktop) const Expanded(flex: 5, child: ClinicHeroBanner()),
+                if (isDesktop)
+                  const Expanded(flex: 5, child: ClinicHeroBanner()),
                 Expanded(
                   flex: isDesktop ? 6 : 1,
                   child: Center(
@@ -79,11 +82,7 @@ class _AccountActivationView extends StatelessWidget {
               ],
             ),
           ),
-          const Positioned(
-            top: 20,
-            right: 20,
-            child: ThemeModeToggleButton(),
-          ),
+          const Positioned(top: 20, right: 20, child: ThemeModeToggleButton()),
         ],
       ),
     );

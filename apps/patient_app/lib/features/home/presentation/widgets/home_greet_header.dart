@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../profile/presentation/widgets/profile_avatar.dart';
 
 /// Top Header showing patient avatar with gradient, dynamic greeting salute,
@@ -58,7 +59,10 @@ class HomeGreetHeader extends StatelessWidget implements PreferredSizeWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: colors.primaryTint,
                     borderRadius: BorderRadius.circular(999),
@@ -148,7 +152,9 @@ class HomeGreetHeader extends StatelessWidget implements PreferredSizeWidget {
           final isWide = constraints.maxWidth >= 640;
           return Center(
             child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: isWide ? 840 : double.infinity),
+              constraints: BoxConstraints(
+                maxWidth: isWide ? 840 : double.infinity,
+              ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Row(
@@ -209,20 +215,21 @@ class HomeGreetHeader extends StatelessWidget implements PreferredSizeWidget {
 
                     // Notification Bell (40x40 with rounded corners matching prototype .bell-btn)
                     GestureDetector(
-                      onTap: onNotificationTap ?? () => _showNotificationsSheet(context),
+                      onTap:
+                          onNotificationTap ??
+                          () => _showNotificationsSheet(context),
                       child: Container(
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(
                           color: colors.surfaceSecondary,
                           borderRadius: BorderRadius.circular(14),
-                          border: Border.all(
-                            color: colors.border,
-                            width: 1.5,
-                          ),
+                          border: Border.all(color: colors.border, width: 1.5),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withValues(alpha: context.isDarkMode ? 0.15 : 0.05),
+                              color: Colors.black.withValues(
+                                alpha: context.isDarkMode ? 0.15 : 0.05,
+                              ),
                               blurRadius: 4,
                               offset: const Offset(0, 1),
                             ),

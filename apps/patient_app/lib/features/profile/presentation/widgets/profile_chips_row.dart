@@ -6,17 +6,12 @@ class ProfileChipsRow extends StatelessWidget {
   final int? age;
   final String? gender;
 
-  const ProfileChipsRow({
-    super.key,
-    this.bloodGroup,
-    this.age,
-    this.gender,
-  });
+  const ProfileChipsRow({super.key, this.bloodGroup, this.age, this.gender});
 
   String get _ageGender => [
-        if (age != null) '$age Yrs',
-        if (gender != null && gender!.isNotEmpty) gender!,
-      ].join(' • ');
+    if (age != null) '$age Yrs',
+    if (gender != null && gender!.isNotEmpty) gender!,
+  ].join(' • ');
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +44,9 @@ class ProfileChipsRow extends StatelessWidget {
                   ),
                   const SizedBox(height: 3),
                   Text(
-                    (bloodGroup == null || bloodGroup!.isEmpty) ? '—' : bloodGroup!,
+                    (bloodGroup == null || bloodGroup!.isEmpty)
+                        ? '—'
+                        : bloodGroup!,
                     style: TextStyle(
                       fontSize: 12.5,
                       fontWeight: FontWeight.w800,

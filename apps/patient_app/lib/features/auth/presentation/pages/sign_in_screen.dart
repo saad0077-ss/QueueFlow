@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../../core/widgets/auth_back_header.dart';
 import '../../../../main.dart';
@@ -24,10 +25,8 @@ class SignInScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final repo = authRepository ?? AuthRepositoryImpl();
     return BlocProvider(
-      create: (_) => SignInBloc(
-        signInUseCase: SignInUseCase(repo),
-        authRepository: repo,
-      ),
+      create: (_) =>
+          SignInBloc(signInUseCase: SignInUseCase(repo), authRepository: repo),
       child: const _SignInView(),
     );
   }
@@ -50,9 +49,8 @@ class _SignInView extends StatelessWidget {
               if (currentUser != null && !currentUser.emailVerified) {
                 Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(
-                    builder: (_) => EmailVerificationScreen(
-                      email: state.user!.email,
-                    ),
+                    builder: (_) =>
+                        EmailVerificationScreen(email: state.user!.email),
                   ),
                   (route) => false,
                 );
@@ -86,7 +84,9 @@ class _SignInView extends StatelessWidget {
                     child: SingleChildScrollView(
                       physics: const ClampingScrollPhysics(),
                       child: ConstrainedBox(
-                        constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                        constraints: BoxConstraints(
+                          minHeight: constraints.maxHeight,
+                        ),
                         child: IntrinsicHeight(
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -98,20 +98,32 @@ class _SignInView extends StatelessWidget {
                                 const SizedBox(height: 34),
                                 SignInHeader(
                                   titleSize: (28.0 * scale).clamp(23.0, 32.0),
-                                  subtitleSize: (14.0 * scale).clamp(12.5, 16.0),
+                                  subtitleSize: (14.0 * scale).clamp(
+                                    12.5,
+                                    16.0,
+                                  ),
                                 ),
                                 const Spacer(flex: 5),
                                 const SizedBox(height: 16),
                                 SignInForm(
                                   state: state,
                                   labelSize: (13.5 * scale).clamp(12.0, 15.0),
-                                  forgotPasswordSize: (13.0 * scale).clamp(11.5, 14.5),
+                                  forgotPasswordSize: (13.0 * scale).clamp(
+                                    11.5,
+                                    14.5,
+                                  ),
                                 ),
                                 const Spacer(flex: 4),
                                 const SizedBox(height: 16),
                                 SignInFooter(
-                                  dividerTextSize: (12.5 * scale).clamp(11.0, 14.0),
-                                  bottomLinkSize: (13.5 * scale).clamp(12.0, 15.0),
+                                  dividerTextSize: (12.5 * scale).clamp(
+                                    11.0,
+                                    14.0,
+                                  ),
+                                  bottomLinkSize: (13.5 * scale).clamp(
+                                    12.0,
+                                    15.0,
+                                  ),
                                 ),
                                 const SizedBox(height: 20),
                               ],

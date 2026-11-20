@@ -20,7 +20,11 @@ class FavoriteClinicModel extends FavoriteClinicEntity {
       rating: (json['rating'] is num) ? (json['rating'] as num).toDouble() : 0,
       reviewsCount: (json['reviewsCount'] as num?)?.toInt() ?? 0,
       address: json['address'] as String? ?? '',
-      initials: json['initials'] as String? ?? (json['name'] != null && (json['name'] as String).isNotEmpty ? (json['name'] as String)[0] : 'C'),
+      initials:
+          json['initials'] as String? ??
+          (json['name'] != null && (json['name'] as String).isNotEmpty
+              ? (json['name'] as String)[0]
+              : 'C'),
       accentColorHex: json['accentColorHex'] as int? ?? 0xFF2563EB,
     );
   }

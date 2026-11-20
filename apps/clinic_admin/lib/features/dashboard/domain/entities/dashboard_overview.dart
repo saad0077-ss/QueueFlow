@@ -51,8 +51,10 @@ class DashboardOverview {
 
   /// Sortable minutes-since-midnight from labels like "11:00 AM".
   static int _minutes(String t) {
-    final m = RegExp(r'(\d{1,2}):(\d{2})\s*(AM|PM)?', caseSensitive: false)
-        .firstMatch(t);
+    final m = RegExp(
+      r'(\d{1,2}):(\d{2})\s*(AM|PM)?',
+      caseSensitive: false,
+    ).firstMatch(t);
     if (m == null) return 0;
     var h = int.parse(m.group(1)!);
     final min = int.parse(m.group(2)!);

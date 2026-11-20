@@ -19,10 +19,15 @@ class ClinicLocationSaveButton extends StatelessWidget {
           backgroundColor: colors.primary,
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 12),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
         icon: const Icon(Icons.save_rounded, size: 16),
-        label: Text('Save Location & Map Settings', style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w600)),
+        label: Text(
+          'Save Location & Map Settings',
+          style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w600),
+        ),
       ),
     );
   }

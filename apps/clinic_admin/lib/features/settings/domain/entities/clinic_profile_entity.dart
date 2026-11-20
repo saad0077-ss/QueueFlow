@@ -1,4 +1,4 @@
-﻿import 'dart:typed_data';
+import 'dart:typed_data';
 import 'package:equatable/equatable.dart';
 
 class ClinicProfileEntity extends Equatable {
@@ -7,8 +7,10 @@ class ClinicProfileEntity extends Equatable {
   final String phone;
   final String email;
   final String description;
+
   /// Legacy hosted photo URL, used only when no photo is stored in Firestore.
   final String imageUrl;
+
   /// Clinic photo stored in Firestore (`clinic_images/{clinicId}`).
   final Uint8List? imageBytes;
 
@@ -43,5 +45,13 @@ class ClinicProfileEntity extends Equatable {
   }
 
   @override
-  List<Object?> get props => [name, address, phone, email, description, imageUrl, imageBytes];
+  List<Object?> get props => [
+    name,
+    address,
+    phone,
+    email,
+    description,
+    imageUrl,
+    imageBytes,
+  ];
 }

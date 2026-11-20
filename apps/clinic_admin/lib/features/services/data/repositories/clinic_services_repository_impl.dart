@@ -62,7 +62,10 @@ class ClinicServicesRepositoryImpl implements ClinicServicesRepository {
           return activeQuery.docs.first;
         }
 
-        final docDirect = await _firestore.collection('clinics').doc('sunrise-health').get();
+        final docDirect = await _firestore
+            .collection('clinics')
+            .doc('sunrise-health')
+            .get();
         if (docDirect.exists) return docDirect;
       } catch (_) {}
 
@@ -91,7 +94,7 @@ class ClinicServicesRepositoryImpl implements ClinicServicesRepository {
             (snap) => snap.docs
                 .map((doc) => ClinicServiceModel.fromFirestore(doc))
                 .toList(),
-          ), 
+          ),
     );
   }
 
@@ -102,7 +105,7 @@ class ClinicServicesRepositoryImpl implements ClinicServicesRepository {
     final slug = _slug(clinic.data()?['name'] as String? ?? '');
 
     final snap = await _firestore.collection('departments').get();
-    return snap.docs
+    final list = snap.docs
         .where((doc) {
           final data = doc.data();
           final status = (data['status'] ?? 'active').toString().toLowerCase();
@@ -118,25 +121,34 @@ class ClinicServicesRepositoryImpl implements ClinicServicesRepository {
           );
         })
         .map(ServiceDepartmentModel.fromFirestore)
-        .toList()
+        .toList();
+
+    final Map<String, ServiceDepartmentEntity> uniqueByName = {};
+    for (final dept in list) {
+      final key = dept.name.trim().toLowerCase();
+      if (!uniqueByName.containsKey(key)) {
+        uniqueByName[key] = dept;
+      }
+    }
+    return uniqueByName.values.toList()
       ..sort((a, b) => a.name.compareTo(b.name));
-  }       
-  
+  }
+
   @override
   Future<ServicePlanEntity> getServicePlan() async {
     final data = (await _clinicDoc()).data() ?? const <String, dynamic>{};
-    final clinicName = data['name'] as String? ?? '';  
+    final clinicName = data['name'] as String? ?? '';
 
     // Derived from planId because the platform admin only updates planId
     // when a subscription changes.
-    switch (data['planId'] as String? ?? 'solo') {  
-      case 'enterprise':  
+    switch (data['planId'] as String? ?? 'solo') {
+      case 'enterprise':
         return ServicePlanEntity(
           planName: 'Unlimited Doctors Plan',
           planPill: 'UNLIMITED DOCTORS PLAN',
           clinicName: clinicName,
         );
-      case 'multi': 
+      case 'multi':
         return ServicePlanEntity(
           planName: 'Multi-Doctor Clinic Plan',
           planPill: 'MULTI-DOCTOR PRACTICE',
@@ -163,7 +175,9 @@ class ClinicServicesRepositoryImpl implements ClinicServicesRepository {
           (m) => ClinicDoctorEntity(
             name: (m['name'] as String? ?? '').trim(),
             specialty: (m['specialty'] as String? ?? '').trim(),
-            department: (m['department'] as String? ?? m['specialty'] as String? ?? '').trim(),
+            department:
+                (m['department'] as String? ?? m['specialty'] as String? ?? '')
+                    .trim(),
             room: (m['room'] as String? ?? 'Consultation Suite').trim(),
           ),
         )
@@ -199,8 +213,7 @@ class ClinicServicesRepositoryImpl implements ClinicServicesRepository {
       await _firestore.collection('service_requests').doc(docId).set({
         'serviceId': docId,
         'clinicId': clinicId,
-        'clinicName':
-            clinic.data()?['name'] as String? ?? '',
+        'clinicName': clinic.data()?['name'] as String? ?? '',
         'departmentId': service.departmentId,
         'departmentName': service.departmentName,
         'serviceName': service.name,

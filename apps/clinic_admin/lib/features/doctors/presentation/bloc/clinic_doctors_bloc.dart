@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/repositories/clinic_doctors_repository.dart';
 import '../../domain/usecases/call_next_patient_usecase.dart';
@@ -26,13 +26,13 @@ class ClinicDoctorsBloc extends Bloc<ClinicDoctorsEvent, ClinicDoctorsState> {
     required DeleteClinicDoctorUseCase deleteDoctorUseCase,
     required CallNextPatientUseCase callNextPatientUseCase,
     required ClinicDoctorsRepository repository,
-  })  : _getDoctorsUseCase = getDoctorsUseCase,
-        _saveDoctorUseCase = saveDoctorUseCase,
-        _updateDoctorStatusUseCase = updateDoctorStatusUseCase,
-        _deleteDoctorUseCase = deleteDoctorUseCase,
-        _callNextPatientUseCase = callNextPatientUseCase,
-        _repository = repository,
-        super(const ClinicDoctorsState()) {
+  }) : _getDoctorsUseCase = getDoctorsUseCase,
+       _saveDoctorUseCase = saveDoctorUseCase,
+       _updateDoctorStatusUseCase = updateDoctorStatusUseCase,
+       _deleteDoctorUseCase = deleteDoctorUseCase,
+       _callNextPatientUseCase = callNextPatientUseCase,
+       _repository = repository,
+       super(const ClinicDoctorsState()) {
     on<DoctorsSubscriptionRequested>(_onSubscriptionRequested);
     on<DoctorsUpdated>(_onDoctorsUpdated);
     on<DoctorsLoadFailed>(_onLoadFailed);
@@ -58,11 +58,13 @@ class ClinicDoctorsBloc extends Bloc<ClinicDoctorsEvent, ClinicDoctorsState> {
       final departments = await _repository.getDepartmentSpecialties();
       final waiting = await _repository.getQueueWaitingCount();
 
-      emit(state.copyWith(
-        plan: plan,
-        departments: departments,
-        waitingCount: waiting,
-      ));
+      emit(
+        state.copyWith(
+          plan: plan,
+          departments: departments,
+          waitingCount: waiting,
+        ),
+      );
 
       await _doctorsSubscription?.cancel();
       _doctorsSubscription = _getDoctorsUseCase().listen(
@@ -70,11 +72,13 @@ class ClinicDoctorsBloc extends Bloc<ClinicDoctorsEvent, ClinicDoctorsState> {
         onError: (e) => add(DoctorsLoadFailed(e.toString())),
       );
     } catch (e) {
-      emit(state.copyWith(
-        status: DoctorsStatus.failure,
-        toastMessage: 'Failed to load doctors: $e',
-        isErrorToast: true,
-      ));
+      emit(
+        state.copyWith(
+          status: DoctorsStatus.failure,
+          toastMessage: 'Failed to load doctors: $e',
+          isErrorToast: true,
+        ),
+      );
     }
   }
 
@@ -84,37 +88,45 @@ class ClinicDoctorsBloc extends Bloc<ClinicDoctorsEvent, ClinicDoctorsState> {
   ) {
     var selected = state.selectedDoctor;
     if (selected != null) {
-      final match = event.doctors.where((d) => d.id == selected!.id).firstOrNull;
+      final match = event.doctors
+          .where((d) => d.id == selected!.id)
+          .firstOrNull;
       selected = match;
     }
 
-    emit(state.copyWith(
-      status: DoctorsStatus.success,
-      doctors: event.doctors,
-      selectedDoctor: selected,
-      clearSelectedDoctor: selected == null,
-    ));
+    emit(
+      state.copyWith(
+        status: DoctorsStatus.success,
+        doctors: event.doctors,
+        selectedDoctor: selected,
+        clearSelectedDoctor: selected == null,
+      ),
+    );
   }
 
   void _onLoadFailed(
     DoctorsLoadFailed event,
     Emitter<ClinicDoctorsState> emit,
   ) {
-    emit(state.copyWith(
-      status: DoctorsStatus.failure,
-      toastMessage: 'Failed to load doctors: ${event.message}',
-      isErrorToast: true,
-    ));
+    emit(
+      state.copyWith(
+        status: DoctorsStatus.failure,
+        toastMessage: 'Failed to load doctors: ${event.message}',
+        isErrorToast: true,
+      ),
+    );
   }
 
   void _onDoctorSelected(
     DoctorSelected event,
     Emitter<ClinicDoctorsState> emit,
   ) {
-    emit(state.copyWith(
-      selectedDoctor: event.doctor,
-      clearSelectedDoctor: event.doctor == null,
-    ));
+    emit(
+      state.copyWith(
+        selectedDoctor: event.doctor,
+        clearSelectedDoctor: event.doctor == null,
+      ),
+    );
   }
 
   Future<void> _onDoctorAddSubmitted(
@@ -122,25 +134,32 @@ class ClinicDoctorsBloc extends Bloc<ClinicDoctorsEvent, ClinicDoctorsState> {
     Emitter<ClinicDoctorsState> emit,
   ) async {
     if (state.isLimitReached) {
-      emit(state.copyWith(
-        toastMessage:
-            'Doctor limit reached (${state.doctors.length}/${state.plan.doctorsLimit}). Upgrade your plan to add more practicing doctors.',
-        isErrorToast: true,
-      ));
+      emit(
+        state.copyWith(
+          toastMessage:
+              'Doctor limit reached (${state.doctors.length}/${state.plan.doctorsLimit}). Upgrade your plan to add more practicing doctors.',
+          isErrorToast: true,
+        ),
+      );
       return;
     }
 
     try {
       await _saveDoctorUseCase(event.doctor);
-      emit(state.copyWith(
-        toastMessage: '${event.doctor.name} added to practicing doctor roster!',
-        isErrorToast: false,
-      ));
+      emit(
+        state.copyWith(
+          toastMessage:
+              '${event.doctor.name} added to practicing doctor roster!',
+          isErrorToast: false,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
-        toastMessage: 'Failed to add doctor: $e',
-        isErrorToast: true,
-      ));
+      emit(
+        state.copyWith(
+          toastMessage: 'Failed to add doctor: $e',
+          isErrorToast: true,
+        ),
+      );
     }
   }
 
@@ -150,16 +169,20 @@ class ClinicDoctorsBloc extends Bloc<ClinicDoctorsEvent, ClinicDoctorsState> {
   ) async {
     try {
       await _repository.updateDoctorProfile(event.doctor);
-      emit(state.copyWith(
-        selectedDoctor: event.doctor,
-        toastMessage: '${event.doctor.name}\'s profile updated successfully.',
-        isErrorToast: false,
-      ));
+      emit(
+        state.copyWith(
+          selectedDoctor: event.doctor,
+          toastMessage: '${event.doctor.name}\'s profile updated successfully.',
+          isErrorToast: false,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
-        toastMessage: 'Failed to update profile: $e',
-        isErrorToast: true,
-      ));
+      emit(
+        state.copyWith(
+          toastMessage: 'Failed to update profile: $e',
+          isErrorToast: true,
+        ),
+      );
     }
   }
 
@@ -177,26 +200,32 @@ class ClinicDoctorsBloc extends Bloc<ClinicDoctorsEvent, ClinicDoctorsState> {
 
       final current = state.selectedDoctor;
       if (current != null && current.id == event.doctorId) {
-        emit(state.copyWith(
-          selectedDoctor: current.copyWith(
-            weeklySchedule: event.schedule,
-            slotDuration: event.slotDuration,
-            leaveDates: event.leaveDates,
+        emit(
+          state.copyWith(
+            selectedDoctor: current.copyWith(
+              weeklySchedule: event.schedule,
+              slotDuration: event.slotDuration,
+              leaveDates: event.leaveDates,
+            ),
+            toastMessage: 'Availability updated.',
+            isErrorToast: false,
           ),
-          toastMessage: 'Availability updated.',
-          isErrorToast: false,
-        ));
+        );
       } else {
-        emit(state.copyWith(
-          toastMessage: 'Weekly schedule and slot duration updated.',
-          isErrorToast: false,
-        ));
+        emit(
+          state.copyWith(
+            toastMessage: 'Weekly schedule and slot duration updated.',
+            isErrorToast: false,
+          ),
+        );
       }
     } catch (e) {
-      emit(state.copyWith(
-        toastMessage: 'Failed to update schedule: $e',
-        isErrorToast: true,
-      ));
+      emit(
+        state.copyWith(
+          toastMessage: 'Failed to update schedule: $e',
+          isErrorToast: true,
+        ),
+      );
     }
   }
 
@@ -205,23 +234,32 @@ class ClinicDoctorsBloc extends Bloc<ClinicDoctorsEvent, ClinicDoctorsState> {
     Emitter<ClinicDoctorsState> emit,
   ) async {
     try {
-      final doc = state.doctors.where((d) => d.id == event.doctorId).firstOrNull;
+      final doc = state.doctors
+          .where((d) => d.id == event.doctorId)
+          .firstOrNull;
       if (doc == null) return;
 
       final nextStatus = doc.accountStatus == 'active' ? 'inactive' : 'active';
       await _repository.setDoctorAccountStatus(event.doctorId, nextStatus);
 
       final updated = doc.copyWith(accountStatus: nextStatus);
-      emit(state.copyWith(
-        selectedDoctor: state.selectedDoctor?.id == doc.id ? updated : state.selectedDoctor,
-        toastMessage: '${doc.name} account is now ${nextStatus.toUpperCase()}.',
-        isErrorToast: false,
-      ));
+      emit(
+        state.copyWith(
+          selectedDoctor: state.selectedDoctor?.id == doc.id
+              ? updated
+              : state.selectedDoctor,
+          toastMessage:
+              '${doc.name} account is now ${nextStatus.toUpperCase()}.',
+          isErrorToast: false,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
-        toastMessage: 'Failed to toggle account status: $e',
-        isErrorToast: true,
-      ));
+      emit(
+        state.copyWith(
+          toastMessage: 'Failed to toggle account status: $e',
+          isErrorToast: true,
+        ),
+      );
     }
   }
 
@@ -230,22 +268,34 @@ class ClinicDoctorsBloc extends Bloc<ClinicDoctorsEvent, ClinicDoctorsState> {
     Emitter<ClinicDoctorsState> emit,
   ) async {
     try {
-      final doc = state.doctors.where((d) => d.id == event.doctorId).firstOrNull;
+      final doc = state.doctors
+          .where((d) => d.id == event.doctorId)
+          .firstOrNull;
       if (doc == null) return;
 
-      await _repository.setDoctorAccountStatus(event.doctorId, event.accountStatus);
+      await _repository.setDoctorAccountStatus(
+        event.doctorId,
+        event.accountStatus,
+      );
 
       final updated = doc.copyWith(accountStatus: event.accountStatus);
-      emit(state.copyWith(
-        selectedDoctor: state.selectedDoctor?.id == doc.id ? updated : state.selectedDoctor,
-        toastMessage: '${doc.name} account status changed to ${event.accountStatus.toUpperCase()}.',
-        isErrorToast: false,
-      ));
+      emit(
+        state.copyWith(
+          selectedDoctor: state.selectedDoctor?.id == doc.id
+              ? updated
+              : state.selectedDoctor,
+          toastMessage:
+              '${doc.name} account status changed to ${event.accountStatus.toUpperCase()}.',
+          isErrorToast: false,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
-        toastMessage: 'Failed to change account status: $e',
-        isErrorToast: true,
-      ));
+      emit(
+        state.copyWith(
+          toastMessage: 'Failed to change account status: $e',
+          isErrorToast: true,
+        ),
+      );
     }
   }
 
@@ -255,15 +305,20 @@ class ClinicDoctorsBloc extends Bloc<ClinicDoctorsEvent, ClinicDoctorsState> {
   ) async {
     try {
       await _updateDoctorStatusUseCase(event.doctorId, event.status);
-      emit(state.copyWith(
-        toastMessage: 'Doctor status updated to ${event.status.toUpperCase()}.',
-        isErrorToast: false,
-      ));
+      emit(
+        state.copyWith(
+          toastMessage:
+              'Doctor status updated to ${event.status.toUpperCase()}.',
+          isErrorToast: false,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
-        toastMessage: 'Failed to update status: $e',
-        isErrorToast: true,
-      ));
+      emit(
+        state.copyWith(
+          toastMessage: 'Failed to update status: $e',
+          isErrorToast: true,
+        ),
+      );
     }
   }
 
@@ -274,16 +329,20 @@ class ClinicDoctorsBloc extends Bloc<ClinicDoctorsEvent, ClinicDoctorsState> {
     try {
       await _deleteDoctorUseCase(event.doctorId);
       final isCurrent = state.selectedDoctor?.id == event.doctorId;
-      emit(state.copyWith(
-        clearSelectedDoctor: isCurrent,
-        toastMessage: '${event.doctorName} removed from roster.',
-        isErrorToast: false,
-      ));
+      emit(
+        state.copyWith(
+          clearSelectedDoctor: isCurrent,
+          toastMessage: '${event.doctorName} removed from roster.',
+          isErrorToast: false,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
-        toastMessage: 'Failed to remove doctor: $e',
-        isErrorToast: true,
-      ));
+      emit(
+        state.copyWith(
+          toastMessage: 'Failed to remove doctor: $e',
+          isErrorToast: true,
+        ),
+      );
     }
   }
 
@@ -294,21 +353,27 @@ class ClinicDoctorsBloc extends Bloc<ClinicDoctorsEvent, ClinicDoctorsState> {
     try {
       final token = await _callNextPatientUseCase(event.doctorName);
       if (token != null) {
-        emit(state.copyWith(
-          toastMessage: 'Called $token for consultation!',
-          isErrorToast: false,
-        ));
+        emit(
+          state.copyWith(
+            toastMessage: 'Called $token for consultation!',
+            isErrorToast: false,
+          ),
+        );
       } else {
-        emit(state.copyWith(
-          toastMessage: 'No patients currently waiting in queue.',
-          isErrorToast: false,
-        ));
+        emit(
+          state.copyWith(
+            toastMessage: 'No patients currently waiting in queue.',
+            isErrorToast: false,
+          ),
+        );
       }
     } catch (e) {
-      emit(state.copyWith(
-        toastMessage: 'Error calling next patient: $e',
-        isErrorToast: true,
-      ));
+      emit(
+        state.copyWith(
+          toastMessage: 'Error calling next patient: $e',
+          isErrorToast: true,
+        ),
+      );
     }
   }
 

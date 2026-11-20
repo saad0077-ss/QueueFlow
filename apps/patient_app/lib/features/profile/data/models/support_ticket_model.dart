@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../../domain/entities/support_ticket_entity.dart';
 
 class TicketMessageModel extends TicketMessageEntity {
@@ -19,12 +20,7 @@ class TicketMessageModel extends TicketMessageEntity {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'sender': sender,
-      'text': text,
-      'time': time,
-      'isUser': isUser,
-    };
+    return {'sender': sender, 'text': text, 'time': time, 'isUser': isUser};
   }
 }
 
@@ -43,9 +39,14 @@ class SupportTicketModel extends SupportTicketEntity {
     required super.messages,
   });
 
-  factory SupportTicketModel.fromJson(Map<String, dynamic> json, {String? docId}) {
+  factory SupportTicketModel.fromJson(
+    Map<String, dynamic> json, {
+    String? docId,
+  }) {
     final rawMessages = json['messages'] as List<dynamic>? ?? [];
-    final messages = rawMessages.map((m) => TicketMessageModel.fromJson(m as Map<String, dynamic>)).toList();
+    final messages = rawMessages
+        .map((m) => TicketMessageModel.fromJson(m as Map<String, dynamic>))
+        .toList();
 
     return SupportTicketModel(
       id: docId ?? json['id'] as String? ?? 'TKT-104',
@@ -57,7 +58,8 @@ class SupportTicketModel extends SupportTicketEntity {
       status: json['status'] as String? ?? 'in_progress',
       priority: json['priority'] as String? ?? 'medium',
       createdAt: json['createdAt'] as String? ?? 'Today, 10:15 AM',
-      slaNotice: json['slaNotice'] as String? ?? 'Est. SLA: Resolution within 2 hrs',
+      slaNotice:
+          json['slaNotice'] as String? ?? 'Est. SLA: Resolution within 2 hrs',
       messages: messages.isNotEmpty
           ? messages
           : [
@@ -107,57 +109,58 @@ class SupportTicketModel extends SupportTicketEntity {
   }
 
   static List<SupportTicketModel> get defaultTickets => [
-        const SupportTicketModel(
-          id: 'TKT-104',
-          clinicId: 'sunrise-health',
-          clinicName: 'Sunrise Health Clinic',
-          category: 'queue',
-          subject: 'Queue slot reschedule query',
-          description: 'Can I defer my afternoon queue slot by 30 mins due to commute delay?',
-          status: 'in_progress',
-          priority: 'medium',
-          createdAt: 'Today, 10:15 AM',
-          slaNotice: 'Est. SLA: Resolution within 2 hrs',
-          messages: [
-            TicketMessageModel(
-              sender: 'Aisha Rahman',
-              text: 'Can I defer my afternoon queue slot by 30 mins due to commute delay?',
-              time: '10:15 AM',
-              isUser: true,
-            ),
-            TicketMessageModel(
-              sender: 'Clinic Front Desk (Anu)',
-              text: 'Hello Aisha! Yes, we have applied a 25-minute buffer to Token A-024. See you soon.',
-              time: '10:22 AM',
-              isUser: false,
-            ),
-          ],
+    const SupportTicketModel(
+      id: 'TKT-104',
+      clinicId: 'sunrise-health',
+      clinicName: 'Sunrise Health Clinic',
+      category: 'queue',
+      subject: 'Queue slot reschedule query',
+      description: 'Can I defer my afternoon queue slot by 30 mins due to commute delay?',
+      status: 'in_progress',
+      priority: 'medium',
+      createdAt: 'Today, 10:15 AM',
+      slaNotice: 'Est. SLA: Resolution within 2 hrs',
+      messages: [
+        TicketMessageModel(
+          sender: 'Aisha Rahman',
+          text: 'Can I defer my afternoon queue slot by 30 mins due to commute delay?',
+          time: '10:15 AM',
+          isUser: true,
         ),
-        const SupportTicketModel(
-          id: 'TKT-098',
-          clinicId: 'smile-dental',
-          clinicName: 'Smile Dental Clinic',
-          category: 'billing',
-          subject: 'Digital invoice copy requested',
-          description: 'Please email the tax invoice for the teeth cleaning procedure.',
-          status: 'resolved',
-          priority: 'low',
-          createdAt: '12 Jun 2026',
-          slaNotice: 'Resolved on 12 Jun 2026',
-          messages: [
-            TicketMessageModel(
-              sender: 'Aisha Rahman',
-              text: 'Please send an itemized invoice for dental insurance claim.',
-              time: '12 Jun, 2:00 PM',
-              isUser: true,
-            ),
-            TicketMessageModel(
-              sender: 'Smile Dental Accounts',
-              text: 'Sent the PDF receipt to aisha.rahman@email.com with ARN ref.',
-              time: '12 Jun, 2:45 PM',
-              isUser: false,
-            ),
-          ],
+        TicketMessageModel(
+          sender: 'Clinic Front Desk (Anu)',
+          text: 'Hello Aisha! Yes, we have applied a 25-minute buffer to Token A-024. See you soon.',
+          time: '10:22 AM',
+          isUser: false,
         ),
-      ];
+      ],
+    ),
+    const SupportTicketModel(
+      id: 'TKT-098',
+      clinicId: 'smile-dental',
+      clinicName: 'Smile Dental Clinic',
+      category: 'billing',
+      subject: 'Digital invoice copy requested',
+      description:
+          'Please email the tax invoice for the teeth cleaning procedure.',
+      status: 'resolved',
+      priority: 'low',
+      createdAt: '12 Jun 2026',
+      slaNotice: 'Resolved on 12 Jun 2026',
+      messages: [
+        TicketMessageModel(
+          sender: 'Aisha Rahman',
+          text: 'Please send an itemized invoice for dental insurance claim.',
+          time: '12 Jun, 2:00 PM',
+          isUser: true,
+        ),
+        TicketMessageModel(
+          sender: 'Smile Dental Accounts',
+          text: 'Sent the PDF receipt to aisha.rahman@email.com with ARN ref.',
+          time: '12 Jun, 2:45 PM',
+          isUser: false,
+        ),
+      ],
+    ),
+  ];
 }

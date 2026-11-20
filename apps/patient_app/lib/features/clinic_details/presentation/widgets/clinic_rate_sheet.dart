@@ -80,7 +80,9 @@ class _ClinicRateSheetState extends State<ClinicRateSheet> {
                 final star = index + 1;
                 return IconButton(
                   icon: Icon(
-                    star <= _rating ? Icons.star_rounded : Icons.star_outline_rounded,
+                    star <= _rating
+                        ? Icons.star_rounded
+                        : Icons.star_outline_rounded,
                     color: colors.ratingGold,
                     size: 32,
                   ),
@@ -99,7 +101,9 @@ class _ClinicRateSheetState extends State<ClinicRateSheet> {
                   selected: isSelected,
                   selectedColor: colors.primaryTint,
                   backgroundColor: colors.surfaceSecondary,
-                  side: BorderSide(color: isSelected ? colors.primary : colors.border),
+                  side: BorderSide(
+                    color: isSelected ? colors.primary : colors.border,
+                  ),
                   labelStyle: TextStyle(
                     color: isSelected ? colors.primary : colors.textMuted,
                   ),
@@ -139,7 +143,9 @@ class _ClinicRateSheetState extends State<ClinicRateSheet> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: colors.primary,
                   foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
                 onPressed: () {
                   widget.onSubmit(
@@ -149,7 +155,10 @@ class _ClinicRateSheetState extends State<ClinicRateSheet> {
                   );
                   Navigator.pop(context);
                 },
-                child: const Text('Submit Review', style: TextStyle(fontWeight: FontWeight.w700)),
+                child: const Text(
+                  'Submit Review',
+                  style: TextStyle(fontWeight: FontWeight.w700),
+                ),
               ),
             ),
           ],

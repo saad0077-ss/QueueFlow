@@ -1,7 +1,9 @@
 import '../../../../core/widgets/clinic_open_builder.dart';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../../core/widgets/clinic_dept_chip.dart';
 import '../../../../core/widgets/distance_builder.dart';
 import '../../../../core/widgets/clinic_photo.dart';
@@ -11,11 +13,7 @@ class HomeClinicCard extends StatelessWidget {
   final ClinicEntity clinic;
   final VoidCallback? onTap;
 
-  const HomeClinicCard({
-    super.key,
-    required this.clinic,
-    this.onTap,
-  });
+  const HomeClinicCard({super.key, required this.clinic, this.onTap});
 
   Color get _categoryColor {
     final cat = clinic.category.toLowerCase();
@@ -52,7 +50,8 @@ class HomeClinicCard extends StatelessWidget {
         ? clinic.name.trim().substring(0, 1).toUpperCase()
         : 'C';
 
-    if (clinic.imageVersion > 0 || (clinic.imageUrl?.trim().isNotEmpty ?? false)) {
+    if (clinic.imageVersion > 0 ||
+        (clinic.imageUrl?.trim().isNotEmpty ?? false)) {
       return Container(
         width: 66,
         height: 66,
@@ -74,7 +73,11 @@ class HomeClinicCard extends StatelessWidget {
     return _buildFallbackThumbnail(context, startingLetter, colors);
   }
 
-  Widget _buildFallbackThumbnail(BuildContext context, String startingLetter, AppColorsExtension colors) {
+  Widget _buildFallbackThumbnail(
+    BuildContext context,
+    String startingLetter,
+    AppColorsExtension colors,
+  ) {
     return Container(
       width: 66,
       height: 66,
@@ -87,11 +90,7 @@ class HomeClinicCard extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            _categoryIcon,
-            color: _categoryColor,
-            size: 24,
-          ),
+          Icon(_categoryIcon, color: _categoryColor, size: 24),
           const SizedBox(height: 2),
           Text(
             startingLetter,
@@ -122,9 +121,7 @@ class HomeClinicCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(9999),
-        border: Border.all(
-          color: color.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -132,10 +129,7 @@ class HomeClinicCard extends StatelessWidget {
           Container(
             width: 6,
             height: 6,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
           ),
           const SizedBox(width: 5),
           Text(
@@ -164,7 +158,9 @@ class HomeClinicCard extends StatelessWidget {
         border: Border.all(color: colors.border),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: context.isDarkMode ? 0.15 : 0.05),
+            color: Colors.black.withValues(
+              alpha: context.isDarkMode ? 0.15 : 0.05,
+            ),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -218,7 +214,9 @@ class HomeClinicCard extends StatelessWidget {
                         children: [
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 6, vertical: 2),
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
                               color: colors.warningTint,
                               borderRadius: BorderRadius.circular(8),
@@ -284,7 +282,9 @@ class HomeClinicCard extends StatelessWidget {
                             child: DistanceBuilder(
                               clinic: clinic,
                               builder: (_, dist) => Text(
-                                dist.isEmpty ? clinic.city : '$dist · ${clinic.city}',
+                                dist.isEmpty
+                                    ? clinic.city
+                                    : '$dist · ${clinic.city}',
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
@@ -319,7 +319,9 @@ class HomeClinicCard extends StatelessWidget {
                             const SizedBox.shrink(),
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 5),
+                              horizontal: 10,
+                              vertical: 5,
+                            ),
                             decoration: BoxDecoration(
                               color: colors.primaryTint,
                               borderRadius: BorderRadius.circular(9999),

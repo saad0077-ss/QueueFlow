@@ -7,7 +7,11 @@ import '../../domain/entities/doctor_daily_schedule.dart';
 
 class ManageDoctorScheduleDialog extends StatefulWidget {
   final ClinicDoctorProfileEntity doctor;
-  final void Function(Map<String, DoctorDailySchedule> schedule, int slotDuration) onSave;
+  final void Function(
+    Map<String, DoctorDailySchedule> schedule,
+    int slotDuration,
+  )
+  onSave;
 
   const ManageDoctorScheduleDialog({
     super.key,
@@ -18,26 +22,29 @@ class ManageDoctorScheduleDialog extends StatefulWidget {
   static Future<void> show(
     BuildContext context, {
     required ClinicDoctorProfileEntity doctor,
-    required void Function(Map<String, DoctorDailySchedule> schedule, int slotDuration) onSave,
+    required void Function(
+      Map<String, DoctorDailySchedule> schedule,
+      int slotDuration,
+    )
+    onSave,
   }) {
     return showDialog<void>(
       context: context,
       barrierColor: Colors.black.withValues(alpha: 0.65),
       builder: (ctx) => BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
-        child: ManageDoctorScheduleDialog(
-          doctor: doctor,
-          onSave: onSave,
-        ),
+        child: ManageDoctorScheduleDialog(doctor: doctor, onSave: onSave),
       ),
     );
   }
 
   @override
-  State<ManageDoctorScheduleDialog> createState() => _ManageDoctorScheduleDialogState();
+  State<ManageDoctorScheduleDialog> createState() =>
+      _ManageDoctorScheduleDialogState();
 }
 
-class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog> {
+class _ManageDoctorScheduleDialogState
+    extends State<ManageDoctorScheduleDialog> {
   static const List<(String, String)> _dayDefs = [
     ('mon', 'Monday'),
     ('tue', 'Tuesday'),
@@ -55,7 +62,9 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
   @override
   void initState() {
     super.initState();
-    _slotDuration = widget.doctor.slotDuration > 0 ? widget.doctor.slotDuration : 20;
+    _slotDuration = widget.doctor.slotDuration > 0
+        ? widget.doctor.slotDuration
+        : 20;
 
     // Deep copy doctor's schedule or fallback to defaults
     final base = widget.doctor.weeklySchedule.isNotEmpty
@@ -87,10 +96,12 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
       _errorMessage = null;
     });
 
-    final firstWorkingKey = _dayDefs.firstWhere(
-      (d) => _schedule[d.$1]?.enabled == true,
-      orElse: () => ('', ''),
-    ).$1;
+    final firstWorkingKey = _dayDefs
+        .firstWhere(
+          (d) => _schedule[d.$1]?.enabled == true,
+          orElse: () => ('', ''),
+        )
+        .$1;
 
     if (firstWorkingKey.isEmpty) {
       setState(() {
@@ -115,7 +126,11 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
     });
   }
 
-  Future<void> _pickTime(String dayKey, String fieldType, String currentTime) async {
+  Future<void> _pickTime(
+    String dayKey,
+    String fieldType,
+    String currentTime,
+  ) async {
     final colors = context.colors;
     final parts = currentTime.split(':');
     final initialHour = parts.isNotEmpty ? int.tryParse(parts[0]) ?? 9 : 9;
@@ -174,7 +189,9 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
       final slot = _schedule[key]!;
       if (!slot.enabled) continue;
 
-      if (slot.start.isEmpty || slot.end.isEmpty || slot.start.compareTo(slot.end) >= 0) {
+      if (slot.start.isEmpty ||
+          slot.end.isEmpty ||
+          slot.start.compareTo(slot.end) >= 0) {
         setState(() {
           _errorMessage = 'Check $name: end time must be after start time.';
         });
@@ -186,7 +203,8 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
 
       if (hasBreakStart != hasBreakEnd) {
         setState(() {
-          _errorMessage = 'Check $name: please set both break start and break end, or clear both.';
+          _errorMessage =
+              'Check $name: please set both break start and break end, or clear both.';
         });
         return;
       }
@@ -196,7 +214,8 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
             slot.breakStart.compareTo(slot.start) < 0 ||
             slot.breakEnd.compareTo(slot.end) > 0) {
           setState(() {
-            _errorMessage = 'Check $name: break must fall completely inside working hours ($slot.start - $slot.end).';
+            _errorMessage =
+                'Check $name: break must fall completely inside working hours ($slot.start - $slot.end).';
           });
           return;
         }
@@ -262,7 +281,11 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.close_rounded, size: 20, color: colors.textMuted),
+                  icon: Icon(
+                    Icons.close_rounded,
+                    size: 20,
+                    color: colors.textMuted,
+                  ),
                   onPressed: () => Navigator.of(context).pop(),
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
@@ -308,18 +331,45 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
                             value: _slotDuration,
                             isExpanded: true,
                             dropdownColor: colors.surfaceSecondary,
-                            style: GoogleFonts.inter(fontSize: 13, color: colors.textPrimary),
-                            icon: Icon(Icons.keyboard_arrow_down_rounded, size: 18, color: colors.textMuted),
+                            style: GoogleFonts.inter(
+                              fontSize: 13,
+                              color: colors.textPrimary,
+                            ),
+                            icon: Icon(
+                              Icons.keyboard_arrow_down_rounded,
+                              size: 18,
+                              color: colors.textMuted,
+                            ),
                             items: const [
-                              DropdownMenuItem(value: 10, child: Text('10 minutes')),
-                              DropdownMenuItem(value: 15, child: Text('15 minutes')),
-                              DropdownMenuItem(value: 20, child: Text('20 minutes')),
-                              DropdownMenuItem(value: 30, child: Text('30 minutes')),
-                              DropdownMenuItem(value: 45, child: Text('45 minutes')),
-                              DropdownMenuItem(value: 60, child: Text('60 minutes')),
+                              DropdownMenuItem(
+                                value: 10,
+                                child: Text('10 minutes'),
+                              ),
+                              DropdownMenuItem(
+                                value: 15,
+                                child: Text('15 minutes'),
+                              ),
+                              DropdownMenuItem(
+                                value: 20,
+                                child: Text('20 minutes'),
+                              ),
+                              DropdownMenuItem(
+                                value: 30,
+                                child: Text('30 minutes'),
+                              ),
+                              DropdownMenuItem(
+                                value: 45,
+                                child: Text('45 minutes'),
+                              ),
+                              DropdownMenuItem(
+                                value: 60,
+                                child: Text('60 minutes'),
+                              ),
                             ],
                             onChanged: (val) {
-                              if (val != null) setState(() => _slotDuration = val);
+                              if (val != null) {
+                                setState(() => _slotDuration = val);
+                              }
                             },
                           ),
                         ),
@@ -337,13 +387,25 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
                       foregroundColor: colors.textPrimary,
                       side: BorderSide(color: colors.border),
                       backgroundColor: colors.surfaceSecondary,
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
-                    icon: Icon(Icons.copy_rounded, size: 14, color: colors.textMuted),
+                    icon: Icon(
+                      Icons.copy_rounded,
+                      size: 14,
+                      color: colors.textMuted,
+                    ),
                     label: Text(
                       'Copy first working day to all',
-                      style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600),
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),
@@ -354,15 +416,24 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
               const SizedBox(height: 14),
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: colors.errorTint,
                   borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: colors.error.withValues(alpha: 0.4)),
+                  border: Border.all(
+                    color: colors.error.withValues(alpha: 0.4),
+                  ),
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.error_outline_rounded, size: 16, color: colors.error),
+                    Icon(
+                      Icons.error_outline_rounded,
+                      size: 16,
+                      color: colors.error,
+                    ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -400,7 +471,10 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
                           children: [
                             // Header Row
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 10,
+                              ),
                               color: colors.surfaceSecondary,
                               child: Row(
                                 children: [
@@ -471,7 +545,11 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
 
                             // Day rows
                             for (var i = 0; i < _dayDefs.length; i++) ...[
-                              _buildDayRow(context, _dayDefs[i].$1, _dayDefs[i].$2),
+                              _buildDayRow(
+                                context,
+                                _dayDefs[i].$1,
+                                _dayDefs[i].$2,
+                              ),
                               if (i < _dayDefs.length - 1)
                                 Divider(color: colors.border, height: 1),
                             ],
@@ -497,12 +575,20 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
                   style: OutlinedButton.styleFrom(
                     foregroundColor: colors.textMuted,
                     side: BorderSide(color: colors.border),
-                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 18,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
                   child: Text(
                     'Cancel',
-                    style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w600),
+                    style: GoogleFonts.inter(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -511,13 +597,21 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
                   style: ElevatedButton.styleFrom(
                     backgroundColor: colors.primary,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                     elevation: 0,
                   ),
                   child: Text(
                     'Save Schedule',
-                    style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w700),
+                    style: GoogleFonts.inter(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
               ],
@@ -535,7 +629,9 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      color: isEnabled ? Colors.transparent : Colors.black.withValues(alpha: 0.05),
+      color: isEnabled
+          ? Colors.transparent
+          : Colors.black.withValues(alpha: 0.05),
       child: Row(
         children: [
           // Day Checkbox + Label
@@ -550,7 +646,9 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
                     value: isEnabled,
                     activeColor: colors.primary,
                     side: BorderSide(color: colors.border, width: 1.5),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
+                    ),
                     onChanged: (val) {
                       setState(() {
                         _schedule[key] = slot.copyWith(enabled: val ?? false);
@@ -626,12 +724,20 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
                     isOptional: true,
                   ),
                 ),
-                if (isEnabled && (slot.breakStart.isNotEmpty || slot.breakEnd.isNotEmpty))
+                if (isEnabled &&
+                    (slot.breakStart.isNotEmpty || slot.breakEnd.isNotEmpty))
                   IconButton(
-                    icon: Icon(Icons.clear_rounded, size: 14, color: colors.textMuted),
+                    icon: Icon(
+                      Icons.clear_rounded,
+                      size: 14,
+                      color: colors.textMuted,
+                    ),
                     tooltip: 'Clear break',
                     padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(minWidth: 20, minHeight: 20),
+                    constraints: const BoxConstraints(
+                      minWidth: 20,
+                      minHeight: 20,
+                    ),
                     onPressed: () => _clearBreak(key),
                   ),
               ],
@@ -651,12 +757,16 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
     bool isOptional = false,
   }) {
     final colors = context.colors;
-    final displayText = value.isNotEmpty ? value : (isOptional ? 'None' : '--:--');
+    final displayText = value.isNotEmpty
+        ? value
+        : (isOptional ? 'None' : '--:--');
 
     return Opacity(
       opacity: enabled ? 1.0 : 0.4,
       child: InkWell(
-        onTap: enabled ? () => _pickTime(key, field, value.isNotEmpty ? value : '09:00') : null,
+        onTap: enabled
+            ? () => _pickTime(key, field, value.isNotEmpty ? value : '09:00')
+            : null,
         borderRadius: BorderRadius.circular(6),
         child: Container(
           margin: const EdgeInsets.only(right: 4),
@@ -665,7 +775,9 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
             color: colors.surface,
             borderRadius: BorderRadius.circular(6),
             border: Border.all(
-              color: value.isNotEmpty ? colors.border : colors.border.withValues(alpha: 0.5),
+              color: value.isNotEmpty
+                  ? colors.border
+                  : colors.border.withValues(alpha: 0.5),
             ),
           ),
           child: Row(
@@ -686,7 +798,11 @@ class _ManageDoctorScheduleDialogState extends State<ManageDoctorScheduleDialog>
                 ),
               ),
               const SizedBox(width: 2),
-              Icon(Icons.access_time_rounded, size: 12, color: colors.textMuted),
+              Icon(
+                Icons.access_time_rounded,
+                size: 12,
+                color: colors.textMuted,
+              ),
             ],
           ),
         ),

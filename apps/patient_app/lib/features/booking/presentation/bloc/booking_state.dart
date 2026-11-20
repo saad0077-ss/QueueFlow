@@ -51,12 +51,11 @@ class BookingState extends Equatable {
   double get payableFee => selectedService?.price.toDouble() ?? 500.0;
   String get formattedPayableFee => '₹${payableFee.toStringAsFixed(2)}';
 
-  String get formattedSchedule => BookingDateFormatter.formatDateTime(
-        selectedDate,
-        selectedTimeSlot,
-      );
+  String get formattedSchedule =>
+      BookingDateFormatter.formatDateTime(selectedDate, selectedTimeSlot);
 
-  String get rawDateFormatted => BookingDateFormatter.formatRawDate(selectedDate);
+  String get rawDateFormatted =>
+      BookingDateFormatter.formatRawDate(selectedDate);
 
   bool get canProceedStep1 => selectedService != null;
   bool get canProceedStep2 => selectedDoctor != null;
@@ -92,8 +91,9 @@ class BookingState extends Equatable {
       doctors: doctors ?? this.doctors,
       filteredDoctors: filteredDoctors ?? this.filteredDoctors,
       selectedService: selectedService ?? this.selectedService,
-      selectedDoctor:
-          clearSelectedDoctor ? null : (selectedDoctor ?? this.selectedDoctor),
+      selectedDoctor: clearSelectedDoctor
+          ? null
+          : (selectedDoctor ?? this.selectedDoctor),
       selectedDate: selectedDate ?? this.selectedDate,
       availableTimeSlots: availableTimeSlots ?? this.availableTimeSlots,
       selectedTimeSlot: selectedTimeSlot ?? this.selectedTimeSlot,
@@ -109,23 +109,23 @@ class BookingState extends Equatable {
 
   @override
   List<Object?> get props => [
-        status,
-        step,
-        clinic,
-        services,
-        doctors,
-        filteredDoctors,
-        selectedService,
-        selectedDoctor,
-        selectedDate,
-        availableTimeSlots,
-        selectedTimeSlot,
-        bookedSlots,
-        patientName,
-        patientPhone,
-        patientEmail,
-        patientNotes,
-        confirmedAppointment,
-        errorMessage,
-      ];
+    status,
+    step,
+    clinic,
+    services,
+    doctors,
+    filteredDoctors,
+    selectedService,
+    selectedDoctor,
+    selectedDate,
+    availableTimeSlots,
+    selectedTimeSlot,
+    bookedSlots,
+    patientName,
+    patientPhone,
+    patientEmail,
+    patientNotes,
+    confirmedAppointment,
+    errorMessage,
+  ];
 }

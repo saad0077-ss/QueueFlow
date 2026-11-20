@@ -38,11 +38,20 @@ class ClinicBillingHeader extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.apartment_rounded, size: 13, color: colors.primaryLight),
+                  Icon(
+                    Icons.apartment_rounded,
+                    size: 13,
+                    color: colors.primaryLight,
+                  ),
                   const SizedBox(width: 6),
                   Text(
                     '${clinicName.toUpperCase()} • ACCOUNT & SUBSCRIPTION',
-                    style: GoogleFonts.inter(fontSize: 10.5, fontWeight: FontWeight.w700, color: colors.textMuted, letterSpacing: 0.5),
+                    style: GoogleFonts.inter(
+                      fontSize: 10.5,
+                      fontWeight: FontWeight.w700,
+                      color: colors.textMuted,
+                      letterSpacing: 0.5,
+                    ),
                   ),
                 ],
               ),
@@ -57,11 +66,25 @@ class ClinicBillingHeader extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Container(width: 6, height: 6, decoration: BoxDecoration(color: colors.success, shape: BoxShape.circle)),
+                  Container(
+                    width: 6,
+                    height: 6,
+                    decoration: BoxDecoration(
+                      color: colors.success,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
                   const SizedBox(width: 6),
                   Text(
-                    renewalDate.isEmpty ? '${planName.toUpperCase()} ACTIVE' : '${planName.toUpperCase()} ACTIVE • VALID TILL $renewalDate',
-                    style: GoogleFonts.inter(fontSize: 10.5, fontWeight: FontWeight.w700, color: colors.badgeOpenText, letterSpacing: 0.4),
+                    renewalDate.isEmpty
+                        ? '${planName.toUpperCase()} ACTIVE'
+                        : '${planName.toUpperCase()} ACTIVE • VALID TILL $renewalDate',
+                    style: GoogleFonts.inter(
+                      fontSize: 10.5,
+                      fontWeight: FontWeight.w700,
+                      color: colors.badgeOpenText,
+                      letterSpacing: 0.4,
+                    ),
                   ),
                 ],
               ),
@@ -78,12 +101,20 @@ class ClinicBillingHeader extends StatelessWidget {
                 children: [
                   Text(
                     'Clinic Subscription & Plan Billing',
-                    style: GoogleFonts.inter(fontSize: 24, fontWeight: FontWeight.w800, color: colors.textPrimary, letterSpacing: -0.5),
+                    style: GoogleFonts.inter(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w800,
+                      color: colors.textPrimary,
+                      letterSpacing: -0.5,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     'Manage your practice plan tier, quota limits, payment methods and official tax invoices',
-                    style: GoogleFonts.inter(fontSize: 13, color: colors.textMuted),
+                    style: GoogleFonts.inter(
+                      fontSize: 13,
+                      color: colors.textMuted,
+                    ),
                   ),
                 ],
               ),

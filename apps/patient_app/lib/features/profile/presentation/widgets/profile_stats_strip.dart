@@ -63,11 +63,7 @@ class ProfileStatsStrip extends StatelessWidget {
             ),
 
             // Divider
-            VerticalDivider(
-              color: colors.border,
-              width: 1,
-              thickness: 1,
-            ),
+            VerticalDivider(color: colors.border, width: 1, thickness: 1),
 
             // Stat 2: Favorites
             Expanded(

@@ -24,16 +24,33 @@ class HoursPresetsToolbar extends StatelessWidget {
           children: [
             Text(
               '⚡ QUICK PRESETS: ',
-              style: GoogleFonts.inter(fontSize: 10.5, fontWeight: FontWeight.w800, color: colors.textMuted, letterSpacing: 0.5),
+              style: GoogleFonts.inter(
+                fontSize: 10.5,
+                fontWeight: FontWeight.w800,
+                color: colors.textMuted,
+                letterSpacing: 0.5,
+              ),
             ),
             const SizedBox(width: 8),
-            _btn(context, 'Standard (Mon–Sat 9–8)', () => onApplyPreset('standard')),
+            _btn(
+              context,
+              'Standard (Mon–Sat 9–8)',
+              () => onApplyPreset('standard'),
+            ),
             const SizedBox(width: 8),
-            _btn(context, 'All 7 Days (9–9)', () => onApplyPreset('seven_days')),
+            _btn(
+              context,
+              'All 7 Days (9–9)',
+              () => onApplyPreset('seven_days'),
+            ),
             const SizedBox(width: 8),
             _btn(context, 'Weekdays (8–5)', () => onApplyPreset('weekdays')),
             const SizedBox(width: 8),
-            _btn(context, 'Split Shift (Lunch Break)', () => onApplyPreset('split')),
+            _btn(
+              context,
+              'Split Shift (Lunch Break)',
+              () => onApplyPreset('split'),
+            ),
             const SizedBox(width: 8),
             OutlinedButton(
               onPressed: onCopyMonday,
@@ -41,10 +58,21 @@ class HoursPresetsToolbar extends StatelessWidget {
                 foregroundColor: colors.primaryLight,
                 side: BorderSide(color: colors.primary, width: 1.2),
                 backgroundColor: colors.primaryTint,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
-              child: Text('📋 Copy Mon to Weekdays', style: GoogleFonts.inter(fontSize: 11.5, fontWeight: FontWeight.w700)),
+              child: Text(
+                '📋 Copy Mon to Weekdays',
+                style: GoogleFonts.inter(
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
             ),
           ],
         ),
@@ -64,7 +92,10 @@ class HoursPresetsToolbar extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 8),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
-      child: Text(label, style: GoogleFonts.inter(fontSize: 11.5, fontWeight: FontWeight.w600)),
+      child: Text(
+        label,
+        style: GoogleFonts.inter(fontSize: 11.5, fontWeight: FontWeight.w600),
+      ),
     );
   }
 }
