@@ -1,4 +1,4 @@
-﻿import 'dart:convert';
+import 'dart:convert';
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -21,15 +21,21 @@ class ClinicSettingsRepositoryImpl implements ClinicSettingsRepository {
   ClinicSettingsRepositoryImpl({
     FirebaseFirestore? firestore,
     FirebaseAuth? auth,
-  })  : _firestore = firestore ?? FirebaseFirestore.instance,
-        _auth = auth ?? FirebaseAuth.instance;
+  }) : _firestore = firestore ?? FirebaseFirestore.instance,
+       _auth = auth ?? FirebaseAuth.instance;
 
   Future<String> _resolveClinicId() async =>
-      (await CurrentClinicResolver.require(auth: _auth, firestore: _firestore)).id;
+      (await CurrentClinicResolver.require(
+        auth: _auth,
+        firestore: _firestore,
+      )).id;
 
   @override
   Future<ClinicSettingsEntity> getClinicSettings() async {
-    final doc = await CurrentClinicResolver.require(auth: _auth, firestore: _firestore);
+    final doc = await CurrentClinicResolver.require(
+      auth: _auth,
+      firestore: _firestore,
+    );
     final data = doc.data() ?? <String, dynamic>{};
     final settings = ClinicSettingsMapper.fromFirestore(doc.id, data);
     // Publish the schedule the admin sees so patients get real Open/Closed times.
@@ -42,14 +48,21 @@ class ClinicSettingsRepositoryImpl implements ClinicSettingsRepository {
 
     final imageBytes = await _loadImage(doc.id);
     if (imageBytes == null) return settings;
-    return settings.copyWith(profile: settings.profile.copyWith(imageBytes: imageBytes));
+    return settings.copyWith(
+      profile: settings.profile.copyWith(imageBytes: imageBytes),
+    );
   }
 
   Future<Uint8List?> _loadImage(String clinicId) async {
     try {
-      final snap = await _firestore.collection('clinic_images').doc(clinicId).get();
+      final snap = await _firestore
+          .collection('clinic_images')
+          .doc(clinicId)
+          .get();
       final encoded = snap.data()?['data'];
-      return encoded is String && encoded.isNotEmpty ? base64Decode(encoded) : null;
+      return encoded is String && encoded.isNotEmpty
+          ? base64Decode(encoded)
+          : null;
     } catch (_) {
       return null;
     }
@@ -59,8 +72,11 @@ class ClinicSettingsRepositoryImpl implements ClinicSettingsRepository {
   Future<void> saveProfile(ClinicProfileEntity profile) async {
     final id = await _resolveClinicId();
     await _firestore.collection('clinics').doc(id).set({
-      'name': profile.name, 'address': profile.address, 'phone': profile.phone,
-      'email': profile.email, 'description': profile.description,
+      'name': profile.name,
+      'address': profile.address,
+      'phone': profile.phone,
+      'email': profile.email,
+      'description': profile.description,
       'updatedAt': FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
   }
@@ -68,10 +84,14 @@ class ClinicSettingsRepositoryImpl implements ClinicSettingsRepository {
   @override
   Future<void> uploadProfileImage(Uint8List bytes, String fileName) async {
     if (bytes.length > _maxImageBytes) {
-      throw Exception('This photo is too large (${(bytes.length / 1024).round()} KB). Please choose an image under 700 KB.');
+      throw Exception(
+        'This photo is too large (${(bytes.length / 1024).round()} KB). Please choose an image under 700 KB.',
+      );
     }
     final id = await _resolveClinicId();
-    final ext = fileName.contains('.') ? fileName.split('.').last.toLowerCase() : 'jpg';
+    final ext = fileName.contains('.')
+        ? fileName.split('.').last.toLowerCase()
+        : 'jpg';
     final type = switch (ext) {
       'png' => 'image/png',
       'webp' => 'image/webp',
@@ -101,11 +121,18 @@ class ClinicSettingsRepositoryImpl implements ClinicSettingsRepository {
     final id = await _resolveClinicId();
     await _firestore.collection('clinics').doc(id).set({
       'location': {
-        'building': loc.building, 'street': loc.street, 'area': loc.area,
-        'city': loc.city, 'state': loc.state, 'pincode': loc.pincode,
-        'landmark': loc.landmark, 'googleMapsUrl': loc.googleMapsUrl,
-        'latitude': loc.latitude, 'longitude': loc.longitude,
-        'parking': loc.parking, 'directions': loc.directions,
+        'building': loc.building,
+        'street': loc.street,
+        'area': loc.area,
+        'city': loc.city,
+        'state': loc.state,
+        'pincode': loc.pincode,
+        'landmark': loc.landmark,
+        'googleMapsUrl': loc.googleMapsUrl,
+        'latitude': loc.latitude,
+        'longitude': loc.longitude,
+        'parking': loc.parking,
+        'directions': loc.directions,
       },
       'address': loc.fullAddress,
       'city': loc.city,
@@ -119,8 +146,12 @@ class ClinicSettingsRepositoryImpl implements ClinicSettingsRepository {
     final hoursMap = <String, dynamic>{};
     for (final e in s.days.entries) {
       hoursMap[e.key] = {
-        'isOpen': e.value.isOpen, 'openTime': e.value.openTime, 'closeTime': e.value.closeTime,
-        'hasBreak': e.value.hasBreak, 'breakStart': e.value.breakStart, 'breakEnd': e.value.breakEnd,
+        'isOpen': e.value.isOpen,
+        'openTime': e.value.openTime,
+        'closeTime': e.value.closeTime,
+        'hasBreak': e.value.hasBreak,
+        'breakStart': e.value.breakStart,
+        'breakEnd': e.value.breakEnd,
       };
     }
     await _firestore.collection('clinics').doc(id).set({

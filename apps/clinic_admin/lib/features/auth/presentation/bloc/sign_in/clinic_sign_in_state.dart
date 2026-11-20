@@ -1,4 +1,4 @@
-﻿import 'package:equatable/equatable.dart';
+import 'package:equatable/equatable.dart';
 import '../../../domain/entities/clinic_staff_entity.dart';
 
 class ClinicSignInState extends Equatable {
@@ -47,12 +47,14 @@ class ClinicSignInState extends Equatable {
       password: password ?? this.password,
       emailError: clearEmailError ? null : (emailError ?? this.emailError),
       isEmailValid: isEmailValid ?? this.isEmailValid,
-      passwordError:
-          clearPasswordError ? null : (passwordError ?? this.passwordError),
+      passwordError: clearPasswordError
+          ? null
+          : (passwordError ?? this.passwordError),
       isPasswordObscured: isPasswordObscured ?? this.isPasswordObscured,
       isLoading: isLoading ?? this.isLoading,
-      errorMessage:
-          clearErrorMessage ? null : (errorMessage ?? this.errorMessage),
+      errorMessage: clearErrorMessage
+          ? null
+          : (errorMessage ?? this.errorMessage),
       infoMessage: clearInfoMessage ? null : (infoMessage ?? this.infoMessage),
       staff: staff ?? this.staff,
     );
@@ -60,15 +62,15 @@ class ClinicSignInState extends Equatable {
 
   @override
   List<Object?> get props => [
-        email,
-        password,
-        emailError,
-        isEmailValid,
-        passwordError,
-        isPasswordObscured,
-        isLoading,
-        errorMessage,
-        infoMessage,
-        staff,
-      ];
+    email,
+    password,
+    emailError,
+    isEmailValid,
+    passwordError,
+    isPasswordObscured,
+    isLoading,
+    errorMessage,
+    infoMessage,
+    staff,
+  ];
 }

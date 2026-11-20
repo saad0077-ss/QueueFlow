@@ -21,27 +21,31 @@ class BillingUpperSection extends StatelessWidget {
     if (isDesktop) {
       return IntrinsicHeight(
         child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            flex: 4,
-            child: BillingHeroCard(
-              subscription: subscription,
-              currentTier: currentTier,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              flex: 4,
+              child: BillingHeroCard(
+                subscription: subscription,
+                currentTier: currentTier,
+              ),
             ),
-          ),
-          const SizedBox(width: 18),
-          Expanded(flex: 6, child: BillingQuotasCard(subscription: subscription, currentTier: currentTier)),
-        ],
-      ));
+            const SizedBox(width: 18),
+            Expanded(
+              flex: 6,
+              child: BillingQuotasCard(
+                subscription: subscription,
+                currentTier: currentTier,
+              ),
+            ),
+          ],
+        ),
+      );
     }
 
     return Column(
       children: [
-        BillingHeroCard(
-          subscription: subscription,
-          currentTier: currentTier,
-        ),
+        BillingHeroCard(subscription: subscription, currentTier: currentTier),
         const SizedBox(height: 18),
         BillingQuotasCard(subscription: subscription, currentTier: currentTier),
       ],

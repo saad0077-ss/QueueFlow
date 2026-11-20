@@ -75,11 +75,11 @@ class ProfileAvatar extends StatelessWidget {
   }
 
   Widget _letter(String letter) => Text(
-        letter,
-        style: TextStyle(
-          fontSize: fontSize,
-          fontWeight: FontWeight.w800,
-          color: Colors.white,
-        ),
-      );
+    letter,
+    style: TextStyle(
+      fontSize: fontSize,
+      fontWeight: FontWeight.w800,
+      color: Colors.white,
+    ),
+  );
 }

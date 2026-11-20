@@ -124,10 +124,7 @@ class DashboardMainColumns extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Left Column: Upcoming Appointments (flex 65 / 2fr)
-                Expanded(
-                  flex: 65,
-                  child: upcomingCard,
-                ),
+                Expanded(flex: 65, child: upcomingCard),
                 const SizedBox(width: 22),
                 // Right Column: Now Serving & Quick Actions (flex 35 / 1fr)
                 Expanded(

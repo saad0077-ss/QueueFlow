@@ -80,10 +80,7 @@ class CustomTextField extends StatelessWidget {
           onChanged: onChanged,
           validator: validator,
           onFieldSubmitted: onFieldSubmitted,
-          style: TextStyle(
-            color: colors.textPrimary,
-            fontSize: fontSize ?? 14,
-          ),
+          style: TextStyle(color: colors.textPrimary, fontSize: fontSize ?? 14),
           cursorColor: colors.primary,
           decoration: InputDecoration(
             isDense: true,
@@ -101,11 +98,7 @@ class CustomTextField extends StatelessWidget {
             ),
             prefixIcon: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 14),
-              child: Icon(
-                prefixIcon,
-                color: colors.textSubtle,
-                size: 20,
-              ),
+              child: Icon(prefixIcon, color: colors.textSubtle, size: 20),
             ),
             prefixIconConstraints: const BoxConstraints(
               minWidth: 48,
@@ -132,17 +125,11 @@ class CustomTextField extends StatelessWidget {
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(
-                color: colors.error,
-                width: 1.2,
-              ),
+              borderSide: BorderSide(color: colors.error, width: 1.2),
             ),
             focusedErrorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(
-                color: colors.error,
-                width: 1.4,
-              ),
+              borderSide: BorderSide(color: colors.error, width: 1.4),
             ),
             disabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),

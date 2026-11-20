@@ -1,10 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../booking/presentation/pages/booking_wizard_screen.dart';
-import '../../../home/data/repositories/home_repository_impl.dart';
-import '../../../home/presentation/widgets/join_queue_dialog.dart';
 import '../../domain/entities/clinic_doctor_item.dart';
 import '../../domain/entities/clinic_service_item.dart';
 import '../../../home/domain/entities/clinic_entity.dart';
@@ -42,29 +40,6 @@ class ClinicDetailsView extends StatelessWidget {
     }
   }
 
-  void _handleJoinQueue(BuildContext context, ClinicEntity clinic) {
-    JoinQueueDialog.show(
-      context,
-      clinic: clinic,
-      onJoinSuccess: () async {
-        try {
-          final user = FirebaseAuth.instance.currentUser;
-          final repo = HomeRepositoryImpl();
-          await repo.joinQueue(
-            clinicId: clinic.id,
-            clinicName: clinic.name,
-            patientName: user?.displayName ?? 'Patient',
-            currentWaitingCount: clinic.waitingCount,
-            currentToken: clinic.currentToken,
-          );
-        } catch (_) {}
-        if (context.mounted) {
-          Navigator.of(context).pop('joined_queue');
-        }
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
@@ -89,7 +64,10 @@ class ClinicDetailsView extends StatelessWidget {
         }
         if (clinic == null) {
           return Center(
-            child: Text('Clinic details unavailable.', style: TextStyle(color: colors.textPrimary)),
+            child: Text(
+              'Clinic details unavailable.',
+              style: TextStyle(color: colors.textPrimary),
+            ),
           );
         }
 
@@ -106,7 +84,9 @@ class ClinicDetailsView extends StatelessWidget {
                 isFavorite: state.isFavorite,
                 onBack: () => Navigator.pop(context),
                 onToggleFavorite: () {
-                  context.read<ClinicDetailsBloc>().add(const ToggleClinicFavorite());
+                  context.read<ClinicDetailsBloc>().add(
+                    const ToggleClinicFavorite(),
+                  );
                 },
               ),
               ClinicHeaderInfo(
@@ -122,9 +102,7 @@ class ClinicDetailsView extends StatelessWidget {
               _buildActiveTab(context, state, clinic),
               const SizedBox(height: 8),
               ClinicBottomActions(
-                isQueueOpen: clinic.isQueueOpen && clinic.isOpenNow,
                 onBookAppointment: () => _startBooking(context, clinic: clinic),
-                onJoinQueue: () => _handleJoinQueue(context, clinic),
               ),
             ],
           ),
@@ -141,24 +119,21 @@ class ClinicDetailsView extends StatelessWidget {
     final d = state.details!;
     switch (state.selectedTabIndex) {
       case 0:
-        return ClinicOverviewTab(description: d.description, features: d.features);
+        return ClinicOverviewTab(
+          description: d.description,
+          features: d.features,
+        );
       case 1:
         return ClinicServicesTab(
           services: d.services,
-          onServiceSelected: (service) => _startBooking(
-            context,
-            clinic: clinic,
-            initialService: service,
-          ),
+          onServiceSelected: (service) =>
+              _startBooking(context, clinic: clinic, initialService: service),
         );
       case 2:
         return ClinicDoctorsTab(
           doctors: d.doctors,
-          onDoctorSelected: (doctor) => _startBooking(
-            context,
-            clinic: clinic,
-            initialDoctor: doctor,
-          ),
+          onDoctorSelected: (doctor) =>
+              _startBooking(context, clinic: clinic, initialDoctor: doctor),
           onRateDoctor: (doctor) => _showDoctorRateDialog(context, doctor),
         );
       case 3:
@@ -168,7 +143,8 @@ class ClinicDetailsView extends StatelessWidget {
           starPercents: d.starPercents,
           reviews: d.reviews,
           onRateClinic: () => _showRateModal(context, d.clinic.name),
-          onHelpful: (id) => context.read<ClinicDetailsBloc>().add(MarkReviewHelpfulEvent(id)),
+          onHelpful: (id) =>
+              context.read<ClinicDetailsBloc>().add(MarkReviewHelpfulEvent(id)),
         );
       default:
         return const SizedBox.shrink();
@@ -181,7 +157,9 @@ class ClinicDetailsView extends StatelessWidget {
       context: context,
       builder: (_) => DoctorRateDialog(
         doctorName: doctor.name,
-        onSubmit: (r, c) => bloc.add(SubmitDoctorReviewEvent(doctorId: doctor.id, rating: r, comment: c)),
+        onSubmit: (r, c) => bloc.add(
+          SubmitDoctorReviewEvent(doctorId: doctor.id, rating: r, comment: c),
+        ),
       ),
     );
   }
@@ -194,7 +172,8 @@ class ClinicDetailsView extends StatelessWidget {
       backgroundColor: Colors.transparent,
       builder: (_) => ClinicRateSheet(
         clinicName: clinicName,
-        onSubmit: (r, c, t) => bloc.add(SubmitClinicReviewEvent(rating: r, comment: c, tags: t)),
+        onSubmit: (r, c, t) =>
+            bloc.add(SubmitClinicReviewEvent(rating: r, comment: c, tags: t)),
       ),
     );
   }

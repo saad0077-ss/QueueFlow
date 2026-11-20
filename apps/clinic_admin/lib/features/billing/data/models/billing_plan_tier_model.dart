@@ -1,4 +1,4 @@
-﻿import '../../domain/entities/billing_plan_tier_entity.dart';
+import '../../domain/entities/billing_plan_tier_entity.dart';
 
 class BillingPlanTierModel extends BillingPlanTierEntity {
   const BillingPlanTierModel({
@@ -29,7 +29,8 @@ class BillingPlanTierModel extends BillingPlanTierEntity {
       serviceLimit: (data['serviceLimit'] as num?)?.toInt() ?? 1,
       staffLimit: (data['staffLimit'] as num?)?.toInt() ?? 1,
       description: data['description'] as String? ?? '',
-      features: (data['features'] as List<dynamic>?)
+      features:
+          (data['features'] as List<dynamic>?)
               ?.map((e) => e.toString())
               .toList() ??
           const [],

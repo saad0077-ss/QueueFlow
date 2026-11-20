@@ -1,4 +1,4 @@
-﻿import 'dart:math' as math;
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../domain/entities/clinic_doctor_profile_entity.dart';
 import '../../domain/entities/doctor_plan_entity.dart';
@@ -13,7 +13,8 @@ class DoctorsCardsGrid extends StatelessWidget {
   final ValueChanged<ClinicDoctorProfileEntity> onCallNext;
   final ValueChanged<ClinicDoctorProfileEntity> onViewQueue;
   final ValueChanged<ClinicDoctorProfileEntity>? onSelectDoctor;
-  final void Function(ClinicDoctorProfileEntity doctor, String newStatus) onStatusChange;
+  final void Function(ClinicDoctorProfileEntity doctor, String newStatus)
+  onStatusChange;
   final ValueChanged<ClinicDoctorProfileEntity> onDelete;
   final VoidCallback onAddDoctor;
   final VoidCallback onUpgradePlan;
@@ -47,7 +48,9 @@ class DoctorsCardsGrid extends StatelessWidget {
               onStatusChange: (status) => onStatusChange(doc, status),
               onCallNext: () => onCallNext(doc),
               onViewQueue: () => onViewQueue(doc),
-              onSelectDoctor: onSelectDoctor != null ? () => onSelectDoctor!(doc) : null,
+              onSelectDoctor: onSelectDoctor != null
+                  ? () => onSelectDoctor!(doc)
+                  : null,
               onDelete: () => onDelete(doc),
             ),
           DoctorSlotCard(

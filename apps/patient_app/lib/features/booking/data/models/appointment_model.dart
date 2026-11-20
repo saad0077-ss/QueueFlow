@@ -47,7 +47,9 @@ class AppointmentModel extends AppointmentEntity {
 
     PaymentInfoEntity? paymentInfo;
     if (map['payment'] is Map<String, dynamic>) {
-      paymentInfo = PaymentInfoEntity.fromMap(map['payment'] as Map<String, dynamic>);
+      paymentInfo = PaymentInfoEntity.fromMap(
+        map['payment'] as Map<String, dynamic>,
+      );
     } else if (map['paymentId'] != null) {
       paymentInfo = PaymentInfoEntity(
         paymentId: map['paymentId'].toString(),
@@ -59,23 +61,40 @@ class AppointmentModel extends AppointmentEntity {
 
     return AppointmentModel(
       id: id ?? (map['id'] ?? '').toString(),
-      bookingRef: (map['bookingRef'] ?? map['bookingId'] ?? 'QF-00000').toString(),
+      bookingRef: (map['bookingRef'] ?? map['bookingId'] ?? 'QF-00000')
+          .toString(),
       clinicId: (map['clinicId'] ?? '').toString(),
       clinicName: (map['clinicName'] ?? 'Clinic').toString(),
       clinicAddress: (map['clinicAddress'] ?? map['address'] ?? '').toString(),
-      customerId: (map['customerId'] ?? map['patientId'] ?? map['userId'] ?? '').toString(),
-      customerName: (map['customerName'] ?? map['patientName'] ?? map['customer'] ?? 'Patient').toString(),
+      customerId: (map['customerId'] ?? map['patientId'] ?? map['userId'] ?? '')
+          .toString(),
+      customerName:
+          (map['customerName'] ??
+                  map['patientName'] ??
+                  map['customer'] ??
+                  'Patient')
+              .toString(),
       customerPhone: (map['customerPhone'] ?? map['phone'] ?? '').toString(),
       customerEmail: (map['customerEmail'] ?? map['email'] ?? '').toString(),
       doctorId: (map['doctorId'] ?? '').toString(),
       doctorName: (map['doctorName'] ?? map['doctor'] ?? 'Doctor').toString(),
-      doctorSpecialty: (map['doctorSpecialty'] ?? map['specialty'] ?? '').toString(),
+      doctorSpecialty: (map['doctorSpecialty'] ?? map['specialty'] ?? '')
+          .toString(),
       serviceId: (map['serviceId'] ?? '').toString(),
-      serviceName: (map['serviceName'] ?? map['service'] ?? 'General Consultation').toString(),
-      serviceDuration: (map['serviceDuration'] as num?)?.toInt() ?? (map['duration'] as num?)?.toInt() ?? 20,
-      servicePrice: (map['servicePrice'] as num?)?.toDouble() ?? (map['price'] as num?)?.toDouble() ?? 500.0,
+      serviceName:
+          (map['serviceName'] ?? map['service'] ?? 'General Consultation')
+              .toString(),
+      serviceDuration:
+          (map['serviceDuration'] as num?)?.toInt() ??
+          (map['duration'] as num?)?.toInt() ??
+          20,
+      servicePrice:
+          (map['servicePrice'] as num?)?.toDouble() ??
+          (map['price'] as num?)?.toDouble() ??
+          500.0,
       dateRaw: (map['dateRaw'] ?? map['date'] ?? '').toString(),
-      timeRaw: (map['timeRaw'] ?? map['time'] ?? map['timeSlot'] ?? '').toString(),
+      timeRaw: (map['timeRaw'] ?? map['time'] ?? map['timeSlot'] ?? '')
+          .toString(),
       dateTime: (map['dateTime'] ?? '').toString(),
       status: (map['status'] ?? 'confirmed').toString(),
       payment: paymentInfo,

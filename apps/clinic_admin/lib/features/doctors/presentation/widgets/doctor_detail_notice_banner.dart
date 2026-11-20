@@ -36,14 +36,19 @@ class DoctorDetailNoticeBanner extends StatelessWidget {
             Container(width: 4, color: bannerColor),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
                         Icon(
-                          isPending ? Icons.hourglass_top_rounded : Icons.warning_amber_rounded,
+                          isPending
+                              ? Icons.hourglass_top_rounded
+                              : Icons.warning_amber_rounded,
                           size: 16,
                           color: bannerColor,
                         ),

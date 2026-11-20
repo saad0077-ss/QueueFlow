@@ -243,7 +243,10 @@ class _ClinicAppointmentsBody extends StatelessWidget {
 
     return BlocBuilder<ClinicAppointmentsBloc, ClinicAppointmentsState>(
       builder: (context, state) {
-        DashboardChrome.setDetailOpen('Appointments', state.selectedAppointment != null);
+        DashboardChrome.setDetailOpen(
+          'Appointments',
+          state.selectedAppointment != null,
+        );
         if (state.isLoading) {
           return Center(
             child: Padding(

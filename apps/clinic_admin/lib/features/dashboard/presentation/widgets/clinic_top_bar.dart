@@ -37,9 +37,7 @@ class ClinicTopBar extends StatelessWidget {
             decoration: BoxDecoration(
               color: colors.surfaceSecondary,
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                color: colors.border,
-              ),
+              border: Border.all(color: colors.border),
             ),
             child: IconButton(
               padding: EdgeInsets.zero,

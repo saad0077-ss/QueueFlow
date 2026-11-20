@@ -51,10 +51,7 @@ class BookingStep4Confirm extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           'Please verify your appointment and billing summary.',
-          style: GoogleFonts.inter(
-            fontSize: 12.5,
-            color: colors.textMuted,
-          ),
+          style: GoogleFonts.inter(fontSize: 12.5, color: colors.textMuted),
         ),
         const SizedBox(height: 16),
 
@@ -90,7 +87,9 @@ class BookingStep4Confirm extends StatelessWidget {
                         Text(
                           clinic.address.isNotEmpty
                               ? clinic.address
-                              : (clinic.distanceLabel.isEmpty ? clinic.city : '${clinic.distanceLabel} • ${clinic.city}'),
+                              : (clinic.distanceLabel.isEmpty
+                                    ? clinic.city
+                                    : '${clinic.distanceLabel} • ${clinic.city}'),
                           style: GoogleFonts.inter(
                             fontSize: 11.5,
                             color: colors.textMuted,
@@ -100,7 +99,10 @@ class BookingStep4Confirm extends StatelessWidget {
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
                     decoration: BoxDecoration(
                       color: colors.success.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(8),
@@ -216,7 +218,10 @@ class BookingStep4Confirm extends StatelessWidget {
                   TextButton.icon(
                     onPressed: onEditSchedule,
                     style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       visualDensity: VisualDensity.compact,
                     ),
                     icon: Icon(
@@ -376,7 +381,10 @@ class BookingStep4Confirm extends StatelessWidget {
 
               // Razorpay Gateway Badge
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 9,
+                ),
                 decoration: BoxDecoration(
                   color: colors.primaryTint,
                   borderRadius: BorderRadius.circular(10),
@@ -406,7 +414,10 @@ class BookingStep4Confirm extends StatelessWidget {
                       ],
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: colors.warning.withValues(alpha: 0.18),
                         borderRadius: BorderRadius.circular(4),

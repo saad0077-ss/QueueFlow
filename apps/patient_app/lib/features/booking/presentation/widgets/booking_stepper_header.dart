@@ -38,7 +38,11 @@ class BookingStepperHeader extends StatelessWidget {
     );
   }
 
-  Widget _buildStepItem(int stepNumber, String title, AppColorsExtension colors) {
+  Widget _buildStepItem(
+    int stepNumber,
+    String title,
+    AppColorsExtension colors,
+  ) {
     final bool isDone = stepNumber < currentStep;
     final bool isActive = stepNumber == currentStep;
 

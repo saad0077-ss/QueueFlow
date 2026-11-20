@@ -64,7 +64,11 @@ class ServiceEditDialog extends StatelessWidget {
               width: double.infinity,
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Color(0xFF0284C7), Color(0xFF06B6D4), Color(0xFF38BDF8)],
+                  colors: [
+                    Color(0xFF0284C7),
+                    Color(0xFF06B6D4),
+                    Color(0xFF38BDF8),
+                  ],
                 ),
               ),
             ),

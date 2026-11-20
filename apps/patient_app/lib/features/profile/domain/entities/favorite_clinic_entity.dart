@@ -23,13 +23,13 @@ class FavoriteClinicEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        name,
-        department,
-        rating,
-        reviewsCount,
-        address,
-        initials,
-        accentColorHex,
-      ];
+    id,
+    name,
+    department,
+    rating,
+    reviewsCount,
+    address,
+    initials,
+    accentColorHex,
+  ];
 }

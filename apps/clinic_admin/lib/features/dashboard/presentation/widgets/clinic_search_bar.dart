@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 
@@ -35,10 +35,15 @@ class ClinicSearchBar extends StatelessWidget {
           contentPadding: const EdgeInsets.symmetric(horizontal: 12),
           hintText: 'Search patients, appointments...',
           hintStyle: GoogleFonts.inter(fontSize: 13.5, color: colors.textMuted),
-          prefixIcon:
-              Icon(Icons.search_rounded, color: colors.textMuted, size: 19),
-          prefixIconConstraints:
-              const BoxConstraints(minWidth: 40, minHeight: 40),
+          prefixIcon: Icon(
+            Icons.search_rounded,
+            color: colors.textMuted,
+            size: 19,
+          ),
+          prefixIconConstraints: const BoxConstraints(
+            minWidth: 40,
+            minHeight: 40,
+          ),
           border: outline(colors.border),
           enabledBorder: outline(colors.border),
           focusedBorder: outline(colors.primary, 1.5),

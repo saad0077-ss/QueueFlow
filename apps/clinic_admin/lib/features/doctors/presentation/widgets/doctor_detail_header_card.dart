@@ -38,7 +38,8 @@ class DoctorDetailHeaderCard extends StatelessWidget {
 
     final metaParts = [
       if (doctor.qualifications.isNotEmpty) doctor.qualifications,
-      if (doctor.experienceYears > 0) '${doctor.experienceYears} yrs experience',
+      if (doctor.experienceYears > 0)
+        '${doctor.experienceYears} yrs experience',
       if (doctor.room.isNotEmpty) doctor.room,
     ];
 
@@ -72,11 +73,16 @@ class DoctorDetailHeaderCard extends StatelessWidget {
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
                     decoration: BoxDecoration(
                       color: accountColor.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: accountColor.withValues(alpha: 0.3)),
+                      border: Border.all(
+                        color: accountColor.withValues(alpha: 0.3),
+                      ),
                     ),
                     child: Text(
                       '● $accountLabel',
@@ -132,11 +138,16 @@ class DoctorDetailHeaderCard extends StatelessWidget {
             side: BorderSide(color: colors.border),
             backgroundColor: colors.surfaceSecondary,
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
           child: Text(
             'Edit Profile',
-            style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w600),
+            style: GoogleFonts.inter(
+              fontSize: 12.5,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
         OutlinedButton(
@@ -146,23 +157,33 @@ class DoctorDetailHeaderCard extends StatelessWidget {
             side: BorderSide(color: colors.border),
             backgroundColor: colors.surfaceSecondary,
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
           child: Text(
             'Manage Schedule',
-            style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w600),
+            style: GoogleFonts.inter(
+              fontSize: 12.5,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
         OutlinedButton(
           onPressed: onToggleAccount,
           style: OutlinedButton.styleFrom(
-            foregroundColor: doctor.isActiveAccount ? colors.error : colors.success,
+            foregroundColor: doctor.isActiveAccount
+                ? colors.error
+                : colors.success,
             side: BorderSide(
-              color: (doctor.isActiveAccount ? colors.error : colors.success).withValues(alpha: 0.4),
+              color: (doctor.isActiveAccount ? colors.error : colors.success)
+                  .withValues(alpha: 0.4),
             ),
             backgroundColor: colors.surfaceSecondary,
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
           child: Text(
             doctor.isActiveAccount ? 'Deactivate' : 'Activate',
@@ -180,7 +201,9 @@ class DoctorDetailHeaderCard extends StatelessWidget {
             side: BorderSide(color: colors.error.withValues(alpha: 0.4)),
             backgroundColor: colors.errorTint,
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -232,5 +255,4 @@ class DoctorDetailHeaderCard extends StatelessWidget {
       ),
     );
   }
-
 }

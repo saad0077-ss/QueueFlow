@@ -8,10 +8,7 @@ import '../../../../core/widgets/app_snack_bar.dart';
 class ExistingAccountNotice extends StatelessWidget {
   final String email;
 
-  const ExistingAccountNotice({
-    super.key,
-    required this.email,
-  });
+  const ExistingAccountNotice({super.key, required this.email});
 
   @override
   Widget build(BuildContext context) {
@@ -22,20 +19,14 @@ class ExistingAccountNotice extends StatelessWidget {
       decoration: BoxDecoration(
         color: colors.infoTint,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: colors.info.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: colors.info.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(
-                Icons.info_outline_rounded,
-                size: 16,
-                color: colors.info,
-              ),
+              Icon(Icons.info_outline_rounded, size: 16, color: colors.info),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -65,11 +56,7 @@ class ExistingAccountNotice extends StatelessWidget {
               minimumSize: const Size(50, 30),
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             ),
-            icon: Icon(
-              Icons.mail_lock_rounded,
-              size: 15,
-              color: colors.info,
-            ),
+            icon: Icon(Icons.mail_lock_rounded, size: 15, color: colors.info),
             label: Text(
               'Send Password Reset Email',
               style: GoogleFonts.inter(
@@ -80,7 +67,9 @@ class ExistingAccountNotice extends StatelessWidget {
             ),
             onPressed: () async {
               try {
-                await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+                await FirebaseAuth.instance.sendPasswordResetEmail(
+                  email: email,
+                );
                 if (context.mounted) {
                   AppSnackBar.showSuccess(
                     context,

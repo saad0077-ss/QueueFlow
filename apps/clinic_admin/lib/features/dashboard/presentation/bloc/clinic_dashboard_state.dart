@@ -1,4 +1,4 @@
-﻿import 'package:equatable/equatable.dart';
+import 'package:equatable/equatable.dart';
 import '../../domain/entities/clinic_queue_entity.dart';
 
 enum ClinicDashboardStatus { initial, loading, success, failure }
@@ -42,11 +42,11 @@ class ClinicDashboardState extends Equatable {
 
   @override
   List<Object?> get props => [
-        status,
-        queue,
-        activeNav,
-        searchQuery,
-        toastMessage,
-        isErrorToast,
-      ];
+    status,
+    queue,
+    activeNav,
+    searchQuery,
+    toastMessage,
+    isErrorToast,
+  ];
 }

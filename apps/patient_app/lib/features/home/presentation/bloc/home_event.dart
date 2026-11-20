@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+
 import '../../domain/entities/clinic_entity.dart';
 
 abstract class HomeEvent extends Equatable {
@@ -55,14 +56,29 @@ class HomeNavTabChanged extends HomeEvent {
 class HomeJoinQueueRequested extends HomeEvent {
   final ClinicEntity clinic;
   final String patientName;
+  final String serviceName;
+  final String departmentName;
 
   const HomeJoinQueueRequested({
     required this.clinic,
     required this.patientName,
+    this.serviceName = 'General Consultation',
+    this.departmentName = '',
   });
 
   @override
-  List<Object?> get props => [clinic, patientName];
+  List<Object?> get props => [clinic, patientName, serviceName, departmentName];
+}
+
+/// The active ticket finished on the clinic side ('completed' or 'cancelled').
+class HomeActiveTicketEnded extends HomeEvent {
+  final String ticketId;
+  final String status;
+
+  const HomeActiveTicketEnded({required this.ticketId, required this.status});
+
+  @override
+  List<Object?> get props => [ticketId, status];
 }
 
 class HomeCancelTicketRequested extends HomeEvent {

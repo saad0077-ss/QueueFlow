@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../home/domain/entities/clinic_entity.dart';
 import '../../data/repositories/clinic_details_repository_impl.dart';
 import '../bloc/clinic_details_bloc.dart';
@@ -22,9 +23,7 @@ class ClinicDetailsScreen extends StatelessWidget {
         builder: (ctx) {
           return Scaffold(
             backgroundColor: ctx.colors.background,
-            body: const SafeArea(
-              child: ClinicDetailsView(),
-            ),
+            body: const SafeArea(child: ClinicDetailsView()),
           );
         },
       ),

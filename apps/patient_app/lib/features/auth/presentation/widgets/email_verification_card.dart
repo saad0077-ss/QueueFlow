@@ -4,10 +4,7 @@ import 'package:queueflow_ui/queueflow_ui.dart';
 class EmailVerificationCard extends StatelessWidget {
   final String effectiveEmail;
 
-  const EmailVerificationCard({
-    super.key,
-    required this.effectiveEmail,
-  });
+  const EmailVerificationCard({super.key, required this.effectiveEmail});
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +19,7 @@ class EmailVerificationCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: colors.primaryTint,
             shape: BoxShape.circle,
-            border: Border.all(
-              color: colors.border,
-              width: 2,
-            ),
+            border: Border.all(color: colors.border, width: 2),
             boxShadow: [
               BoxShadow(
                 color: colors.primary.withValues(alpha: 0.25),
@@ -61,10 +55,7 @@ class EmailVerificationCard extends StatelessWidget {
         Text(
           'We sent a verification link to:',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            color: colors.textMuted,
-            fontSize: 14.5,
-          ),
+          style: TextStyle(color: colors.textMuted, fontSize: 14.5),
         ),
         const SizedBox(height: 6),
 

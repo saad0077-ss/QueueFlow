@@ -1,4 +1,4 @@
-﻿import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../domain/entities/clinic_staff_entity.dart';
 import '../../domain/repositories/clinic_auth_repository.dart';
@@ -13,8 +13,8 @@ class ClinicAuthRepositoryImpl implements ClinicAuthRepository {
   ClinicAuthRepositoryImpl({
     FirebaseAuth? firebaseAuth,
     FirebaseFirestore? firestore,
-  })  : _auth = firebaseAuth ?? FirebaseAuth.instance,
-        _firestore = firestore ?? FirebaseFirestore.instance;
+  }) : _auth = firebaseAuth ?? FirebaseAuth.instance,
+       _firestore = firestore ?? FirebaseFirestore.instance;
 
   @override
   Future<ClinicStaffEntity> signIn({
@@ -30,16 +30,26 @@ class ClinicAuthRepositoryImpl implements ClinicAuthRepository {
       if (credential.user == null) throw Exception('Sign-in failed.');
 
       // Check if clinic was removed by platform owner
-      final removedSnap = await _firestore.collection('removed_clinics').doc(cleanEmail).get();
+      final removedSnap = await _firestore
+          .collection('removed_clinics')
+          .doc(cleanEmail)
+          .get();
       if (removedSnap.exists) {
         await _auth.signOut();
-        throw Exception('The platform owner has removed this clinic facility and account.');
+        throw Exception(
+          'The platform owner has removed this clinic facility and account.',
+        );
       }
 
-      final clinicSnap = await _firestore.collection('clinics').where('adminEmail', isEqualTo: cleanEmail).get();
+      final clinicSnap = await _firestore
+          .collection('clinics')
+          .where('adminEmail', isEqualTo: cleanEmail)
+          .get();
       if (clinicSnap.docs.isEmpty) {
         await _auth.signOut();
-        throw Exception('The platform owner has removed this clinic facility and account.');
+        throw Exception(
+          'The platform owner has removed this clinic facility and account.',
+        );
       }
 
       // Suspended clinics cannot sign in; show the platform owner's reason.
@@ -59,16 +69,22 @@ class ClinicAuthRepositoryImpl implements ClinicAuthRepository {
       await _markClinicAsActive(cleanEmail);
       return ClinicStaffModel.fromFirebaseUser(credential.user!);
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found' || e.code == 'invalid-credential' || e.code == 'wrong-password') {
+      if (e.code == 'user-not-found' ||
+          e.code == 'invalid-credential' ||
+          e.code == 'wrong-password') {
         final isInvited = await _isClinicInvited(cleanEmail);
         if (isInvited) {
           throw Exception(
             'Your clinic account is not activated yet. Please click the activation link sent to $cleanEmail to set your password.',
           );
         }
-        throw Exception('Invalid email or password. Please verify credentials.');
+        throw Exception(
+          'Invalid email or password. Please verify credentials.',
+        );
       } else if (e.code == 'too-many-requests') {
-        throw Exception('Too many attempts. Please try again in a few moments.');
+        throw Exception(
+          'Too many attempts. Please try again in a few moments.',
+        );
       }
       throw Exception(e.message ?? 'Sign-in failed. Please check credentials.');
     }
@@ -90,12 +106,25 @@ class ClinicAuthRepositoryImpl implements ClinicAuthRepository {
       );
       final user = credential.user!;
       await _saveUserProfile(user, doctorName, cleanEmail, clinicName);
-      return ClinicStaffModel.fromFirebaseUser(user, fallbackName: doctorName, role: role, clinicName: clinicName);
+      return ClinicStaffModel.fromFirebaseUser(
+        user,
+        fallbackName: doctorName,
+        role: role,
+        clinicName: clinicName,
+      );
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
-        return _handleExistingUserActivation(cleanEmail, password, doctorName, role, clinicName);
+        return _handleExistingUserActivation(
+          cleanEmail,
+          password,
+          doctorName,
+          role,
+          clinicName,
+        );
       } else if (e.code == 'weak-password') {
-        throw Exception('Password is too weak. Please use at least 8 characters with numbers and letters.');
+        throw Exception(
+          'Password is too weak. Please use at least 8 characters with numbers and letters.',
+        );
       }
       throw Exception(e.message ?? 'Account activation failed.');
     }
@@ -109,10 +138,18 @@ class ClinicAuthRepositoryImpl implements ClinicAuthRepository {
     String clinicName,
   ) async {
     try {
-      final credential = await _auth.signInWithEmailAndPassword(email: email, password: password);
+      final credential = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
       final user = credential.user!;
       await _saveUserProfile(user, doctorName, email, clinicName);
-      return ClinicStaffModel.fromFirebaseUser(user, fallbackName: doctorName, role: role, clinicName: clinicName);
+      return ClinicStaffModel.fromFirebaseUser(
+        user,
+        fallbackName: doctorName,
+        role: role,
+        clinicName: clinicName,
+      );
     } on FirebaseAuthException catch (e) {
       if (e.code == 'invalid-credential' || e.code == 'wrong-password') {
         throw Exception(
@@ -123,7 +160,12 @@ class ClinicAuthRepositoryImpl implements ClinicAuthRepository {
     }
   }
 
-  Future<void> _saveUserProfile(User user, String name, String email, String clinicName) async {
+  Future<void> _saveUserProfile(
+    User user,
+    String name,
+    String email,
+    String clinicName,
+  ) async {
     await user.updateDisplayName(name);
     await _firestore.collection('users').doc(user.uid).set({
       'email': email,
@@ -138,7 +180,11 @@ class ClinicAuthRepositoryImpl implements ClinicAuthRepository {
 
   Future<bool> _isClinicInvited(String email) async {
     try {
-      final snap = await _firestore.collection('clinics').where('adminEmail', isEqualTo: email).where('status', isEqualTo: 'INVITED').get();
+      final snap = await _firestore
+          .collection('clinics')
+          .where('adminEmail', isEqualTo: email)
+          .where('status', isEqualTo: 'INVITED')
+          .get();
       return snap.docs.isNotEmpty;
     } catch (_) {
       return false;
@@ -147,15 +193,30 @@ class ClinicAuthRepositoryImpl implements ClinicAuthRepository {
 
   Future<void> _markClinicAsActive(String email) async {
     try {
-      final clinicSnap = await _firestore.collection('clinics').where('adminEmail', isEqualTo: email).get();
+      final clinicSnap = await _firestore
+          .collection('clinics')
+          .where('adminEmail', isEqualTo: email)
+          .get();
       for (final doc in clinicSnap.docs) {
         // Never lift a suspension just because the admin signed in.
-        if ((doc.data()['status'] ?? '').toString().toUpperCase() == 'SUSPENDED') continue;
-        await doc.reference.update({'status': 'ACTIVE', 'activatedAt': FieldValue.serverTimestamp()});
+        if ((doc.data()['status'] ?? '').toString().toUpperCase() ==
+            'SUSPENDED') {
+          continue;
+        }
+        await doc.reference.update({
+          'status': 'ACTIVE',
+          'activatedAt': FieldValue.serverTimestamp(),
+        });
       }
-      final inviteSnap = await _firestore.collection('invites').where('adminEmail', isEqualTo: email).get();
+      final inviteSnap = await _firestore
+          .collection('invites')
+          .where('adminEmail', isEqualTo: email)
+          .get();
       for (final doc in inviteSnap.docs) {
-        await doc.reference.update({'status': 'activated', 'activatedAt': FieldValue.serverTimestamp()});
+        await doc.reference.update({
+          'status': 'activated',
+          'activatedAt': FieldValue.serverTimestamp(),
+        });
       }
     } catch (_) {}
   }

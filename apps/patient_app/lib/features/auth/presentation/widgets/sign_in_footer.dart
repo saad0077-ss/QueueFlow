@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../../core/widgets/google_sign_in_button.dart';
 import '../bloc/sign_in/sign_in_bloc.dart';
 import '../bloc/sign_in/sign_in_event.dart';
@@ -24,12 +25,7 @@ class SignInFooter extends StatelessWidget {
       children: [
         Row(
           children: [
-            Expanded(
-              child: Divider(
-                color: colors.border,
-                thickness: 1,
-              ),
-            ),
+            Expanded(child: Divider(color: colors.border, thickness: 1)),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 14),
               child: Text(
@@ -40,28 +36,19 @@ class SignInFooter extends StatelessWidget {
                 ),
               ),
             ),
-            Expanded(
-              child: Divider(
-                color: colors.border,
-                thickness: 1,
-              ),
-            ),
+            Expanded(child: Divider(color: colors.border, thickness: 1)),
           ],
         ),
         const SizedBox(height: 20),
         GoogleSignInButton(
-          onPressed: () => context
-              .read<SignInBloc>()
-              .add(const SignInWithGoogleSubmitted()),
+          onPressed: () =>
+              context.read<SignInBloc>().add(const SignInWithGoogleSubmitted()),
         ),
         const SizedBox(height: 28),
         Center(
           child: GestureDetector(
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => const SignUpScreen(),
-              ),
-            ),
+            onTap: () => Navigator.of(context)
+                .push(MaterialPageRoute(builder: (_) => const SignUpScreen())),
             child: RichText(
               text: TextSpan(
                 text: "Don't have an account? ",

@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import 'app_icon_badge.dart';
 
 class AppLogo extends StatelessWidget {
   final double fontSize;
   final bool showIcon;
 
-  const AppLogo({
-    super.key,
-    this.fontSize = 20,
-    this.showIcon = false,
-  });
+  const AppLogo({super.key, this.fontSize = 20, this.showIcon = false});
 
   @override
   Widget build(BuildContext context) {

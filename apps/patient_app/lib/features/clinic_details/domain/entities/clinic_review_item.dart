@@ -53,15 +53,15 @@ class ClinicReviewItem extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        patientName,
-        initials,
-        rating,
-        date,
-        comment,
-        tags,
-        doctor,
-        verified,
-        helpfulCount,
-      ];
+    id,
+    patientName,
+    initials,
+    rating,
+    date,
+    comment,
+    tags,
+    doctor,
+    verified,
+    helpfulCount,
+  ];
 }

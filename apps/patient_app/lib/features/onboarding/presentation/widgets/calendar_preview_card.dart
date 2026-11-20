@@ -26,7 +26,10 @@ class CalendarPreviewCard extends StatelessWidget {
                 Container(
                   height: 148,
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 18,
+                  ),
                   decoration: const BoxDecoration(
                     gradient: LinearGradient(
                       colors: [Color(0xFF2563EB), Color(0xFF00BFA5)],
@@ -65,9 +68,7 @@ class CalendarPreviewCard extends StatelessWidget {
                       const SizedBox(
                         width: 74,
                         height: 74,
-                        child: CustomPaint(
-                          painter: CalendarIconPainter(),
-                        ),
+                        child: CustomPaint(painter: CalendarIconPainter()),
                       ),
                     ],
                   ),
@@ -75,7 +76,10 @@ class CalendarPreviewCard extends StatelessWidget {
 
                 // Bottom Dates & Time Slots Section
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 20),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 20,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -126,10 +130,7 @@ class CalendarIconPainter extends CustomPainter {
   final Color color;
   final double? strokeWidth;
 
-  const CalendarIconPainter({
-    this.color = Colors.white,
-    this.strokeWidth,
-  });
+  const CalendarIconPainter({this.color = Colors.white, this.strokeWidth});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -252,10 +253,7 @@ class _TimeChip extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         border: isSelected
             ? null
-            : Border.all(
-                color: const Color(0xFF283A56),
-                width: 1,
-              ),
+            : Border.all(color: const Color(0xFF283A56), width: 1),
       ),
       child: Text(
         time,

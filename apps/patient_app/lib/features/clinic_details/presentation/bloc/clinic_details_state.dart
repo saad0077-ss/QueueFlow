@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+
 import '../../domain/entities/clinic_details_entity.dart';
 
 enum ClinicDetailsStatus { initial, loading, loaded, failure }
@@ -45,12 +46,12 @@ class ClinicDetailsState extends Equatable {
 
   @override
   List<Object?> get props => [
-        status,
-        details,
-        selectedTabIndex,
-        isFavorite,
-        errorMessage,
-        isSubmittingReview,
-        reviewSubmittedSuccessfully,
-      ];
+    status,
+    details,
+    selectedTabIndex,
+    isFavorite,
+    errorMessage,
+    isSubmittingReview,
+    reviewSubmittedSuccessfully,
+  ];
 }

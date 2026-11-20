@@ -57,7 +57,8 @@ class _ClinicProfilePanelState extends State<ClinicProfilePanel> {
   @override
   void didUpdateWidget(covariant ClinicProfilePanel oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.location != widget.location || oldWidget.profile.address != widget.profile.address) {
+    if (oldWidget.location != widget.location ||
+        oldWidget.profile.address != widget.profile.address) {
       final address = _resolvedAddress;
       if (_addressCtrl.text != address) _addressCtrl.text = address;
     }
@@ -74,7 +75,12 @@ class _ClinicProfilePanelState extends State<ClinicProfilePanel> {
   }
 
   Future<void> _pickImage() async {
-    final file = await ImagePicker().pickImage(source: ImageSource.gallery, maxWidth: 600, maxHeight: 600, imageQuality: 70);
+    final file = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 600,
+      maxHeight: 600,
+      imageQuality: 70,
+    );
     if (file == null) return;
     final bytes = await file.readAsBytes();
     setState(() => _pickedBytes = bytes);
@@ -104,7 +110,8 @@ class _ClinicProfilePanelState extends State<ClinicProfilePanel> {
           'Address',
           _addressCtrl,
           readOnly: true,
-          helperText: 'Filled from the Location tab. Use "Configure Location" below to change it.',
+          helperText:
+              'Filled from the Location tab. Use "Configure Location" below to change it.',
         ),
         const SizedBox(height: 14),
         Row(
@@ -124,33 +131,54 @@ class _ClinicProfilePanelState extends State<ClinicProfilePanel> {
         const SizedBox(height: 24),
         ElevatedButton(
           onPressed: () {
-            widget.onSave(widget.profile.copyWith(
-              name: _nameCtrl.text.trim(),
-              address: _addressCtrl.text.trim(),
-              phone: _phoneCtrl.text.trim(),
-              email: _emailCtrl.text.trim(),
-              description: _descCtrl.text.trim(),
-            ));
+            widget.onSave(
+              widget.profile.copyWith(
+                name: _nameCtrl.text.trim(),
+                address: _addressCtrl.text.trim(),
+                phone: _phoneCtrl.text.trim(),
+                email: _emailCtrl.text.trim(),
+                description: _descCtrl.text.trim(),
+              ),
+            );
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: colors.primary,
             foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
-          child: Text('Save Changes', style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w600)),
+          child: Text(
+            'Save Changes',
+            style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w600),
+          ),
         ),
       ],
     );
   }
 
-  Widget _field(BuildContext context, String label, TextEditingController ctrl, {int maxLines = 1, bool readOnly = false, String? helperText}) {
+  Widget _field(
+    BuildContext context,
+    String label,
+    TextEditingController ctrl, {
+    int maxLines = 1,
+    bool readOnly = false,
+    String? helperText,
+  }) {
     final colors = context.colors;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: colors.textMuted)),
+        Text(
+          label,
+          style: GoogleFonts.inter(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: colors.textMuted,
+          ),
+        ),
         const SizedBox(height: 6),
         TextField(
           controller: ctrl,
@@ -161,11 +189,23 @@ class _ClinicProfilePanelState extends State<ClinicProfilePanel> {
             hintText: readOnly ? 'No address set yet' : null,
             hintStyle: GoogleFonts.inter(fontSize: 13, color: colors.textMuted),
             helperText: helperText,
-            helperStyle: GoogleFonts.inter(fontSize: 11, color: colors.textSubtle),
-            suffixIcon: readOnly ? Icon(Icons.lock_outline_rounded, size: 15, color: colors.textMuted) : null,
+            helperStyle: GoogleFonts.inter(
+              fontSize: 11,
+              color: colors.textSubtle,
+            ),
+            suffixIcon: readOnly
+                ? Icon(
+                    Icons.lock_outline_rounded,
+                    size: 15,
+                    color: colors.textMuted,
+                  )
+                : null,
             filled: true,
             fillColor: colors.surfaceSecondary,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: 10,
+            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide(color: colors.border),

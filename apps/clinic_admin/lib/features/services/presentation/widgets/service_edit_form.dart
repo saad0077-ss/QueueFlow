@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../domain/entities/clinic_doctor_entity.dart';
 import '../../domain/entities/clinic_service_entity.dart';
@@ -104,7 +104,10 @@ class _ServiceEditFormState extends State<ServiceEditForm> {
 
   bool get _isCustom => _selectedStandard == _customValue;
 
-  bool _doctorMatchesDept(ClinicDoctorEntity doc, ServiceDepartmentEntity dept) {
+  bool _doctorMatchesDept(
+    ClinicDoctorEntity doc,
+    ServiceDepartmentEntity dept,
+  ) {
     final deptName = dept.name.trim().toLowerCase();
     final deptId = dept.id.trim().toLowerCase();
     final deptCode = dept.code.trim().toLowerCase();
@@ -114,12 +117,16 @@ class _ServiceEditFormState extends State<ServiceEditForm> {
 
     // Direct match against department name, ID, or code
     if (docDept.isNotEmpty) {
-      if (docDept == deptName || docDept == deptId || docDept == deptCode) return true;
+      if (docDept == deptName || docDept == deptId || docDept == deptCode) {
+        return true;
+      }
       if (deptName.contains(docDept) || docDept.contains(deptName)) return true;
     }
 
     if (docSpec.isNotEmpty) {
-      if (docSpec == deptName || docSpec == deptId || docSpec == deptCode) return true;
+      if (docSpec == deptName || docSpec == deptId || docSpec == deptCode) {
+        return true;
+      }
       if (deptName.contains(docSpec) || docSpec.contains(deptName)) return true;
     }
 
@@ -160,7 +167,9 @@ class _ServiceEditFormState extends State<ServiceEditForm> {
     // so they remain visible/toggleable.
     for (final name in _assignedStaff) {
       if (!result.any((d) => d.name == name)) {
-        final existing = widget.doctors.where((d) => d.name == name).firstOrNull;
+        final existing = widget.doctors
+            .where((d) => d.name == name)
+            .firstOrNull;
         result.add(existing ?? ClinicDoctorEntity(name: name));
       }
     }

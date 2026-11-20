@@ -28,11 +28,14 @@ class DoctorCapacityQuotaCard extends StatelessWidget {
 
     final String subText;
     if (docLimit == 1) {
-      subText = 'Solo practice plan covers 1 practicing physician with full live queue triage. Upgrade to add more doctors.';
+      subText =
+          'Solo practice plan covers 1 practicing physician with full live queue triage. Upgrade to add more doctors.';
     } else if (isUnlimited) {
-      subText = 'Enterprise tier with unlimited doctor consultation rooms and queue management.';
+      subText =
+          'Enterprise tier with unlimited doctor consultation rooms and queue management.';
     } else {
-      subText = 'Multi-doctor plan covers up to $docLimit practicing physicians with room-wise queue triage.';
+      subText =
+          'Multi-doctor plan covers up to $docLimit practicing physicians with room-wise queue triage.';
     }
 
     final pillText = isUnlimited
@@ -85,10 +88,7 @@ class DoctorCapacityQuotaCard extends StatelessWidget {
               const SizedBox(height: 2),
               Text(
                 subText,
-                style: GoogleFonts.inter(
-                  fontSize: 12,
-                  color: colors.textMuted,
-                ),
+                style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted),
               ),
             ],
           ),
@@ -133,7 +133,10 @@ class DoctorCapacityQuotaCard extends StatelessWidget {
             children: [
               Text(
                 'Upgrade Doctor Limit',
-                style: GoogleFonts.inter(fontSize: 11.5, fontWeight: FontWeight.w600),
+                style: GoogleFonts.inter(
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               const SizedBox(width: 4),
               const Icon(Icons.arrow_forward_rounded, size: 13),
@@ -153,9 +156,7 @@ class DoctorCapacityQuotaCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
         child: Container(
           decoration: BoxDecoration(
-            border: Border(
-              left: BorderSide(color: colors.primary, width: 4),
-            ),
+            border: Border(left: BorderSide(color: colors.primary, width: 4)),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
           child: LayoutBuilder(

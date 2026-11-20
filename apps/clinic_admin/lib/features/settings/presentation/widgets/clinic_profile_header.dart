@@ -30,14 +30,21 @@ class ClinicProfileHeader extends StatelessWidget {
     Widget image;
     final bytes = pickedBytes ?? imageBytes;
     if (bytes != null) {
-      image = Image.memory(bytes, fit: BoxFit.cover, width: double.infinity, height: double.infinity, gaplessPlayback: true);
+      image = Image.memory(
+        bytes,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
+        gaplessPlayback: true,
+      );
     } else if (imageUrl.trim().isNotEmpty) {
       image = Image.network(
         imageUrl.trim(),
         fit: BoxFit.cover,
         width: double.infinity,
         height: double.infinity,
-        errorBuilder: (context, error, stackTrace) => _initialAvatar(context, initial),
+        errorBuilder: (context, error, stackTrace) =>
+            _initialAvatar(context, initial),
       );
     } else {
       image = _initialAvatar(context, initial);
@@ -68,19 +75,28 @@ class ClinicProfileHeader extends StatelessWidget {
                 ),
                 foregroundDecoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: colors.accent.withAlpha(140), width: 2),
+                  border: Border.all(
+                    color: colors.accent.withAlpha(140),
+                    width: 2,
+                  ),
                 ),
                 child: SizedBox.expand(child: image),
               ),
               if (isUploadingImage)
                 Positioned.fill(
                   child: Container(
-                    decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(20)),
+                    decoration: BoxDecoration(
+                      color: Colors.black54,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
                     child: Center(
                       child: SizedBox(
                         width: 22,
                         height: 22,
-                        child: CircularProgressIndicator(strokeWidth: 2.4, color: colors.primary),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.4,
+                          color: colors.primary,
+                        ),
                       ),
                     ),
                   ),
@@ -90,13 +106,19 @@ class ClinicProfileHeader extends StatelessWidget {
                 bottom: -6,
                 child: Material(
                   color: colors.primary,
-                  shape: CircleBorder(side: BorderSide(color: colors.surface, width: 3)),
+                  shape: CircleBorder(
+                    side: BorderSide(color: colors.surface, width: 3),
+                  ),
                   child: InkWell(
                     customBorder: const CircleBorder(),
                     onTap: isUploadingImage ? null : onPickImage,
                     child: const Padding(
                       padding: EdgeInsets.all(7),
-                      child: Icon(Icons.camera_alt_rounded, size: 15, color: Colors.white),
+                      child: Icon(
+                        Icons.camera_alt_rounded,
+                        size: 15,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
@@ -111,12 +133,19 @@ class ClinicProfileHeader extends StatelessWidget {
               children: [
                 Text(
                   name.isEmpty ? 'Your Clinic' : name,
-                  style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w800, color: colors.textPrimary),
+                  style: GoogleFonts.inter(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                    color: colors.textPrimary,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   'This photo is shown to patients on the clinic card and details page.',
-                  style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted),
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    color: colors.textMuted,
+                  ),
                 ),
                 const SizedBox(height: 12),
                 OutlinedButton.icon(
@@ -125,13 +154,25 @@ class ClinicProfileHeader extends StatelessWidget {
                     foregroundColor: colors.textPrimary,
                     side: BorderSide(color: colors.border),
                     backgroundColor: colors.surface,
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 10,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                   icon: const Icon(Icons.upload_rounded, size: 16),
                   label: Text(
-                    isUploadingImage ? 'Uploading...' : (imageUrl.isEmpty && bytes == null ? 'Upload Photo' : 'Change Photo'),
-                    style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w600),
+                    isUploadingImage
+                        ? 'Uploading...'
+                        : (imageUrl.isEmpty && bytes == null
+                              ? 'Upload Photo'
+                              : 'Change Photo'),
+                    style: GoogleFonts.inter(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ],
@@ -149,7 +190,11 @@ class ClinicProfileHeader extends StatelessWidget {
       alignment: Alignment.center,
       child: Text(
         initial,
-        style: GoogleFonts.inter(fontSize: 32, fontWeight: FontWeight.w800, color: colors.primary),
+        style: GoogleFonts.inter(
+          fontSize: 32,
+          fontWeight: FontWeight.w800,
+          color: colors.primary,
+        ),
       ),
     );
   }

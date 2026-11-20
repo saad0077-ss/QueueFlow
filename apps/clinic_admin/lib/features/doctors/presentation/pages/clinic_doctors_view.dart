@@ -18,14 +18,14 @@ import '../widgets/doctor_capacity_quota_card.dart';
 import '../widgets/doctor_detail_view.dart';
 import '../widgets/doctors_cards_grid.dart';
 import '../widgets/doctors_roster_header.dart';
-import '../widgets/doctors_view_header.dart';   
+import '../widgets/doctors_view_header.dart';
 
 class ClinicDoctorsView extends StatelessWidget {
   final VoidCallback? onNavigateToBilling;
-  final VoidCallback? onNavigateToQueue;   
- 
+  final VoidCallback? onNavigateToQueue;
+
   const ClinicDoctorsView({
-    super.key,  
+    super.key,
     this.onNavigateToBilling,
     this.onNavigateToQueue,
   });
@@ -55,10 +55,7 @@ class _ClinicDoctorsBody extends StatelessWidget {
   final VoidCallback? onNavigateToBilling;
   final VoidCallback? onNavigateToQueue;
 
-  const _ClinicDoctorsBody({
-    this.onNavigateToBilling,
-    this.onNavigateToQueue,
-  });
+  const _ClinicDoctorsBody({this.onNavigateToBilling, this.onNavigateToQueue});
 
   void _openAddDoctorModal(BuildContext context, ClinicDoctorsState state) {
     if (state.isLimitReached) {
@@ -94,7 +91,10 @@ class _ClinicDoctorsBody extends StatelessWidget {
         ),
         title: Text(
           'Remove Doctor',
-          style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w700),
+          style: TextStyle(
+            color: colors.textPrimary,
+            fontWeight: FontWeight.w700,
+          ),
         ),
         content: Text(
           'Are you sure you want to remove ${doctor.name} from the practicing roster?',
@@ -109,11 +109,11 @@ class _ClinicDoctorsBody extends StatelessWidget {
             onPressed: () {
               Navigator.of(ctx).pop();
               context.read<ClinicDoctorsBloc>().add(
-                    DoctorDeletePressed(
-                      doctorId: doctor.id,
-                      doctorName: doctor.name,
-                    ),
-                  );
+                DoctorDeletePressed(
+                  doctorId: doctor.id,
+                  doctorName: doctor.name,
+                ),
+              );
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: colors.error,
@@ -167,7 +167,10 @@ class _ClinicDoctorsBody extends StatelessWidget {
                 if (onNavigateToBilling != null) {
                   onNavigateToBilling!();
                 } else {
-                  AppSnackBar.showInfo(context, message: 'Navigating to Plan & Billing...');
+                  AppSnackBar.showInfo(
+                    context,
+                    message: 'Navigating to Plan & Billing...',
+                  );
                 }
               },
             ),

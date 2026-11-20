@@ -83,7 +83,8 @@ class HomeCategoryChips extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: 20),
         child: Row(
           children: categories.map((cat) {
-            final isSelected = selectedCategory.toLowerCase() == cat.id.toLowerCase();
+            final isSelected =
+                selectedCategory.toLowerCase() == cat.id.toLowerCase();
             final defaultBg = context.isDarkMode
                 ? cat.tintColor
                 : cat.iconColor.withValues(alpha: 0.08);
@@ -107,15 +108,15 @@ class HomeCategoryChips extends StatelessWidget {
                               : defaultBg,
                           borderRadius: BorderRadius.circular(18),
                           border: Border.all(
-                            color: isSelected
-                                ? cat.iconColor
-                                : colors.border,
+                            color: isSelected ? cat.iconColor : colors.border,
                             width: isSelected ? 2 : 1,
                           ),
                           boxShadow: isSelected
                               ? [
                                   BoxShadow(
-                                    color: cat.iconColor.withValues(alpha: 0.35),
+                                    color: cat.iconColor.withValues(
+                                      alpha: 0.35,
+                                    ),
                                     blurRadius: 10,
                                     offset: const Offset(0, 3),
                                   ),
@@ -124,7 +125,9 @@ class HomeCategoryChips extends StatelessWidget {
                         ),
                         child: Icon(
                           cat.icon,
-                          color: isSelected ? cat.iconColor : cat.iconColor.withValues(alpha: 0.9),
+                          color: isSelected
+                              ? cat.iconColor
+                              : cat.iconColor.withValues(alpha: 0.9),
                           size: 24,
                         ),
                       ),
@@ -136,8 +139,12 @@ class HomeCategoryChips extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontSize: 11,
-                          fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
-                          color: isSelected ? colors.textPrimary : colors.textMuted,
+                          fontWeight: isSelected
+                              ? FontWeight.w700
+                              : FontWeight.w600,
+                          color: isSelected
+                              ? colors.textPrimary
+                              : colors.textMuted,
                         ),
                       ),
                     ],

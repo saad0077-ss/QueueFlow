@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../../domain/entities/clinic_review_item.dart';
 
 class ClinicReviewModel extends ClinicReviewItem {
@@ -21,13 +22,20 @@ class ClinicReviewModel extends ClinicReviewItem {
   }
 
   factory ClinicReviewModel.fromMap(Map<String, dynamic> map, {String? id}) {
-    final name = (map['patientName'] ?? map['userName'] ?? 'Patient').toString().trim();
+    final name = (map['patientName'] ?? map['userName'] ?? 'Patient')
+        .toString()
+        .trim();
     String initials = 'PT';
-    final parts = name.split(RegExp(r'\s+')).where((p) => p.isNotEmpty).toList();
+    final parts = name
+        .split(RegExp(r'\s+'))
+        .where((p) => p.isNotEmpty)
+        .toList();
     if (parts.length >= 2) {
       initials = '${parts[0][0]}${parts[1][0]}'.toUpperCase();
     } else if (parts.isNotEmpty) {
-      initials = parts[0].substring(0, parts[0].length >= 2 ? 2 : 1).toUpperCase();
+      initials = parts[0]
+          .substring(0, parts[0].length >= 2 ? 2 : 1)
+          .toUpperCase();
     }
 
     final rawTags = (map['tags'] as List<dynamic>?) ?? [];
@@ -37,7 +45,8 @@ class ClinicReviewModel extends ClinicReviewItem {
       patientName: name,
       initials: (map['initials'] ?? initials).toString(),
       rating: (map['rating'] as num?)?.toInt() ?? 5,
-      date: _formatDate(map['createdAt']) ?? (map['date'] ?? 'Recent').toString(),
+      date:
+          _formatDate(map['createdAt']) ?? (map['date'] ?? 'Recent').toString(),
       comment: (map['comment'] ?? '').toString(),
       tags: rawTags.map((e) => e.toString()).toList(),
       doctor: (map['doctor'] ?? map['doctorName'] ?? '').toString(),
@@ -46,7 +55,20 @@ class ClinicReviewModel extends ClinicReviewItem {
     );
   }
 
-  static const _months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  static const _months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
 
   static String? _formatDate(Object? raw) {
     if (raw is! Timestamp) return null;
@@ -55,7 +77,9 @@ class ClinicReviewModel extends ClinicReviewItem {
     if (diff.inMinutes < 1) return 'Just now';
     if (diff.inHours < 1) return '${diff.inMinutes} min ago';
     if (diff.inDays < 1) return '${diff.inHours} hr ago';
-    if (diff.inDays < 7) return '${diff.inDays} day${diff.inDays == 1 ? '' : 's'} ago';
+    if (diff.inDays < 7) {
+      return '${diff.inDays} day${diff.inDays == 1 ? '' : 's'} ago';
+    }
     return '${d.day} ${_months[d.month - 1]} ${d.year}';
   }
 

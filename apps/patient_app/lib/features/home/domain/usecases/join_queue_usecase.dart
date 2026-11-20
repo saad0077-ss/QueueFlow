@@ -12,6 +12,8 @@ class JoinQueueUseCase {
     required String patientName,
     required int currentWaitingCount,
     required String currentToken,
+    String serviceName = 'General Consultation',
+    String departmentName = '',
   }) {
     return repository.joinQueue(
       clinicId: clinicId,
@@ -19,6 +21,8 @@ class JoinQueueUseCase {
       patientName: patientName,
       currentWaitingCount: currentWaitingCount,
       currentToken: currentToken,
+      serviceName: serviceName,
+      departmentName: departmentName,
     );
   }
 }

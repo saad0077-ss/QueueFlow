@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+
 import '../../../../core/services/user_location_service.dart';
 
 class ClinicEntity extends Equatable {
@@ -9,6 +10,7 @@ class ClinicEntity extends Equatable {
   final double rating;
   final int reviewCount;
   final String distance;
+
   /// Clinic GPS coordinates saved by the clinic admin (null when not set).
   final double? latitude;
   final double? longitude;
@@ -22,6 +24,7 @@ class ClinicEntity extends Equatable {
   final String currentToken;
   final int waitingCount;
   final String? imageUrl;
+
   /// Bumped on every photo upload; 0 when the clinic has no photo in `clinic_images`.
   final int imageVersion;
   final List<String> departmentIds;
@@ -63,10 +66,33 @@ class ClinicEntity extends Equatable {
 
   bool isOpenAt(DateTime now) {
     if (!isOpen) return false;
-    // No operating hours published yet: never claim the clinic is open.
-    if (schedule.isEmpty) return false;
+    // Fall back to openingHours if structured weekly schedule is empty.
+    if (schedule.isEmpty) {
+      if (openingHours.isNotEmpty) {
+        final match = RegExp(
+          r'(\d{1,2}:\d{2}\s*(?:AM|PM|am|pm)?)\s*[-–—]\s*(\d{1,2}:\d{2}\s*(?:AM|PM|am|pm)?)',
+        ).firstMatch(openingHours);
+        if (match != null) {
+          final open = _minutes(match.group(1));
+          final close = _minutes(match.group(2));
+          if (open != null && close != null) {
+            final cur = now.hour * 60 + now.minute;
+            return close > open
+                ? (cur >= open && cur < close)
+                : (cur >= open || cur < close);
+          }
+        }
+      }
+      return false;
+    }
     const keys = [
-      'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday',
+      'monday',
+      'tuesday',
+      'wednesday',
+      'thursday',
+      'friday',
+      'saturday',
+      'sunday',
     ];
     final day = schedule[keys[now.weekday - 1]];
     if (day is! Map || day['isOpen'] != true) return false;
@@ -74,11 +100,38 @@ class ClinicEntity extends Equatable {
     final close = _minutes(day['closeTime']);
     if (open == null || close == null) return false;
     final cur = now.hour * 60 + now.minute;
-    return close > open ? (cur >= open && cur < close) : (cur >= open || cur < close);
+    return close > open
+        ? (cur >= open && cur < close)
+        : (cur >= open || cur < close);
+  }
+
+  /// When the clinic is inside today's configured break (e.g. lunch), returns
+  /// the time the break ends ("14:00"); otherwise null.
+  String? breakEndsAt(DateTime now) {
+    const keys = [
+      'monday',
+      'tuesday',
+      'wednesday',
+      'thursday',
+      'friday',
+      'saturday',
+      'sunday',
+    ];
+    final day = schedule[keys[now.weekday - 1]];
+    if (day is! Map || day['isOpen'] != true || day['hasBreak'] != true) {
+      return null;
+    }
+    final start = _minutes(day['breakStart']);
+    final end = _minutes(day['breakEnd']);
+    if (start == null || end == null || end <= start) return null;
+    final cur = now.hour * 60 + now.minute;
+    if (cur >= start && cur < end) return day['breakEnd'].toString();
+    return null;
   }
 
   static int? _minutes(dynamic v) {
-    final m = RegExp(r'^\s*(\d{1,2}):(\d{2})\s*([AaPp][Mm])?\s*$').firstMatch('$v');
+    final m = RegExp(r'^\s*(\d{1,2}):(\d{2})\s*([AaPp][Mm])?\s*$')
+        .firstMatch('$v');
     if (m == null) return null;
     var h = int.parse(m.group(1)!);
     final min = int.parse(m.group(2)!);
@@ -90,7 +143,8 @@ class ClinicEntity extends Equatable {
 
   /// Real distance from the patient's current position, e.g. "850 m" or
   /// "3.4 km". Empty until both the clinic GPS and the patient position are known.
-  String get distanceLabel => UserLocationService.distanceLabel(latitude, longitude);
+  String get distanceLabel =>
+      UserLocationService.distanceLabel(latitude, longitude);
 
   /// Distance in km, or null when unknown.
   double? get distanceKm => UserLocationService.distanceKm(latitude, longitude);
@@ -152,28 +206,28 @@ class ClinicEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        name,
-        initials,
-        category,
-        rating,
-        reviewCount,
-        distance,
-        latitude,
-        longitude,
-        city,
-        address,
-        phone,
-        consultationFee,
-        openingHours,
-        isOpen,
-        isQueueOpen,
-        currentToken,
-        waitingCount,
-        imageUrl,
-        imageVersion,
-        departmentIds,
-        departments,
-        schedule,
-      ];
+    id,
+    name,
+    initials,
+    category,
+    rating,
+    reviewCount,
+    distance,
+    latitude,
+    longitude,
+    city,
+    address,
+    phone,
+    consultationFee,
+    openingHours,
+    isOpen,
+    isQueueOpen,
+    currentToken,
+    waitingCount,
+    imageUrl,
+    imageVersion,
+    departmentIds,
+    departments,
+    schedule,
+  ];
 }

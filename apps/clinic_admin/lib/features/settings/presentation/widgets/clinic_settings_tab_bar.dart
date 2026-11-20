@@ -35,7 +35,10 @@ class ClinicSettingsTabBar extends StatelessWidget {
             return InkWell(
               onTap: () => onTabSelected(i),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
                   border: Border(
                     bottom: BorderSide(

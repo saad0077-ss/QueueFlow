@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../../core/widgets/custom_text_field.dart';
 import '../../../../core/widgets/gradient_button.dart';
@@ -11,11 +12,7 @@ class SignUpForm extends StatelessWidget {
   final SignUpState state;
   final double labelSize;
 
-  const SignUpForm({
-    super.key,
-    required this.state,
-    required this.labelSize,
-  });
+  const SignUpForm({super.key, required this.state, required this.labelSize});
 
   void _onCreateAccountPressed(BuildContext context) {
     final fullName = state.fullName.trim();
@@ -149,7 +146,8 @@ class SignUpForm extends StatelessWidget {
           helperText: state.confirmPasswordError ?? "Passwords don't match.",
           errorText: state.confirmPasswordError,
           labelFontSize: labelSize,
-          onChanged: (confirm) => bloc.add(SignUpConfirmPasswordChanged(confirm)),
+          onChanged: (confirm) =>
+              bloc.add(SignUpConfirmPasswordChanged(confirm)),
           suffixIcon: IconButton(
             icon: Icon(
               state.isConfirmObscured

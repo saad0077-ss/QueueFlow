@@ -23,7 +23,9 @@ class DoctorSlotCard extends StatelessWidget {
     final isUnlimited = plan.isUnlimited;
     final docLimit = plan.doctorsLimit;
     final isAvailable = isUnlimited || currentCount < docLimit;
-    final remaining = isUnlimited ? 999 : (docLimit - currentCount).clamp(0, 999);
+    final remaining = isUnlimited
+        ? 999
+        : (docLimit - currentCount).clamp(0, 999);
 
     return CustomPaint(
       painter: _DashedRRectPainter(
@@ -72,8 +74,8 @@ class DoctorSlotCard extends StatelessWidget {
             Text(
               isAvailable
                   ? (isUnlimited
-                      ? 'Your plan supports unlimited practicing doctors.'
-                      : 'You have $remaining open doctor slot${remaining == 1 ? '' : 's'} remaining on your current plan.')
+                        ? 'Your plan supports unlimited practicing doctors.'
+                        : 'You have $remaining open doctor slot${remaining == 1 ? '' : 's'} remaining on your current plan.')
                   : 'Your ${plan.planName} covers $docLimit doctor${docLimit == 1 ? '' : 's'}. Upgrade to add more doctors.',
               style: GoogleFonts.inter(
                 fontSize: 12,
@@ -88,13 +90,23 @@ class DoctorSlotCard extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: colors.primary,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 11),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 18,
+                  vertical: 11,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
                 elevation: 0,
               ),
               child: Text(
-                isAvailable ? '+ Add Practicing Doctor' : 'Upgrade Plan for More Doctors →',
-                style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w700),
+                isAvailable
+                    ? '+ Add Practicing Doctor'
+                    : 'Upgrade Plan for More Doctors →',
+                style: GoogleFonts.inter(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
           ],

@@ -18,6 +18,8 @@ abstract class HomeRepository {
     required String patientName,
     required int currentWaitingCount,
     required String currentToken,
+    String serviceName = 'General Consultation',
+    String departmentName = '',
   });
 
   /// Cancels an active ticket.

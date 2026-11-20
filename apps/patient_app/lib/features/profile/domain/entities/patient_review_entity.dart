@@ -25,14 +25,14 @@ class PatientReviewEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        clinicId,
-        clinicName,
-        doctorName,
-        rating,
-        tags,
-        comment,
-        isAnonymous,
-        date,
-      ];
+    id,
+    clinicId,
+    clinicName,
+    doctorName,
+    rating,
+    tags,
+    comment,
+    isAnonymous,
+    date,
+  ];
 }

@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../domain/repositories/clinic_details_repository.dart';
 import 'clinic_details_event.dart';
 import 'clinic_details_state.dart';
@@ -6,9 +7,8 @@ import 'clinic_details_state.dart';
 class ClinicDetailsBloc extends Bloc<ClinicDetailsEvent, ClinicDetailsState> {
   final ClinicDetailsRepository repository;
 
-  ClinicDetailsBloc({
-    required this.repository,
-  }) : super(const ClinicDetailsState()) {
+  ClinicDetailsBloc({required this.repository})
+    : super(const ClinicDetailsState()) {
     on<LoadClinicDetails>(_onLoadClinicDetails);
     on<SelectClinicTab>(_onSelectClinicTab);
     on<ToggleClinicFavorite>(_onToggleClinicFavorite);
@@ -30,7 +30,10 @@ class ClinicDetailsBloc extends Bloc<ClinicDetailsEvent, ClinicDetailsState> {
         rating: event.rating,
         comment: event.comment,
       );
-      final reloaded = await repository.getClinicDetails(details.clinic.id, details.clinic);
+      final reloaded = await repository.getClinicDetails(
+        details.clinic.id,
+        details.clinic,
+      );
       emit(state.copyWith(details: reloaded));
     } catch (e) {
       emit(state.copyWith(errorMessage: 'Failed to submit rating: $e'));
@@ -48,16 +51,20 @@ class ClinicDetailsBloc extends Bloc<ClinicDetailsEvent, ClinicDetailsState> {
         event.initialClinic,
       );
       final fav = await repository.isClinicFavorite(event.clinicId);
-      emit(state.copyWith(
-        status: ClinicDetailsStatus.loaded,
-        details: details,
-        isFavorite: fav,
-      ));
+      emit(
+        state.copyWith(
+          status: ClinicDetailsStatus.loaded,
+          details: details,
+          isFavorite: fav,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
-        status: ClinicDetailsStatus.failure,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: ClinicDetailsStatus.failure,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 
@@ -79,7 +86,12 @@ class ClinicDetailsBloc extends Bloc<ClinicDetailsEvent, ClinicDetailsState> {
     try {
       await repository.setClinicFavorite(details.clinic, !prev);
     } catch (e) {
-      emit(state.copyWith(isFavorite: prev, errorMessage: 'Could not update favorites: $e'));
+      emit(
+        state.copyWith(
+          isFavorite: prev,
+          errorMessage: 'Could not update favorites: $e',
+        ),
+      );
     }
   }
 
@@ -96,9 +108,7 @@ class ClinicDetailsBloc extends Bloc<ClinicDetailsEvent, ClinicDetailsState> {
       return r;
     }).toList();
 
-    emit(state.copyWith(
-      details: state.details!.copyWith(reviews: updated),
-    ));
+    emit(state.copyWith(details: state.details!.copyWith(reviews: updated)));
 
     await repository.markReviewHelpful(event.reviewId);
   }
@@ -122,16 +132,20 @@ class ClinicDetailsBloc extends Bloc<ClinicDetailsEvent, ClinicDetailsState> {
         state.details!.clinic,
       );
 
-      emit(state.copyWith(
-        isSubmittingReview: false,
-        reviewSubmittedSuccessfully: true,
-        details: reloaded,
-      ));
+      emit(
+        state.copyWith(
+          isSubmittingReview: false,
+          reviewSubmittedSuccessfully: true,
+          details: reloaded,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
-        isSubmittingReview: false,
-        errorMessage: 'Failed to submit review: $e',
-      ));
+      emit(
+        state.copyWith(
+          isSubmittingReview: false,
+          errorMessage: 'Failed to submit review: $e',
+        ),
+      );
     }
   }
 }

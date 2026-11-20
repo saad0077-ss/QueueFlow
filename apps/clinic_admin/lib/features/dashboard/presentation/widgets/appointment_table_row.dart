@@ -8,10 +8,7 @@ import 'appointment_status_pill.dart';
 class AppointmentTableRow extends StatelessWidget {
   final AppointmentItem appointment;
 
-  const AppointmentTableRow({
-    super.key,
-    required this.appointment,
-  });
+  const AppointmentTableRow({super.key, required this.appointment});
 
   @override
   Widget build(BuildContext context) {
@@ -26,10 +23,7 @@ class AppointmentTableRow extends StatelessWidget {
             flex: 2,
             child: Text(
               appointment.time,
-              style: GoogleFonts.inter(
-                fontSize: 12,
-                color: colors.textMuted,
-              ),
+              style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted),
             ),
           ),
           // Customer Name
@@ -49,10 +43,7 @@ class AppointmentTableRow extends StatelessWidget {
             flex: 4,
             child: Text(
               appointment.service,
-              style: GoogleFonts.inter(
-                fontSize: 12,
-                color: colors.textMuted,
-              ),
+              style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted),
             ),
           ),
           // Doctor
@@ -60,10 +51,7 @@ class AppointmentTableRow extends StatelessWidget {
             flex: 3,
             child: Text(
               appointment.doctor,
-              style: GoogleFonts.inter(
-                fontSize: 12,
-                color: colors.textMuted,
-              ),
+              style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted),
             ),
           ),
           // Status Pill Badge

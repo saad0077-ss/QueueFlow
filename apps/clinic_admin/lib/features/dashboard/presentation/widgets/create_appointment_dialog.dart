@@ -34,10 +34,7 @@ class CreateAppointmentDialog extends StatelessWidget {
       ),
       content: Text(
         'Quickly schedule a new consultation or appointment for a patient.',
-        style: GoogleFonts.inter(
-          color: colors.textMuted,
-          fontSize: 13,
-        ),
+        style: GoogleFonts.inter(color: colors.textMuted, fontSize: 13),
       ),
       actions: [
         TextButton(

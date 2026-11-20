@@ -6,7 +6,9 @@ class UserLocationService {
   UserLocationService._();
 
   /// Latest known position; listeners rebuild when it arrives or changes.
-  static final ValueNotifier<Position?> position = ValueNotifier<Position?>(null);
+  static final ValueNotifier<Position?> position = ValueNotifier<Position?>(
+    null,
+  );
   static bool _loading = false;
 
   /// Asks for permission (once) and reads the current position. Safe to call often.
@@ -19,8 +21,12 @@ class UserLocationService {
       if (perm == LocationPermission.denied) {
         perm = await Geolocator.requestPermission();
       }
-      if (perm == LocationPermission.denied || perm == LocationPermission.deniedForever) return;
-      position.value = await Geolocator.getLastKnownPosition() ?? position.value;
+      if (perm == LocationPermission.denied ||
+          perm == LocationPermission.deniedForever) {
+        return;
+      }
+      position.value =
+          await Geolocator.getLastKnownPosition() ?? position.value;
       position.value = await Geolocator.getCurrentPosition(
         locationSettings: const LocationSettings(
           accuracy: LocationAccuracy.medium,

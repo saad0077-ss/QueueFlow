@@ -26,10 +26,7 @@ class AddDoctorDialog extends StatefulWidget {
       barrierColor: Colors.black.withValues(alpha: 0.7),
       builder: (ctx) => BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-        child: AddDoctorDialog(
-          departments: departments,
-          onSave: onSave,
-        ),
+        child: AddDoctorDialog(departments: departments, onSave: onSave),
       ),
     );
   }
@@ -86,7 +83,8 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
     }
 
     final name = _nameController.text.trim();
-    final specialty = (_selectedSpecialty != null && _selectedSpecialty!.isNotEmpty)
+    final specialty =
+        (_selectedSpecialty != null && _selectedSpecialty!.isNotEmpty)
         ? _selectedSpecialty!.trim()
         : widget.departments.first;
     final room = _roomController.text.trim();
@@ -144,7 +142,11 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
               width: double.infinity,
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Color(0xFF0284C7), Color(0xFF06B6D4), Color(0xFF38BDF8)],
+                  colors: [
+                    Color(0xFF0284C7),
+                    Color(0xFF06B6D4),
+                    Color(0xFF38BDF8),
+                  ],
                 ),
               ),
             ),
@@ -173,15 +175,21 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
                                       colors: [
-                                        const Color(0xFF0284C7).withValues(alpha: 0.2),
-                                        const Color(0xFF06B6D4).withValues(alpha: 0.1),
+                                        const Color(
+                                          0xFF0284C7,
+                                        ).withValues(alpha: 0.2),
+                                        const Color(
+                                          0xFF06B6D4,
+                                        ).withValues(alpha: 0.1),
                                       ],
                                       begin: Alignment.topLeft,
                                       end: Alignment.bottomRight,
                                     ),
                                     borderRadius: BorderRadius.circular(10),
                                     border: Border.all(
-                                      color: const Color(0xFF0284C7).withValues(alpha: 0.35),
+                                      color: const Color(
+                                        0xFF0284C7,
+                                      ).withValues(alpha: 0.35),
                                     ),
                                   ),
                                   alignment: Alignment.center,
@@ -194,7 +202,8 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         'Add Clinic Doctor',
@@ -252,7 +261,10 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
                         label: 'Doctor Full Name',
                         child: TextFormField(
                           controller: _nameController,
-                          style: GoogleFonts.inter(fontSize: 13.5, color: colors.textPrimary),
+                          style: GoogleFonts.inter(
+                            fontSize: 13.5,
+                            color: colors.textPrimary,
+                          ),
                           decoration: _inputDecoration(
                             hint: 'e.g. Dr. Rajesh Pillai',
                             prefixIcon: Icons.badge_outlined,
@@ -283,7 +295,10 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
                           return Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Expanded(flex: 3, child: _buildDepartmentDropdown()),
+                              Expanded(
+                                flex: 3,
+                                child: _buildDepartmentDropdown(),
+                              ),
                               const SizedBox(width: 14),
                               Expanded(flex: 2, child: _buildRoomField()),
                             ],
@@ -327,7 +342,9 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
                                 foregroundColor: colors.textPrimary,
                                 side: BorderSide(color: colors.border),
                                 backgroundColor: colors.surfaceSecondary,
-                                padding: const EdgeInsets.symmetric(vertical: 13),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 13,
+                                ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
@@ -347,14 +364,19 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
                             child: DecoratedBox(
                               decoration: BoxDecoration(
                                 gradient: const LinearGradient(
-                                  colors: [Color(0xFF0284C7), Color(0xFF00B4D8)],
+                                  colors: [
+                                    Color(0xFF0284C7),
+                                    Color(0xFF00B4D8),
+                                  ],
                                   begin: Alignment.centerLeft,
                                   end: Alignment.centerRight,
                                 ),
                                 borderRadius: BorderRadius.circular(10),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: const Color(0xFF0284C7).withValues(alpha: 0.4),
+                                    color: const Color(
+                                      0xFF0284C7,
+                                    ).withValues(alpha: 0.4),
                                     blurRadius: 14,
                                     offset: const Offset(0, 4),
                                   ),
@@ -368,7 +390,9 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
                                   child: Container(
                                     height: 44,
                                     alignment: Alignment.center,
-                                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                    ),
                                     child: Text(
                                       'Save Doctor',
                                       style: GoogleFonts.inter(
@@ -402,7 +426,9 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
     final items = widget.departments;
     final hasItems = items.isNotEmpty;
     final currentVal = hasItems
-        ? (items.contains(_selectedSpecialty) ? _selectedSpecialty : items.first)
+        ? (items.contains(_selectedSpecialty)
+              ? _selectedSpecialty
+              : items.first)
         : null;
 
     return DoctorLabeledField(
@@ -416,9 +442,7 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
             decoration: BoxDecoration(
               color: colors.surfaceSecondary,
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                color: colors.border,
-              ),
+              border: Border.all(color: colors.border),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: DropdownButtonHideUnderline(
@@ -434,12 +458,20 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
                 ),
                 hint: Text(
                   hasItems ? 'Select Department' : 'No assigned departments',
-                  style: GoogleFonts.inter(fontSize: 13, color: colors.textMuted),
+                  style: GoogleFonts.inter(
+                    fontSize: 13,
+                    color: colors.textMuted,
+                  ),
                 ),
-                style: GoogleFonts.inter(fontSize: 13, color: colors.textPrimary),
+                style: GoogleFonts.inter(
+                  fontSize: 13,
+                  color: colors.textPrimary,
+                ),
                 onChanged: hasItems
                     ? (val) {
-                        if (val != null) setState(() => _selectedSpecialty = val);
+                        if (val != null) {
+                          setState(() => _selectedSpecialty = val);
+                        }
                       }
                     : null,
                 items: items.map((dept) {
@@ -518,9 +550,13 @@ class _AddDoctorDialogState extends State<AddDoctorDialog> {
     );
   }
 
-  InputDecoration _inputDecoration({required String hint, IconData? prefixIcon}) {
+  InputDecoration _inputDecoration({
+    required String hint,
+    IconData? prefixIcon,
+  }) {
     final colors = context.colors;
-    OutlineInputBorder border(Color color, [double width = 1]) => OutlineInputBorder(
+    OutlineInputBorder border(Color color, [double width = 1]) =>
+        OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: color, width: width),
         );

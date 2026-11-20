@@ -21,7 +21,11 @@ class BillingCadenceToggle extends StatelessWidget {
       children: [
         Text(
           'QueueFlow Subscription Plans',
-          style: GoogleFonts.inter(fontSize: 22, fontWeight: FontWeight.w800, color: colors.textPrimary),
+          style: GoogleFonts.inter(
+            fontSize: 22,
+            fontWeight: FontWeight.w800,
+            color: colors.textPrimary,
+          ),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 6),
@@ -93,7 +97,9 @@ class BillingCadenceToggle extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: isSelected ? Colors.white.withAlpha(50) : colors.badgeOpenBg,
+                  color: isSelected
+                      ? Colors.white.withAlpha(50)
+                      : colors.badgeOpenBg,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(

@@ -25,9 +25,12 @@ class BillingPricingGrid extends StatelessWidget {
         bool isCurrent(BillingPlanTierEntity t) =>
             subscription.planId.toLowerCase() == t.id.toLowerCase() ||
             subscription.planName.toLowerCase().contains(t.id.toLowerCase());
-        final lockedUntil = subscription.isPlanLocked ? subscription.currentPeriodEnd : null;
+        final lockedUntil = subscription.isPlanLocked
+            ? subscription.currentPeriodEnd
+            : null;
         final canRenew = subscription.isPlanExpired;
-        final currentPrice = tiers.where(isCurrent).map((t) => t.monthlyPrice).firstOrNull ?? 0;
+        final currentPrice =
+            tiers.where(isCurrent).map((t) => t.monthlyPrice).firstOrNull ?? 0;
 
         if (isDesktop) {
           // Equal-height cards so the action buttons line up.

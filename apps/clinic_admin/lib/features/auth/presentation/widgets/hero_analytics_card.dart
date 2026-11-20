@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'flaticon_stethoscope.dart';
 
@@ -30,13 +30,9 @@ class HeroAnalyticsCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Expanded(
-                      child: _metricBox('48', 'Appointments today'),
-                    ),
+                    Expanded(child: _metricBox('48', 'Appointments today')),
                     const SizedBox(width: 12),
-                    Expanded(
-                      child: _metricBox('12', 'Customers waiting'),
-                    ),
+                    Expanded(child: _metricBox('12', 'Customers waiting')),
                   ],
                 ),
                 const SizedBox(height: 24),

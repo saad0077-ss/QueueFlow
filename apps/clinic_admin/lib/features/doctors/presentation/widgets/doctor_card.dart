@@ -120,9 +120,7 @@ class DoctorCard extends StatelessWidget {
                                   decoration: BoxDecoration(
                                     color: colors.surfaceSecondary,
                                     borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                      color: colors.border,
-                                    ),
+                                    border: Border.all(color: colors.border),
                                   ),
                                   child: Text(
                                     doctor.room.isNotEmpty

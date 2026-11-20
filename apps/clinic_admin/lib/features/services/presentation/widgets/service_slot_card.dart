@@ -38,11 +38,7 @@ class ServiceSlotCard extends StatelessWidget {
                 shape: BoxShape.circle,
                 color: colors.surfaceSecondary,
               ),
-              child: Icon(
-                Icons.add,
-                size: 22,
-                color: colors.info,
-              ),
+              child: Icon(Icons.add, size: 22, color: colors.info),
             ),
             const SizedBox(height: 14),
             Text(
@@ -73,8 +69,13 @@ class ServiceSlotCard extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: colors.primary,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 11),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 18,
+                  vertical: 11,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
                 elevation: 0,
               ),
               child: Text(

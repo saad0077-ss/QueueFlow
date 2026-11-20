@@ -100,8 +100,10 @@ class ClinicSubscriptionEntity extends Equatable {
     this.serviceLimit = 1,
   });
 
-  bool get isPlanExpired => periodEndAt != null && !DateTime.now().isBefore(periodEndAt!);
-  bool get isPlanLocked => periodEndAt != null && DateTime.now().isBefore(periodEndAt!);
+  bool get isPlanExpired =>
+      periodEndAt != null && !DateTime.now().isBefore(periodEndAt!);
+  bool get isPlanLocked =>
+      periodEndAt != null && DateTime.now().isBefore(periodEndAt!);
 
   bool get isAnnual => billingCycle.toLowerCase() == 'annual';
   bool get isDoctorUnlimited => doctorLimit >= 999;

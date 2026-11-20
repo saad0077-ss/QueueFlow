@@ -1,12 +1,13 @@
-﻿import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../domain/usecases/clinic_sign_in_usecase.dart';
 import '../../../domain/usecases/reset_clinic_password_usecase.dart';
 import 'clinic_sign_in_event.dart';
 import 'clinic_sign_in_state.dart';
 
 class ClinicSignInBloc extends Bloc<ClinicSignInEvent, ClinicSignInState> {
-  static final RegExp _emailRegex =
-      RegExp(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$');
+  static final RegExp _emailRegex = RegExp(
+    r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$',
+  );
 
   final ClinicSignInUseCase signInUseCase;
   final ResetClinicPasswordUseCase resetPasswordUseCase;
@@ -33,26 +34,30 @@ class ClinicSignInBloc extends Bloc<ClinicSignInEvent, ClinicSignInState> {
       inlineError = 'Enter a valid email address.';
     }
 
-    emit(state.copyWith(
-      email: event.email,
-      emailError: inlineError,
-      clearEmailError: inlineError == null,
-      isEmailValid: isValid,
-      clearErrorMessage: true,
-      clearInfoMessage: true,
-    ));
+    emit(
+      state.copyWith(
+        email: event.email,
+        emailError: inlineError,
+        clearEmailError: inlineError == null,
+        isEmailValid: isValid,
+        clearErrorMessage: true,
+        clearInfoMessage: true,
+      ),
+    );
   }
 
   void _onPasswordChanged(
     ClinicSignInPasswordChanged event,
     Emitter<ClinicSignInState> emit,
   ) {
-    emit(state.copyWith(
-      password: event.password,
-      clearPasswordError: true,
-      clearErrorMessage: true,
-      clearInfoMessage: true,
-    ));
+    emit(
+      state.copyWith(
+        password: event.password,
+        clearPasswordError: true,
+        clearErrorMessage: true,
+        clearInfoMessage: true,
+      ),
+    );
   }
 
   void _onTogglePassword(
@@ -82,13 +87,15 @@ class ClinicSignInBloc extends Bloc<ClinicSignInEvent, ClinicSignInState> {
     }
 
     if (emailError != null || passwordError != null) {
-      emit(state.copyWith(
-        emailError: emailError,
-        clearEmailError: emailError == null,
-        isEmailValid: emailError == null,
-        passwordError: passwordError,
-        clearPasswordError: passwordError == null,
-      ));
+      emit(
+        state.copyWith(
+          emailError: emailError,
+          clearEmailError: emailError == null,
+          isEmailValid: emailError == null,
+          passwordError: passwordError,
+          clearPasswordError: passwordError == null,
+        ),
+      );
       return;
     }
 
@@ -97,10 +104,12 @@ class ClinicSignInBloc extends Bloc<ClinicSignInEvent, ClinicSignInState> {
       final staff = await signInUseCase(email: email, password: password);
       emit(state.copyWith(isLoading: false, staff: staff));
     } catch (e) {
-      emit(state.copyWith(
-        isLoading: false,
-        errorMessage: e.toString().replaceFirst('Exception: ', ''),
-      ));
+      emit(
+        state.copyWith(
+          isLoading: false,
+          errorMessage: e.toString().replaceFirst('Exception: ', ''),
+        ),
+      );
     }
   }
 
@@ -111,10 +120,12 @@ class ClinicSignInBloc extends Bloc<ClinicSignInEvent, ClinicSignInState> {
     emit(state.copyWith(clearErrorMessage: true, clearInfoMessage: true));
     final email = state.email.trim();
     if (email.isEmpty || !_emailRegex.hasMatch(email)) {
-      emit(state.copyWith(
-        emailError: 'Enter a valid email address.',
-        errorMessage: 'Enter email first.',
-      ));
+      emit(
+        state.copyWith(
+          emailError: 'Enter a valid email address.',
+          errorMessage: 'Enter email first.',
+        ),
+      );
       return;
     }
     try {

@@ -1,4 +1,4 @@
-﻿import 'package:equatable/equatable.dart';
+import 'package:equatable/equatable.dart';
 
 /// A practicing doctor registered on the clinic, assignable to services.
 class ClinicDoctorEntity extends Equatable {
@@ -17,7 +17,10 @@ class ClinicDoctorEntity extends Equatable {
   /// Secondary line shown next to the doctor's name, e.g. "Room 1 • Dental & Oral Surgery".
   String get detail {
     final deptOrSpec = department.isNotEmpty ? department : specialty;
-    final parts = [if (room.isNotEmpty) room, if (deptOrSpec.isNotEmpty) deptOrSpec];
+    final parts = [
+      if (room.isNotEmpty) room,
+      if (deptOrSpec.isNotEmpty) deptOrSpec,
+    ];
     return parts.join(' • ');
   }
 

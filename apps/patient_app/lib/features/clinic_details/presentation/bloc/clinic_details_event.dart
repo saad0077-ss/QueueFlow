@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+
 import '../../../home/domain/entities/clinic_entity.dart';
 
 abstract class ClinicDetailsEvent extends Equatable {
@@ -12,10 +13,7 @@ class LoadClinicDetails extends ClinicDetailsEvent {
   final String clinicId;
   final ClinicEntity? initialClinic;
 
-  const LoadClinicDetails({
-    required this.clinicId,
-    this.initialClinic,
-  });
+  const LoadClinicDetails({required this.clinicId, this.initialClinic});
 
   @override
   List<Object?> get props => [clinicId, initialClinic];

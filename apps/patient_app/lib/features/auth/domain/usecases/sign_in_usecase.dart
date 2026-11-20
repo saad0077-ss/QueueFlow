@@ -6,10 +6,7 @@ class SignInUseCase {
 
   const SignInUseCase(this.repository);
 
-  Future<UserEntity> call({
-    required String email,
-    required String password,
-  }) {
+  Future<UserEntity> call({required String email, required String password}) {
     return repository.signInWithEmailAndPassword(
       email: email,
       password: password,

@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+
 import '../../../domain/entities/user_entity.dart';
 
 class SignUpState extends Equatable {
@@ -60,25 +61,26 @@ class SignUpState extends Equatable {
       confirmPasswordError: clearConfirmError
           ? null
           : (confirmPasswordError ?? this.confirmPasswordError),
-      errorMessage:
-          clearErrorMessage ? null : (errorMessage ?? this.errorMessage),
+      errorMessage: clearErrorMessage
+          ? null
+          : (errorMessage ?? this.errorMessage),
       user: user ?? this.user,
     );
   }
 
   @override
   List<Object?> get props => [
-        fullName,
-        email,
-        phoneNumber,
-        password,
-        confirmPassword,
-        isPasswordObscured,
-        isConfirmObscured,
-        isLoading,
-        emailError,
-        confirmPasswordError,
-        errorMessage,
-        user,
-      ];
+    fullName,
+    email,
+    phoneNumber,
+    password,
+    confirmPassword,
+    isPasswordObscured,
+    isConfirmObscured,
+    isLoading,
+    emailError,
+    confirmPasswordError,
+    errorMessage,
+    user,
+  ];
 }

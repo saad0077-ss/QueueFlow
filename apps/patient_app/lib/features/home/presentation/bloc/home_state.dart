@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+
 import '../../domain/entities/active_ticket_entity.dart';
 import '../../domain/entities/clinic_entity.dart';
 
@@ -51,30 +52,34 @@ class HomeState extends Equatable {
       searchQuery: searchQuery ?? this.searchQuery,
       allClinics: allClinics ?? this.allClinics,
       filteredClinics: filteredClinics ?? this.filteredClinics,
-      activeTicket: clearActiveTicket ? null : (activeTicket ?? this.activeTicket),
+      activeTicket: clearActiveTicket
+          ? null
+          : (activeTicket ?? this.activeTicket),
       userName: userName ?? this.userName,
       userInitials: userInitials ?? this.userInitials,
       unreadNotificationsCount:
           unreadNotificationsCount ?? this.unreadNotificationsCount,
-      successMessage:
-          clearSuccessMessage ? null : (successMessage ?? this.successMessage),
-      errorMessage:
-          clearErrorMessage ? null : (errorMessage ?? this.errorMessage),
+      successMessage: clearSuccessMessage
+          ? null
+          : (successMessage ?? this.successMessage),
+      errorMessage: clearErrorMessage
+          ? null
+          : (errorMessage ?? this.errorMessage),
     );
   }
 
   @override
   List<Object?> get props => [
-        currentTabIndex,
-        selectedCategory,
-        searchQuery,
-        allClinics,
-        filteredClinics,
-        activeTicket,
-        userName,
-        userInitials,
-        unreadNotificationsCount,
-        successMessage,
-        errorMessage,
-      ];
+    currentTabIndex,
+    selectedCategory,
+    searchQuery,
+    allClinics,
+    filteredClinics,
+    activeTicket,
+    userName,
+    userInitials,
+    unreadNotificationsCount,
+    successMessage,
+    errorMessage,
+  ];
 }

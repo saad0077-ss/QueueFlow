@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'hero_analytics_card.dart';
 
@@ -54,11 +54,12 @@ class ClinicHeroBanner extends StatelessWidget {
                       child: Image.asset(
                         'assets/icons/app_icon_128.png',
                         fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) => const Icon(
-                          Icons.local_hospital_rounded,
-                          color: Color(0xFF2563EB),
-                          size: 20,
-                        ),
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Icon(
+                              Icons.local_hospital_rounded,
+                              color: Color(0xFF2563EB),
+                              size: 20,
+                            ),
                       ),
                     ),
                     const SizedBox(width: 12),

@@ -111,11 +111,7 @@ class AppointmentDetailPage extends StatelessWidget {
 
     final identity = Row(
       children: [
-        PatientAvatar(
-          photo: a.customerPhoto,
-          initials: a.initials,
-          size: 64,
-        ),
+        PatientAvatar(photo: a.customerPhoto, initials: a.initials, size: 64),
         const SizedBox(width: 16),
         Expanded(
           child: Column(

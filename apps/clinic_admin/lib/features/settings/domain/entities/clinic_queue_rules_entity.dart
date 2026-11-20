@@ -1,4 +1,4 @@
-﻿import 'package:equatable/equatable.dart';
+import 'package:equatable/equatable.dart';
 
 class ClinicQueueRulesEntity extends Equatable {
   final int maxQueueCapacity;
@@ -18,13 +18,18 @@ class ClinicQueueRulesEntity extends Equatable {
   }) {
     return ClinicQueueRulesEntity(
       maxQueueCapacity: maxQueueCapacity ?? this.maxQueueCapacity,
-      avgConsultationTimeMin: avgConsultationTimeMin ?? this.avgConsultationTimeMin,
+      avgConsultationTimeMin:
+          avgConsultationTimeMin ?? this.avgConsultationTimeMin,
       allowWalkIns: allowWalkIns ?? this.allowWalkIns,
     );
   }
 
   @override
-  List<Object?> get props => [maxQueueCapacity, avgConsultationTimeMin, allowWalkIns];
+  List<Object?> get props => [
+    maxQueueCapacity,
+    avgConsultationTimeMin,
+    allowWalkIns,
+  ];
 }
 
 class ClinicSecuritySettingsEntity extends Equatable {

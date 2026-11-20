@@ -66,11 +66,7 @@ class BookingStep5Receipt extends StatelessWidget {
             ],
           ),
           child: const Center(
-            child: Icon(
-              Icons.check_rounded,
-              color: Colors.white,
-              size: 40,
-            ),
+            child: Icon(Icons.check_rounded, color: Colors.white, size: 40),
           ),
         ),
 
@@ -88,10 +84,7 @@ class BookingStep5Receipt extends StatelessWidget {
         Text(
           'Your medical consultation has been booked successfully.',
           textAlign: TextAlign.center,
-          style: GoogleFonts.inter(
-            fontSize: 12.5,
-            color: colors.textMuted,
-          ),
+          style: GoogleFonts.inter(fontSize: 12.5, color: colors.textMuted),
         ),
 
         const SizedBox(height: 20),
@@ -203,7 +196,10 @@ class BookingStep5Receipt extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
                         decoration: BoxDecoration(
                           color: colors.success.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(6),
@@ -281,7 +277,11 @@ class BookingStep5Receipt extends StatelessWidget {
             ),
             child: ElevatedButton.icon(
               onPressed: onTrackLiveQueue ?? onBackToHome,
-              icon: const Icon(Icons.bolt_rounded, color: Colors.white, size: 20),
+              icon: const Icon(
+                Icons.bolt_rounded,
+                color: Colors.white,
+                size: 20,
+              ),
               label: Text(
                 'Track Live Queue Spot Now',
                 style: GoogleFonts.inter(
@@ -338,7 +338,13 @@ class BookingStep5Receipt extends StatelessWidget {
     );
   }
 
-  Widget _buildDetailRow(BuildContext context, String label, String value, {String? subtitle, bool isHighlight = false}) {
+  Widget _buildDetailRow(
+    BuildContext context,
+    String label,
+    String value, {
+    String? subtitle,
+    bool isHighlight = false,
+  }) {
     final colors = context.colors;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -346,10 +352,7 @@ class BookingStep5Receipt extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.inter(
-            fontSize: 12,
-            color: colors.textMuted,
-          ),
+          style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted),
         ),
         const SizedBox(width: 12),
         Expanded(

@@ -1,4 +1,4 @@
-﻿import 'package:equatable/equatable.dart';
+import 'package:equatable/equatable.dart';
 import '../../../domain/entities/clinic_staff_entity.dart';
 
 class AccountActivationState extends Equatable {
@@ -66,35 +66,38 @@ class AccountActivationState extends Equatable {
       isConfirmObscured: isConfirmObscured ?? this.isConfirmObscured,
       agreedToTerms: agreedToTerms ?? this.agreedToTerms,
       passwordStrength: passwordStrength ?? this.passwordStrength,
-      passwordError:
-          clearPasswordError ? null : (passwordError ?? this.passwordError),
-      confirmError:
-          clearConfirmError ? null : (confirmError ?? this.confirmError),
+      passwordError: clearPasswordError
+          ? null
+          : (passwordError ?? this.passwordError),
+      confirmError: clearConfirmError
+          ? null
+          : (confirmError ?? this.confirmError),
       isConfirmValid: isConfirmValid ?? this.isConfirmValid,
       isLoading: isLoading ?? this.isLoading,
-      errorMessage:
-          clearErrorMessage ? null : (errorMessage ?? this.errorMessage),
+      errorMessage: clearErrorMessage
+          ? null
+          : (errorMessage ?? this.errorMessage),
       activatedStaff: activatedStaff ?? this.activatedStaff,
     );
   }
 
   @override
   List<Object?> get props => [
-        inviteEmail,
-        doctorName,
-        role,
-        clinicName,
-        password,
-        confirmPassword,
-        isPasswordObscured,
-        isConfirmObscured,
-        agreedToTerms,
-        passwordStrength,
-        passwordError,
-        confirmError,
-        isConfirmValid,
-        isLoading,
-        errorMessage,
-        activatedStaff,
-      ];
+    inviteEmail,
+    doctorName,
+    role,
+    clinicName,
+    password,
+    confirmPassword,
+    isPasswordObscured,
+    isConfirmObscured,
+    agreedToTerms,
+    passwordStrength,
+    passwordError,
+    confirmError,
+    isConfirmValid,
+    isLoading,
+    errorMessage,
+    activatedStaff,
+  ];
 }

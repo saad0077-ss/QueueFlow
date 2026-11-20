@@ -49,7 +49,10 @@ class ClinicDepartmentsHubCard extends StatelessWidget {
                 ],
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: colors.badgeOpenBg,
                   borderRadius: BorderRadius.circular(12),
@@ -204,7 +207,10 @@ class _DepartmentCard extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 7,
+                  vertical: 2.5,
+                ),
                 decoration: BoxDecoration(
                   color: colors.badgeOpenBg,
                   borderRadius: BorderRadius.circular(8),

@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/usecases/call_next_token_usecase.dart';
 import '../../domain/usecases/issue_walk_in_token_usecase.dart';
@@ -22,11 +22,11 @@ class ClinicDashboardBloc
     required CallNextTokenUseCase callNextTokenUseCase,
     required IssueWalkInTokenUseCase issueWalkInTokenUseCase,
     required TogglePauseQueueUseCase togglePauseQueueUseCase,
-  })  : _watchQueueUseCase = watchQueueUseCase,
-        _callNextTokenUseCase = callNextTokenUseCase,
-        _issueWalkInTokenUseCase = issueWalkInTokenUseCase,
-        _togglePauseQueueUseCase = togglePauseQueueUseCase,
-        super(const ClinicDashboardState()) {
+  }) : _watchQueueUseCase = watchQueueUseCase,
+       _callNextTokenUseCase = callNextTokenUseCase,
+       _issueWalkInTokenUseCase = issueWalkInTokenUseCase,
+       _togglePauseQueueUseCase = togglePauseQueueUseCase,
+       super(const ClinicDashboardState()) {
     on<DashboardSubscriptionRequested>(_onSubscriptionRequested);
     on<DashboardQueueUpdated>(_onQueueUpdated);
     on<DashboardCallNextPressed>(_onCallNextPressed);
@@ -52,10 +52,9 @@ class ClinicDashboardBloc
     DashboardQueueUpdated event,
     Emitter<ClinicDashboardState> emit,
   ) {
-    emit(state.copyWith(
-      status: ClinicDashboardStatus.success,
-      queue: event.queue,
-    ));
+    emit(
+      state.copyWith(status: ClinicDashboardStatus.success, queue: event.queue),
+    );
   }
 
   Future<void> _onCallNextPressed(
@@ -64,15 +63,19 @@ class ClinicDashboardBloc
   ) async {
     try {
       await _callNextTokenUseCase(state.queue.totalIssued);
-      emit(state.copyWith(
-        toastMessage: 'Next patient called successfully.',
-        isErrorToast: false,
-      ));
+      emit(
+        state.copyWith(
+          toastMessage: 'Next patient called successfully.',
+          isErrorToast: false,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
-        toastMessage: 'Error calling next: $e',
-        isErrorToast: true,
-      ));
+      emit(
+        state.copyWith(
+          toastMessage: 'Error calling next: $e',
+          isErrorToast: true,
+        ),
+      );
     }
   }
 
@@ -85,15 +88,19 @@ class ClinicDashboardBloc
         state.queue.totalIssued,
         state.queue.waitingCount,
       );
-      emit(state.copyWith(
-        toastMessage: 'Walk-in patient token issued.',
-        isErrorToast: false,
-      ));
+      emit(
+        state.copyWith(
+          toastMessage: 'Walk-in patient token issued.',
+          isErrorToast: false,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
-        toastMessage: 'Error issuing walk-in: $e',
-        isErrorToast: true,
-      ));
+      emit(
+        state.copyWith(
+          toastMessage: 'Error issuing walk-in: $e',
+          isErrorToast: true,
+        ),
+      );
     }
   }
 
@@ -104,16 +111,21 @@ class ClinicDashboardBloc
     final nextPaused = !state.queue.isPaused;
     try {
       await _togglePauseQueueUseCase(state.queue.isPaused);
-      emit(state.copyWith(
-        toastMessage:
-            nextPaused ? 'Live queue is paused.' : 'Live queue resumed.',
-        isErrorToast: false,
-      ));
+      emit(
+        state.copyWith(
+          toastMessage: nextPaused
+              ? 'Live queue is paused.'
+              : 'Live queue resumed.',
+          isErrorToast: false,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
-        toastMessage: 'Error toggling queue: $e',
-        isErrorToast: true,
-      ));
+      emit(
+        state.copyWith(
+          toastMessage: 'Error toggling queue: $e',
+          isErrorToast: true,
+        ),
+      );
     }
   }
 

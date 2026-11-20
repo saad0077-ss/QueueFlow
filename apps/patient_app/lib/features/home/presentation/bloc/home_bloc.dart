@@ -1,6 +1,8 @@
 import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../domain/entities/clinic_entity.dart';
 import '../../domain/usecases/cancel_ticket_usecase.dart';
 import '../../domain/usecases/get_active_ticket_usecase.dart';
@@ -23,8 +25,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     required this.joinQueueUseCase,
     required this.cancelTicketUseCase,
     FirebaseAuth? firebaseAuth,
-  })  : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
-        super(_initialState(firebaseAuth ?? FirebaseAuth.instance)) {
+  }) : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
+       super(_initialState(firebaseAuth ?? FirebaseAuth.instance)) {
     on<HomeInitialDataRequested>(_onInitialDataRequested);
     on<HomeClinicsUpdated>(_onClinicsUpdated);
     on<HomeRefreshRequested>(_onRefreshRequested);
@@ -33,6 +35,26 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<HomeNavTabChanged>(_onNavTabChanged);
     on<HomeJoinQueueRequested>(_onJoinQueueRequested);
     on<HomeCancelTicketRequested>(_onCancelTicketRequested);
+    on<HomeActiveTicketEnded>(_onActiveTicketEnded);
+  }
+
+  void _onActiveTicketEnded(
+    HomeActiveTicketEnded event,
+    Emitter<HomeState> emit,
+  ) {
+    // Ignore if the ticket was already cleared or is a different one.
+    if (state.activeTicket == null ||
+        state.activeTicket!.id != event.ticketId) {
+      return;
+    }
+    emit(
+      state.copyWith(
+        clearActiveTicket: true,
+        successMessage: event.status == 'completed'
+            ? 'Consultation completed. Thank you for visiting!'
+            : 'Your ticket was cancelled.',
+      ),
+    );
   }
 
   static HomeState _initialState(FirebaseAuth auth) {
@@ -77,31 +99,31 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     final clinics = await getFeaturedClinicsUseCase();
     final activeTicket = await getActiveTicketUseCase();
 
-    emit(state.copyWith(
-      allClinics: clinics,
-      filteredClinics: _filterClinics(clinics, state.selectedCategory, state.searchQuery),
-      userName: name,
-      userInitials: initials,
-      activeTicket: activeTicket,
-      currentTabIndex: 0,
-      selectedCategory: 'all',
-      searchQuery: '',
-    ));
+    emit(
+      state.copyWith(
+        allClinics: clinics,
+        filteredClinics: _filterClinics(
+          clinics,
+          state.selectedCategory,
+          state.searchQuery,
+        ),
+        userName: name,
+        userInitials: initials,
+        activeTicket: activeTicket,
+        currentTabIndex: 0,
+        selectedCategory: 'all',
+        searchQuery: '',
+      ),
+    );
   }
 
-  void _onClinicsUpdated(
-    HomeClinicsUpdated event,
-    Emitter<HomeState> emit,
-  ) {
+  void _onClinicsUpdated(HomeClinicsUpdated event, Emitter<HomeState> emit) {
     final filtered = _filterClinics(
       event.clinics,
       state.selectedCategory,
       state.searchQuery,
     );
-    emit(state.copyWith(
-      allClinics: event.clinics,
-      filteredClinics: filtered,
-    ));
+    emit(state.copyWith(allClinics: event.clinics, filteredClinics: filtered));
   }
 
   Future<void> _onRefreshRequested(
@@ -115,11 +137,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       state.selectedCategory,
       state.searchQuery,
     );
-    emit(state.copyWith(
-      allClinics: clinics,
-      filteredClinics: filtered,
-      activeTicket: activeTicket,
-    ));
+    emit(
+      state.copyWith(
+        allClinics: clinics,
+        filteredClinics: filtered,
+        activeTicket: activeTicket,
+      ),
+    );
   }
 
   void _onCategorySelected(
@@ -131,10 +155,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       event.category,
       state.searchQuery,
     );
-    emit(state.copyWith(
-      selectedCategory: event.category,
-      filteredClinics: filtered,
-    ));
+    emit(
+      state.copyWith(
+        selectedCategory: event.category,
+        filteredClinics: filtered,
+      ),
+    );
   }
 
   void _onSearchQueryChanged(
@@ -146,21 +172,17 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       state.selectedCategory,
       event.query,
     );
-    emit(state.copyWith(
-      searchQuery: event.query,
-      filteredClinics: filtered,
-    ));
+    emit(state.copyWith(searchQuery: event.query, filteredClinics: filtered));
   }
 
-  void _onNavTabChanged(
-    HomeNavTabChanged event,
-    Emitter<HomeState> emit,
-  ) {
-    emit(state.copyWith(
-      currentTabIndex: event.tabIndex,
-      clearSuccessMessage: true,
-      clearErrorMessage: true,
-    ));
+  void _onNavTabChanged(HomeNavTabChanged event, Emitter<HomeState> emit) {
+    emit(
+      state.copyWith(
+        currentTabIndex: event.tabIndex,
+        clearSuccessMessage: true,
+        clearErrorMessage: true,
+      ),
+    );
   }
 
   Future<void> _onJoinQueueRequested(
@@ -174,15 +196,25 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         patientName: event.patientName,
         currentWaitingCount: event.clinic.waitingCount,
         currentToken: event.clinic.currentToken,
+        serviceName: event.serviceName,
+        departmentName: event.departmentName,
       );
 
-      emit(state.copyWith(
-        activeTicket: ticket,
-        currentTabIndex: 1, // Switch to Queue tab
-        successMessage: 'Token ${ticket.token} allocated successfully!',
-      ));
+      emit(
+        state.copyWith(
+          activeTicket: ticket,
+          currentTabIndex: 1, // Switch to Queue tab
+          successMessage: 'Token ${ticket.token} allocated successfully!',
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(errorMessage: 'Failed to join queue: $e'));
+      emit(
+        state.copyWith(
+          errorMessage: e is StateError
+              ? e.message
+              : 'Failed to join queue: $e',
+        ),
+      );
     }
   }
 
@@ -194,10 +226,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     if (ticketId != null) {
       await cancelTicketUseCase(ticketId);
     }
-    emit(state.copyWith(
-      clearActiveTicket: true,
-      successMessage: 'Left queue. Your ticket has been cancelled.',
-    ));
+    emit(
+      state.copyWith(
+        clearActiveTicket: true,
+        successMessage: 'Left queue. Your ticket has been cancelled.',
+      ),
+    );
   }
 
   List<ClinicEntity> _filterClinics(

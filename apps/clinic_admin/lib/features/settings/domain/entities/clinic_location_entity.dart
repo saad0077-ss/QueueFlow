@@ -1,4 +1,4 @@
-﻿import 'package:equatable/equatable.dart';
+import 'package:equatable/equatable.dart';
 
 class ClinicLocationEntity extends Equatable {
   final String building;
@@ -33,9 +33,14 @@ class ClinicLocationEntity extends Equatable {
       latitude.trim().isNotEmpty && longitude.trim().isNotEmpty;
 
   String get fullAddress {
-    final parts = [building, street, area, city, state, pincode]
-        .where((s) => s.trim().isNotEmpty)
-        .toList();
+    final parts = [
+      building,
+      street,
+      area,
+      city,
+      state,
+      pincode,
+    ].where((s) => s.trim().isNotEmpty).toList();
     return parts.join(', ');
   }
 

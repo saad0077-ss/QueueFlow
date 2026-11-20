@@ -27,9 +27,19 @@ class HoursPolicyDropdown extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.bold, color: colors.textPrimary)),
+        Text(
+          title,
+          style: GoogleFonts.inter(
+            fontSize: 12.5,
+            fontWeight: FontWeight.bold,
+            color: colors.textPrimary,
+          ),
+        ),
         const SizedBox(height: 2),
-        Text(subtitle, style: GoogleFonts.inter(fontSize: 11, color: colors.textMuted)),
+        Text(
+          subtitle,
+          style: GoogleFonts.inter(fontSize: 11, color: colors.textMuted),
+        ),
         const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
@@ -40,11 +50,17 @@ class HoursPolicyDropdown extends StatelessWidget {
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<int>(
-              value: items.any((i) => i.value == value) ? value : items.first.value,
+              value: items.any((i) => i.value == value)
+                  ? value
+                  : items.first.value,
               dropdownColor: colors.surfaceElevated,
               isExpanded: true,
               icon: Icon(icon, size: 16, color: colors.textMuted),
-              style: GoogleFonts.inter(color: colors.textPrimary, fontSize: 13, fontWeight: FontWeight.w500),
+              style: GoogleFonts.inter(
+                color: colors.textPrimary,
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
               items: items,
               onChanged: (v) {
                 if (v != null) onChanged(v);

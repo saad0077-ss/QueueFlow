@@ -2,10 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../features/home/domain/entities/clinic_entity.dart';
 import 'clinic_department_item.dart';
 
-void showClinicDepartmentsDialog(BuildContext context, {required ClinicEntity clinic}) {
+void showClinicDepartmentsDialog(
+  BuildContext context, {
+  required ClinicEntity clinic,
+}) {
   showDialog(
     context: context,
     barrierDismissible: true,
@@ -19,7 +23,8 @@ class ClinicDepartmentsDialog extends StatefulWidget {
   const ClinicDepartmentsDialog({super.key, required this.clinic});
 
   @override
-  State<ClinicDepartmentsDialog> createState() => _ClinicDepartmentsDialogState();
+  State<ClinicDepartmentsDialog> createState() =>
+      _ClinicDepartmentsDialogState();
 }
 
 class _ClinicDepartmentsDialogState extends State<ClinicDepartmentsDialog> {
@@ -35,22 +40,31 @@ class _ClinicDepartmentsDialogState extends State<ClinicDepartmentsDialog> {
     final depts = widget.clinic.departmentList;
     _items = depts.map((d) => ClinicDepartmentItemData.fromName(d)).toList();
 
-    FirebaseFirestore.instance.collection('departments').get().then((snap) {
-      if (snap.docs.isNotEmpty && mounted) {
-        final Map<String, Map<String, dynamic>> map = {};
-        for (var doc in snap.docs) {
-          final data = doc.data();
-          map[(data['name'] ?? '').toString().toLowerCase()] = data;
-          map[(data['code'] ?? '').toString().toLowerCase()] = data;
-        }
-        setState(() {
-          _items = depts.map((d) {
-            final fData = map[d.toLowerCase()] ?? map[d.toLowerCase().split(' ').first];
-            return ClinicDepartmentItemData.fromName(d, firestoreData: fData);
-          }).toList();
-        });
-      }
-    }).catchError((_) {});
+    FirebaseFirestore.instance
+        .collection('departments')
+        .get()
+        .then((snap) {
+          if (snap.docs.isNotEmpty && mounted) {
+            final Map<String, Map<String, dynamic>> map = {};
+            for (var doc in snap.docs) {
+              final data = doc.data();
+              map[(data['name'] ?? '').toString().toLowerCase()] = data;
+              map[(data['code'] ?? '').toString().toLowerCase()] = data;
+            }
+            setState(() {
+              _items = depts.map((d) {
+                final fData =
+                    map[d.toLowerCase()] ??
+                    map[d.toLowerCase().split(' ').first];
+                return ClinicDepartmentItemData.fromName(
+                  d,
+                  firestoreData: fData,
+                );
+              }).toList();
+            });
+          }
+        })
+        .catchError((_) {});
   }
 
   @override
@@ -72,7 +86,12 @@ class _ClinicDepartmentsDialogState extends State<ClinicDepartmentsDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Container(height: 4, decoration: const BoxDecoration(gradient: AppColors.primaryGradient)),
+            Container(
+              height: 4,
+              decoration: const BoxDecoration(
+                gradient: AppColors.primaryGradient,
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.fromLTRB(18, 16, 18, 12),
               child: Row(
@@ -84,18 +103,42 @@ class _ClinicDepartmentsDialogState extends State<ClinicDepartmentsDialog> {
                       children: [
                         Text(
                           '${_items.length} DEPARTMENTS',
-                          style: GoogleFonts.inter(fontSize: 10.5, fontWeight: FontWeight.w800, letterSpacing: 0.6, color: colors.accent),
+                          style: GoogleFonts.inter(
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 0.6,
+                            color: colors.accent,
+                          ),
                         ),
                         const SizedBox(height: 2),
-                        Text('Departments', style: GoogleFonts.inter(fontSize: 19, fontWeight: FontWeight.w800, color: colors.textPrimary)),
+                        Text(
+                          'Departments',
+                          style: GoogleFonts.inter(
+                            fontSize: 19,
+                            fontWeight: FontWeight.w800,
+                            color: colors.textPrimary,
+                          ),
+                        ),
                         const SizedBox(height: 2),
-                        Text(widget.clinic.name, style: GoogleFonts.inter(fontSize: 12.5, color: colors.textMuted), maxLines: 1, overflow: TextOverflow.ellipsis),
+                        Text(
+                          widget.clinic.name,
+                          style: GoogleFonts.inter(
+                            fontSize: 12.5,
+                            color: colors.textMuted,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ],
                     ),
                   ),
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    icon: Icon(Icons.close_rounded, color: colors.textSubtle, size: 20),
+                    icon: Icon(
+                      Icons.close_rounded,
+                      color: colors.textSubtle,
+                      size: 20,
+                    ),
                   ),
                 ],
               ),
@@ -105,7 +148,8 @@ class _ClinicDepartmentsDialogState extends State<ClinicDepartmentsDialog> {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 shrinkWrap: true,
                 itemCount: _items.length,
-                itemBuilder: (ctx, i) => ClinicDepartmentCardWidget(data: _items[i]),
+                itemBuilder: (ctx, i) =>
+                    ClinicDepartmentCardWidget(data: _items[i]),
               ),
             ),
             Padding(
@@ -113,9 +157,18 @@ class _ClinicDepartmentsDialogState extends State<ClinicDepartmentsDialog> {
               child: SizedBox(
                 height: 44,
                 child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: colors.primary, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: colors.primary,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Got it', style: TextStyle(fontWeight: FontWeight.w700)),
+                  child: const Text(
+                    'Got it',
+                    style: TextStyle(fontWeight: FontWeight.w700),
+                  ),
                 ),
               ),
             ),

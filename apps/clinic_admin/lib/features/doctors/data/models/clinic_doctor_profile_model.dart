@@ -1,4 +1,4 @@
-﻿import '../../domain/entities/clinic_doctor_profile_entity.dart';
+import '../../domain/entities/clinic_doctor_profile_entity.dart';
 import '../../domain/entities/doctor_daily_schedule.dart';
 import '../../domain/entities/doctor_review_entity.dart';
 
@@ -78,7 +78,8 @@ class ClinicDoctorProfileModel extends ClinicDoctorProfileEntity {
     final name = map['name']?.toString() ?? 'Dr. Specialist';
     final specialty = map['specialty']?.toString() ?? 'General Medicine';
     final title = map['title']?.toString() ?? '';
-    final scheduleText = map['schedule']?.toString() ?? 'Mon–Sat, 9:00 AM – 5:00 PM';
+    final scheduleText =
+        map['schedule']?.toString() ?? 'Mon–Sat, 9:00 AM – 5:00 PM';
 
     // Parse weekly schedule map if present, else build from scheduleText or defaults
     Map<String, DoctorDailySchedule> weekly;
@@ -87,7 +88,9 @@ class ClinicDoctorProfileModel extends ClinicDoctorProfileEntity {
       weekly = {};
       for (final entry in rawMap.entries) {
         final k = entry.key.toString();
-        final v = entry.value is Map ? entry.value as Map<dynamic, dynamic> : {};
+        final v = entry.value is Map
+            ? entry.value as Map<dynamic, dynamic>
+            : {};
         weekly[k] = DoctorDailySchedule(
           dayKey: k,
           dayName: v['dayName']?.toString() ?? _dayName(k),
@@ -108,20 +111,28 @@ class ClinicDoctorProfileModel extends ClinicDoctorProfileEntity {
     if (map['reviews'] is List) {
       reviews = (map['reviews'] as List<dynamic>)
           .whereType<Map<String, dynamic>>()
-          .map((r) => DoctorReviewEntity(
-                id: r['id']?.toString() ?? 'rev-${DateTime.now().millisecondsSinceEpoch}',
-                userName: r['userName']?.toString() ?? 'Verified Patient',
-                rating: (r['rating'] as num?)?.toDouble() ?? 5.0,
-                date: r['date']?.toString() ?? '',
-                service: r['service']?.toString() ?? '',
-                comment: r['comment']?.toString() ?? '',
-                tags: (r['tags'] as List<dynamic>? ?? []).map((t) => t.toString()).toList(),
-              ))
+          .map(
+            (r) => DoctorReviewEntity(
+              id:
+                  r['id']?.toString() ??
+                  'rev-${DateTime.now().millisecondsSinceEpoch}',
+              userName: r['userName']?.toString() ?? 'Verified Patient',
+              rating: (r['rating'] as num?)?.toDouble() ?? 5.0,
+              date: r['date']?.toString() ?? '',
+              service: r['service']?.toString() ?? '',
+              comment: r['comment']?.toString() ?? '',
+              tags: (r['tags'] as List<dynamic>? ?? [])
+                  .map((t) => t.toString())
+                  .toList(),
+            ),
+          )
           .toList();
     }
 
     return ClinicDoctorProfileModel(
-      id: map['id']?.toString() ?? 'doc-${DateTime.now().millisecondsSinceEpoch}',
+      id:
+          map['id']?.toString() ??
+          'doc-${DateTime.now().millisecondsSinceEpoch}',
       clinicId: map['clinicId']?.toString() ?? defaultClinicId,
       name: name,
       title: title,
@@ -144,39 +155,60 @@ class ClinicDoctorProfileModel extends ClinicDoctorProfileEntity {
       initials: map['initials']?.toString(),
       nowServing: map['nowServing']?.toString(),
       waitingCount: (map['waitingCount'] as num?)?.toInt() ?? 0,
-      services: (map['services'] as List<dynamic>? ?? []).map((e) => e.toString()).toList(),
+      services: (map['services'] as List<dynamic>? ?? [])
+          .map((e) => e.toString())
+          .toList(),
       weeklySchedule: weekly,
-      leaveDates: (map['leaveDates'] as List<dynamic>? ?? []).map((e) => e.toString()).toList(),
+      leaveDates: (map['leaveDates'] as List<dynamic>? ?? [])
+          .map((e) => e.toString())
+          .toList(),
       reviews: reviews,
       totalAppointments: (map['totalAppointments'] as num?)?.toInt() ?? 0,
-      completedAppointments: (map['completedAppointments'] as num?)?.toInt() ?? 0,
+      completedAppointments:
+          (map['completedAppointments'] as num?)?.toInt() ?? 0,
       upcomingAppointments: (map['upcomingAppointments'] as num?)?.toInt() ?? 0,
     );
   }
 
   static String _dayName(String key) {
     switch (key) {
-      case 'mon': return 'Monday';
-      case 'tue': return 'Tuesday';
-      case 'wed': return 'Wednesday';
-      case 'thu': return 'Thursday';
-      case 'fri': return 'Friday';
-      case 'sat': return 'Saturday';
-      case 'sun': return 'Sunday';
-      default: return key;
+      case 'mon':
+        return 'Monday';
+      case 'tue':
+        return 'Tuesday';
+      case 'wed':
+        return 'Wednesday';
+      case 'thu':
+        return 'Thursday';
+      case 'fri':
+        return 'Friday';
+      case 'sat':
+        return 'Saturday';
+      case 'sun':
+        return 'Sunday';
+      default:
+        return key;
     }
   }
 
   static String _shortDayName(String key) {
     switch (key) {
-      case 'mon': return 'Mon';
-      case 'tue': return 'Tue';
-      case 'wed': return 'Wed';
-      case 'thu': return 'Thu';
-      case 'fri': return 'Fri';
-      case 'sat': return 'Sat';
-      case 'sun': return 'Sun';
-      default: return key;
+      case 'mon':
+        return 'Mon';
+      case 'tue':
+        return 'Tue';
+      case 'wed':
+        return 'Wed';
+      case 'thu':
+        return 'Thu';
+      case 'fri':
+        return 'Fri';
+      case 'sat':
+        return 'Sat';
+      case 'sun':
+        return 'Sun';
+      default:
+        return key;
     }
   }
 
@@ -219,15 +251,19 @@ class ClinicDoctorProfileModel extends ClinicDoctorProfileEntity {
           'breakEnd': v.breakEnd,
         }),
       ),
-      'reviews': reviews.map((r) => {
-        'id': r.id,
-        'userName': r.userName,
-        'rating': r.rating,
-        'date': r.date,
-        'service': r.service,
-        'comment': r.comment,
-        'tags': r.tags,
-      }).toList(),
+      'reviews': reviews
+          .map(
+            (r) => {
+              'id': r.id,
+              'userName': r.userName,
+              'rating': r.rating,
+              'date': r.date,
+              'service': r.service,
+              'comment': r.comment,
+              'tags': r.tags,
+            },
+          )
+          .toList(),
       'totalAppointments': totalAppointments,
       'completedAppointments': completedAppointments,
       'upcomingAppointments': upcomingAppointments,

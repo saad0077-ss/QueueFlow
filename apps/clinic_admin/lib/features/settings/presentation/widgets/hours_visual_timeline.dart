@@ -33,12 +33,19 @@ class HoursVisualTimeline extends StatelessWidget {
                   children: [
                     Text(
                       'Visual Weekly Timeline Overview',
-                      style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.bold, color: colors.textPrimary),
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: colors.textPrimary,
+                      ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       'Proportional daily clinic shift coverage. Blue indicates active OPD consultation hours, amber indicates midday doctor lunch breaks.',
-                      style: GoogleFonts.inter(fontSize: 11, color: colors.textMuted),
+                      style: GoogleFonts.inter(
+                        fontSize: 11,
+                        color: colors.textMuted,
+                      ),
                     ),
                   ],
                 ),
@@ -67,9 +74,23 @@ class HoursVisualTimeline extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Container(width: 8, height: 8, decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(2))),
+        Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
         const SizedBox(width: 4),
-        Text(text, style: GoogleFonts.inter(fontSize: 10.5, fontWeight: FontWeight.w600, color: colors.textMuted)),
+        Text(
+          text,
+          style: GoogleFonts.inter(
+            fontSize: 10.5,
+            fontWeight: FontWeight.w600,
+            color: colors.textMuted,
+          ),
+        ),
       ],
     );
   }

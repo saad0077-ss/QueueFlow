@@ -35,12 +35,29 @@ class OperatingDayCard extends StatelessWidget {
               Container(
                 width: 38,
                 height: 32,
-                decoration: BoxDecoration(color: colors.surface, borderRadius: BorderRadius.circular(8)),
+                decoration: BoxDecoration(
+                  color: colors.surface,
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 alignment: Alignment.center,
-                child: Text(day.shortName, style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.bold, color: colors.textPrimary)),
+                child: Text(
+                  day.shortName,
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: colors.textPrimary,
+                  ),
+                ),
               ),
               const SizedBox(width: 10),
-              Text(day.dayName, style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.bold, color: colors.textPrimary)),
+              Text(
+                day.dayName,
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: colors.textPrimary,
+                ),
+              ),
               const SizedBox(width: 10),
               _statusPill(context, day.isOpen),
               const Spacer(),
@@ -55,7 +72,11 @@ class OperatingDayCard extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               'Clinic OPD is closed on this day. Emergency triage on-call duty may still apply.',
-              style: GoogleFonts.inter(fontSize: 11.5, color: colors.textSubtle, fontStyle: FontStyle.italic),
+              style: GoogleFonts.inter(
+                fontSize: 11.5,
+                color: colors.textSubtle,
+                fontStyle: FontStyle.italic,
+              ),
             ),
           ] else ...[
             const SizedBox(height: 10),
@@ -73,13 +94,34 @@ class OperatingDayCard extends StatelessWidget {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text('OPD Shift: ', style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: colors.textMuted)),
-                        TimeInputBox(value: day.openTime, onChanged: (t) => onDayChanged(day.copyWith(openTime: t))),
+                        Text(
+                          'OPD Shift: ',
+                          style: GoogleFonts.inter(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: colors.textMuted,
+                          ),
+                        ),
+                        TimeInputBox(
+                          value: day.openTime,
+                          onChanged: (t) =>
+                              onDayChanged(day.copyWith(openTime: t)),
+                        ),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 6),
-                          child: Text('to', style: GoogleFonts.inter(fontSize: 11, color: colors.textSubtle)),
+                          child: Text(
+                            'to',
+                            style: GoogleFonts.inter(
+                              fontSize: 11,
+                              color: colors.textSubtle,
+                            ),
+                          ),
                         ),
-                        TimeInputBox(value: day.closeTime, onChanged: (t) => onDayChanged(day.copyWith(closeTime: t))),
+                        TimeInputBox(
+                          value: day.closeTime,
+                          onChanged: (t) =>
+                              onDayChanged(day.copyWith(closeTime: t)),
+                        ),
                       ],
                     ),
                     Row(
@@ -88,23 +130,41 @@ class OperatingDayCard extends StatelessWidget {
                         Checkbox(
                           value: day.hasBreak,
                           activeColor: colors.primary,
-                          onChanged: (val) => onDayChanged(day.copyWith(hasBreak: val ?? false)),
+                          onChanged: (val) => onDayChanged(
+                            day.copyWith(hasBreak: val ?? false),
+                          ),
                         ),
                         Text(
                           'Lunch Break ',
                           style: GoogleFonts.inter(
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
-                            color: day.hasBreak ? colors.textPrimary : colors.textMuted,
+                            color: day.hasBreak
+                                ? colors.textPrimary
+                                : colors.textMuted,
                           ),
                         ),
                         if (day.hasBreak) ...[
-                          TimeInputBox(value: day.breakStart, onChanged: (t) => onDayChanged(day.copyWith(breakStart: t))),
+                          TimeInputBox(
+                            value: day.breakStart,
+                            onChanged: (t) =>
+                                onDayChanged(day.copyWith(breakStart: t)),
+                          ),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 6),
-                            child: Text('to', style: GoogleFonts.inter(fontSize: 11, color: colors.textSubtle)),
+                            child: Text(
+                              'to',
+                              style: GoogleFonts.inter(
+                                fontSize: 11,
+                                color: colors.textSubtle,
+                              ),
+                            ),
                           ),
-                          TimeInputBox(value: day.breakEnd, onChanged: (t) => onDayChanged(day.copyWith(breakEnd: t))),
+                          TimeInputBox(
+                            value: day.breakEnd,
+                            onChanged: (t) =>
+                                onDayChanged(day.copyWith(breakEnd: t)),
+                          ),
                         ],
                       ],
                     ),
@@ -114,7 +174,10 @@ class OperatingDayCard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: colors.primaryTint,
                         borderRadius: BorderRadius.circular(6),
@@ -122,7 +185,11 @@ class OperatingDayCard extends StatelessWidget {
                       ),
                       child: Text(
                         day.netHoursText,
-                        style: GoogleFonts.inter(fontSize: 11.5, fontWeight: FontWeight.bold, color: colors.primaryLight),
+                        style: GoogleFonts.inter(
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.bold,
+                          color: colors.primaryLight,
+                        ),
                       ),
                     ),
                     if (onCopyDay != null) ...[
@@ -133,11 +200,19 @@ class OperatingDayCard extends StatelessWidget {
                           foregroundColor: colors.textPrimary,
                           side: BorderSide(color: colors.border),
                           backgroundColor: colors.surface,
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(6),
+                          ),
                         ),
                         icon: const Icon(Icons.copy_rounded, size: 12),
-                        label: Text('Copy', style: GoogleFonts.inter(fontSize: 11)),
+                        label: Text(
+                          'Copy',
+                          style: GoogleFonts.inter(fontSize: 11),
+                        ),
                       ),
                     ],
                   ],
@@ -158,7 +233,9 @@ class OperatingDayCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: isOpen ? colors.badgeOpenBg : colors.surface,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: isOpen ? colors.badgeOpenText.withAlpha(120) : colors.border),
+        border: Border.all(
+          color: isOpen ? colors.badgeOpenText.withAlpha(120) : colors.border,
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

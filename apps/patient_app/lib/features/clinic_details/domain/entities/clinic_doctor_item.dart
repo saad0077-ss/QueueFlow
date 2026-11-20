@@ -76,7 +76,9 @@ class ClinicDoctorItem extends Equatable {
   bool isBookableOn(DateTime date) {
     final today = DateTime.now();
     final day = DateTime(date.year, date.month, date.day);
-    if (day.isBefore(DateTime(today.year, today.month, today.day))) return false;
+    if (day.isBefore(DateTime(today.year, today.month, today.day))) {
+      return false;
+    }
     if (!isAvailable || isOnLeave(date)) return false;
     return _hoursOn(date) != null;
   }
@@ -95,12 +97,19 @@ class ClinicDoctorItem extends Equatable {
 
     final slots = <String>[];
     for (var t = start; t + slotMinutes <= end; t += slotMinutes) {
-      if (bStart != null && bEnd != null && t < bEnd && t + slotMinutes > bStart) continue;
+      if (bStart != null &&
+          bEnd != null &&
+          t < bEnd &&
+          t + slotMinutes > bStart) {
+        continue;
+      }
       // Booking closes 1 hour before the consultation start (today only).
       if (isToday && t < nowMin + 60) continue;
       final hour = t ~/ 60, min = t % 60;
       final h12 = hour % 12 == 0 ? 12 : hour % 12;
-      slots.add('${h12.toString().padLeft(2, '0')}:${min.toString().padLeft(2, '0')} ${hour < 12 ? 'AM' : 'PM'}');
+      slots.add(
+        '${h12.toString().padLeft(2, '0')}:${min.toString().padLeft(2, '0')} ${hour < 12 ? 'AM' : 'PM'}',
+      );
     }
     return slots;
   }
@@ -125,20 +134,20 @@ class ClinicDoctorItem extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        name,
-        initials,
-        title,
-        specialty,
-        schedule,
-        isAvailable,
-        services,
-        department,
-        photoUrl,
-        rating,
-        reviewCount,
-        weeklySchedule,
-        leaveDates,
-        slotDuration,
-      ];
+    id,
+    name,
+    initials,
+    title,
+    specialty,
+    schedule,
+    isAvailable,
+    services,
+    department,
+    photoUrl,
+    rating,
+    reviewCount,
+    weeklySchedule,
+    leaveDates,
+    slotDuration,
+  ];
 }

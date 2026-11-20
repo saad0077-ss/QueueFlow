@@ -1,5 +1,7 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
+
 import '../../features/home/domain/entities/clinic_entity.dart';
 
 /// Rebuilds [builder] every 30 seconds so a clinic's Open/Closed state flips

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../domain/entities/clinic_service_item.dart';
 import 'clinic_service_item_tile.dart';
 

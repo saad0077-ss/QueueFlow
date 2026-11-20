@@ -156,7 +156,10 @@ class AppointmentsListTable extends StatelessWidget {
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          _Avatar(initials: appt.initials, photo: appt.customerPhoto),
+                          _Avatar(
+                            initials: appt.initials,
+                            photo: appt.customerPhoto,
+                          ),
                           const SizedBox(width: 10),
                           Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -572,7 +575,11 @@ class _AppointmentMobileCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  _Avatar(initials: a.initials, photo: a.customerPhoto, size: 40),
+                  _Avatar(
+                    initials: a.initials,
+                    photo: a.customerPhoto,
+                    size: 40,
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(

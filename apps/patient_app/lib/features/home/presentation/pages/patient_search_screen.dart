@@ -1,7 +1,9 @@
 import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../clinic_details/presentation/pages/clinic_details_screen.dart';
 import '../../data/repositories/home_repository_impl.dart';
 import '../../domain/entities/clinic_entity.dart';
@@ -143,7 +145,9 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
 
   Future<void> _loadDepartmentsFromFirestore() async {
     try {
-      final snap = await FirebaseFirestore.instance.collection('departments').get();
+      final snap = await FirebaseFirestore.instance
+          .collection('departments')
+          .get();
       if (snap.docs.isNotEmpty && mounted) {
         setState(() {});
       }
@@ -336,7 +340,10 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
                 borderRadius: BorderRadius.circular(24),
                 side: BorderSide(color: colors.border, width: 1.5),
               ),
-              insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+              insetPadding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 24,
+              ),
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 480),
                 child: Padding(
@@ -379,7 +386,10 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
                               ],
                             ),
                             IconButton(
-                              icon: Icon(Icons.close_rounded, color: colors.textSubtle),
+                              icon: Icon(
+                                Icons.close_rounded,
+                                color: colors.textSubtle,
+                              ),
                               onPressed: () => Navigator.of(ctx).pop(),
                             ),
                           ],
@@ -400,7 +410,10 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
 
                         // Department Dropdown
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: colors.surfaceSecondary,
                             borderRadius: BorderRadius.circular(14),
@@ -408,7 +421,9 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
                           ),
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton<String>(
-                              value: allDepts.contains(tempDept) ? tempDept : 'all',
+                              value: allDepts.contains(tempDept)
+                                  ? tempDept
+                                  : 'all',
                               isExpanded: true,
                               dropdownColor: colors.surfaceElevated,
                               icon: Icon(
@@ -423,7 +438,9 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
                               items: allDepts.map((d) {
                                 return DropdownMenuItem<String>(
                                   value: d,
-                                  child: Text(d == 'all' ? 'All Departments' : d),
+                                  child: Text(
+                                    d == 'all' ? 'All Departments' : d,
+                                  ),
                                 );
                               }).toList(),
                               onChanged: (val) {
@@ -439,7 +456,8 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
                         ),
 
                         // Cascading Service Dropdown
-                        if (tempDept.toLowerCase() != 'all' && availableServices.isNotEmpty) ...[
+                        if (tempDept.toLowerCase() != 'all' &&
+                            availableServices.isNotEmpty) ...[
                           const SizedBox(height: 16),
                           Text(
                             'SELECT SERVICE',
@@ -452,7 +470,10 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
                           ),
                           const SizedBox(height: 8),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
                               color: colors.surfaceSecondary,
                               borderRadius: BorderRadius.circular(14),
@@ -460,7 +481,11 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
                             ),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton<String>(
-                                value: ['all', ...availableServices].contains(tempService)
+                                value:
+                                    [
+                                      'all',
+                                      ...availableServices,
+                                    ].contains(tempService)
                                     ? tempService
                                     : 'all',
                                 isExpanded: true,
@@ -591,7 +616,9 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
                                 style: OutlinedButton.styleFrom(
                                   foregroundColor: colors.textMuted,
                                   side: BorderSide(color: colors.border),
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 12,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
@@ -618,7 +645,9 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: colors.primary,
                                   foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 12,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
@@ -679,7 +708,8 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final clinics = _filteredClinics;
-    final int activeCount = (_selectedDepartment != 'all' ? 1 : 0) +
+    final int activeCount =
+        (_selectedDepartment != 'all' ? 1 : 0) +
         (_selectedService != 'all' ? 1 : 0) +
         _activeQuickFilters.length;
 
@@ -692,8 +722,12 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
             final bool isTablet = width >= 640 && width < 960;
             final bool isDesktop = width >= 960;
             final bool useGrid = width >= 720;
-            final double horizontalPadding = isDesktop ? 32 : (isTablet ? 24 : 18);
-            final double maxContentWidth = isDesktop ? 960 : (isTablet ? 720 : double.infinity);
+            final double horizontalPadding = isDesktop
+                ? 32
+                : (isTablet ? 24 : 18);
+            final double maxContentWidth = isDesktop
+                ? 960
+                : (isTablet ? 720 : double.infinity);
 
             return Center(
               child: ConstrainedBox(
@@ -767,7 +801,9 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
                                 boxShadow: _hasActiveFilters
                                     ? [
                                         BoxShadow(
-                                          color: colors.primary.withValues(alpha: 0.2),
+                                          color: colors.primary.withValues(
+                                            alpha: 0.2,
+                                          ),
                                           blurRadius: 6,
                                           offset: const Offset(0, 2),
                                         ),
@@ -842,25 +878,33 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
                                 _buildActiveTag(
                                   label: 'Open Now',
                                   colors: colors,
-                                  onClear: () => setState(() => _activeQuickFilters.remove('open')),
+                                  onClear: () => setState(
+                                    () => _activeQuickFilters.remove('open'),
+                                  ),
                                 ),
                               if (_activeQuickFilters.contains('rating'))
                                 _buildActiveTag(
                                   label: '4.5+ Rating',
                                   colors: colors,
-                                  onClear: () => setState(() => _activeQuickFilters.remove('rating')),
+                                  onClear: () => setState(
+                                    () => _activeQuickFilters.remove('rating'),
+                                  ),
                                 ),
                               if (_activeQuickFilters.contains('near'))
                                 _buildActiveTag(
                                   label: '< 2 km',
                                   colors: colors,
-                                  onClear: () => setState(() => _activeQuickFilters.remove('near')),
+                                  onClear: () => setState(
+                                    () => _activeQuickFilters.remove('near'),
+                                  ),
                                 ),
                               if (_activeQuickFilters.contains('queue'))
                                 _buildActiveTag(
                                   label: 'Live Queue',
                                   colors: colors,
-                                  onClear: () => setState(() => _activeQuickFilters.remove('queue')),
+                                  onClear: () => setState(
+                                    () => _activeQuickFilters.remove('queue'),
+                                  ),
                                 ),
                             ],
                           ),
@@ -881,7 +925,8 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
                             // 1. RECENT SEARCHES
                             if (_recentSearches.isNotEmpty) ...[
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     'Recent Searches',
@@ -910,10 +955,8 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
                                 itemCount: _recentSearches.length,
-                                separatorBuilder: (_, _) => Divider(
-                                  color: colors.border,
-                                  height: 1,
-                                ),
+                                separatorBuilder: (_, _) =>
+                                    Divider(color: colors.border, height: 1),
                                 itemBuilder: (context, i) {
                                   final query = _recentSearches[i];
                                   return InkWell(
@@ -943,7 +986,8 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
                                             ),
                                           ),
                                           GestureDetector(
-                                            onTap: () => _removeRecentSearch(query),
+                                            onTap: () =>
+                                                _removeRecentSearch(query),
                                             behavior: HitTestBehavior.opaque,
                                             child: Padding(
                                               padding: const EdgeInsets.all(4),
@@ -968,7 +1012,10 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
                               if (_recentSearches.isEmpty)
                                 Center(
                                   child: Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 24),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 80,
+                                      horizontal: 24,
+                                    ),
                                     child: Column(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
@@ -977,8 +1024,12 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
                                           height: 60,
                                           decoration: BoxDecoration(
                                             color: colors.surfaceSecondary,
-                                            borderRadius: BorderRadius.circular(18),
-                                            border: Border.all(color: colors.border),
+                                            borderRadius: BorderRadius.circular(
+                                              18,
+                                            ),
+                                            border: Border.all(
+                                              color: colors.border,
+                                            ),
                                           ),
                                           alignment: Alignment.center,
                                           child: Icon(
@@ -1027,17 +1078,21 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
                                   shrinkWrap: true,
                                   physics: const NeverScrollableScrollPhysics(),
                                   itemCount: clinics.length,
-                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: isDesktop ? 2 : 2,
-                                    crossAxisSpacing: 14,
-                                    mainAxisSpacing: 14,
-                                    mainAxisExtent: 110,
-                                  ),
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: isDesktop ? 2 : 2,
+                                        crossAxisSpacing: 14,
+                                        mainAxisSpacing: 14,
+                                        mainAxisExtent: 110,
+                                      ),
                                   itemBuilder: (ctx, i) {
                                     final clinic = clinics[i];
                                     return HomeClinicCard(
                                       clinic: clinic,
-                                      onTap: () => _showClinicDetailsModal(context, clinic),
+                                      onTap: () => _showClinicDetailsModal(
+                                        context,
+                                        clinic,
+                                      ),
                                     );
                                   },
                                 )
@@ -1050,7 +1105,10 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
                                     final clinic = clinics[i];
                                     return HomeClinicCard(
                                       clinic: clinic,
-                                      onTap: () => _showClinicDetailsModal(context, clinic),
+                                      onTap: () => _showClinicDetailsModal(
+                                        context,
+                                        clinic,
+                                      ),
                                     );
                                   },
                                 ),
@@ -1099,11 +1157,7 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
           GestureDetector(
             onTap: onClear,
             behavior: HitTestBehavior.opaque,
-            child: Icon(
-              Icons.close_rounded,
-              size: 13,
-              color: colors.primary,
-            ),
+            child: Icon(Icons.close_rounded, size: 13, color: colors.primary),
           ),
         ],
       ),
@@ -1141,10 +1195,7 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
             Text(
               'We couldn\'t find matches for your search or filters. Try adjusting keywords.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 12.5,
-                color: colors.textMuted,
-              ),
+              style: TextStyle(fontSize: 12.5, color: colors.textMuted),
             ),
             const SizedBox(height: 16),
             TextButton(
@@ -1152,7 +1203,10 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
               style: TextButton.styleFrom(
                 backgroundColor: colors.surfaceSecondary,
                 side: BorderSide(color: colors.border),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
@@ -1172,12 +1226,13 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
     );
   }
 
-  void _showClinicDetailsModal(BuildContext context, ClinicEntity clinic) async {
+  void _showClinicDetailsModal(
+    BuildContext context,
+    ClinicEntity clinic,
+  ) async {
     final result = await Navigator.push<bool>(
       context,
-      MaterialPageRoute(
-        builder: (_) => ClinicDetailsScreen(clinic: clinic),
-      ),
+      MaterialPageRoute(builder: (_) => ClinicDetailsScreen(clinic: clinic)),
     );
     if (result == true && context.mounted) {
       Navigator.pop(context, true);

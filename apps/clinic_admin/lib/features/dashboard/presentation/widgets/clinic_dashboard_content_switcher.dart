@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../appointments/domain/entities/clinic_appointment_entity.dart';
@@ -8,6 +8,7 @@ import '../../../appointments/presentation/widgets/create_appointment_modal.dart
 import '../../../appointments/presentation/widgets/reschedule_appointment_dialog.dart';
 import '../../../billing/presentation/pages/clinic_billing_view.dart';
 import '../../../doctors/presentation/pages/clinic_doctors_view.dart';
+import '../../../queue/presentation/pages/clinic_live_queue_view.dart';
 import '../../../services/data/repositories/clinic_services_repository_impl.dart';
 import '../../../services/domain/entities/clinic_doctor_entity.dart';
 import '../../../services/domain/entities/clinic_service_entity.dart';
@@ -28,7 +29,7 @@ class ClinicDashboardContentSwitcher extends StatefulWidget {
   final ClinicDashboardBloc bloc;
   final String doctorName;
 
-  const ClinicDashboardContentSwitcher({
+  const ClinicDashboardContentSwitcher({ 
     super.key,
     required this.state,
     required this.bloc,
@@ -146,6 +147,10 @@ class _ClinicDashboardContentSwitcherState
     final state = widget.state;
     final bloc = widget.bloc;
 
+    if (state.activeNav == 'Live Queue') {
+      return const ClinicLiveQueueView();
+    }
+
     if (state.activeNav == 'Appointments') {
       return const ClinicAppointmentsView();
     }
@@ -206,8 +211,8 @@ class _ClinicDashboardContentSwitcherState
               setState(() {
                 _selectedAppointment = _selectedAppointment!.copyWith(
                   dateRaw: newDate,
-                  timeRaw: newTime,
-                  dateTime: '$newDate · $newTime',
+                  timeRaw: newTime, 
+                  dateTime: '$newDate · $newTime', 
                   status: 'confirmed',
                 );
               });

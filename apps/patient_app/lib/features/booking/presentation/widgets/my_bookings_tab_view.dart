@@ -12,6 +12,8 @@ import 'package:patient_app/features/clinic_details/data/models/clinic_doctor_mo
 import 'package:patient_app/features/clinic_details/data/repositories/clinic_details_repository_impl.dart';
 import 'package:patient_app/features/clinic_details/presentation/widgets/doctor_rate_dialog.dart';
 import 'package:patient_app/features/home/data/models/clinic_model.dart';
+import 'package:patient_app/features/home/data/repositories/home_repository_impl.dart'
+    show allocateClinicToken;
 import 'package:patient_app/features/home/presentation/bloc/home_bloc.dart';
 import 'package:patient_app/features/home/presentation/bloc/home_event.dart';
 import 'package:patient_app/features/booking/domain/entities/appointment_entity.dart';
@@ -47,16 +49,13 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
     _repo = widget.repository ?? BookingRepositoryImpl();
     _loadAppointments();
     // Live updates: clinic check-in / complete / cancel appear instantly.
-    _sub = _repo.watchUserAppointments().listen(
-      (list) {
-        if (!mounted) return;
-        setState(() {
-          _allAppointments = list;
-          _isLoading = false;
-        });
-      },
-      onError: (_) {},
-    );
+    _sub = _repo.watchUserAppointments().listen((list) {
+      if (!mounted) return;
+      setState(() {
+        _allAppointments = list;
+        _isLoading = false;
+      });
+    }, onError: (_) {});
   }
 
   @override
@@ -164,10 +163,7 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
                     child: OutlinedButton(
                       onPressed: () => Navigator.pop(ctx, true),
                       style: OutlinedButton.styleFrom(
-                        side: BorderSide(
-                          color: colors.error,
-                          width: 1.5,
-                        ),
+                        side: BorderSide(color: colors.error, width: 1.5),
                         shape: const StadiumBorder(),
                         padding: const EdgeInsets.symmetric(vertical: 12),
                       ),
@@ -205,9 +201,8 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
 
   void _toast(String msg, {Color? color}) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(msg), backgroundColor: color),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(msg), backgroundColor: color));
   }
 
   /// Rate the doctor who treated this (completed) appointment.
@@ -230,8 +225,10 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
               rating: rating,
               comment: comment,
             );
-            _toast('Thank you! Your rating has been submitted.',
-                color: okColor);
+            _toast(
+              'Thank you! Your rating has been submitted.',
+              color: okColor,
+            );
           } catch (e) {
             _toast('Could not submit rating: $e', color: errColor);
           }
@@ -252,11 +249,18 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
       final clinic = ClinicModel.fromFirestore(doc);
       ClinicDoctorModel? doctor;
       try {
-        final doctors = await ClinicDoctorModel.fetchForClinic(fs, apt.clinicId);
+        final doctors = await ClinicDoctorModel.fetchForClinic(
+          fs,
+          apt.clinicId,
+        );
         doctor = doctors.where((d) => d.id == apt.doctorId).firstOrNull;
       } catch (_) {}
       if (!mounted) return;
-      await BookingWizardScreen.push(context, clinic: clinic, initialDoctor: doctor);
+      await BookingWizardScreen.push(
+        context,
+        clinic: clinic,
+        initialDoctor: doctor,
+      );
     } catch (e) {
       _toast('Could not open booking: $e');
     }
@@ -273,30 +277,47 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
     // If not checked in, update appointment status to checkedin
     if (!apt.isCheckedIn) {
       try {
-        await FirebaseFirestore.instance.collection('appointments').doc(apt.id).update({
-          'status': 'checkedin',
-          'checkedInAt': FieldValue.serverTimestamp(),
-        });
+        await FirebaseFirestore.instance
+            .collection('appointments')
+            .doc(apt.id)
+            .update({
+              'status': 'checkedin',
+              'checkedInAt': FieldValue.serverTimestamp(),
+            });
       } catch (_) {}
     }
     // Also ensure active ticket is in HomeBloc / HomeRepository
     try {
       final user = FirebaseAuth.instance.currentUser;
-      final rawToken = apt.bookingRef.replaceAll(RegExp(r'\D'), '');
-      final tokenNum = rawToken.length >= 3 ? rawToken.substring(rawToken.length - 3) : rawToken.padLeft(3, '0');
-      final token = 'A-${tokenNum.isNotEmpty ? tokenNum : "026"}';
+      final fs = FirebaseFirestore.instance;
+      final ticketRef = fs.collection('tickets').doc(apt.id);
+      final existing = await ticketRef.get();
+      // Never overwrite an existing ticket (it may be called/completed already).
+      if (existing.exists) throw StateError('ticket exists');
 
-      await FirebaseFirestore.instance.collection('tickets').doc(apt.id).set({
+      final token = await allocateClinicToken(
+        fs,
+        clinicId: apt.clinicId,
+        clinicName: apt.clinicName,
+        serviceName: apt.serviceName,
+      );
+
+      await ticketRef.set({
         'token': token,
         'clinicId': apt.clinicId,
         'clinicName': apt.clinicName,
         'serviceName': apt.serviceName,
         'doctorName': apt.doctorName,
         'patientName': apt.customerName,
-        'patientEmail': (apt.customerEmail.isNotEmpty ? apt.customerEmail : user?.email ?? '').trim().toLowerCase(),
-        'position': 1,
-        'estWaitMin': 12,
-        'nowServing': 'A-023',
+        'patientEmail':
+            (apt.customerEmail.isNotEmpty
+                    ? apt.customerEmail
+                    : user?.email ?? '')
+                .trim()
+                .toLowerCase(),
+        'position': 0,
+        'estWaitMin': 0,
+        'nowServing': '',
         'status': 'waiting',
         'createdAt': FieldValue.serverTimestamp(),
       });
@@ -405,9 +426,7 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 40),
                       child: Center(
-                        child: CircularProgressIndicator(
-                          color: colors.primary,
-                        ),
+                        child: CircularProgressIndicator(color: colors.primary),
                       ),
                     )
                   else if (_filteredAppointments.isEmpty)
@@ -499,10 +518,7 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
           Text(
             'You do not have any $label clinic consultations at this moment.',
             textAlign: TextAlign.center,
-            style: GoogleFonts.inter(
-              fontSize: 12.5,
-              color: colors.textMuted,
-            ),
+            style: GoogleFonts.inter(fontSize: 12.5, color: colors.textMuted),
           ),
         ],
       ),
@@ -560,7 +576,10 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(k, style: GoogleFonts.inter(fontSize: 12.5, color: colors.textMuted)),
+          Text(
+            k,
+            style: GoogleFonts.inter(fontSize: 12.5, color: colors.textMuted),
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
@@ -942,7 +961,10 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
                 ],
                 Text(
                   '⏰ ${apt.serviceDuration} mins',
-                  style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted),
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    color: colors.textMuted,
+                  ),
                 ),
               ],
             ),
@@ -966,7 +988,11 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
                     },
                     child: Row(
                       children: [
-                        Icon(Icons.bolt_rounded, size: 14, color: colors.primary),
+                        Icon(
+                          Icons.bolt_rounded,
+                          size: 14,
+                          color: colors.primary,
+                        ),
                         const SizedBox(width: 4),
                         Flexible(
                           child: Text(
@@ -1052,7 +1078,11 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
                   ),
                   child: ElevatedButton.icon(
                     onPressed: () => _handleTrackLiveQueue(apt),
-                    icon: const Icon(Icons.bolt_rounded, size: 18, color: Colors.white),
+                    icon: const Icon(
+                      Icons.bolt_rounded,
+                      size: 18,
+                      color: Colors.white,
+                    ),
                     label: Text(
                       apt.isCheckedIn
                           ? 'Track in Live Queue (Token Active)'

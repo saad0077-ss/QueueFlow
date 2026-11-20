@@ -63,13 +63,22 @@ class DoctorDetailDangerCard extends StatelessWidget {
                 foregroundColor: colors.error,
                 side: BorderSide(color: colors.error.withValues(alpha: 0.45)),
                 backgroundColor: colors.errorTint,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.delete_outline_rounded, size: 14, color: colors.error),
+                  Icon(
+                    Icons.delete_outline_rounded,
+                    size: 14,
+                    color: colors.error,
+                  ),
                   const SizedBox(width: 6),
                   Text(
                     'Remove Doctor',

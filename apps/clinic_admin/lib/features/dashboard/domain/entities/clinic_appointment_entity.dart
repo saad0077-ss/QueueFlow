@@ -1,4 +1,4 @@
-﻿import 'package:equatable/equatable.dart';
+import 'package:equatable/equatable.dart';
 
 /// Domain entity representing an appointment in the clinic admin portal.
 class ClinicAppointmentEntity extends Equatable {
@@ -20,11 +20,11 @@ class ClinicAppointmentEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        time,
-        customer,
-        service,
-        doctor,
-        status,
-        isCompleted,
-      ];
+    time,
+    customer,
+    service,
+    doctor,
+    status,
+    isCompleted,
+  ];
 }

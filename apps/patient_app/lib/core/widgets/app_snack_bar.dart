@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
 
 /// Semantic types of feedback for [AppSnackBar].
-enum SnackBarType {
-  success,
-  error,
-  warning,
-  info,
-}
+enum SnackBarType { success, error, warning, info }
 
 /// QueueFlow Design System SnackBar
 /// Provides styled, floating pill feedback notifications with gradient backgrounds.
@@ -167,16 +162,12 @@ class AppSnackBar {
               Container(
                 width: 30,
                 height: 30,
-                decoration: BoxDecoration( 
+                decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.22),
                   shape: BoxShape.circle,
                 ),
                 child: Center(
-                  child: Icon(
-                    style.icon,
-                    color: Colors.white,
-                    size: 18,
-                  ),
+                  child: Icon(style.icon, color: Colors.white, size: 18),
                 ),
               ),
               const SizedBox(width: 12),
@@ -277,7 +268,8 @@ class AppSnackBar {
     if (lower.contains('user-not-found')) {
       return 'No account exists with this email. Please sign up first.';
     }
-    if (lower.contains('wrong-password') || lower.contains('invalid-credential')) {
+    if (lower.contains('wrong-password') ||
+        lower.contains('invalid-credential')) {
       return 'Invalid email or password. Please check your credentials.';
     }
     if (lower.contains('email-already-in-use')) {
@@ -295,7 +287,9 @@ class AppSnackBar {
     if (lower.contains('too-many-requests')) {
       return 'Too many attempts. Please try again in a few moments.';
     }
-    if (lower.contains('sign_in_canceled') || lower.contains('cancelled') || lower.contains('canceled')) {
+    if (lower.contains('sign_in_canceled') ||
+        lower.contains('cancelled') ||
+        lower.contains('canceled')) {
       return 'Sign in was cancelled.';
     }
 
@@ -309,7 +303,9 @@ class AppSnackBar {
     final bracketRegex = RegExp(r'^\[.*?\]\s*');
     cleaned = cleaned.replaceFirst(bracketRegex, '');
 
-    return cleaned.trim().isEmpty ? 'An unexpected error occurred.' : cleaned.trim();
+    return cleaned.trim().isEmpty
+        ? 'An unexpected error occurred.'
+        : cleaned.trim();
   }
 }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../clinic_details/presentation/pages/clinic_details_screen.dart';
 import '../../domain/entities/clinic_entity.dart';
 import '../bloc/home_bloc.dart';
@@ -61,8 +62,12 @@ class _HomeTabViewState extends State<HomeTabView> {
             final bool isTablet = width >= 640 && width < 960;
             final bool isDesktop = width >= 960;
             final bool useGrid = width >= 720;
-            final double horizontalPadding = isDesktop ? 32 : (isTablet ? 24 : 18);
-            final double maxContentWidth = isDesktop ? 960 : (isTablet ? 720 : double.infinity);
+            final double horizontalPadding = isDesktop
+                ? 32
+                : (isTablet ? 24 : 18);
+            final double maxContentWidth = isDesktop
+                ? 960
+                : (isTablet ? 720 : double.infinity);
 
             return Column(
               children: [
@@ -82,8 +87,10 @@ class _HomeTabViewState extends State<HomeTabView> {
                         readOnly: true,
                         margin: EdgeInsets.zero,
                         onTap: () => _openSearchScreen(context, state),
-                        onChanged: (val) => bloc.add(HomeSearchQueryChanged(val)),
-                        onClear: () => bloc.add(const HomeSearchQueryChanged('')),
+                        onChanged: (val) =>
+                            bloc.add(HomeSearchQueryChanged(val)),
+                        onClear: () =>
+                            bloc.add(const HomeSearchQueryChanged('')),
                       ),
                     ),
                   ),
@@ -104,7 +111,9 @@ class _HomeTabViewState extends State<HomeTabView> {
                       ),
                       child: Center(
                         child: ConstrainedBox(
-                          constraints: BoxConstraints(maxWidth: maxContentWidth),
+                          constraints: BoxConstraints(
+                            maxWidth: maxContentWidth,
+                          ),
                           child: Padding(
                             padding: EdgeInsets.symmetric(
                               horizontal: horizontalPadding,
@@ -114,17 +123,21 @@ class _HomeTabViewState extends State<HomeTabView> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 // Active Live Queue Ticket Banner (if active)
-                                if (state.activeTicket != null && state.activeTicket!.isActive) ...[
+                                if (state.activeTicket != null &&
+                                    state.activeTicket!.isActive) ...[
                                   HomeActiveQueueBanner(
                                     ticket: state.activeTicket!,
-                                    onTap: () => bloc.add(const HomeNavTabChanged(1)),
+                                    onTap: () =>
+                                        bloc.add(const HomeNavTabChanged(1)),
                                   ),
                                 ],
 
                                 // Featured Clinics Section Header
                                 Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.baseline,
                                   textBaseline: TextBaseline.alphabetic,
                                   children: [
                                     Text(
@@ -146,20 +159,25 @@ class _HomeTabViewState extends State<HomeTabView> {
                                 else if (useGrid)
                                   GridView.builder(
                                     shrinkWrap: true,
-                                    physics: const NeverScrollableScrollPhysics(),
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
                                     itemCount: state.allClinics.length,
-                                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: isDesktop ? 2 : 2,
-                                      crossAxisSpacing: 14,
-                                      mainAxisSpacing: 14,
-                                      mainAxisExtent: 110,
-                                    ),
+                                    gridDelegate:
+                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: isDesktop ? 2 : 2,
+                                          crossAxisSpacing: 14,
+                                          mainAxisSpacing: 14,
+                                          mainAxisExtent: 110,
+                                        ),
                                     itemBuilder: (ctx, i) {
                                       final clinic = state.allClinics[i];
                                       return HomeClinicCard(
                                         clinic: clinic,
                                         onTap: () {
-                                          _showClinicDetailsModal(context, clinic);
+                                          _showClinicDetailsModal(
+                                            context,
+                                            clinic,
+                                          );
                                         },
                                       );
                                     },
@@ -167,14 +185,18 @@ class _HomeTabViewState extends State<HomeTabView> {
                                 else
                                   ListView.builder(
                                     shrinkWrap: true,
-                                    physics: const NeverScrollableScrollPhysics(),
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
                                     itemCount: state.allClinics.length,
                                     itemBuilder: (ctx, i) {
                                       final clinic = state.allClinics[i];
                                       return HomeClinicCard(
                                         clinic: clinic,
                                         onTap: () {
-                                          _showClinicDetailsModal(context, clinic);
+                                          _showClinicDetailsModal(
+                                            context,
+                                            clinic,
+                                          );
                                         },
                                       );
                                     },
@@ -232,10 +254,7 @@ class _HomeTabViewState extends State<HomeTabView> {
             Text(
               'No active clinics registered in the database at the moment.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 13,
-                color: colors.textMuted,
-              ),
+              style: TextStyle(fontSize: 13, color: colors.textMuted),
             ),
           ],
         ),
@@ -247,9 +266,7 @@ class _HomeTabViewState extends State<HomeTabView> {
     if (clinic is ClinicEntity) {
       final result = await Navigator.push<dynamic>(
         context,
-        MaterialPageRoute(
-          builder: (_) => ClinicDetailsScreen(clinic: clinic),
-        ),
+        MaterialPageRoute(builder: (_) => ClinicDetailsScreen(clinic: clinic)),
       );
       if (context.mounted) {
         if (result == 'open_queue' || result == 'joined_queue') {

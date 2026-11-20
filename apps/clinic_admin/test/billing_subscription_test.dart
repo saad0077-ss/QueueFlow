@@ -5,6 +5,8 @@ import 'package:clinic_admin/features/billing/domain/entities/clinic_subscriptio
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   group('subscription lock', () {
     test('active period is locked, not expired', () {
       final sub = ClinicSubscriptionEntity(
@@ -24,23 +26,40 @@ void main() {
       expect(sub.isPlanExpired, isTrue);
     });
 
-    test('no recorded period (legacy clinic) is neither locked nor expired', () {
-      const sub = ClinicSubscriptionEntity();
-      expect(sub.isPlanLocked, isFalse);
-      expect(sub.isPlanExpired, isFalse);
-    });
+    test(
+      'no recorded period (legacy clinic) is neither locked nor expired',
+      () {
+        const sub = ClinicSubscriptionEntity();
+        expect(sub.isPlanLocked, isFalse);
+        expect(sub.isPlanExpired, isFalse);
+      },
+    );
   });
 
   group('date helpers', () {
     test('formats dates', () {
       expect(formatBillingDate(DateTime(2026, 11, 7)), '7 Nov 2026');
-      expect(formatBillingDateTime(DateTime(2026, 11, 7, 14, 5)), '7 Nov 2026, 02:05 PM');
+      expect(
+        formatBillingDateTime(DateTime(2026, 11, 7, 14, 5)),
+        '7 Nov 2026, 02:05 PM',
+      );
     });
 
     test('remaining time', () {
-      expect(formatRemaining(DateTime.now().subtract(const Duration(minutes: 1))), 'Expired');
-      expect(formatRemaining(DateTime.now().add(const Duration(days: 10, hours: 1))), '11 days left');
-      expect(formatRemaining(DateTime.now().add(const Duration(hours: 5, minutes: 30))), '5 hours left');
+      expect(
+        formatRemaining(DateTime.now().subtract(const Duration(minutes: 1))),
+        'Expired',
+      );
+      expect(
+        formatRemaining(DateTime.now().add(const Duration(days: 10, hours: 2))),
+        '11 days left',
+      );
+      expect(
+        formatRemaining(
+          DateTime.now().add(const Duration(hours: 5, minutes: 30)),
+        ),
+        '5 hours left',
+      );
     });
   });
 
@@ -73,8 +92,16 @@ void main() {
 
   test('receipt PDF tolerates legacy invoices with missing fields', () async {
     const inv = BillingInvoiceEntity(
-      id: 'x', number: 'QF-INV-2026-001', clinicId: '', clinic: '', plan: 'Solo Doctor Plan',
-      amount: '₹999', due: '', date: '1 Oct 2026', status: 'completed', method: 'Razorpay UPI',
+      id: 'x',
+      number: 'QF-INV-2026-001',
+      clinicId: '',
+      clinic: '',
+      plan: 'Solo Doctor Plan',
+      amount: '₹999',
+      due: '',
+      date: '1 Oct 2026',
+      status: 'completed',
+      method: 'Razorpay UPI',
     );
     final bytes = await BillingReceiptPdf.build(inv);
     expect(String.fromCharCodes(bytes.take(5)), '%PDF-');

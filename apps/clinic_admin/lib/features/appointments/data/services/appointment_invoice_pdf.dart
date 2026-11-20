@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -43,10 +42,11 @@ class AppointmentInvoicePdf {
       String address = (d['address'] ?? '').toString();
       if (address.isEmpty && d['location'] is Map) {
         final loc = d['location'] as Map;
-        address = [loc['building'], loc['street'], loc['city']]
-            .whereType<String>()
-            .where((s) => s.trim().isNotEmpty)
-            .join(', ');
+        address = [
+          loc['building'],
+          loc['street'],
+          loc['city'],
+        ].whereType<String>().where((s) => s.trim().isNotEmpty).join(', ');
       }
       return {
         'name': (d['name'] ?? 'Clinic').toString(),
@@ -98,61 +98,93 @@ class AppointmentInvoicePdf {
         ? pay.receiptNo
         : 'INV-${a.bookingId.replaceAll('QF-', '')}';
     final issued = DateTime.now();
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    final issuedText = '${issued.day} ${months[issued.month - 1]} ${issued.year}';
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    final issuedText =
+        '${issued.day} ${months[issued.month - 1]} ${issued.year}';
 
     pw.Widget label(String t) => pw.Text(
-          t.toUpperCase(),
-          style: pw.TextStyle(font: bold, fontSize: 7.5, color: _muted, letterSpacing: 1),
-        );
+      t.toUpperCase(),
+      style: pw.TextStyle(
+        font: bold,
+        fontSize: 7.5,
+        color: _muted,
+        letterSpacing: 1,
+      ),
+    );
 
-    pw.Widget value(String t, {bool strong = false, double size = 10}) => pw.Text(
+    pw.Widget value(String t, {bool strong = false, double size = 10}) =>
+        pw.Text(
           t.isEmpty ? '—' : t,
-          style: pw.TextStyle(font: strong ? bold : regular, fontSize: size, color: _ink),
+          style: pw.TextStyle(
+            font: strong ? bold : regular,
+            fontSize: size,
+            color: _ink,
+          ),
         );
 
     pw.Widget field(String l, String v) => pw.Padding(
-          padding: const pw.EdgeInsets.only(bottom: 9),
-          child: pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [label(l), pw.SizedBox(height: 2.5), value(v)],
-          ),
-        );
+      padding: const pw.EdgeInsets.only(bottom: 9),
+      child: pw.Column(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [label(l), pw.SizedBox(height: 2.5), value(v)],
+      ),
+    );
 
-    pw.Widget infoRow(String l, String v, {PdfColor? color, bool strong = false}) => pw.Padding(
-          padding: const pw.EdgeInsets.symmetric(vertical: 3.5),
-          child: pw.Row(
-            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              pw.Text(l, style: pw.TextStyle(font: regular, fontSize: 9, color: _muted)),
-              pw.SizedBox(width: 12),
-              pw.Flexible(
-                child: pw.Text(
-                  v.isEmpty ? '—' : v,
-                  textAlign: pw.TextAlign.right,
-                  style: pw.TextStyle(font: strong ? bold : regular, fontSize: 9, color: color ?? _ink),
-                ),
-              ),
-            ],
+    pw.Widget infoRow(
+      String l,
+      String v, {
+      PdfColor? color,
+      bool strong = false,
+    }) => pw.Padding(
+      padding: const pw.EdgeInsets.symmetric(vertical: 3.5),
+      child: pw.Row(
+        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          pw.Text(
+            l,
+            style: pw.TextStyle(font: regular, fontSize: 9, color: _muted),
           ),
-        );
+          pw.SizedBox(width: 12),
+          pw.Flexible(
+            child: pw.Text(
+              v.isEmpty ? '—' : v,
+              textAlign: pw.TextAlign.right,
+              style: pw.TextStyle(
+                font: strong ? bold : regular,
+                fontSize: 9,
+                color: color ?? _ink,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
 
     pw.Widget card(String title, List<pw.Widget> children) => pw.Container(
-          padding: const pw.EdgeInsets.all(14),
-          decoration: pw.BoxDecoration(
-            color: _soft,
-            borderRadius: pw.BorderRadius.circular(8),
-          ),
-          child: pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start,
-            children: [
-              label(title),
-              pw.SizedBox(height: 8),
-              ...children,
-            ],
-          ),
-        );
+      padding: const pw.EdgeInsets.all(14),
+      decoration: pw.BoxDecoration(
+        color: _soft,
+        borderRadius: pw.BorderRadius.circular(8),
+      ),
+      child: pw.Column(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [label(title), pw.SizedBox(height: 8), ...children],
+      ),
+    );
 
     final doc = pw.Document(
       title: 'Invoice ${a.bookingId}',
@@ -189,18 +221,40 @@ class AppointmentInvoicePdf {
                         children: [
                           pw.Text(
                             clinic['name']!,
-                            style: pw.TextStyle(font: bold, fontSize: 20, color: PdfColors.white),
+                            style: pw.TextStyle(
+                              font: bold,
+                              fontSize: 20,
+                              color: PdfColors.white,
+                            ),
                           ),
                           pw.SizedBox(height: 6),
                           if (clinic['address']!.isNotEmpty)
-                            pw.Text(clinic['address']!,
-                                style: pw.TextStyle(font: regular, fontSize: 9, color: PdfColors.blue100)),
+                            pw.Text(
+                              clinic['address']!,
+                              style: pw.TextStyle(
+                                font: regular,
+                                fontSize: 9,
+                                color: PdfColors.blue100,
+                              ),
+                            ),
                           if (clinic['phone']!.isNotEmpty)
-                            pw.Text(clinic['phone']!,
-                                style: pw.TextStyle(font: regular, fontSize: 9, color: PdfColors.blue100)),
+                            pw.Text(
+                              clinic['phone']!,
+                              style: pw.TextStyle(
+                                font: regular,
+                                fontSize: 9,
+                                color: PdfColors.blue100,
+                              ),
+                            ),
                           if (clinic['email']!.isNotEmpty)
-                            pw.Text(clinic['email']!,
-                                style: pw.TextStyle(font: regular, fontSize: 9, color: PdfColors.blue100)),
+                            pw.Text(
+                              clinic['email']!,
+                              style: pw.TextStyle(
+                                font: regular,
+                                fontSize: 9,
+                                color: PdfColors.blue100,
+                              ),
+                            ),
                         ],
                       ),
                     ),
@@ -217,10 +271,22 @@ class AppointmentInvoicePdf {
                           ),
                         ),
                         pw.SizedBox(height: 6),
-                        pw.Text('# $invoiceNo',
-                            style: pw.TextStyle(font: regular, fontSize: 10, color: PdfColors.blue100)),
-                        pw.Text('Issued $issuedText',
-                            style: pw.TextStyle(font: regular, fontSize: 9, color: PdfColors.blue100)),
+                        pw.Text(
+                          '# $invoiceNo',
+                          style: pw.TextStyle(
+                            font: regular,
+                            fontSize: 10,
+                            color: PdfColors.blue100,
+                          ),
+                        ),
+                        pw.Text(
+                          'Issued $issuedText',
+                          style: pw.TextStyle(
+                            font: regular,
+                            fontSize: 9,
+                            color: PdfColors.blue100,
+                          ),
+                        ),
                       ],
                     ),
                   ],
@@ -242,22 +308,46 @@ class AppointmentInvoicePdf {
                             children: [
                               label('Billed to'),
                               pw.SizedBox(height: 5),
-                              pw.Text(a.customerName,
-                                  style: pw.TextStyle(font: bold, fontSize: 15, color: _ink)),
+                              pw.Text(
+                                a.customerName,
+                                style: pw.TextStyle(
+                                  font: bold,
+                                  fontSize: 15,
+                                  color: _ink,
+                                ),
+                              ),
                               pw.SizedBox(height: 3),
                               if (a.phone.isNotEmpty)
-                                pw.Text(a.phone,
-                                    style: pw.TextStyle(font: regular, fontSize: 9.5, color: _muted)),
+                                pw.Text(
+                                  a.phone,
+                                  style: pw.TextStyle(
+                                    font: regular,
+                                    fontSize: 9.5,
+                                    color: _muted,
+                                  ),
+                                ),
                               if (a.email.isNotEmpty)
-                                pw.Text(a.email,
-                                    style: pw.TextStyle(font: regular, fontSize: 9.5, color: _muted)),
+                                pw.Text(
+                                  a.email,
+                                  style: pw.TextStyle(
+                                    font: regular,
+                                    fontSize: 9.5,
+                                    color: _muted,
+                                  ),
+                                ),
                             ],
                           ),
                         ),
                         pw.Container(
-                          padding: const pw.EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          padding: const pw.EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
                           decoration: pw.BoxDecoration(
-                            border: pw.Border.all(color: statusColor, width: 1.4),
+                            border: pw.Border.all(
+                              color: statusColor,
+                              width: 1.4,
+                            ),
                           ),
                           child: pw.Text(
                             statusText,
@@ -284,9 +374,15 @@ class AppointmentInvoicePdf {
                       child: pw.Row(
                         crossAxisAlignment: pw.CrossAxisAlignment.start,
                         children: [
-                          pw.Expanded(child: field('Booking reference', a.bookingId)),
-                          pw.Expanded(child: field('Consulting doctor', a.doctor)),
-                          pw.Expanded(child: field('Department', a.departmentName)),
+                          pw.Expanded(
+                            child: field('Booking reference', a.bookingId),
+                          ),
+                          pw.Expanded(
+                            child: field('Consulting doctor', a.doctor),
+                          ),
+                          pw.Expanded(
+                            child: field('Department', a.departmentName),
+                          ),
                           pw.Expanded(child: field('Date & time', a.dateTime)),
                         ],
                       ),
@@ -296,7 +392,10 @@ class AppointmentInvoicePdf {
 
                     // ── Items table ──
                     pw.Container(
-                      padding: const pw.EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+                      padding: const pw.EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 9,
+                      ),
                       decoration: pw.BoxDecoration(
                         color: _brand,
                         borderRadius: const pw.BorderRadius.only(
@@ -308,25 +407,49 @@ class AppointmentInvoicePdf {
                         children: [
                           pw.Expanded(
                             flex: 5,
-                            child: pw.Text('SERVICE',
-                                style: pw.TextStyle(font: bold, fontSize: 8, color: PdfColors.white, letterSpacing: 1)),
+                            child: pw.Text(
+                              'SERVICE',
+                              style: pw.TextStyle(
+                                font: bold,
+                                fontSize: 8,
+                                color: PdfColors.white,
+                                letterSpacing: 1,
+                              ),
+                            ),
                           ),
                           pw.Expanded(
                             flex: 2,
-                            child: pw.Text('DURATION',
-                                style: pw.TextStyle(font: bold, fontSize: 8, color: PdfColors.white, letterSpacing: 1)),
+                            child: pw.Text(
+                              'DURATION',
+                              style: pw.TextStyle(
+                                font: bold,
+                                fontSize: 8,
+                                color: PdfColors.white,
+                                letterSpacing: 1,
+                              ),
+                            ),
                           ),
                           pw.Expanded(
                             flex: 2,
-                            child: pw.Text('AMOUNT',
-                                textAlign: pw.TextAlign.right,
-                                style: pw.TextStyle(font: bold, fontSize: 8, color: PdfColors.white, letterSpacing: 1)),
+                            child: pw.Text(
+                              'AMOUNT',
+                              textAlign: pw.TextAlign.right,
+                              style: pw.TextStyle(
+                                font: bold,
+                                fontSize: 8,
+                                color: PdfColors.white,
+                                letterSpacing: 1,
+                              ),
+                            ),
                           ),
                         ],
                       ),
                     ),
                     pw.Container(
-                      padding: const pw.EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                      padding: const pw.EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 14,
+                      ),
                       decoration: pw.BoxDecoration(
                         border: pw.Border.all(color: _line),
                         borderRadius: const pw.BorderRadius.only(
@@ -345,9 +468,15 @@ class AppointmentInvoicePdf {
                                 value(a.service, strong: true, size: 11),
                                 if (a.notes.isNotEmpty) ...[
                                   pw.SizedBox(height: 3),
-                                  pw.Text(a.notes,
-                                      maxLines: 2,
-                                      style: pw.TextStyle(font: regular, fontSize: 8.5, color: _muted)),
+                                  pw.Text(
+                                    a.notes,
+                                    maxLines: 2,
+                                    style: pw.TextStyle(
+                                      font: regular,
+                                      fontSize: 8.5,
+                                      color: _muted,
+                                    ),
+                                  ),
                                 ],
                               ],
                             ),
@@ -357,7 +486,11 @@ class AppointmentInvoicePdf {
                             flex: 2,
                             child: pw.Align(
                               alignment: pw.Alignment.centerRight,
-                              child: value(money(a.servicePrice), strong: true, size: 11),
+                              child: value(
+                                money(a.servicePrice),
+                                strong: true,
+                                size: 11,
+                              ),
                             ),
                           ),
                         ],
@@ -377,24 +510,47 @@ class AppointmentInvoicePdf {
                             infoRow('Tax', money(0)),
                             pw.Divider(color: _line, height: 14),
                             pw.Row(
-                              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment:
+                                  pw.MainAxisAlignment.spaceBetween,
                               children: [
-                                pw.Text('Total',
-                                    style: pw.TextStyle(font: bold, fontSize: 12, color: _ink)),
-                                pw.Text(money(a.servicePrice),
-                                    style: pw.TextStyle(font: bold, fontSize: 16, color: _brand)),
+                                pw.Text(
+                                  'Total',
+                                  style: pw.TextStyle(
+                                    font: bold,
+                                    fontSize: 12,
+                                    color: _ink,
+                                  ),
+                                ),
+                                pw.Text(
+                                  money(a.servicePrice),
+                                  style: pw.TextStyle(
+                                    font: bold,
+                                    fontSize: 16,
+                                    color: _brand,
+                                  ),
+                                ),
                               ],
                             ),
                             pw.SizedBox(height: 6),
                             infoRow(
-                              pay.isPaid || pay.isRefunded ? 'Amount paid' : 'Balance due',
-                              money(pay.isPaid || pay.isRefunded ? pay.amount : a.servicePrice),
+                              pay.isPaid || pay.isRefunded
+                                  ? 'Amount paid'
+                                  : 'Balance due',
+                              money(
+                                pay.isPaid || pay.isRefunded
+                                    ? pay.amount
+                                    : a.servicePrice,
+                              ),
                               color: statusColor,
                               strong: true,
                             ),
                             if (pay.isRefunded && pay.refundAmount != null)
-                              infoRow('Refunded', '- ${money(pay.refundAmount!)}',
-                                  color: _amber, strong: true),
+                              infoRow(
+                                'Refunded',
+                                '- ${money(pay.refundAmount!)}',
+                                color: _amber,
+                                strong: true,
+                              ),
                           ],
                         ),
                       ),
@@ -408,10 +564,17 @@ class AppointmentInvoicePdf {
                       children: [
                         pw.Expanded(
                           child: card('Payment details', [
-                            infoRow('Method', pay.isPaid || pay.isRefunded ? pay.method : 'Pay at clinic'),
+                            infoRow(
+                              'Method',
+                              pay.isPaid || pay.isRefunded
+                                  ? pay.method
+                                  : 'Pay at clinic',
+                            ),
                             infoRow('Gateway', pay.gateway),
-                            if (pay.paymentId.isNotEmpty) infoRow('Transaction ID', pay.paymentId),
-                            if (pay.orderId.isNotEmpty) infoRow('Order ID', pay.orderId),
+                            if (pay.paymentId.isNotEmpty)
+                              infoRow('Transaction ID', pay.paymentId),
+                            if (pay.orderId.isNotEmpty)
+                              infoRow('Order ID', pay.orderId),
                             infoRow('Paid on', pay.paidAt),
                           ]),
                         ),
@@ -419,10 +582,22 @@ class AppointmentInvoicePdf {
                           pw.SizedBox(width: 14),
                           pw.Expanded(
                             child: card('Refund', [
-                              infoRow('Amount', money(pay.refundAmount ?? pay.amount), color: _amber, strong: true),
-                              if (pay.refundId != null) infoRow('Refund ID', pay.refundId!),
-                              infoRow('Status', pay.refundStatus == 'processed' ? 'Processed' : 'Pending'),
-                              if (pay.refundNote != null) infoRow('Note', pay.refundNote!),
+                              infoRow(
+                                'Amount',
+                                money(pay.refundAmount ?? pay.amount),
+                                color: _amber,
+                                strong: true,
+                              ),
+                              if (pay.refundId != null)
+                                infoRow('Refund ID', pay.refundId!),
+                              infoRow(
+                                'Status',
+                                pay.refundStatus == 'processed'
+                                    ? 'Processed'
+                                    : 'Pending',
+                              ),
+                              if (pay.refundNote != null)
+                                infoRow('Note', pay.refundNote!),
                             ]),
                           ),
                         ],
@@ -437,7 +612,10 @@ class AppointmentInvoicePdf {
               // ── Footer ──
               pw.Container(
                 width: double.infinity,
-                padding: const pw.EdgeInsets.symmetric(horizontal: 40, vertical: 18),
+                padding: const pw.EdgeInsets.symmetric(
+                  horizontal: 40,
+                  vertical: 18,
+                ),
                 decoration: const pw.BoxDecoration(
                   color: _soft,
                   border: pw.Border(top: pw.BorderSide(color: _line)),
@@ -447,11 +625,19 @@ class AppointmentInvoicePdf {
                   children: [
                     pw.Text(
                       'Thank you for choosing ${clinic['name']}. Wishing you good health!',
-                      style: pw.TextStyle(font: regular, fontSize: 9, color: _muted),
+                      style: pw.TextStyle(
+                        font: regular,
+                        fontSize: 9,
+                        color: _muted,
+                      ),
                     ),
                     pw.Text(
                       'Powered by QueueFlow',
-                      style: pw.TextStyle(font: bold, fontSize: 9, color: _brand),
+                      style: pw.TextStyle(
+                        font: bold,
+                        fontSize: 9,
+                        color: _brand,
+                      ),
                     ),
                   ],
                 ),

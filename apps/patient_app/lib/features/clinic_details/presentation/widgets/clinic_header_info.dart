@@ -1,7 +1,9 @@
 import '../../../../core/widgets/clinic_open_builder.dart';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../../core/widgets/clinic_dept_chip.dart';
 import '../../../../core/widgets/distance_builder.dart';
 import '../../../home/domain/entities/clinic_entity.dart';
@@ -11,11 +13,7 @@ class ClinicHeaderInfo extends StatelessWidget {
   final ClinicEntity clinic;
   final String? holidayNotice;
 
-  const ClinicHeaderInfo({
-    super.key,
-    required this.clinic,
-    this.holidayNotice,
-  });
+  const ClinicHeaderInfo({super.key, required this.clinic, this.holidayNotice});
 
   @override
   Widget build(BuildContext context) {
@@ -197,13 +195,19 @@ class _ExpandableAddressState extends State<_ExpandableAddress> {
         final overflows = painter.didExceedMaxLines;
 
         return InkWell(
-          onTap: overflows ? () => setState(() => _expanded = !_expanded) : null,
+          onTap: overflows
+              ? () => setState(() => _expanded = !_expanded)
+              : null,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
                 padding: const EdgeInsets.only(top: 2),
-                child: Icon(Icons.location_on_outlined, size: 14, color: widget.color),
+                child: Icon(
+                  Icons.location_on_outlined,
+                  size: 14,
+                  color: widget.color,
+                ),
               ),
               const SizedBox(width: 6),
               Expanded(

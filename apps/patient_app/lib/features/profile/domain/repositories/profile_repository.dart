@@ -1,11 +1,13 @@
 import '../entities/favorite_clinic_entity.dart';
+import '../entities/patient_payment_item_entity.dart';
 import '../entities/patient_profile_entity.dart';
+import '../entities/patient_queue_history_entity.dart';
 import '../entities/patient_review_entity.dart';
 import '../entities/support_ticket_entity.dart';
 
 abstract class ProfileRepository {
   Future<PatientProfileEntity> getProfile();
-  
+
   Future<PatientProfileEntity> updateProfile({
     required String name,
     required String email,
@@ -50,6 +52,12 @@ abstract class ProfileRepository {
     required String text,
     required String senderName,
   });
+
+  Future<List<PatientQueueHistoryEntity>> getQueueHistory();
+
+  Stream<List<PatientQueueHistoryEntity>> watchQueueHistory();
+
+  Future<List<PatientPaymentItemEntity>> getPaymentHistory();
 
   Future<void> logout();
 

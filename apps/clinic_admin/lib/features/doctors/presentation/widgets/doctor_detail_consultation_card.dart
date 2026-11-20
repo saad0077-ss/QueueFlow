@@ -12,7 +12,9 @@ class DoctorDetailConsultationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final activeDays = doctor.weeklySchedule.values.where((d) => d.enabled).toList();
+    final activeDays = doctor.weeklySchedule.values
+        .where((d) => d.enabled)
+        .toList();
     final workingDaysText = activeDays.isNotEmpty
         ? activeDays.map((d) => d.shortName).join(', ')
         : 'Mon, Tue, Wed, Thu, Fri, Sat, Sun';
@@ -40,7 +42,11 @@ class DoctorDetailConsultationCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.schedule_rounded, size: 16, color: colors.primaryLight),
+              Icon(
+                Icons.schedule_rounded,
+                size: 16,
+                color: colors.primaryLight,
+              ),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(

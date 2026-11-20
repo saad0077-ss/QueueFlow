@@ -33,7 +33,16 @@ class ProfileUpdated extends ProfileEvent {
   });
 
   @override
-  List<Object?> get props => [name, email, phone, initials, age, gender, bloodGroup, photoBase64];
+  List<Object?> get props => [
+    name,
+    email,
+    phone,
+    initials,
+    age,
+    gender,
+    bloodGroup,
+    photoBase64,
+  ];
 }
 
 class ProfileDarkModeToggled extends ProfileEvent {
@@ -66,14 +75,14 @@ class ProfileReviewSubmitted extends ProfileEvent {
 
   @override
   List<Object?> get props => [
-        clinicId,
-        clinicName,
-        doctorName,
-        rating,
-        tags,
-        comment,
-        isAnonymous,
-      ];
+    clinicId,
+    clinicName,
+    doctorName,
+    rating,
+    tags,
+    comment,
+    isAnonymous,
+  ];
 }
 
 class ProfileReviewDeleted extends ProfileEvent {
@@ -102,22 +111,19 @@ class ProfileSupportTicketCreated extends ProfileEvent {
 
   @override
   List<Object?> get props => [
-        clinicId,
-        clinicName,
-        category,
-        subject,
-        description,
-      ];
+    clinicId,
+    clinicName,
+    category,
+    subject,
+    description,
+  ];
 }
 
 class ProfileTicketReplySent extends ProfileEvent {
   final String ticketId;
   final String text;
 
-  const ProfileTicketReplySent({
-    required this.ticketId,
-    required this.text,
-  });
+  const ProfileTicketReplySent({required this.ticketId, required this.text});
 
   @override
   List<Object?> get props => [ticketId, text];

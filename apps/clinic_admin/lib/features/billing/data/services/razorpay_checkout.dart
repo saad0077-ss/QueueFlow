@@ -86,7 +86,11 @@ class RazorpayCheckout {
 
     options['handler'] = ((JSObject response) {
       final id = response['razorpay_payment_id'];
-      finish(RazorpayResult.success(id.isA<JSString>() ? (id as JSString).toDart : null));
+      finish(
+        RazorpayResult.success(
+          id.isA<JSString>() ? (id as JSString).toDart : null,
+        ),
+      );
     }).toJS;
 
     final modal = JSObject();

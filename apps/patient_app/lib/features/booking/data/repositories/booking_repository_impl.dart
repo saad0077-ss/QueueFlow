@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -23,11 +24,9 @@ class BookingRepositoryImpl implements BookingRepository {
   final StreamController<List<AppointmentEntity>> _streamController =
       StreamController<List<AppointmentEntity>>.broadcast();
 
-  BookingRepositoryImpl({
-    FirebaseFirestore? firestore,
-    FirebaseAuth? auth,
-  })  : _firestore = firestore ?? _safeFirestore(),
-        _auth = auth ?? _safeAuth();
+  BookingRepositoryImpl({FirebaseFirestore? firestore, FirebaseAuth? auth})
+    : _firestore = firestore ?? _safeFirestore(),
+      _auth = auth ?? _safeAuth();
 
   static FirebaseFirestore? _safeFirestore() {
     try {
@@ -44,7 +43,10 @@ class BookingRepositoryImpl implements BookingRepository {
   }
 
   @override
-  Future<List<ClinicServiceItem>> getClinicServices(String clinicId, String category) async {
+  Future<List<ClinicServiceItem>> getClinicServices(
+    String clinicId,
+    String category,
+  ) async {
     if (_firestore != null) {
       try {
         final snap = await _firestore
@@ -62,7 +64,10 @@ class BookingRepositoryImpl implements BookingRepository {
   }
 
   @override
-  Future<List<ClinicDoctorItem>> getClinicDoctors(String clinicId, String category) async {
+  Future<List<ClinicDoctorItem>> getClinicDoctors(
+    String clinicId,
+    String category,
+  ) async {
     if (_firestore != null) {
       try {
         return await ClinicDoctorModel.fetchForClinic(_firestore, clinicId);
@@ -94,7 +99,9 @@ class BookingRepositoryImpl implements BookingRepository {
     final booked = <String>{};
 
     for (final a in _localCache) {
-      if (a.doctorId == doctorId && a.dateRaw == dateRaw && a.status.toLowerCase() != 'cancelled') {
+      if (a.doctorId == doctorId &&
+          a.dateRaw == dateRaw &&
+          a.status.toLowerCase() != 'cancelled') {
         booked.add(_normSlot(a.timeRaw));
       }
     }
@@ -123,7 +130,9 @@ class BookingRepositoryImpl implements BookingRepository {
   /// The patient's profile photo (base64), shown to the clinic on the booking.
   Future<String> _customerPhoto(String customerId) async {
     final fs = _firestore;
-    final uid = customerId.isNotEmpty ? customerId : (_auth?.currentUser?.uid ?? '');
+    final uid = customerId.isNotEmpty
+        ? customerId
+        : (_auth?.currentUser?.uid ?? '');
     if (fs == null || uid.isEmpty) return '';
     try {
       final doc = await fs.collection('users').doc(uid).get();
@@ -134,7 +143,9 @@ class BookingRepositoryImpl implements BookingRepository {
   }
 
   @override
-  Future<AppointmentEntity> createAppointment(AppointmentEntity appointment) async {
+  Future<AppointmentEntity> createAppointment(
+    AppointmentEntity appointment,
+  ) async {
     // Block double booking: the slot may have been taken since it was shown.
     final taken = await getBookedSlots(
       clinicId: appointment.clinicId,
@@ -142,7 +153,9 @@ class BookingRepositoryImpl implements BookingRepository {
       date: DateTime.tryParse(appointment.dateRaw) ?? DateTime.now(),
     );
     if (taken.contains(_normSlot(appointment.timeRaw))) {
-      throw Exception('This time slot was just booked by someone else. Please choose another slot.');
+      throw Exception(
+        'This time slot was just booked by someone else. Please choose another slot.',
+      );
     }
 
     // Generate bookingRef if missing
@@ -158,33 +171,33 @@ class BookingRepositoryImpl implements BookingRepository {
       try {
         final photo = await _customerPhoto(newAppointment.customerId);
         final docRef = await _firestore.collection('appointments').add({
-              ...AppointmentModel(
-                id: newAppointment.id,
-                bookingRef: newAppointment.bookingRef,
-                clinicId: newAppointment.clinicId,
-                clinicName: newAppointment.clinicName,
-                clinicAddress: newAppointment.clinicAddress,
-                customerId: newAppointment.customerId,
-                customerName: newAppointment.customerName,
-                customerPhone: newAppointment.customerPhone,
-                customerEmail: newAppointment.customerEmail,
-                doctorId: newAppointment.doctorId,
-                doctorName: newAppointment.doctorName,
-                doctorSpecialty: newAppointment.doctorSpecialty,
-                serviceId: newAppointment.serviceId,
-                serviceName: newAppointment.serviceName,
-                serviceDuration: newAppointment.serviceDuration,
-                servicePrice: newAppointment.servicePrice,
-                dateRaw: newAppointment.dateRaw,
-                timeRaw: newAppointment.timeRaw,
-                dateTime: newAppointment.dateTime,
-                status: newAppointment.status,
-                payment: newAppointment.payment,
-                notes: newAppointment.notes,
-                createdAt: newAppointment.createdAt,
-              ).toMap(),
-              if (photo.isNotEmpty) 'customerPhoto': photo,
-            });
+          ...AppointmentModel(
+            id: newAppointment.id,
+            bookingRef: newAppointment.bookingRef,
+            clinicId: newAppointment.clinicId,
+            clinicName: newAppointment.clinicName,
+            clinicAddress: newAppointment.clinicAddress,
+            customerId: newAppointment.customerId,
+            customerName: newAppointment.customerName,
+            customerPhone: newAppointment.customerPhone,
+            customerEmail: newAppointment.customerEmail,
+            doctorId: newAppointment.doctorId,
+            doctorName: newAppointment.doctorName,
+            doctorSpecialty: newAppointment.doctorSpecialty,
+            serviceId: newAppointment.serviceId,
+            serviceName: newAppointment.serviceName,
+            serviceDuration: newAppointment.serviceDuration,
+            servicePrice: newAppointment.servicePrice,
+            dateRaw: newAppointment.dateRaw,
+            timeRaw: newAppointment.timeRaw,
+            dateTime: newAppointment.dateTime,
+            status: newAppointment.status,
+            payment: newAppointment.payment,
+            notes: newAppointment.notes,
+            createdAt: newAppointment.createdAt,
+          ).toMap(),
+          if (photo.isNotEmpty) 'customerPhoto': photo,
+        });
 
         try {
           await _firestore.collection('notifications').add({
@@ -225,9 +238,14 @@ class BookingRepositoryImpl implements BookingRepository {
 
     if (_firestore != null) {
       try {
-        Query<Map<String, dynamic>> query = _firestore.collection('appointments');
+        Query<Map<String, dynamic>> query = _firestore.collection(
+          'appointments',
+        );
         if (email != null && email.isNotEmpty) {
-          query = query.where('customerEmail', isEqualTo: email.trim().toLowerCase());
+          query = query.where(
+            'customerEmail',
+            isEqualTo: email.trim().toLowerCase(),
+          );
         } else if (uid != null && uid.isNotEmpty) {
           query = query.where('customerId', isEqualTo: uid);
         }
@@ -255,9 +273,14 @@ class BookingRepositoryImpl implements BookingRepository {
 
     if (_firestore != null) {
       try {
-        Query<Map<String, dynamic>> query = _firestore.collection('appointments');
+        Query<Map<String, dynamic>> query = _firestore.collection(
+          'appointments',
+        );
         if (email != null && email.isNotEmpty) {
-          query = query.where('customerEmail', isEqualTo: email.trim().toLowerCase());
+          query = query.where(
+            'customerEmail',
+            isEqualTo: email.trim().toLowerCase(),
+          );
         } else if (uid != null && uid.isNotEmpty) {
           query = query.where('customerId', isEqualTo: uid);
         }

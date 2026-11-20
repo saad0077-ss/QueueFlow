@@ -33,9 +33,7 @@ class AppIconBadge extends StatelessWidget {
       child: Container(
         width: size,
         height: size,
-        decoration: const BoxDecoration(
-          color: Color(0xFF2563EB),
-        ),
+        decoration: const BoxDecoration(color: Color(0xFF2563EB)),
         child: Stack(
           children: [
             Positioned(

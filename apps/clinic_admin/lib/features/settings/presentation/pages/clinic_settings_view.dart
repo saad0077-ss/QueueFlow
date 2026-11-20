@@ -82,10 +82,7 @@ class _ClinicSettingsBody extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 'Configure operational parameters, working hours and security',
-                style: GoogleFonts.inter(
-                  fontSize: 13,
-                  color: colors.textMuted,
-                ),
+                style: GoogleFonts.inter(fontSize: 13, color: colors.textMuted),
               ),
               const SizedBox(height: 18),
               ClinicSettingsTabBar(

@@ -65,10 +65,7 @@ class GoogleLogoVector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      size: Size(size, size),
-      painter: _GoogleLogoPainter(),
-    );
+    return CustomPaint(size: Size(size, size), painter: _GoogleLogoPainter());
   }
 }
 

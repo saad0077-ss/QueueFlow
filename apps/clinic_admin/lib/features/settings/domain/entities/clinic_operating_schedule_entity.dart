@@ -1,4 +1,4 @@
-﻿import 'package:equatable/equatable.dart';
+import 'package:equatable/equatable.dart';
 import 'operating_hours_day_entity.dart';
 
 class ClinicOperatingScheduleEntity extends Equatable {
@@ -15,7 +15,8 @@ class ClinicOperatingScheduleEntity extends Equatable {
     this.slotDurationMin = 15,
     this.emergencyOnCall = true,
     this.emergencyPhone = '+91 98470 12345',
-    this.holidayNotice = 'Clinic will operate on a half-day schedule on upcoming public holidays. Evening OPD remains closed.',
+    this.holidayNotice =
+        'Clinic will operate on a half-day schedule on upcoming public holidays. Evening OPD remains closed.',
   });
 
   int get totalWeeklyHours {
@@ -30,7 +31,15 @@ class ClinicOperatingScheduleEntity extends Equatable {
   /// Returns (isOpenNow, label) e.g. (true, 'OPEN NOW · CLOSES 20:00').
   ({bool isOpen, String label})? statusAt(DateTime now) {
     if (days.isEmpty) return null;
-    const keys = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+    const keys = [
+      'monday',
+      'tuesday',
+      'wednesday',
+      'thursday',
+      'friday',
+      'saturday',
+      'sunday',
+    ];
     final d = days[keys[now.weekday - 1]];
     if (d == null || !d.isOpen) return (isOpen: false, label: 'CLOSED TODAY');
     final cur = now.hour * 60 + now.minute;
@@ -38,7 +47,12 @@ class ClinicOperatingScheduleEntity extends Equatable {
     final c = OperatingHoursDayEntity.parseMinutes(d.closeTime);
     final open = c > o ? (cur >= o && cur < c) : (cur >= o || cur < c);
     if (open) return (isOpen: true, label: 'OPEN NOW · CLOSES ${d.closeTime}');
-    return (isOpen: false, label: cur < o ? 'CLOSED · OPENS ${d.openTime}' : 'CLOSED · OPENS TOMORROW');
+    return (
+      isOpen: false,
+      label: cur < o
+          ? 'CLOSED · OPENS ${d.openTime}'
+          : 'CLOSED · OPENS TOMORROW',
+    );
   }
 
   String get scheduleSummary {
@@ -47,9 +61,15 @@ class ClinicOperatingScheduleEntity extends Equatable {
     final mon = days['monday'];
     final sat = days['saturday'];
     final sun = days['sunday'];
-    final monTime = mon != null && mon.isOpen ? '${mon.openTime} – ${mon.closeTime}' : 'Closed';
-    final satTime = sat != null && sat.isOpen ? '${sat.openTime} – ${sat.closeTime}' : 'Closed';
-    final sunTime = sun != null && sun.isOpen ? '${sun.openTime} – ${sun.closeTime}' : 'Closed';
+    final monTime = mon != null && mon.isOpen
+        ? '${mon.openTime} – ${mon.closeTime}'
+        : 'Closed';
+    final satTime = sat != null && sat.isOpen
+        ? '${sat.openTime} – ${sat.closeTime}'
+        : 'Closed';
+    final sunTime = sun != null && sun.isOpen
+        ? '${sun.openTime} – ${sun.closeTime}'
+        : 'Closed';
     if (monTime == satTime && sunTime == 'Closed') {
       return 'Mon–Sat: $monTime · Sun: Closed';
     }
@@ -75,5 +95,12 @@ class ClinicOperatingScheduleEntity extends Equatable {
   }
 
   @override
-  List<Object?> get props => [days, queueCutoffMin, slotDurationMin, emergencyOnCall, emergencyPhone, holidayNotice];
+  List<Object?> get props => [
+    days,
+    queueCutoffMin,
+    slotDurationMin,
+    emergencyOnCall,
+    emergencyPhone,
+    holidayNotice,
+  ];
 }

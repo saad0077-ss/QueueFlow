@@ -1,4 +1,4 @@
-﻿import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../domain/usecases/activate_clinic_account_usecase.dart';
 import 'account_activation_event.dart';
 import 'account_activation_state.dart';
@@ -13,20 +13,24 @@ class AccountActivationBloc
     String? initialDoctorName,
     String? initialClinicName,
     String? initialRole,
-  }) : super(AccountActivationState(
-          inviteEmail: (initialEmail != null && initialEmail.isNotEmpty)
-              ? initialEmail
-              : 'admin@clinic.com',
-          doctorName: (initialDoctorName != null && initialDoctorName.isNotEmpty)
-              ? initialDoctorName
-              : 'Clinic Admin',
-          clinicName: (initialClinicName != null && initialClinicName.isNotEmpty)
-              ? initialClinicName
-              : 'Healthcare Clinic',
-          role: (initialRole != null && initialRole.isNotEmpty)
-              ? initialRole
-              : 'Clinic Admin',
-        )) {
+  }) : super(
+         AccountActivationState(
+           inviteEmail: (initialEmail != null && initialEmail.isNotEmpty)
+               ? initialEmail
+               : 'admin@clinic.com',
+           doctorName:
+               (initialDoctorName != null && initialDoctorName.isNotEmpty)
+               ? initialDoctorName
+               : 'Clinic Admin',
+           clinicName:
+               (initialClinicName != null && initialClinicName.isNotEmpty)
+               ? initialClinicName
+               : 'Healthcare Clinic',
+           role: (initialRole != null && initialRole.isNotEmpty)
+               ? initialRole
+               : 'Clinic Admin',
+         ),
+       ) {
     on<ActivationPasswordChanged>(_onPasswordChanged);
     on<ActivationConfirmPasswordChanged>(_onConfirmChanged);
     on<ActivationTogglePassword>(_onTogglePassword);
@@ -54,15 +58,19 @@ class AccountActivationBloc
     final hasConfirm = state.confirmPassword.isNotEmpty;
     final matches = hasConfirm && state.confirmPassword == pwd;
 
-    emit(state.copyWith(
-      password: pwd,
-      passwordStrength: strength,
-      clearPasswordError: true,
-      confirmError: (hasConfirm && !matches) ? "Passwords don't match." : null,
-      clearConfirmError: !hasConfirm || matches,
-      isConfirmValid: matches && pwd.length >= 8,
-      clearErrorMessage: true,
-    ));
+    emit(
+      state.copyWith(
+        password: pwd,
+        passwordStrength: strength,
+        clearPasswordError: true,
+        confirmError: (hasConfirm && !matches)
+            ? "Passwords don't match."
+            : null,
+        clearConfirmError: !hasConfirm || matches,
+        isConfirmValid: matches && pwd.length >= 8,
+        clearErrorMessage: true,
+      ),
+    );
   }
 
   void _onConfirmChanged(
@@ -72,14 +80,17 @@ class AccountActivationBloc
     final confirm = event.confirmPassword;
     final matches = confirm.isNotEmpty && confirm == state.password;
 
-    emit(state.copyWith(
-      confirmPassword: confirm,
-      confirmError:
-          (confirm.isNotEmpty && !matches) ? "Passwords don't match." : null,
-      clearConfirmError: confirm.isEmpty || matches,
-      isConfirmValid: matches && state.password.length >= 8,
-      clearErrorMessage: true,
-    ));
+    emit(
+      state.copyWith(
+        confirmPassword: confirm,
+        confirmError: (confirm.isNotEmpty && !matches)
+            ? "Passwords don't match."
+            : null,
+        clearConfirmError: confirm.isEmpty || matches,
+        isConfirmValid: matches && state.password.length >= 8,
+        clearErrorMessage: true,
+      ),
+    );
   }
 
   void _onTogglePassword(
@@ -114,10 +125,12 @@ class AccountActivationBloc
       return;
     }
     if (state.confirmPassword != state.password) {
-      emit(state.copyWith(
-        confirmError: "Passwords don't match.",
-        isConfirmValid: false,
-      ));
+      emit(
+        state.copyWith(
+          confirmError: "Passwords don't match.",
+          isConfirmValid: false,
+        ),
+      );
       return;
     }
     if (!state.agreedToTerms) {
@@ -137,13 +150,12 @@ class AccountActivationBloc
       emit(state.copyWith(isLoading: false, activatedStaff: staff));
     } catch (e) {
       String msg = e.toString().replaceFirst('Exception: ', '');
-      if (msg.contains('malformed or has expired') || msg.contains('invalid-credential')) {
-        msg = 'An account with this email is already registered with a different password. Please log in or use "Forgot password" to reset it.';
+      if (msg.contains('malformed or has expired') ||
+          msg.contains('invalid-credential')) {
+        msg =
+            'An account with this email is already registered with a different password. Please log in or use "Forgot password" to reset it.';
       }
-      emit(state.copyWith(
-        isLoading: false,
-        errorMessage: msg,
-      ));
+      emit(state.copyWith(isLoading: false, errorMessage: msg));
     }
   }
 }

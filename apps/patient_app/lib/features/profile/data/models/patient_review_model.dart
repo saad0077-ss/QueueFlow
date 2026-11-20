@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../../domain/entities/patient_review_entity.dart';
 
 class PatientReviewModel extends PatientReviewEntity {
@@ -14,14 +15,24 @@ class PatientReviewModel extends PatientReviewEntity {
     required super.date,
   });
 
-  factory PatientReviewModel.fromJson(Map<String, dynamic> json, {String? docId}) {
+  factory PatientReviewModel.fromJson(
+    Map<String, dynamic> json, {
+    String? docId,
+  }) {
     return PatientReviewModel(
-      id: docId ?? json['id'] as String? ?? 'rev-${DateTime.now().millisecondsSinceEpoch}',
+      id:
+          docId ??
+          json['id'] as String? ??
+          'rev-${DateTime.now().millisecondsSinceEpoch}',
       clinicId: json['clinicId'] as String? ?? 'smile-dental',
       clinicName: json['clinicName'] as String? ?? 'Smile Dental Clinic',
-      doctorName: json['doctorName'] as String? ?? json['doctor'] as String? ?? 'Dr. Rahul Menon',
+      doctorName:
+          json['doctorName'] as String? ??
+          json['doctor'] as String? ??
+          'Dr. Rahul Menon',
       rating: json['rating'] as int? ?? 5,
-      tags: (json['tags'] as List<dynamic>?)?.map((e) => e.toString()).toList() ??
+      tags:
+          (json['tags'] as List<dynamic>?)?.map((e) => e.toString()).toList() ??
           const ['Zero Wait Time', 'Friendly Doctor'],
       comment: json['comment'] as String? ?? '',
       isAnonymous: json['isAnonymous'] as bool? ?? false,

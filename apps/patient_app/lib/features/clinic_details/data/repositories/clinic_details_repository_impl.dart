@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+
 import '../../../home/domain/entities/clinic_entity.dart';
 import '../../domain/entities/clinic_details_entity.dart';
 import '../../domain/repositories/clinic_details_repository.dart';
@@ -16,15 +17,16 @@ class ClinicDetailsRepositoryImpl implements ClinicDetailsRepository {
   ClinicDetailsRepositoryImpl({
     FirebaseFirestore? firestore,
     FirebaseAuth? auth,
-  })  : _firestore = firestore ?? FirebaseFirestore.instance,
-        _auth = auth ?? FirebaseAuth.instance;
+  }) : _firestore = firestore ?? FirebaseFirestore.instance,
+       _auth = auth ?? FirebaseAuth.instance;
 
   @override
   Future<ClinicDetailsEntity> getClinicDetails(
     String clinicId,
     ClinicEntity? initialClinic,
   ) async {
-    final clinic = initialClinic ??
+    final clinic =
+        initialClinic ??
         const ClinicEntity(
           id: '',
           name: 'Clinic',
@@ -40,7 +42,10 @@ class ClinicDetailsRepositoryImpl implements ClinicDetailsRepository {
           openingHours: '',
         );
 
-    String description = ClinicFallbackData.getDescription(clinic.name, clinic.category);
+    String description = ClinicFallbackData.getDescription(
+      clinic.name,
+      clinic.category,
+    );
     List<String> features = const [];
     String? holidayNotice;
 
@@ -48,9 +53,13 @@ class ClinicDetailsRepositoryImpl implements ClinicDetailsRepository {
       final doc = await _firestore.collection('clinics').doc(clinicId).get();
       if (doc.exists) {
         final d = doc.data() ?? {};
-        if ((d['description'] ?? '').toString().isNotEmpty) description = d['description'].toString();
+        if ((d['description'] ?? '').toString().isNotEmpty) {
+          description = d['description'].toString();
+        }
         features = _featuresFrom(d);
-        if ((d['holidayNotice'] ?? '').toString().isNotEmpty) holidayNotice = d['holidayNotice'].toString();
+        if ((d['holidayNotice'] ?? '').toString().isNotEmpty) {
+          holidayNotice = d['holidayNotice'].toString();
+        }
       }
     } catch (e) {
       debugPrint('Error fetching clinic doc: $e');
@@ -62,7 +71,10 @@ class ClinicDetailsRepositoryImpl implements ClinicDetailsRepository {
     final summary = _summarize(reviews.map((r) => r.rating));
 
     return ClinicDetailsEntity(
-      clinic: clinic.withRating(rating: summary.average, reviewCount: reviews.length),
+      clinic: clinic.withRating(
+        rating: summary.average,
+        reviewCount: reviews.length,
+      ),
       starPercents: summary.starPercents,
       description: description,
       features: features,
@@ -77,7 +89,9 @@ class ClinicDetailsRepositoryImpl implements ClinicDetailsRepository {
   /// parking choice (+ wheelchair access) and the emergency on-call switch.
   static List<String> _featuresFrom(Map<String, dynamic> d) {
     final out = <String>[];
-    final loc = d['location'] is Map ? Map<String, dynamic>.from(d['location'] as Map) : const <String, dynamic>{};
+    final loc = d['location'] is Map
+        ? Map<String, dynamic>.from(d['location'] as Map)
+        : const <String, dynamic>{};
     final parking = (loc['parking'] ?? '').toString().toLowerCase();
     if (parking.isNotEmpty) {
       if (parking.startsWith('free parking')) {
@@ -87,7 +101,8 @@ class ClinicDetailsRepositoryImpl implements ClinicDetailsRepository {
       } else if (parking.startsWith('street parking')) {
         out.add('Street parking');
       }
-      if (parking.contains('wheelchair accessible') && !parking.contains('not wheelchair')) {
+      if (parking.contains('wheelchair accessible') &&
+          !parking.contains('not wheelchair')) {
         out.add('Wheelchair access');
       }
     }
@@ -95,22 +110,39 @@ class ClinicDetailsRepositoryImpl implements ClinicDetailsRepository {
     return out;
   }
 
-  Future<List<ClinicServiceModel>> _fetchServices(String clinicId, String cat) async {
+  Future<List<ClinicServiceModel>> _fetchServices(
+    String clinicId,
+    String cat,
+  ) async {
     try {
-      final snap = await _firestore.collection('services').where('clinicId', isEqualTo: clinicId).get();
-      if (snap.docs.isNotEmpty) return snap.docs.map(ClinicServiceModel.fromFirestore).toList();
+      final snap = await _firestore
+          .collection('services')
+          .where('clinicId', isEqualTo: clinicId)
+          .get();
+      if (snap.docs.isNotEmpty) {
+        return snap.docs.map(ClinicServiceModel.fromFirestore).toList();
+      }
     } catch (_) {}
     return const [];
   }
 
-  Future<List<ClinicDoctorModel>> _fetchDoctors(String clinicId, String cat) async {
+  Future<List<ClinicDoctorModel>> _fetchDoctors(
+    String clinicId,
+    String cat,
+  ) async {
     try {
-      final doctors = await ClinicDoctorModel.fetchForClinic(_firestore, clinicId);
+      final doctors = await ClinicDoctorModel.fetchForClinic(
+        _firestore,
+        clinicId,
+      );
       final ratings = await _fetchDoctorRatings(clinicId);
       return doctors.map((d) {
         final r = ratings[d.id];
         if (r == null || r.isEmpty) return d;
-        return d.withRating(rating: r.reduce((a, b) => a + b) / r.length, reviewCount: r.length);
+        return d.withRating(
+          rating: r.reduce((a, b) => a + b) / r.length,
+          reviewCount: r.length,
+        );
       }).toList();
     } catch (e) {
       debugPrint('Error fetching doctors: $e');
@@ -122,12 +154,17 @@ class ClinicDetailsRepositoryImpl implements ClinicDetailsRepository {
   Future<Map<String, List<int>>> _fetchDoctorRatings(String clinicId) async {
     final out = <String, List<int>>{};
     try {
-      final snap = await _firestore.collection('doctor_reviews').where('clinicId', isEqualTo: clinicId).get();
+      final snap = await _firestore
+          .collection('doctor_reviews')
+          .where('clinicId', isEqualTo: clinicId)
+          .get();
       for (final d in snap.docs) {
         final data = d.data();
         final id = (data['doctorId'] ?? '').toString();
         final r = (data['rating'] as num?)?.toInt() ?? 0;
-        if (id.isNotEmpty && r > 0) out.putIfAbsent(id, () => []).add(r.clamp(1, 5));
+        if (id.isNotEmpty && r > 0) {
+          out.putIfAbsent(id, () => []).add(r.clamp(1, 5));
+        }
       }
     } catch (e) {
       debugPrint('Error fetching doctor ratings: $e');
@@ -137,7 +174,10 @@ class ClinicDetailsRepositoryImpl implements ClinicDetailsRepository {
 
   Future<List<ClinicReviewModel>> _fetchReviews(String clinicId) async {
     try {
-      final snap = await _firestore.collection('reviews').where('clinicId', isEqualTo: clinicId).get();
+      final snap = await _firestore
+          .collection('reviews')
+          .where('clinicId', isEqualTo: clinicId)
+          .get();
       // Newest first; sorted here to avoid needing a composite index.
       final docs = snap.docs.toList()
         ..sort((a, b) {
@@ -153,7 +193,9 @@ class ClinicDetailsRepositoryImpl implements ClinicDetailsRepository {
   }
 
   /// Average rating and the share of each star (5★ → 1★) for [ratings].
-  static ({double average, List<int> starPercents}) _summarize(Iterable<int> ratings) {
+  static ({double average, List<int> starPercents}) _summarize(
+    Iterable<int> ratings,
+  ) {
     final counts = List<int>.filled(5, 0);
     var total = 0, sum = 0;
     for (final r in ratings) {
@@ -197,8 +239,14 @@ class ClinicDetailsRepositoryImpl implements ClinicDetailsRepository {
   /// Stores the average rating on the clinic doc so lists and the platform console can show it.
   Future<void> _syncClinicRating(String clinicId) async {
     try {
-      final snap = await _firestore.collection('reviews').where('clinicId', isEqualTo: clinicId).get();
-      final ratings = snap.docs.map((d) => (d.data()['rating'] as num?)?.toInt() ?? 0).where((r) => r > 0).toList();
+      final snap = await _firestore
+          .collection('reviews')
+          .where('clinicId', isEqualTo: clinicId)
+          .get();
+      final ratings = snap.docs
+          .map((d) => (d.data()['rating'] as num?)?.toInt() ?? 0)
+          .where((r) => r > 0)
+          .toList();
       final summary = _summarize(ratings);
       await _firestore.collection('clinics').doc(clinicId).set({
         'rating': double.parse(summary.average.toStringAsFixed(2)),
@@ -219,21 +267,26 @@ class ClinicDetailsRepositoryImpl implements ClinicDetailsRepository {
     final user = _auth.currentUser;
     if (user == null) throw Exception('Please sign in to rate this doctor.');
     final name = user.displayName?.trim() ?? '';
-    await _firestore.collection('doctor_reviews').doc('${doctorId}_${user.uid}').set({
-      'clinicId': clinicId,
-      'doctorId': doctorId,
-      'patientId': user.uid,
-      'patientName': name.isNotEmpty ? name : 'Verified Patient',
-      'rating': rating.clamp(1, 5),
-      'comment': comment,
-      'createdAt': FieldValue.serverTimestamp(),
-    });
+    await _firestore
+        .collection('doctor_reviews')
+        .doc('${doctorId}_${user.uid}')
+        .set({
+          'clinicId': clinicId,
+          'doctorId': doctorId,
+          'patientId': user.uid,
+          'patientName': name.isNotEmpty ? name : 'Verified Patient',
+          'rating': rating.clamp(1, 5),
+          'comment': comment,
+          'createdAt': FieldValue.serverTimestamp(),
+        });
   }
 
   @override
   Future<void> markReviewHelpful(String reviewId) async {
     try {
-      await _firestore.collection('reviews').doc(reviewId).update({'helpfulCount': FieldValue.increment(1)});
+      await _firestore.collection('reviews').doc(reviewId).update({
+        'helpfulCount': FieldValue.increment(1),
+      });
     } catch (_) {}
   }
 
@@ -242,7 +295,8 @@ class ClinicDetailsRepositoryImpl implements ClinicDetailsRepository {
     final user = _auth.currentUser;
     if (user == null) return false;
     try {
-      final data = (await _firestore.collection('users').doc(user.uid).get()).data();
+      final data = (await _firestore.collection('users').doc(user.uid).get())
+          .data();
       final favs = data?['favoriteClinics'];
       return favs is Map && favs.containsKey(clinicId);
     } catch (e) {

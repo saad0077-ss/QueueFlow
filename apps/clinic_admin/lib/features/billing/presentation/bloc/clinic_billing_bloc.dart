@@ -6,7 +6,8 @@ import 'clinic_billing_state.dart';
 class ClinicBillingBloc extends Bloc<ClinicBillingEvent, ClinicBillingState> {
   final ClinicBillingRepository repository;
 
-  ClinicBillingBloc({required this.repository}) : super(const ClinicBillingState()) {
+  ClinicBillingBloc({required this.repository})
+    : super(const ClinicBillingState()) {
     on<ClinicBillingStarted>(_onStarted);
     on<ClinicBillingCadenceToggled>(_onCadenceToggled);
     on<ClinicBillingPlanChangeRequested>(_onPlanChangeRequested);
@@ -15,25 +16,32 @@ class ClinicBillingBloc extends Bloc<ClinicBillingEvent, ClinicBillingState> {
     on<ClinicBillingFeedbackDismissed>(_onFeedbackDismissed);
   }
 
-  Future<void> _onStarted(ClinicBillingStarted event, Emitter<ClinicBillingState> emit) async {
+  Future<void> _onStarted(
+    ClinicBillingStarted event,
+    Emitter<ClinicBillingState> emit,
+  ) async {
     emit(state.copyWith(status: ClinicBillingStatus.loading));
     try {
       final sub = await repository.getClinicSubscription();
       final tiers = await repository.getPlanTiers();
       final invoices = await repository.getInvoices();
-      emit(state.copyWith(
-        status: ClinicBillingStatus.success,
-        subscription: sub,
-        tiers: tiers,
-        invoices: invoices,
-        activeCadence: sub.billingCycle,
-      ));
+      emit(
+        state.copyWith(
+          status: ClinicBillingStatus.success,
+          subscription: sub,
+          tiers: tiers,
+          invoices: invoices,
+          activeCadence: sub.billingCycle,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
-        status: ClinicBillingStatus.failure,
-        feedbackMessage: 'Failed to load billing: $e',
-        isError: true,
-      ));
+      emit(
+        state.copyWith(
+          status: ClinicBillingStatus.failure,
+          feedbackMessage: 'Failed to load billing: $e',
+          isError: true,
+        ),
+      );
     }
   }
 
@@ -59,19 +67,24 @@ class ClinicBillingBloc extends Bloc<ClinicBillingEvent, ClinicBillingState> {
       );
       final sub = await repository.getClinicSubscription();
       final invoices = await repository.getInvoices();
-      emit(state.copyWith(
-        isSubmitting: false,
-        subscription: sub,
-        invoices: invoices,
-        feedbackMessage: '${event.targetTier.name} activated. Your receipt is available in Invoice History.',
-        isError: false,
-      ));
+      emit(
+        state.copyWith(
+          isSubmitting: false,
+          subscription: sub,
+          invoices: invoices,
+          feedbackMessage:
+              '${event.targetTier.name} activated. Your receipt is available in Invoice History.',
+          isError: false,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
-        isSubmitting: false,
-        feedbackMessage: e.toString().replaceFirst('Exception: ', ''),
-        isError: true,
-      ));
+      emit(
+        state.copyWith(
+          isSubmitting: false,
+          feedbackMessage: e.toString().replaceFirst('Exception: ', ''),
+          isError: true,
+        ),
+      );
     }
   }
 
@@ -83,18 +96,22 @@ class ClinicBillingBloc extends Bloc<ClinicBillingEvent, ClinicBillingState> {
     try {
       await repository.updateBillingContact(event.contact);
       final sub = await repository.getClinicSubscription();
-      emit(state.copyWith(
-        isSubmitting: false,
-        subscription: sub,
-        feedbackMessage: 'GST and billing information updated successfully.',
-        isError: false,
-      ));
+      emit(
+        state.copyWith(
+          isSubmitting: false,
+          subscription: sub,
+          feedbackMessage: 'GST and billing information updated successfully.',
+          isError: false,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
-        isSubmitting: false,
-        feedbackMessage: 'Failed to update billing details: $e',
-        isError: true,
-      ));
+      emit(
+        state.copyWith(
+          isSubmitting: false,
+          feedbackMessage: 'Failed to update billing details: $e',
+          isError: true,
+        ),
+      );
     }
   }
 
@@ -104,16 +121,20 @@ class ClinicBillingBloc extends Bloc<ClinicBillingEvent, ClinicBillingState> {
   ) async {
     try {
       final invoices = await repository.getInvoices();
-      emit(state.copyWith(
-        invoices: invoices,
-        feedbackMessage: 'Invoices list refreshed.',
-        isError: false,
-      ));
+      emit(
+        state.copyWith(
+          invoices: invoices,
+          feedbackMessage: 'Invoices list refreshed.',
+          isError: false,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
-        feedbackMessage: 'Failed to refresh invoices: $e',
-        isError: true,
-      ));
+      emit(
+        state.copyWith(
+          feedbackMessage: 'Failed to refresh invoices: $e',
+          isError: true,
+        ),
+      );
     }
   }
 

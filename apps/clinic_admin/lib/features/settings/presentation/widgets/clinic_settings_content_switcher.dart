@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import '../../domain/entities/clinic_settings_entity.dart';
 import '../bloc/clinic_settings_bloc.dart';
 import '../bloc/clinic_settings_event.dart';
@@ -36,7 +36,8 @@ class ClinicSettingsContentSwitcher extends StatelessWidget {
           schedule: settings.schedule,
           onDayChanged: (d) => bloc.add(ClinicSettingsDayUpdated(d)),
           onApplyPreset: (p) => bloc.add(ClinicSettingsPresetApplied(p)),
-          onCopyMonday: () => bloc.add(const ClinicSettingsCopyMondayToWeekdays()),
+          onCopyMonday: () =>
+              bloc.add(const ClinicSettingsCopyMondayToWeekdays()),
           onSave: (s) => bloc.add(ClinicSettingsScheduleSaved(s)),
           onRevert: () => bloc.add(const ClinicSettingsStarted()),
         );
@@ -48,22 +49,32 @@ class ClinicSettingsContentSwitcher extends StatelessWidget {
       case 4:
         return ClinicSecurityPanel(
           security: settings.security,
-          onSave: ({required currentPassword, required newPassword, required requireTwoFactor}) {
-            bloc.add(ClinicSettingsSecurityUpdated(
-              currentPassword: currentPassword,
-              newPassword: newPassword,
-              requireTwoFactor: requireTwoFactor,
-            ));
-          },
+          onSave:
+              ({
+                required currentPassword,
+                required newPassword,
+                required requireTwoFactor,
+              }) {
+                bloc.add(
+                  ClinicSettingsSecurityUpdated(
+                    currentPassword: currentPassword,
+                    newPassword: newPassword,
+                    requireTwoFactor: requireTwoFactor,
+                  ),
+                );
+              },
         );
       case 0:
       default:
         return ClinicProfilePanel(
           profile: settings.profile,
           location: settings.location,
-          onJumpToLocationTab: () => bloc.add(const ClinicSettingsTabChanged(1)),
+          onJumpToLocationTab: () =>
+              bloc.add(const ClinicSettingsTabChanged(1)),
           isUploadingImage: isUploadingImage,
-          onImagePicked: (bytes, fileName) => bloc.add(ClinicSettingsProfileImagePicked(bytes: bytes, fileName: fileName)),
+          onImagePicked: (bytes, fileName) => bloc.add(
+            ClinicSettingsProfileImagePicked(bytes: bytes, fileName: fileName),
+          ),
           onSave: (p) => bloc.add(ClinicSettingsProfileSaved(p)),
         );
     }

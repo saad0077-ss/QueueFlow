@@ -28,7 +28,9 @@ class DoctorDetailBackBar extends StatelessWidget {
             side: BorderSide(color: colors.border),
             backgroundColor: colors.surfaceSecondary,
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -63,7 +65,11 @@ class DoctorDetailBackBar extends StatelessWidget {
                 ),
               ),
             ),
-            Icon(Icons.chevron_right_rounded, size: 16, color: colors.textSubtle),
+            Icon(
+              Icons.chevron_right_rounded,
+              size: 16,
+              color: colors.textSubtle,
+            ),
             Text(
               doctorName,
               style: GoogleFonts.inter(

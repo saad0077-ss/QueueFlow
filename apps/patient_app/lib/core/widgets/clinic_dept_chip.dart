@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../features/home/domain/entities/clinic_entity.dart';
 import 'clinic_departments_dialog.dart';
 
@@ -54,11 +55,7 @@ class ClinicDeptChip extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 2),
-            Icon(
-              Icons.chevron_right_rounded,
-              size: 11,
-              color: colors.primary,
-            ),
+            Icon(Icons.chevron_right_rounded, size: 11, color: colors.primary),
           ],
         ),
       ),

@@ -5,6 +5,7 @@ import 'package:queueflow_ui/queueflow_ui.dart';
 class ClinicReviewsRatingCard extends StatelessWidget {
   final double rating;
   final int reviewCount;
+
   /// Share of reviews per star, ordered 5★ → 1★.
   final List<int> starPercents;
   final VoidCallback onRateClinic;
@@ -54,7 +55,9 @@ class ClinicReviewsRatingCard extends StatelessWidget {
                           (i) => Icon(
                             i < rating.floor()
                                 ? Icons.star
-                                : (i < rating ? Icons.star_half : Icons.star_border),
+                                : (i < rating
+                                      ? Icons.star_half
+                                      : Icons.star_border),
                             color: colors.ratingGold,
                             size: 16,
                           ),
@@ -79,7 +82,10 @@ class ClinicReviewsRatingCard extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: colors.primary,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -95,7 +101,11 @@ class ClinicReviewsRatingCard extends StatelessWidget {
           const SizedBox(height: 14),
           for (var i = 0; i < 5; i++) ...[
             if (i > 0) const SizedBox(height: 4),
-            _buildBar('${5 - i} ★', i < starPercents.length ? starPercents[i] : 0, colors),
+            _buildBar(
+              '${5 - i} ★',
+              i < starPercents.length ? starPercents[i] : 0,
+              colors,
+            ),
           ],
         ],
       ),

@@ -10,16 +10,16 @@ class AppointmentTrendCard extends StatelessWidget {
 
   const AppointmentTrendCard({super.key, this.data = const []});
 
-  @override 
+  @override
   Widget build(BuildContext context) {
     final colors = context.colors;
     final total = data.fold<int>(0, (s, d) => s + d.count);
     final peak = data.fold<int>(0, (m, d) => d.count > m ? d.count : m);
     final avg = data.isEmpty ? 0.0 : total / data.length;
     final peakDay = peak == 0
-        ? '—' 
+        ? '—'
         : data.firstWhere((d) => d.count == peak).label;
- 
+
     return Container(
       decoration: BoxDecoration(
         color: colors.surface,
@@ -43,10 +43,7 @@ class AppointmentTrendCard extends StatelessWidget {
               ),
               Text(
                 'Last 7 days',
-                style: GoogleFonts.inter(
-                  fontSize: 12,
-                  color: colors.textMuted,
-                ),
+                style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted),
               ),
             ],
           ),

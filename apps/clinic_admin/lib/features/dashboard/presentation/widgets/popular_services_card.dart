@@ -63,10 +63,7 @@ class PopularServicesCard extends StatelessWidget {
               ),
               Text(
                 'Based on patient bookings',
-                style: GoogleFonts.inter(
-                  fontSize: 12,
-                  color: colors.textMuted,
-                ),
+                style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted),
               ),
             ],
           ),
@@ -88,10 +85,7 @@ class PopularServicesCard extends StatelessWidget {
           else
             for (var g = 0; g < groups.length; g++) ...[
               if (g > 0) const SizedBox(height: 20),
-              _DepartmentGroup(
-                name: groups[g].key,
-                items: groups[g].value,
-              ),
+              _DepartmentGroup(name: groups[g].key, items: groups[g].value),
             ],
         ],
       ),
@@ -122,8 +116,11 @@ class _DepartmentGroup extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Icon(Icons.local_hospital_outlined,
-                  size: 14, color: colors.primary),
+              Icon(
+                Icons.local_hospital_outlined,
+                size: 14,
+                color: colors.primary,
+              ),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(

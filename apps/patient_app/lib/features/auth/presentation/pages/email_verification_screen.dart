@@ -1,7 +1,9 @@
 import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../../main.dart';
 import '../widgets/email_verification_actions.dart';
@@ -14,7 +16,8 @@ class EmailVerificationScreen extends StatefulWidget {
   const EmailVerificationScreen({super.key, required this.email});
 
   @override
-  State<EmailVerificationScreen> createState() => _EmailVerificationScreenState();
+  State<EmailVerificationScreen> createState() =>
+      _EmailVerificationScreenState();
 }
 
 class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
@@ -55,11 +58,19 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     try {
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) await user.reload();
-      final isVerified = FirebaseAuth.instance.currentUser?.emailVerified ?? false;
+      final isVerified =
+          FirebaseAuth.instance.currentUser?.emailVerified ?? false;
       if (!mounted) return;
       if (isVerified) {
-        AppSnackBar.showSuccess(context, title: 'Email Verified', message: 'Your account is now activated. Welcome to QueueFlow!');
-        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (_) => const PatientHomeScreen()), (route) => false);
+        AppSnackBar.showSuccess(
+          context,
+          title: 'Email Verified',
+          message: 'Your account is now activated. Welcome to QueueFlow!',
+        );
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (_) => const PatientHomeScreen()),
+          (route) => false,
+        );
       } else {
         AppSnackBar.showError(
           context,
@@ -68,7 +79,12 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
         );
       }
     } catch (_) {
-      if (mounted) AppSnackBar.showError(context, message: 'Could not verify status. Please check your connection.');
+      if (mounted) {
+        AppSnackBar.showError(
+          context,
+          message: 'Could not verify status. Please check your connection.',
+        );
+      }
     } finally {
       if (mounted) setState(() => _isChecking = false);
     }
@@ -80,15 +96,26 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     try {
       final user = FirebaseAuth.instance.currentUser;
       if (user == null) {
-        if (mounted) AppSnackBar.showError(context, message: 'No user signed in.');
+        if (mounted) {
+          AppSnackBar.showError(context, message: 'No user signed in.');
+        }
         return;
       }
       await user.sendEmailVerification();
       if (!mounted) return;
-      AppSnackBar.showSuccess(context, title: 'Email Sent', message: 'A fresh verification email has been sent to ${widget.email}.');
+      AppSnackBar.showSuccess(
+        context,
+        title: 'Email Sent',
+        message: 'A fresh verification email has been sent to ${widget.email}.',
+      );
       _startCooldown(60);
     } catch (_) {
-      if (mounted) AppSnackBar.showError(context, message: 'Failed to resend verification email. Please try again.');
+      if (mounted) {
+        AppSnackBar.showError(
+          context,
+          message: 'Failed to resend verification email. Please try again.',
+        );
+      }
     } finally {
       if (mounted) setState(() => _isResending = false);
     }
@@ -99,7 +126,10 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
       await FirebaseAuth.instance.signOut();
     } catch (_) {}
     if (!mounted) return;
-    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (_) => const SignInScreen()), (route) => false);
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => const SignInScreen()),
+      (route) => false,
+    );
   }
 
   @override
@@ -113,7 +143,11 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
         if (didPop) return;
-        AppSnackBar.showError(context, title: 'Verification Required', message: 'Please verify your email address to access your account.');
+        AppSnackBar.showError(
+          context,
+          title: 'Verification Required',
+          message: 'Please verify your email address to access your account.',
+        );
       },
       child: Scaffold(
         backgroundColor: colors.background,

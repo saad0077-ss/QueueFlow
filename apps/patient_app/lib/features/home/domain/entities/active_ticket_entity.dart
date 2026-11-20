@@ -19,10 +19,10 @@ class ActiveTicketEntity extends Equatable {
     required this.clinicId,
     required this.clinicName,
     this.serviceName = 'General Consultation',
-    this.doctorName = 'Dr. Priya',
-    this.position = 3,
-    this.estWaitMin = 15,
-    this.nowServing = 'A-021',
+    this.doctorName = '',
+    this.position = 0,
+    this.estWaitMin = 0,
+    this.nowServing = '',
     this.status = 'waiting',
     this.joinedAt,
   });
@@ -38,16 +38,16 @@ class ActiveTicketEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        token,
-        clinicId,
-        clinicName,
-        serviceName,
-        doctorName,
-        position,
-        estWaitMin,
-        nowServing,
-        status,
-        joinedAt,
-      ];
+    id,
+    token,
+    clinicId,
+    clinicName,
+    serviceName,
+    doctorName,
+    position,
+    estWaitMin,
+    nowServing,
+    status,
+    joinedAt,
+  ];
 }

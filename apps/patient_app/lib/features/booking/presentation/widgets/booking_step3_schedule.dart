@@ -35,10 +35,28 @@ class BookingStep3Schedule extends StatefulWidget {
 }
 
 class _BookingStep3ScheduleState extends State<BookingStep3Schedule> {
-  static const _weekdayShort = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  static const _weekdayShort = [
+    'Mon',
+    'Tue',
+    'Wed',
+    'Thu',
+    'Fri',
+    'Sat',
+    'Sun',
+  ];
   static const _months = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
   ];
   late DateTime _weekStart;
 
@@ -89,10 +107,7 @@ class _BookingStep3ScheduleState extends State<BookingStep3Schedule> {
         const SizedBox(height: 4),
         Text(
           'Choose an available day this week, then a time slot.',
-          style: GoogleFonts.inter(
-            fontSize: 12.5,
-            color: colors.textMuted,
-          ),
+          style: GoogleFonts.inter(fontSize: 12.5, color: colors.textMuted),
         ),
         const SizedBox(height: 16),
         _buildCalendarCard(),
@@ -139,7 +154,9 @@ class _BookingStep3ScheduleState extends State<BookingStep3Schedule> {
             Expanded(
               child: GradientButton(
                 text: 'Review Booking',
-                onPressed: widget.selectedSlot.isNotEmpty ? widget.onContinue : null,
+                onPressed: widget.selectedSlot.isNotEmpty
+                    ? widget.onContinue
+                    : null,
               ),
             ),
           ],
@@ -171,10 +188,16 @@ class _BookingStep3ScheduleState extends State<BookingStep3Schedule> {
         children: [
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            decoration: const BoxDecoration(gradient: AppColors.primaryGradient),
+            decoration: const BoxDecoration(
+              gradient: AppColors.primaryGradient,
+            ),
             child: Row(
               children: [
-                const Icon(Icons.calendar_month_rounded, size: 18, color: Colors.white),
+                const Icon(
+                  Icons.calendar_month_rounded,
+                  size: 18,
+                  color: Colors.white,
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -193,7 +216,9 @@ class _BookingStep3ScheduleState extends State<BookingStep3Schedule> {
                     padding: const EdgeInsets.all(4),
                     child: Icon(
                       Icons.chevron_left_rounded,
-                      color: Colors.white.withValues(alpha: _canGoPrev ? 1 : 0.35),
+                      color: Colors.white.withValues(
+                        alpha: _canGoPrev ? 1 : 0.35,
+                      ),
                       size: 22,
                     ),
                   ),
@@ -204,7 +229,11 @@ class _BookingStep3ScheduleState extends State<BookingStep3Schedule> {
                   borderRadius: BorderRadius.circular(20),
                   child: const Padding(
                     padding: EdgeInsets.all(4),
-                    child: Icon(Icons.chevron_right_rounded, color: Colors.white, size: 22),
+                    child: Icon(
+                      Icons.chevron_right_rounded,
+                      color: Colors.white,
+                      size: 22,
+                    ),
                   ),
                 ),
               ],
@@ -243,28 +272,40 @@ class _BookingStep3ScheduleState extends State<BookingStep3Schedule> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Container(width: 8, height: 8, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+        Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
         const SizedBox(width: 5),
-        Text(label, style: GoogleFonts.inter(fontSize: 10.5, color: colors.textMuted)),
+        Text(
+          label,
+          style: GoogleFonts.inter(fontSize: 10.5, color: colors.textMuted),
+        ),
       ],
     );
   }
 
-  Widget _buildDayTile(DateTime date, DateTime today, ClinicDoctorItem? doctor) {
+  Widget _buildDayTile(
+    DateTime date,
+    DateTime today,
+    ClinicDoctorItem? doctor,
+  ) {
     final colors = context.colors;
     final isPast = date.isBefore(today);
     final onLeave = !isPast && (doctor?.isOnLeave(date) ?? false);
     final bookable = !isPast && (doctor?.isBookableOn(date) ?? false);
-    final isSelected = bookable && DateUtils.isSameDay(date, widget.selectedDate);
+    final isSelected =
+        bookable && DateUtils.isSameDay(date, widget.selectedDate);
     final isToday = DateUtils.isSameDay(date, today);
 
     final Color textColor = isSelected
         ? Colors.white
         : onLeave
-            ? colors.error
-            : bookable
-                ? colors.textPrimary
-                : colors.textSubtle.withValues(alpha: 0.45);
+        ? colors.error
+        : bookable
+        ? colors.textPrimary
+        : colors.textSubtle.withValues(alpha: 0.45);
 
     return GestureDetector(
       onTap: bookable ? () => widget.onDateSelected(date) : null,
@@ -277,15 +318,23 @@ class _BookingStep3ScheduleState extends State<BookingStep3Schedule> {
           color: isSelected
               ? null
               : onLeave
-                  ? colors.error.withValues(alpha: 0.12)
-                  : (isToday ? colors.primaryTint : Colors.transparent),
+              ? colors.error.withValues(alpha: 0.12)
+              : (isToday ? colors.primaryTint : Colors.transparent),
           border: Border.all(
             color: onLeave
                 ? colors.error.withValues(alpha: 0.6)
-                : (isToday && !isSelected ? colors.primary.withValues(alpha: 0.5) : Colors.transparent),
+                : (isToday && !isSelected
+                      ? colors.primary.withValues(alpha: 0.5)
+                      : Colors.transparent),
           ),
           boxShadow: isSelected
-              ? [BoxShadow(color: colors.primary.withValues(alpha: 0.4), blurRadius: 8, offset: const Offset(0, 2))]
+              ? [
+                  BoxShadow(
+                    color: colors.primary.withValues(alpha: 0.4),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
               : null,
         ),
         child: Column(
@@ -296,7 +345,9 @@ class _BookingStep3ScheduleState extends State<BookingStep3Schedule> {
               style: GoogleFonts.inter(
                 fontSize: 10.5,
                 fontWeight: FontWeight.w700,
-                color: isSelected ? Colors.white70 : (onLeave ? colors.error : colors.textSubtle),
+                color: isSelected
+                    ? Colors.white70
+                    : (onLeave ? colors.error : colors.textSubtle),
               ),
             ),
             const SizedBox(height: 6),
@@ -304,7 +355,9 @@ class _BookingStep3ScheduleState extends State<BookingStep3Schedule> {
               '${date.day}',
               style: GoogleFonts.inter(
                 fontSize: 15,
-                fontWeight: isSelected || isToday ? FontWeight.w800 : FontWeight.w600,
+                fontWeight: isSelected || isToday
+                    ? FontWeight.w800
+                    : FontWeight.w600,
                 color: textColor,
               ),
             ),
@@ -318,8 +371,8 @@ class _BookingStep3ScheduleState extends State<BookingStep3Schedule> {
                 color: onLeave
                     ? colors.error
                     : (bookable
-                        ? (isSelected ? Colors.white : colors.primary)
-                        : Colors.transparent),
+                          ? (isSelected ? Colors.white : colors.primary)
+                          : Colors.transparent),
               ),
             ),
           ],
@@ -341,72 +394,87 @@ class _BookingStep3ScheduleState extends State<BookingStep3Schedule> {
       );
     }
 
-    return LayoutBuilder(builder: (context, constraints) {
-      const cols = 3;
-      const gap = 8.0;
-      final w = (constraints.maxWidth - gap * (cols - 1)) / cols;
-      return Wrap(
-      spacing: gap,
-      runSpacing: gap,
-      children: widget.availableSlots.map((slot) {
-        final isBooked = widget.bookedSlots.contains(slot.trim().toUpperCase());
-        final isSelected = !isBooked && slot == widget.selectedSlot;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const cols = 3;
+        const gap = 8.0;
+        final w = (constraints.maxWidth - gap * (cols - 1)) / cols;
+        return Wrap(
+          spacing: gap,
+          runSpacing: gap,
+          children: widget.availableSlots.map((slot) {
+            final isBooked = widget.bookedSlots.contains(
+              slot.trim().toUpperCase(),
+            );
+            final isSelected = !isBooked && slot == widget.selectedSlot;
 
-        return GestureDetector(
-          onTap: isBooked ? null : () => widget.onSlotSelected(slot),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 180),
-            width: w,
-            alignment: Alignment.center,
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            decoration: BoxDecoration(
-              gradient: isSelected ? AppColors.primaryGradient : null,
-              color: isSelected
-                  ? null
-                  : (isBooked ? colors.border.withValues(alpha: 0.25) : colors.surface),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: isSelected ? Colors.transparent : colors.border,
-                width: 1.2,
-              ),
-              boxShadow: isSelected
-                  ? [
-                      BoxShadow(
-                        color: colors.primary.withValues(alpha: 0.3),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
-                      ),
-                    ]
-                  : null,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  slot,
-                  style: GoogleFonts.inter(
-                    fontSize: 12,
-                    fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-                    decoration: isBooked ? TextDecoration.lineThrough : null,
-                    color: isSelected
-                        ? Colors.white
-                        : (isBooked ? colors.textSubtle.withValues(alpha: 0.6) : colors.textPrimary),
+            return GestureDetector(
+              onTap: isBooked ? null : () => widget.onSlotSelected(slot),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 180),
+                width: w,
+                alignment: Alignment.center,
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                decoration: BoxDecoration(
+                  gradient: isSelected ? AppColors.primaryGradient : null,
+                  color: isSelected
+                      ? null
+                      : (isBooked
+                            ? colors.border.withValues(alpha: 0.25)
+                            : colors.surface),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: isSelected ? Colors.transparent : colors.border,
+                    width: 1.2,
                   ),
+                  boxShadow: isSelected
+                      ? [
+                          BoxShadow(
+                            color: colors.primary.withValues(alpha: 0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ]
+                      : null,
                 ),
-                if (isBooked)
-                  Text(
-                    'Booked',
-                    style: GoogleFonts.inter(fontSize: 9.5, fontWeight: FontWeight.w700, color: colors.error),
-                  ),
-              ],
-            ),
-          ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      slot,
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        fontWeight: isSelected
+                            ? FontWeight.w800
+                            : FontWeight.w600,
+                        decoration: isBooked
+                            ? TextDecoration.lineThrough
+                            : null,
+                        color: isSelected
+                            ? Colors.white
+                            : (isBooked
+                                  ? colors.textSubtle.withValues(alpha: 0.6)
+                                  : colors.textPrimary),
+                      ),
+                    ),
+                    if (isBooked)
+                      Text(
+                        'Booked',
+                        style: GoogleFonts.inter(
+                          fontSize: 9.5,
+                          fontWeight: FontWeight.w700,
+                          color: colors.error,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            );
+          }).toList(),
         );
-      }).toList(),
-      );
-    });
+      },
+    );
   }
-
 
   Widget _buildFeePreviewCard() {
     final colors = context.colors;
@@ -446,18 +514,11 @@ class _BookingStep3ScheduleState extends State<BookingStep3Schedule> {
             children: [
               Text(
                 'Payment Gateway',
-                style: GoogleFonts.inter(
-                  fontSize: 12,
-                  color: colors.textMuted,
-                ),
+                style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted),
               ),
               Row(
                 children: [
-                  Icon(
-                    Icons.bolt_rounded,
-                    size: 15,
-                    color: colors.accent,
-                  ),
+                  Icon(Icons.bolt_rounded, size: 15, color: colors.accent),
                   const SizedBox(width: 4),
                   Text(
                     'Razorpay (Test Mode)',

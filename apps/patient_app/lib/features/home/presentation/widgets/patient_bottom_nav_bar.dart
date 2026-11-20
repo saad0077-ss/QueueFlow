@@ -22,9 +22,7 @@ class PatientBottomNavBar extends StatelessWidget {
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
       decoration: BoxDecoration(
         color: colors.navBarBg,
-        border: Border(
-          top: BorderSide(color: colors.navBarBorder, width: 1),
-        ),
+        border: Border(top: BorderSide(color: colors.navBarBorder, width: 1)),
       ),
       alignment: Alignment.center,
       child: ConstrainedBox(
@@ -80,7 +78,9 @@ class PatientBottomNavBar extends StatelessWidget {
   }) {
     final colors = context.colors;
     final isSelected = currentIndex == index;
-    final activeColor = context.isDarkMode ? const Color(0xFF38BDF8) : colors.primary;
+    final activeColor = context.isDarkMode
+        ? const Color(0xFF38BDF8)
+        : colors.primary;
     final color = isSelected ? activeColor : colors.textSubtle;
 
     Widget iconWidget;

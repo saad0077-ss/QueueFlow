@@ -16,18 +16,11 @@ class AppointmentStatusPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final bgColor = isCompleted
-        ? colors.badgeOpenBg
-        : colors.infoTint;
-    final textColor = isCompleted
-        ? colors.badgeOpenText
-        : colors.info;
+    final bgColor = isCompleted ? colors.badgeOpenBg : colors.infoTint;
+    final textColor = isCompleted ? colors.badgeOpenText : colors.info;
 
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 10,
-        vertical: 3.5,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3.5),
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(12),

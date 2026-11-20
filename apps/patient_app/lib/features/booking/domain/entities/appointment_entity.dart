@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+
 import 'payment_info_entity.dart';
 
 class AppointmentEntity extends Equatable {
@@ -136,28 +137,28 @@ class AppointmentEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        bookingRef,
-        clinicId,
-        clinicName,
-        clinicAddress,
-        customerId,
-        customerName,
-        customerPhone,
-        customerEmail,
-        doctorId,
-        doctorName,
-        doctorSpecialty,
-        serviceId,
-        serviceName,
-        serviceDuration,
-        servicePrice,
-        dateRaw,
-        timeRaw,
-        dateTime,
-        status,
-        payment,
-        notes,
-        createdAt,
-      ];
+    id,
+    bookingRef,
+    clinicId,
+    clinicName,
+    clinicAddress,
+    customerId,
+    customerName,
+    customerPhone,
+    customerEmail,
+    doctorId,
+    doctorName,
+    doctorSpecialty,
+    serviceId,
+    serviceName,
+    serviceDuration,
+    servicePrice,
+    dateRaw,
+    timeRaw,
+    dateTime,
+    status,
+    payment,
+    notes,
+    createdAt,
+  ];
 }

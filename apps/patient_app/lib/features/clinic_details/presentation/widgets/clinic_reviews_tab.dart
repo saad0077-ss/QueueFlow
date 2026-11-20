@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../domain/entities/clinic_review_item.dart';
 import 'clinic_review_card.dart';
 import 'clinic_reviews_rating_card.dart';
@@ -39,10 +40,8 @@ class ClinicReviewsTab extends StatelessWidget {
           _buildEmptyReviews(colors)
         else
           ...reviews.map(
-            (r) => ClinicReviewCard(
-              review: r,
-              onHelpful: () => onHelpful(r.id),
-            ),
+            (r) =>
+                ClinicReviewCard(review: r, onHelpful: () => onHelpful(r.id)),
           ),
       ],
     );

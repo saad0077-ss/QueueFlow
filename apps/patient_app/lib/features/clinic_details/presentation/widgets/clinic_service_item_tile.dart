@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../domain/entities/clinic_service_item.dart';
 
 class ClinicServiceItemTile extends StatelessWidget {
   final ClinicServiceItem service;
   final VoidCallback? onTap;
 
-  const ClinicServiceItemTile({
-    super.key,
-    required this.service,
-    this.onTap,
-  });
+  const ClinicServiceItemTile({super.key, required this.service, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +23,9 @@ class ClinicServiceItemTile extends StatelessWidget {
         border: Border.all(color: colors.border, width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: context.isDarkMode ? 0.18 : 0.05),
+            color: Colors.black.withValues(
+              alpha: context.isDarkMode ? 0.18 : 0.05,
+            ),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -64,7 +63,10 @@ class ClinicServiceItemTile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      _DepartmentTag(name: service.departmentName, colors: colors),
+                      _DepartmentTag(
+                        name: service.departmentName,
+                        colors: colors,
+                      ),
                       const SizedBox(height: 6),
                       Text(
                         service.name,
@@ -167,11 +169,7 @@ class _DepartmentTag extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            Icons.local_hospital_outlined,
-            size: 11,
-            color: colors.primary,
-          ),
+          Icon(Icons.local_hospital_outlined, size: 11, color: colors.primary),
           const SizedBox(width: 4),
           Flexible(
             child: Text(

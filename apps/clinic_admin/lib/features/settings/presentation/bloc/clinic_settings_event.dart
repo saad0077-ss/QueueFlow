@@ -1,4 +1,4 @@
-﻿import 'dart:typed_data';
+import 'dart:typed_data';
 import 'package:equatable/equatable.dart';
 import '../../domain/entities/clinic_location_entity.dart';
 import '../../domain/entities/clinic_operating_schedule_entity.dart';
@@ -18,7 +18,8 @@ class ClinicSettingsStarted extends ClinicSettingsEvent {
 }
 
 class ClinicSettingsTabChanged extends ClinicSettingsEvent {
-  final int activeTab; // 0: Profile, 1: Location, 2: Hours, 3: Rules, 4: Security
+  final int
+  activeTab; // 0: Profile, 1: Location, 2: Hours, 3: Rules, 4: Security
 
   const ClinicSettingsTabChanged(this.activeTab);
 
@@ -30,7 +31,10 @@ class ClinicSettingsProfileImagePicked extends ClinicSettingsEvent {
   final Uint8List bytes;
   final String fileName;
 
-  const ClinicSettingsProfileImagePicked({required this.bytes, required this.fileName});
+  const ClinicSettingsProfileImagePicked({
+    required this.bytes,
+    required this.fileName,
+  });
 
   @override
   List<Object?> get props => [fileName, bytes.length];

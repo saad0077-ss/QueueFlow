@@ -41,7 +41,10 @@ class DoctorDetailView extends StatelessWidget {
         filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
         child: Dialog(
           backgroundColor: Colors.transparent,
-          insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 24,
+          ),
           child: Container(
             constraints: const BoxConstraints(maxWidth: 420),
             decoration: BoxDecoration(
@@ -67,7 +70,9 @@ class DoctorDetailView extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: colors.error.withValues(alpha: 0.14),
                     shape: BoxShape.circle,
-                    border: Border.all(color: colors.error.withValues(alpha: 0.3)),
+                    border: Border.all(
+                      color: colors.error.withValues(alpha: 0.3),
+                    ),
                   ),
                   alignment: Alignment.center,
                   child: Icon(
@@ -107,11 +112,16 @@ class DoctorDetailView extends StatelessWidget {
                           foregroundColor: colors.textMuted,
                           side: BorderSide(color: colors.border),
                           padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                         ),
                         child: Text(
                           'Cancel',
-                          style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w600),
+                          style: GoogleFonts.inter(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ),
@@ -121,22 +131,27 @@ class DoctorDetailView extends StatelessWidget {
                         onPressed: () {
                           Navigator.of(dialogCtx).pop();
                           context.read<ClinicDoctorsBloc>().add(
-                                DoctorDeletePressed(
-                                  doctorId: doctor.id,
-                                  doctorName: doctor.name,
-                                ),
-                              );
+                            DoctorDeletePressed(
+                              doctorId: doctor.id,
+                              doctorName: doctor.name,
+                            ),
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: colors.error,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                           elevation: 0,
                         ),
                         child: Text(
                           'Remove Doctor',
-                          style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w700),
+                          style: GoogleFonts.inter(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
                     ),
@@ -168,24 +183,28 @@ class DoctorDetailView extends StatelessWidget {
       context,
       doctor: doctor,
       onSave: (schedule, slotDuration) {
-        bloc.add(DoctorScheduleUpdated(
-          doctorId: doctor.id,
-          schedule: schedule,
-          slotDuration: slotDuration,
-        ));
+        bloc.add(
+          DoctorScheduleUpdated(
+            doctorId: doctor.id,
+            schedule: schedule,
+            slotDuration: slotDuration,
+          ),
+        );
       },
     );
   }
 
   void _updateLeave(BuildContext context, List<String> leaveDates) {
-    context.read<ClinicDoctorsBloc>().add(DoctorScheduleUpdated(
-          doctorId: doctor.id,
-          schedule: doctor.weeklySchedule.isNotEmpty
-              ? doctor.weeklySchedule
-              : DoctorDailySchedule.defaultWeekly(),
-          slotDuration: doctor.slotDuration,
-          leaveDates: leaveDates,
-        ));
+    context.read<ClinicDoctorsBloc>().add(
+      DoctorScheduleUpdated(
+        doctorId: doctor.id,
+        schedule: doctor.weeklySchedule.isNotEmpty
+            ? doctor.weeklySchedule
+            : DoctorDailySchedule.defaultWeekly(),
+        slotDuration: doctor.slotDuration,
+        leaveDates: leaveDates,
+      ),
+    );
   }
 
   @override
@@ -203,10 +222,7 @@ class DoctorDetailView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Back bar & Breadcrumb
-              DoctorDetailBackBar(
-                doctorName: doctor.name,
-                onBack: onBack,
-              ),
+              DoctorDetailBackBar(doctorName: doctor.name, onBack: onBack),
               const SizedBox(height: 16),
 
               // Header Card
@@ -214,7 +230,8 @@ class DoctorDetailView extends StatelessWidget {
                 doctor: doctor,
                 onEditProfile: () => _openEditProfile(context),
                 onManageSchedule: () => _openManageSchedule(context),
-                onToggleAccount: () => bloc.add(DoctorAccountStatusToggled(doctor.id)),
+                onToggleAccount: () =>
+                    bloc.add(DoctorAccountStatusToggled(doctor.id)),
                 onRemoveDoctor: () => _showRemoveConfirmationDialog(context),
               ),
 
@@ -263,7 +280,8 @@ class DoctorDetailView extends StatelessWidget {
                           const SizedBox(height: 18),
                           DoctorDetailDangerCard(
                             doctor: doctor,
-                            onRemoveDoctor: () => _showRemoveConfirmationDialog(context),
+                            onRemoveDoctor: () =>
+                                _showRemoveConfirmationDialog(context),
                           ),
                         ],
                       ),
@@ -287,7 +305,8 @@ class DoctorDetailView extends StatelessWidget {
                     const SizedBox(height: 18),
                     DoctorDetailDangerCard(
                       doctor: doctor,
-                      onRemoveDoctor: () => _showRemoveConfirmationDialog(context),
+                      onRemoveDoctor: () =>
+                          _showRemoveConfirmationDialog(context),
                     ),
                   ],
                 ),

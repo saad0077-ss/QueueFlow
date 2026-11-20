@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../../domain/entities/clinic_doctor_item.dart';
 
 class ClinicDoctorModel extends ClinicDoctorItem {
@@ -20,23 +21,26 @@ class ClinicDoctorModel extends ClinicDoctorItem {
     super.slotDuration,
   });
 
-  ClinicDoctorModel withRating({required double rating, required int reviewCount}) => ClinicDoctorModel(
-        id: id,
-        name: name,
-        initials: initials,
-        title: title,
-        specialty: specialty,
-        schedule: schedule,
-        isAvailable: isAvailable,
-        services: services,
-        department: department,
-        photoUrl: photoUrl,
-        rating: rating,
-        reviewCount: reviewCount,
-        weeklySchedule: weeklySchedule,
-        leaveDates: leaveDates,
-        slotDuration: slotDuration,
-      );
+  ClinicDoctorModel withRating({
+    required double rating,
+    required int reviewCount,
+  }) => ClinicDoctorModel(
+    id: id,
+    name: name,
+    initials: initials,
+    title: title,
+    specialty: specialty,
+    schedule: schedule,
+    isAvailable: isAvailable,
+    services: services,
+    department: department,
+    photoUrl: photoUrl,
+    rating: rating,
+    reviewCount: reviewCount,
+    weeklySchedule: weeklySchedule,
+    leaveDates: leaveDates,
+    slotDuration: slotDuration,
+  );
 
   factory ClinicDoctorModel.fromFirestore(DocumentSnapshot doc) {
     final map = (doc.data() as Map<String, dynamic>?) ?? {};
@@ -46,11 +50,16 @@ class ClinicDoctorModel extends ClinicDoctorItem {
   factory ClinicDoctorModel.fromMap(Map<String, dynamic> map, {String? id}) {
     final name = (map['name'] ?? 'Doctor').toString().trim();
     String initials = 'DR';
-    final parts = name.split(RegExp(r'\s+')).where((p) => p.isNotEmpty).toList();
+    final parts = name
+        .split(RegExp(r'\s+'))
+        .where((p) => p.isNotEmpty)
+        .toList();
     if (parts.length >= 2) {
       initials = '${parts[0][0]}${parts[1][0]}'.toUpperCase();
     } else if (parts.isNotEmpty) {
-      initials = parts[0].substring(0, parts[0].length >= 2 ? 2 : 1).toUpperCase();
+      initials = parts[0]
+          .substring(0, parts[0].length >= 2 ? 2 : 1)
+          .toUpperCase();
     }
 
     final rawServices = (map['services'] as List<dynamic>?) ?? [];
@@ -59,14 +68,25 @@ class ClinicDoctorModel extends ClinicDoctorItem {
       id: id ?? map['id'] ?? '',
       name: name,
       initials: (map['initials'] ?? initials).toString(),
-      title: (map['title'] ?? map['specialty'] ?? 'Senior Consultant').toString(),
+      title: (map['title'] ?? map['specialty'] ?? 'Senior Consultant')
+          .toString(),
       specialty: (map['specialty'] ?? 'General Medicine').toString(),
       schedule: (map['schedule'] ?? 'Mon–Sat, 9:00 AM – 5:00 PM').toString(),
-      isAvailable: map['isAvailable'] as bool? ??
-          !const {'offline', 'on_leave', 'on-leave', 'leave', 'off-duty', 'off_duty', 'inactive'}
-              .contains((map['status'] ?? '').toString().toLowerCase()),
+      isAvailable:
+          map['isAvailable'] as bool? ??
+          !const {
+            'offline',
+            'on_leave',
+            'on-leave',
+            'leave',
+            'off-duty',
+            'off_duty',
+            'inactive',
+          }.contains((map['status'] ?? '').toString().toLowerCase()),
       weeklySchedule: _parseWeekly(map['weeklySchedule']),
-      leaveDates: ((map['leaveDates'] as List<dynamic>?) ?? const []).map((e) => e.toString()).toList(),
+      leaveDates: ((map['leaveDates'] as List<dynamic>?) ?? const [])
+          .map((e) => e.toString())
+          .toList(),
       slotDuration: (map['slotDuration'] as num?)?.toInt() ?? 20,
       services: rawServices.map((e) => e.toString()).toList(),
       department: (map['department'] ?? map['specialty'] ?? '').toString(),
@@ -114,15 +134,29 @@ class ClinicDoctorModel extends ClinicDoctorItem {
       final m = raw[i];
       if (m is! Map) continue;
       final map = Map<String, dynamic>.from(m);
-      final account = (map['accountStatus'] ?? 'active').toString().toLowerCase();
-      if (account == 'inactive' || account == 'suspended' || account == 'disabled') continue;
+      final account = (map['accountStatus'] ?? 'active')
+          .toString()
+          .toLowerCase();
+      if (account == 'inactive' ||
+          account == 'suspended' ||
+          account == 'disabled') {
+        continue;
+      }
       final id = (map['id'] ?? '').toString();
-      doctors.add(ClinicDoctorModel.fromMap(map, id: id.isNotEmpty ? id : '$clinicId-doc-$i'));
+      doctors.add(
+        ClinicDoctorModel.fromMap(
+          map,
+          id: id.isNotEmpty ? id : '$clinicId-doc-$i',
+        ),
+      );
     }
     if (doctors.isNotEmpty) return doctors;
 
     // Older clinics may keep doctors in the `staff` collection.
-    final snap = await firestore.collection('staff').where('clinicId', isEqualTo: clinicId).get();
+    final snap = await firestore
+        .collection('staff')
+        .where('clinicId', isEqualTo: clinicId)
+        .get();
     return snap.docs.map(ClinicDoctorModel.fromFirestore).toList();
   }
 
