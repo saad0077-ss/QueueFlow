@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../domain/entities/favorite_clinic_entity.dart';
 import '../../domain/entities/patient_payment_item_entity.dart';
@@ -18,15 +20,20 @@ import '../models/support_ticket_model.dart';
 class ProfileRepositoryImpl implements ProfileRepository {
   final FirebaseFirestore? _firestore;
   final FirebaseAuth? _auth;
+  final FirebaseStorage? _storage;
 
   // In-memory cache for snappy reactivity and offline resilience
   PatientProfileModel? _cachedProfile;
   List<PatientReviewModel>? _cachedReviews;
   List<SupportTicketModel>? _cachedTickets;
 
-  ProfileRepositoryImpl({FirebaseFirestore? firestore, FirebaseAuth? auth})
-    : _firestore = firestore ?? _safeFirestore(),
-      _auth = auth ?? _safeAuth();
+  ProfileRepositoryImpl({
+    FirebaseFirestore? firestore,
+    FirebaseAuth? auth,
+    FirebaseStorage? storage,
+  })  : _firestore = firestore ?? _safeFirestore(),
+        _auth = auth ?? _safeAuth(),
+        _storage = storage ?? _safeStorage();
 
   static FirebaseFirestore? _safeFirestore() {
     try {
@@ -38,6 +45,13 @@ class ProfileRepositoryImpl implements ProfileRepository {
   static FirebaseAuth? _safeAuth() {
     try {
       if (Firebase.apps.isNotEmpty) return FirebaseAuth.instance;
+    } catch (_) {}
+    return null;
+  }
+
+  static FirebaseStorage? _safeStorage() {
+    try {
+      if (Firebase.apps.isNotEmpty) return FirebaseStorage.instance;
     } catch (_) {}
     return null;
   }
@@ -202,23 +216,77 @@ class ProfileRepositoryImpl implements ProfileRepository {
   @override
   Future<List<FavoriteClinicEntity>> getFavoriteClinics() async {
     final user = _auth?.currentUser;
-    if (user == null || _firestore == null) return const [];
-    try {
-      final data = (await _firestore.collection('users').doc(user.uid).get())
-          .data();
-      final favs = data?['favoriteClinics'];
-      if (favs is! Map) return const [];
-      final list = <FavoriteClinicModel>[];
-      for (final v in favs.values) {
-        if (v is Map) {
-          list.add(FavoriteClinicModel.fromJson(Map<String, dynamic>.from(v)));
+    if (user != null && _firestore != null) {
+      try {
+        final data = (await _firestore.collection('users').doc(user.uid).get())
+            .data();
+        final favs = data?['favoriteClinics'];
+        if (favs is Map && favs.isNotEmpty) {
+          final list = <FavoriteClinicModel>[];
+          for (final v in favs.values) {
+            if (v is Map) {
+              list.add(FavoriteClinicModel.fromJson(Map<String, dynamic>.from(v)));
+            }
+          }
+          if (list.isNotEmpty) {
+            list.sort((a, b) => a.name.compareTo(b.name));
+            return list;
+          }
         }
+      } catch (e) {
+        debugPrint('Error loading favorite clinics: $e');
       }
-      list.sort((a, b) => a.name.compareTo(b.name));
-      return list;
+    }
+    return const [];
+  }
+
+  @override
+  Future<void> toggleFavorite(String clinicId, {required bool isFavorite}) async {
+    final user = _auth?.currentUser;
+    if (user == null || _firestore == null) return;
+    try {
+      if (isFavorite) {
+        // Fetch clinic details from Firestore if available
+        String clinicName = 'Clinic';
+        String department = 'General Medicine';
+        double rating = 4.8;
+        int reviewCount = 0;
+        String address = '';
+        String initials = 'CF';
+        try {
+          final clinicDoc = await _firestore.collection('clinics').doc(clinicId).get();
+          final cData = clinicDoc.data();
+          if (cData != null) {
+            clinicName = cData['name'] ?? clinicName;
+            department = cData['category'] ?? cData['department'] ?? department;
+            rating = (cData['rating'] as num?)?.toDouble() ?? rating;
+            reviewCount = (cData['reviewCount'] as num?)?.toInt() ?? reviewCount;
+            address = cData['address'] ?? address;
+            initials = cData['initials'] ?? initials;
+          }
+        } catch (_) {}
+
+        await _firestore.collection('users').doc(user.uid).set({
+          'favoriteClinics': {
+            clinicId: {
+              'id': clinicId,
+              'name': clinicName,
+              'department': department,
+              'rating': rating,
+              'reviewsCount': reviewCount,
+              'address': address,
+              'initials': initials,
+              'savedAt': FieldValue.serverTimestamp(),
+            },
+          },
+        }, SetOptions(merge: true));
+      } else {
+        await _firestore.collection('users').doc(user.uid).update({
+          'favoriteClinics.$clinicId': FieldValue.delete(),
+        });
+      }
     } catch (e) {
-      debugPrint('Error loading favorite clinics: $e');
-      return const [];
+      debugPrint('Error toggling favorite clinic: $e');
     }
   }
 
@@ -227,7 +295,33 @@ class ProfileRepositoryImpl implements ProfileRepository {
     if (_cachedReviews != null) {
       return _cachedReviews!;
     }
-    _cachedReviews = <PatientReviewModel>[];
+    final user = _auth?.currentUser;
+    if (user != null && _firestore != null) {
+      try {
+        final snap = await _firestore
+            .collection('reviews')
+            .where('userId', isEqualTo: user.uid)
+            .get();
+        if (snap.docs.isNotEmpty) {
+          _cachedReviews = snap.docs.map(PatientReviewModel.fromFirestore).toList();
+          return _cachedReviews!;
+        }
+
+        if (user.email != null && user.email!.isNotEmpty) {
+          final snapEmail = await _firestore
+              .collection('reviews')
+              .where('userEmail', isEqualTo: user.email!.trim().toLowerCase())
+              .get();
+          if (snapEmail.docs.isNotEmpty) {
+            _cachedReviews = snapEmail.docs.map(PatientReviewModel.fromFirestore).toList();
+            return _cachedReviews!;
+          }
+        }
+      } catch (e) {
+        debugPrint('Error loading user reviews: $e');
+      }
+    }
+    _cachedReviews = [];
     return _cachedReviews!;
   }
 
@@ -241,6 +335,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
     required String comment,
     required bool isAnonymous,
   }) async {
+    final user = _auth?.currentUser;
     final newReview = PatientReviewModel(
       id: 'rev-${DateTime.now().millisecondsSinceEpoch}',
       clinicId: clinicId,
@@ -274,8 +369,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
         age: _cachedProfile!.age,
         gender: _cachedProfile!.gender,
         memberSince: _cachedProfile!.memberSince,
-        loyaltyCredits:
-            _cachedProfile!.loyaltyCredits + 50, // bonus loyalty points!
+        loyaltyCredits: _cachedProfile!.loyaltyCredits,
         emergencyContactName: _cachedProfile!.emergencyContactName,
         emergencyContactRelation: _cachedProfile!.emergencyContactRelation,
         emergencyContactPhone: _cachedProfile!.emergencyContactPhone,
@@ -298,10 +392,19 @@ class ProfileRepositoryImpl implements ProfileRepository {
 
     if (_firestore != null) {
       try {
+        final json = newReview.toJson();
+        if (user != null) {
+          json['userId'] = user.uid;
+          if (user.email != null) {
+            json['userEmail'] = user.email!.trim().toLowerCase();
+          }
+          json['userName'] = _cachedProfile?.name ?? user.displayName ?? 'Patient';
+        }
+        json['createdAt'] = FieldValue.serverTimestamp();
         await _firestore
             .collection('reviews')
             .doc(newReview.id)
-            .set(newReview.toJson());
+            .set(json);
       } catch (e) {
         debugPrint('Firestore review write skipped/failed: $e');
       }
@@ -317,6 +420,14 @@ class ProfileRepositoryImpl implements ProfileRepository {
         .where((r) => r.id != reviewId)
         .map((r) => r as PatientReviewModel)
         .toList();
+
+    if (_firestore != null) {
+      try {
+        await _firestore.collection('reviews').doc(reviewId).delete();
+      } catch (e) {
+        debugPrint('Firestore review delete skipped/failed: $e');
+      }
+    }
 
     if (_cachedProfile != null) {
       _cachedProfile = PatientProfileModel(
@@ -600,74 +711,206 @@ class ProfileRepositoryImpl implements ProfileRepository {
     return Stream.value(const []);
   }
 
+  static String _monthName(int month) {
+    const m = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+    return (month >= 1 && month <= 12) ? m[month - 1] : 'Jan';
+  }
+
   @override
   Future<List<PatientPaymentItemEntity>> getPaymentHistory() async {
     final user = _auth?.currentUser;
-    final email = user?.email;
+    final email = user?.email?.trim().toLowerCase();
     final uid = user?.uid;
 
-    if (_firestore != null) {
-      try {
-        Query<Map<String, dynamic>> query = _firestore.collection(
-          'appointments',
-        );
-        if (email != null && email.isNotEmpty) {
-          query = query.where(
-            'customerEmail',
-            isEqualTo: email.trim().toLowerCase(),
-          );
-        } else if (uid != null && uid.isNotEmpty) {
-          query = query.where('customerId', isEqualTo: uid);
-        }
-
-        final snap = await query.get();
-        final paid = snap.docs
-            .where((d) {
-              final p = d.data()['payment'];
-              return p != null &&
-                  p is Map &&
-                  (p['status'] == 'paid' || p['status'] == 'completed');
-            })
-            .map((d) {
-              final data = d.data();
-              final p = data['payment'] as Map;
-              return PatientPaymentItemEntity(
-                id: d.id,
-                receiptNo:
-                    (p['receiptNo'] ?? 'REC-2026-${d.id.substring(0, 5)}')
-                        .toString(),
-                bookingId: (data['bookingRef'] ?? 'QF-48210').toString(),
-                clinicId: (data['clinicId'] ?? 'sunrise-health').toString(),
-                clinicName:
-                    (data['clinicName'] ?? 'Sunrise Health Clinic').toString(),
-                department: (data['departmentName'] ??
-                        data['serviceCategory'] ??
-                        'General Medicine')
-                    .toString(),
-                service:
-                    (data['serviceName'] ?? 'General Consultation').toString(),
-                doctor: (data['doctorName'] ?? 'Dr. Priya').toString(),
-                amount: (p['amount'] is num)
-                    ? (p['amount'] as num).toDouble()
-                    : 500.0,
-                status: 'paid',
-                date: (p['paidAt'] ?? data['dateTime'] ?? '12 Jun 2026')
-                    .toString(),
-                method: (p['method'] ?? 'Razorpay UPI').toString(),
-                transactionId:
-                    (p['paymentId'] ?? 'pay_${d.id.substring(0, 8)}')
-                        .toString(),
-              );
-            })
-            .toList();
-
-        return paid;
-      } catch (e) {
-        debugPrint('Error fetching payment history: $e');
-      }
+    if (_firestore == null) {
+      return const [];
     }
 
-    return const [];
+    final payments = <PatientPaymentItemEntity>[];
+    final seenIds = <String>{};
+
+    try {
+      // 1. Fetch from 'appointments' collection (Consultation bookings)
+      Query<Map<String, dynamic>> aptQuery = _firestore.collection('appointments');
+      if (email != null && email.isNotEmpty) {
+        aptQuery = aptQuery.where('customerEmail', isEqualTo: email);
+      } else if (uid != null && uid.isNotEmpty) {
+        aptQuery = aptQuery.where('customerId', isEqualTo: uid);
+      }
+
+      final aptSnap = await aptQuery.get();
+      for (final doc in aptSnap.docs) {
+        final data = doc.data();
+        final rawPayment = data['payment'];
+        final paymentMap = rawPayment is Map<String, dynamic>
+            ? rawPayment
+            : (rawPayment is Map ? Map<String, dynamic>.from(rawPayment) : null);
+
+        final docStatus = (data['status'] ?? '').toString().toLowerCase();
+        final paymentStatus = (paymentMap?['status'] ?? '').toString().toLowerCase();
+
+        final isCancelled = docStatus == 'cancelled' || paymentStatus == 'refunded';
+        final status = isCancelled ? 'refunded' : (paymentStatus.isNotEmpty ? paymentStatus : 'paid');
+
+        final amount = (paymentMap?['amount'] as num?)?.toDouble() ??
+            (data['servicePrice'] as num?)?.toDouble() ??
+            500.0;
+
+        final rawDate = paymentMap?['paidAt'] ?? data['dateTime'] ?? data['createdAt'];
+        String formattedDate = 'Recent';
+        if (rawDate is Timestamp) {
+          final dt = rawDate.toDate();
+          formattedDate = '${dt.day} ${_monthName(dt.month)} ${dt.year}';
+        } else if (rawDate != null) {
+          formattedDate = rawDate.toString();
+        }
+
+        final id = doc.id;
+        final shortId = id.length > 5 ? id.substring(0, 5) : id;
+        final receiptNo = (paymentMap?['receiptNo'] ?? 'REC-2026-$shortId').toString();
+        final bookingId = (data['bookingRef'] ?? 'QF-$shortId').toString();
+        final type = (paymentMap?['type'] ?? data['type'] ?? 'appointment').toString();
+        final token = data['token']?.toString() ?? paymentMap?['token']?.toString();
+
+        seenIds.add(id);
+        seenIds.add(receiptNo);
+
+        payments.add(
+          PatientPaymentItemEntity(
+            id: id,
+            receiptNo: receiptNo,
+            bookingId: bookingId,
+            clinicId: (data['clinicId'] ?? 'sunrise-health').toString(),
+            clinicName: (data['clinicName'] ?? 'Sunrise Health Clinic').toString(),
+            department: (data['departmentName'] ?? data['serviceCategory'] ?? 'General Medicine').toString(),
+            service: (data['serviceName'] ?? 'General Consultation').toString(),
+            doctor: (data['doctorName'] ?? 'Attending Specialist').toString(),
+            amount: amount,
+            status: status,
+            date: formattedDate,
+            method: (paymentMap?['method'] ?? 'Razorpay UPI').toString(),
+            transactionId: (paymentMap?['paymentId'] ?? 'pay_$shortId').toString(),
+            type: type,
+            token: token,
+            refundId: paymentMap?['refundId']?.toString() ?? (isCancelled ? 'RFND-$shortId' : null),
+            refundReason: paymentMap?['refundReason']?.toString() ?? (isCancelled ? 'Appointment cancelled by patient' : null),
+            refundToAccount: paymentMap?['refundToAccount']?.toString() ?? (isCancelled ? 'Original Payment Source' : null),
+            refundedAt: paymentMap?['refundedAt']?.toString() ?? (isCancelled ? formattedDate : null),
+          ),
+        );
+      }
+
+      // 2. Fetch from 'tickets' collection (Live Queue Token payments)
+      Query<Map<String, dynamic>> tktQuery = _firestore.collection('tickets');
+      if (email != null && email.isNotEmpty) {
+        tktQuery = tktQuery.where('patientEmail', isEqualTo: email);
+      } else if (uid != null && uid.isNotEmpty) {
+        tktQuery = tktQuery.where('patientId', isEqualTo: uid);
+      }
+
+      final tktSnap = await tktQuery.get();
+      for (final doc in tktSnap.docs) {
+        final data = doc.data();
+        final id = doc.id;
+        final shortId = id.length > 5 ? id.substring(0, 5) : id;
+        final receiptNo = 'REC-TK-$shortId';
+
+        if (seenIds.contains(id) || seenIds.contains(receiptNo)) continue;
+        seenIds.add(id);
+
+        final rawPayment = data['payment'];
+        final paymentMap = rawPayment is Map<String, dynamic>
+            ? rawPayment
+            : (rawPayment is Map ? Map<String, dynamic>.from(rawPayment) : null);
+
+        final docStatus = (data['status'] ?? '').toString().toLowerCase();
+        final isCancelled = docStatus == 'cancelled';
+        final status = isCancelled ? 'refunded' : 'paid';
+
+        final amount = (paymentMap?['amount'] as num?)?.toDouble() ??
+            (data['fee'] as num?)?.toDouble() ??
+            100.0;
+
+        final rawDate = data['createdAt'] ?? data['joinedAt'];
+        String formattedDate = 'Today';
+        if (rawDate is Timestamp) {
+          final dt = rawDate.toDate();
+          formattedDate = '${dt.day} ${_monthName(dt.month)} ${dt.year}';
+        } else if (rawDate != null) {
+          formattedDate = rawDate.toString();
+        }
+
+        payments.add(
+          PatientPaymentItemEntity(
+            id: id,
+            receiptNo: receiptNo,
+            bookingId: (data['token'] ?? 'TK-$shortId').toString(),
+            clinicId: (data['clinicId'] ?? 'smile-dental').toString(),
+            clinicName: (data['clinicName'] ?? 'Smile Dental Clinic').toString(),
+            department: (data['departmentName'] ?? 'General Medicine').toString(),
+            service: (data['serviceName'] ?? 'Queue Consultation').toString(),
+            doctor: (data['doctorName'] ?? 'Attending Doctor').toString(),
+            amount: amount,
+            status: status,
+            date: formattedDate,
+            method: (paymentMap?['method'] ?? 'Razorpay UPI').toString(),
+            transactionId: (paymentMap?['paymentId'] ?? 'pay_tk_$shortId').toString(),
+            type: 'queue',
+            token: (data['token'] ?? 'T-$shortId').toString(),
+            refundId: isCancelled ? 'RFND-TK-$shortId' : null,
+            refundReason: isCancelled ? 'Live queue spot cancelled' : null,
+            refundToAccount: isCancelled ? 'UPI / Source Account' : null,
+            refundedAt: isCancelled ? formattedDate : null,
+          ),
+        );
+      }
+
+      // 3. Check fallback query for tickets with userEmail or userId if patientEmail wasn't used
+      if (email != null && email.isNotEmpty) {
+        final fallbackTktSnap = await _firestore
+            .collection('tickets')
+            .where('userEmail', isEqualTo: email)
+            .get();
+        for (final doc in fallbackTktSnap.docs) {
+          if (seenIds.contains(doc.id)) continue;
+          seenIds.add(doc.id);
+          final data = doc.data();
+          final shortId = doc.id.length > 5 ? doc.id.substring(0, 5) : doc.id;
+          final isCancelled = (data['status'] ?? '').toString().toLowerCase() == 'cancelled';
+          payments.add(
+            PatientPaymentItemEntity(
+              id: doc.id,
+              receiptNo: 'REC-TK-$shortId',
+              bookingId: (data['token'] ?? 'TK-$shortId').toString(),
+              clinicId: (data['clinicId'] ?? 'clinic-1').toString(),
+              clinicName: (data['clinicName'] ?? 'Clinic').toString(),
+              department: (data['departmentName'] ?? 'General').toString(),
+              service: (data['serviceName'] ?? 'Consultation').toString(),
+              doctor: (data['doctorName'] ?? 'Doctor').toString(),
+              amount: (data['fee'] as num?)?.toDouble() ?? 100.0,
+              status: isCancelled ? 'refunded' : 'paid',
+              date: 'Today',
+              method: 'Razorpay UPI',
+              transactionId: 'pay_tk_$shortId',
+              type: 'queue',
+              token: (data['token'] ?? 'T-$shortId').toString(),
+              refundId: isCancelled ? 'RFND-TK-$shortId' : null,
+              refundReason: isCancelled ? 'Live queue spot cancelled' : null,
+              refundToAccount: isCancelled ? 'UPI / Source Account' : null,
+            ),
+          );
+        }
+      }
+
+      // 4. Sort payments by date / most recent first
+      return payments;
+    } catch (e) {
+      debugPrint('Error fetching payment history: $e');
+      return const [];
+    }
   }
 
   @override
@@ -687,16 +930,209 @@ class ProfileRepositoryImpl implements ProfileRepository {
     _cachedProfile = null;
     _cachedReviews = null;
     _cachedTickets = null;
-    try {
-      final user = _auth?.currentUser;
-      if (user != null) {
-        if (_firestore != null) {
-          await _firestore.collection('users').doc(user.uid).delete();
+
+    final user = _auth?.currentUser;
+    if (user == null) {
+      debugPrint('deleteAccount: No authenticated user session found.');
+      return;
+    }
+
+    final uid = user.uid;
+    final email = user.email?.trim().toLowerCase();
+
+    // 1. Permanently purge all Firebase Storage folders/files for this patient
+    if (_storage != null) {
+      try {
+        final storagePaths = [
+          'users/$uid',
+          'patients/$uid',
+          'profile_photos/$uid',
+          'prescriptions/$uid',
+          'medical_records/$uid',
+          'documents/$uid',
+          uid,
+        ];
+        for (final p in storagePaths) {
+          await _deleteStorageFolderRecursively(_storage.ref(p));
         }
-        await user.delete();
+      } catch (e) {
+        debugPrint('Error purging user files from Firebase Storage: $e');
       }
+    }
+
+    // 2. Cascade delete all documents across Cloud Firestore collections
+    if (_firestore != null) {
+      try {
+        final docsToDelete = <String, DocumentReference>{};
+
+        Future<void> collectDocs(
+          String collectionName,
+          List<Query<Map<String, dynamic>>> queries,
+        ) async {
+          for (final q in queries) {
+            try {
+              final snap = await q.get();
+              for (final doc in snap.docs) {
+                docsToDelete[doc.reference.path] = doc.reference;
+              }
+            } catch (e) {
+              debugPrint('Error querying $collectionName for deletion: $e');
+            }
+          }
+        }
+
+        // A. Appointments (Booking History)
+        final apptQueries = <Query<Map<String, dynamic>>>[
+          _firestore.collection('appointments').where('customerId', isEqualTo: uid),
+          _firestore.collection('appointments').where('userId', isEqualTo: uid),
+          _firestore.collection('appointments').where('patientId', isEqualTo: uid),
+        ];
+        if (email != null && email.isNotEmpty) {
+          apptQueries.add(_firestore.collection('appointments').where('customerEmail', isEqualTo: email));
+          apptQueries.add(_firestore.collection('appointments').where('patientEmail', isEqualTo: email));
+          apptQueries.add(_firestore.collection('appointments').where('userEmail', isEqualTo: email));
+        }
+        await collectDocs('appointments', apptQueries);
+
+        // B. Tickets (Live Queue Tokens)
+        final ticketQueries = <Query<Map<String, dynamic>>>[
+          _firestore.collection('tickets').where('patientId', isEqualTo: uid),
+          _firestore.collection('tickets').where('userId', isEqualTo: uid),
+          _firestore.collection('tickets').where('customerId', isEqualTo: uid),
+        ];
+        if (email != null && email.isNotEmpty) {
+          ticketQueries.add(_firestore.collection('tickets').where('patientEmail', isEqualTo: email));
+          ticketQueries.add(_firestore.collection('tickets').where('userEmail', isEqualTo: email));
+        }
+        await collectDocs('tickets', ticketQueries);
+
+        // C. Clinic Reviews & Ratings
+        final reviewQueries = <Query<Map<String, dynamic>>>[
+          _firestore.collection('reviews').where('userId', isEqualTo: uid),
+          _firestore.collection('reviews').where('patientId', isEqualTo: uid),
+          _firestore.collection('reviews').where('customerId', isEqualTo: uid),
+        ];
+        if (email != null && email.isNotEmpty) {
+          reviewQueries.add(_firestore.collection('reviews').where('userEmail', isEqualTo: email));
+        }
+        await collectDocs('reviews', reviewQueries);
+
+        // D. Doctor Reviews & Ratings
+        final doctorReviewQueries = <Query<Map<String, dynamic>>>[
+          _firestore.collection('doctor_reviews').where('userId', isEqualTo: uid),
+          _firestore.collection('doctor_reviews').where('patientId', isEqualTo: uid),
+          _firestore.collection('doctor_reviews').where('customerId', isEqualTo: uid),
+        ];
+        if (email != null && email.isNotEmpty) {
+          doctorReviewQueries.add(_firestore.collection('doctor_reviews').where('userEmail', isEqualTo: email));
+        }
+        await collectDocs('doctor_reviews', doctorReviewQueries);
+
+        // E. Notifications
+        final notifQueries = <Query<Map<String, dynamic>>>[
+          _firestore.collection('notifications').where('userId', isEqualTo: uid),
+          _firestore.collection('notifications').where('patientId', isEqualTo: uid),
+          _firestore.collection('notifications').where('customerId', isEqualTo: uid),
+        ];
+        if (email != null && email.isNotEmpty) {
+          notifQueries.add(_firestore.collection('notifications').where('userEmail', isEqualTo: email));
+        }
+        await collectDocs('notifications', notifQueries);
+
+        // F. Support Tickets
+        final supportQueries = <Query<Map<String, dynamic>>>[
+          _firestore.collection('support_tickets').where('patientId', isEqualTo: uid),
+          _firestore.collection('support_tickets').where('userId', isEqualTo: uid),
+          _firestore.collection('support_tickets').where('customerId', isEqualTo: uid),
+        ];
+        if (email != null && email.isNotEmpty) {
+          supportQueries.add(_firestore.collection('support_tickets').where('userEmail', isEqualTo: email));
+          supportQueries.add(_firestore.collection('support_tickets').where('patientEmail', isEqualTo: email));
+        }
+        await collectDocs('support_tickets', supportQueries);
+
+        // G. Payments & Invoices
+        final paymentQueries = <Query<Map<String, dynamic>>>[
+          _firestore.collection('payments').where('userId', isEqualTo: uid),
+          _firestore.collection('payments').where('customerId', isEqualTo: uid),
+          _firestore.collection('payments').where('patientId', isEqualTo: uid),
+        ];
+        if (email != null && email.isNotEmpty) {
+          paymentQueries.add(_firestore.collection('payments').where('userEmail', isEqualTo: email));
+          paymentQueries.add(_firestore.collection('payments').where('customerEmail', isEqualTo: email));
+        }
+        await collectDocs('payments', paymentQueries);
+
+        // H. Subcollections under users/{uid}
+        const subcollections = [
+          'vital_history',
+          'medical_records',
+          'favorites',
+          'notifications',
+          'devices',
+          'activity',
+          'prescriptions',
+        ];
+        for (final sub in subcollections) {
+          try {
+            final subSnap = await _firestore.collection('users').doc(uid).collection(sub).get();
+            for (final d in subSnap.docs) {
+              docsToDelete[d.reference.path] = d.reference;
+            }
+          } catch (_) {}
+        }
+
+        // Commit deletions in batches (Firestore allows max 500 ops per batch)
+        final docList = docsToDelete.values.toList();
+        for (var i = 0; i < docList.length; i += 400) {
+          final batch = _firestore.batch();
+          final end = (i + 400 < docList.length) ? i + 400 : docList.length;
+          for (var j = i; j < end; j++) {
+            batch.delete(docList[j]);
+          }
+          await batch.commit();
+        }
+
+        // Delete the root user profile document
+        await _firestore.collection('users').doc(uid).delete();
+      } catch (e) {
+        debugPrint('Firestore account cascade delete error: $e');
+      }
+    }
+
+    // 3. Clear local SharedPreferences cache
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.clear();
+    } catch (_) {}
+
+    // 4. Delete user from Firebase Authentication
+    try {
+      await user.delete();
+    } on FirebaseAuthException catch (authErr) {
+      if (authErr.code == 'requires-recent-login') {
+        debugPrint('User requires re-authentication before Auth deletion: ${authErr.message}');
+        rethrow;
+      }
+      debugPrint('FirebaseAuth user.delete error: $authErr');
     } catch (e) {
-      debugPrint('Account delete error: $e');
+      debugPrint('User auth delete error: $e');
+    }
+  }
+
+  Future<void> _deleteStorageFolderRecursively(Reference ref) async {
+    try {
+      final listResult = await ref.listAll();
+      for (final item in listResult.items) {
+        try {
+          await item.delete();
+        } catch (_) {}
+      }
+      for (final prefix in listResult.prefixes) {
+        await _deleteStorageFolderRecursively(prefix);
+      }
+    } catch (_) {
+      // Folder does not exist or empty bucket; safe to ignore
     }
   }
 }

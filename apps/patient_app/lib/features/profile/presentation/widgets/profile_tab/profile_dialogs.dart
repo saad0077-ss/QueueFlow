@@ -87,7 +87,7 @@ class ProfileDialogs {
           ],
         ),
         content: Text(
-          'Are you sure you want to permanently delete your account? All your queue history and tokens will be reset.',
+          'Are you sure you want to permanently delete your account? All your profile information, appointment histories, live queue tokens, medical documents, ratings, and payment receipts will be permanently erased from the servers and cannot be recovered.',
           style: TextStyle(color: context.colors.textMuted, fontSize: 13),
         ),
         actions: [

@@ -112,11 +112,20 @@ extension _ProfileBlocDataHandlers on ProfileBloc {
       emit(
         state.copyWith(
           isLoggedOut: true,
-          successMessage: 'Account data reset successfully.',
+          successMessage: 'Account and all history permanently deleted.',
         ),
       );
     } catch (e) {
-      emit(state.copyWith(errorMessage: 'Account deletion failed: $e'));
+      if (e.toString().contains('requires-recent-login')) {
+        emit(
+          state.copyWith(
+            errorMessage:
+                'For security, please sign in again before deleting your account.',
+          ),
+        );
+      } else {
+        emit(state.copyWith(errorMessage: 'Account deletion failed: $e'));
+      }
     }
   }
 }

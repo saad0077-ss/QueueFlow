@@ -9,12 +9,12 @@ import '../bloc/profile_bloc.dart';
 import '../bloc/profile_event.dart';
 import '../bloc/profile_state.dart';
 import '../pages/edit_profile_screen.dart';
+import '../pages/favorite_clinics_screen.dart';
 import 'profile_chips_row.dart';
 import 'profile_hero_card.dart';
 import 'profile_stats_strip.dart';
 import 'profile_tab/profile_account_menu_section.dart';
 import 'profile_tab/profile_activity_menu_section.dart';
-import 'profile_tab/profile_dialogs.dart';
 import 'profile_tab/profile_preferences_menu_section.dart';
 import 'profile_tab/profile_support_legal_menu_section.dart';
 
@@ -92,7 +92,12 @@ class ProfileTabView extends StatelessWidget {
                       visitsCount: profile.visitsCount,
                       favoritesCount: state.favoriteClinics.length,
                       onVisitsTap: () => onVisitsTap?.call(),
-                      onFavoritesTap: () => ProfileDialogs.showComingSoon(context, 'Favorite Clinics'),
+                      onFavoritesTap: () => FavoriteClinicsScreen.open(
+                        context,
+                        initialClinics: state.favoriteClinics,
+                        onBookClinic: onVisitsTap != null ? (_) => onVisitsTap?.call() : null,
+                        onQueueClinic: onTrackLiveQueue != null ? (_) => onTrackLiveQueue?.call() : null,
+                      ),
                     ),
                     ProfileChipsRow(bloodGroup: profile.bloodGroup, age: profile.age, gender: profile.gender),
                     ProfileActivityMenuSection(state: state, onVisitsTap: onVisitsTap, onTrackLiveQueue: onTrackLiveQueue),

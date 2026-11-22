@@ -23,6 +23,8 @@ abstract class ProfileRepository {
 
   Future<List<FavoriteClinicEntity>> getFavoriteClinics();
 
+  Future<void> toggleFavorite(String clinicId, {required bool isFavorite});
+
   Future<List<PatientReviewEntity>> getUserReviews();
 
   Future<PatientReviewEntity> addReview({

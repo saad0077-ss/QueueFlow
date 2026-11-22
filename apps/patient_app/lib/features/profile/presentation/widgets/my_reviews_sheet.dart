@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+import '../../data/repositories/profile_repository_impl.dart';
 import '../../domain/entities/patient_review_entity.dart';
 import 'reviews/my_review_card.dart';
 import 'reviews/my_reviews_cubit.dart';
@@ -37,6 +38,7 @@ class MyReviewsSheet extends StatelessWidget {
 
     return BlocProvider(
       create: (_) => MyReviewsCubit(
+        repository: ProfileRepositoryImpl(),
         initialReviews: reviews,
         onDeleteCallback: onDeleteReview,
       ),
@@ -106,6 +108,7 @@ class MyReviewsSheet extends StatelessWidget {
                               separatorBuilder: (_, _) => const SizedBox(height: 12),
                               itemBuilder: (_, i) => MyReviewCard(
                                 review: state.reviews[i],
+                                onEdit: () {},
                                 onDelete: () => cubit.delete(state.reviews[i].id),
                               ),
                             ),

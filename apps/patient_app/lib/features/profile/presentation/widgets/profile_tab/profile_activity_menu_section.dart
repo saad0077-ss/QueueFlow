@@ -5,11 +5,11 @@ import 'package:patient_app/features/profile/presentation/bloc/profile_bloc.dart
 import 'package:patient_app/features/profile/presentation/bloc/profile_event.dart';
 import 'package:patient_app/features/profile/presentation/bloc/profile_state.dart';
 import 'package:patient_app/features/profile/presentation/pages/booking_history_screen.dart';
+import 'package:patient_app/features/profile/presentation/pages/favorite_clinics_screen.dart';
 import 'package:patient_app/features/profile/presentation/pages/live_queue_history_screen.dart';
-import '../my_reviews_sheet.dart';
-import '../payment_history/payment_history_sheet.dart';
+import 'package:patient_app/features/profile/presentation/pages/my_reviews_screen.dart';
+import 'package:patient_app/features/profile/presentation/pages/payment_history_screen.dart';
 import '../profile_menu_section.dart';
-import 'profile_dialogs.dart';
 
 class ProfileActivityMenuSection extends StatelessWidget {
   final ProfileState state;
@@ -69,14 +69,14 @@ class ProfileActivityMenuSection extends StatelessWidget {
         ProfileMenuItem(
           icon: const Text('💳', style: TextStyle(fontSize: 16)),
           iconBgColor: const Color(0xFF8B5CF6).withValues(alpha: 0.15),
-          title: 'Payment & Invoice History',
+          title: 'Payment History',
           subtitle: 'Consultation fees, receipts & refunds',
           trailing: _badge(
             const Color(0xFF8B5CF6),
             '₹${state.totalAmountPaid.toStringAsFixed(0)}',
             colors,
           ),
-          onTap: () => PaymentHistorySheet.show(context),
+          onTap: () => PaymentHistoryScreen.open(context),
         ),
         ProfileMenuItem(
           icon: const Text('⭐', style: TextStyle(fontSize: 16)),
@@ -88,10 +88,10 @@ class ProfileActivityMenuSection extends StatelessWidget {
             '${state.userReviews.length} Reviews',
             colors,
           ),
-          onTap: () => MyReviewsSheet.show(
+          onTap: () => MyReviewsScreen.open(
             context,
-            reviews: state.userReviews,
-            onDeleteReview: (id) => bloc.add(ProfileReviewDeleted(id)),
+            initialReviews: state.userReviews,
+            onDeleteCallback: (id) => bloc.add(ProfileReviewDeleted(id)),
           ),
         ),
         ProfileMenuItem(
@@ -107,7 +107,12 @@ class ProfileActivityMenuSection extends StatelessWidget {
               Icon(Icons.chevron_right_rounded, size: 18, color: colors.textSubtle),
             ],
           ),
-          onTap: () => ProfileDialogs.showComingSoon(context, 'Favorite Clinics'),
+          onTap: () => FavoriteClinicsScreen.open(
+            context,
+            initialClinics: state.favoriteClinics,
+            onBookClinic: onVisitsTap != null ? (_) => onVisitsTap?.call() : null,
+            onQueueClinic: onTrackLiveQueue != null ? (_) => onTrackLiveQueue?.call() : null,
+          ),
         ),
       ],
     );

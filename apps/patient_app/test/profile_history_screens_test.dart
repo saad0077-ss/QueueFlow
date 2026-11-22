@@ -268,7 +268,7 @@ void main() {
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Payment & Invoice History'), findsOneWidget);
+      expect(find.text('Payment History'), findsOneWidget);
       expect(find.text('No payment records found'), findsOneWidget);
     });
 
@@ -296,7 +296,7 @@ void main() {
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Payment & Invoice History'), findsOneWidget);
+      expect(find.text('Payment History'), findsOneWidget);
       expect(find.text('TOTAL SPENT'), findsOneWidget);
       expect(find.text('1 Paid'), findsOneWidget);
       expect(find.text('✓ Verified'), findsOneWidget);

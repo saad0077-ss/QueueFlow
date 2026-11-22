@@ -10,6 +10,12 @@ class PatientReviewEntity extends Equatable {
   final String comment;
   final bool isAnonymous;
   final String date;
+  final String service;
+  final String doctorSpecialty;
+  final int doctorRating;
+  final int clinicRating;
+  final List<String> doctorTags;
+  final int helpfulCount;
 
   const PatientReviewEntity({
     required this.id,
@@ -21,6 +27,12 @@ class PatientReviewEntity extends Equatable {
     required this.comment,
     required this.isAnonymous,
     required this.date,
+    this.service = 'General Consultation',
+    this.doctorSpecialty = 'Senior Attending Specialist',
+    this.doctorRating = 5,
+    this.clinicRating = 5,
+    this.doctorTags = const [],
+    this.helpfulCount = 2,
   });
 
   @override
@@ -34,5 +46,11 @@ class PatientReviewEntity extends Equatable {
     comment,
     isAnonymous,
     date,
+    service,
+    doctorSpecialty,
+    doctorRating,
+    clinicRating,
+    doctorTags,
+    helpfulCount,
   ];
 }
