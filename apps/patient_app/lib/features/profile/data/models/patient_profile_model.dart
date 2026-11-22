@@ -71,7 +71,7 @@ class PatientProfileModel extends PatientProfileEntity {
       age: null,
       gender: null,
       memberSince: 'Jan 2026',
-      loyaltyCredits: 450,
+      loyaltyCredits: 0,
       emergencyContactName: 'Farhan Rahman',
       emergencyContactRelation: 'Spouse',
       emergencyContactPhone: '+91 98470 11223',
@@ -88,7 +88,7 @@ class PatientProfileModel extends PatientProfileEntity {
       darkMode: false,
       visitsCount: 0,
       favoritesCount: 0,
-      reviewsCount: 2,
+      reviewsCount: 0,
     );
   }
 

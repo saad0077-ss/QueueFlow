@@ -43,6 +43,7 @@ dependencies:
   # QueueFlow UI: Shared internal UI components and theme library
   queueflow_ui:
     path: ../../packages/queueflow_ui
+  firebase_storage: ^13.6.1
 
 dev_dependencies:
   flutter_test:

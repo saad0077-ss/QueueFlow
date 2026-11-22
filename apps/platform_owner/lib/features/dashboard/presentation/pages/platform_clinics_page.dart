@@ -16,6 +16,7 @@ import '../../../departments/data/repositories/department_repository_impl.dart';
 import '../../../departments/domain/entities/department_entity.dart';
 import '../../../departments/presentation/pages/platform_departments_page.dart';
 import '../../../billing/presentation/pages/platform_billing_page.dart';
+import '../../../users/presentation/pages/platform_users_page.dart';
 import '../widgets/clinics_directory_content.dart';
 import '../widgets/console_sidebar.dart';
 import '../widgets/console_top_bar.dart';
@@ -52,6 +53,8 @@ class _PlatformClinicsViewState extends State<_PlatformClinicsView> {
   void _onSidebarNav(int i) {
     if (i == 1) {
       Navigator.pushReplacement(context, PageRouteBuilder(pageBuilder: (_, _, _) => const PlatformDepartmentsPage(), transitionDuration: Duration.zero));
+    } else if (i == 2) {
+      Navigator.pushReplacement(context, PageRouteBuilder(pageBuilder: (_, _, _) => const PlatformUsersPage(), transitionDuration: Duration.zero));
     } else if (i == 4) {
       Navigator.pushReplacement(context, PageRouteBuilder(pageBuilder: (_, _, _) => const PlatformBillingPage(), transitionDuration: Duration.zero));
     }

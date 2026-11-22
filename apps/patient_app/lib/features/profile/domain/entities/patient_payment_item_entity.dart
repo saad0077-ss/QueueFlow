@@ -15,6 +15,12 @@ class PatientPaymentItemEntity extends Equatable {
   final String date;
   final String method; // e.g. 'UPI (Google Pay)', 'Razorpay UPI', 'Credit Card'
   final String transactionId;
+  final String type; // 'queue' or 'appointment'
+  final String? token; // e.g. 'SH-GC-001' or 'A-024'
+  final String? refundId;
+  final String? refundReason;
+  final String? refundToAccount;
+  final String? refundedAt;
 
   const PatientPaymentItemEntity({
     required this.id,
@@ -30,10 +36,17 @@ class PatientPaymentItemEntity extends Equatable {
     required this.date,
     this.method = 'UPI (Online)',
     this.transactionId = '',
+    this.type = 'appointment',
+    this.token,
+    this.refundId,
+    this.refundReason,
+    this.refundToAccount,
+    this.refundedAt,
   });
 
   bool get isPaid => status.toLowerCase() == 'paid';
   bool get isRefunded => status.toLowerCase() == 'refunded';
+  bool get isQueueToken => type.toLowerCase() == 'queue';
 
   @override
   List<Object?> get props => [
@@ -50,5 +63,11 @@ class PatientPaymentItemEntity extends Equatable {
     date,
     method,
     transactionId,
+    type,
+    token,
+    refundId,
+    refundReason,
+    refundToAccount,
+    refundedAt,
   ];
 }

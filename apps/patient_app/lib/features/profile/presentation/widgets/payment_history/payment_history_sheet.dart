@@ -64,7 +64,7 @@ class PaymentHistorySheet extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Payment & Invoice History',
+                                'Payment History',
                                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: colors.textPrimary),
                               ),
                               Text(
