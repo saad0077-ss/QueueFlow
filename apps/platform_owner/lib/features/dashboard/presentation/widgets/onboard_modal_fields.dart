@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../departments/domain/entities/department_entity.dart';
 
 class OnboardTextField extends StatelessWidget {
@@ -48,7 +49,10 @@ class OnboardTextField extends StatelessWidget {
             filled: true,
             fillColor: colors.surfaceSecondary,
             isDense: true,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: 13,
+            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide(color: colors.border),
@@ -113,12 +117,25 @@ class OnboardPlanDropdown extends StatelessWidget {
             child: DropdownButton<String>(
               value: value,
               dropdownColor: colors.surfaceElevated,
-              icon: Icon(Icons.keyboard_arrow_down_rounded, color: colors.textMuted, size: 18),
+              icon: Icon(
+                Icons.keyboard_arrow_down_rounded,
+                color: colors.textMuted,
+                size: 18,
+              ),
               style: GoogleFonts.inter(color: colors.textPrimary, fontSize: 13),
               items: const [
-                DropdownMenuItem(value: 'solo', child: Text('Solo Doctor Plan (₹999/mo)')),
-                DropdownMenuItem(value: 'multi', child: Text('Multi-Doctor Clinic Plan (₹2,999/mo)')),
-                DropdownMenuItem(value: 'enterprise', child: Text('Enterprise Practice (₹6,999/mo)')),
+                DropdownMenuItem(
+                  value: 'solo',
+                  child: Text('Solo Doctor Plan (₹999/mo)'),
+                ),
+                DropdownMenuItem(
+                  value: 'multi',
+                  child: Text('Multi-Doctor Clinic Plan (₹2,999/mo)'),
+                ),
+                DropdownMenuItem(
+                  value: 'enterprise',
+                  child: Text('Enterprise Practice (₹6,999/mo)'),
+                ),
               ],
               onChanged: (v) => onChanged(v ?? 'solo'),
             ),
@@ -190,17 +207,18 @@ class OnboardDepartmentDropdown extends StatelessWidget {
                 isLoading
                     ? 'Loading platform departments...'
                     : (activeDepartments.isEmpty
-                        ? 'No active departments found (add in Dept tab)'
-                        : (selectedDepartmentIds.isEmpty
-                            ? 'Select departments for this clinic...'
-                            : '+ Add / toggle another department...')),
-                style: GoogleFonts.inter(
-                  color: colors.textMuted,
-                  fontSize: 13,
-                ),
+                          ? 'No active departments found (add in Dept tab)'
+                          : (selectedDepartmentIds.isEmpty
+                                ? 'Select departments for this clinic...'
+                                : '+ Add / toggle another department...')),
+                style: GoogleFonts.inter(color: colors.textMuted, fontSize: 13),
               ),
               dropdownColor: colors.surfaceElevated,
-              icon: Icon(Icons.keyboard_arrow_down_rounded, color: colors.textMuted, size: 18),
+              icon: Icon(
+                Icons.keyboard_arrow_down_rounded,
+                color: colors.textMuted,
+                size: 18,
+              ),
               style: GoogleFonts.inter(color: colors.textPrimary, fontSize: 13),
               items: activeDepartments.map((dept) {
                 final isSelected = selectedDepartmentIds.contains(dept.id);
@@ -209,9 +227,13 @@ class OnboardDepartmentDropdown extends StatelessWidget {
                   child: Row(
                     children: [
                       Icon(
-                        isSelected ? Icons.check_box_rounded : Icons.check_box_outline_blank_rounded,
+                        isSelected
+                            ? Icons.check_box_rounded
+                            : Icons.check_box_outline_blank_rounded,
                         size: 16,
-                        color: isSelected ? colors.primaryLight : colors.textMuted,
+                        color: isSelected
+                            ? colors.primaryLight
+                            : colors.textMuted,
                       ),
                       const SizedBox(width: 8),
                       Text(
@@ -223,8 +245,12 @@ class OnboardDepartmentDropdown extends StatelessWidget {
                           '${dept.name} (${dept.code})',
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.inter(
-                            color: isSelected ? colors.primaryLight : colors.textPrimary,
-                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                            color: isSelected
+                                ? colors.primaryLight
+                                : colors.textPrimary,
+                            fontWeight: isSelected
+                                ? FontWeight.w600
+                                : FontWeight.normal,
                           ),
                         ),
                       ),
@@ -251,7 +277,8 @@ class OnboardDepartmentDropdown extends StatelessWidget {
             spacing: 6,
             runSpacing: 6,
             children: selectedDepartmentIds.map((id) {
-              final DepartmentEntity dept = departments.where((d) => d.id == id).firstOrNull ??
+              final DepartmentEntity dept =
+                  departments.where((d) => d.id == id).firstOrNull ??
                   DepartmentEntity(
                     id: id,
                     name: id,
@@ -260,11 +287,16 @@ class OnboardDepartmentDropdown extends StatelessWidget {
                     description: '',
                   );
               return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: colors.surfaceSecondary,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: colors.primary.withValues(alpha: 0.35)),
+                  border: Border.all(
+                    color: colors.primary.withValues(alpha: 0.35),
+                  ),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -282,7 +314,8 @@ class OnboardDepartmentDropdown extends StatelessWidget {
                     const SizedBox(width: 6),
                     InkWell(
                       onTap: () {
-                        final updated = List<String>.from(selectedDepartmentIds)..remove(id);
+                        final updated = List<String>.from(selectedDepartmentIds)
+                          ..remove(id);
                         onChanged(updated);
                       },
                       borderRadius: BorderRadius.circular(10),

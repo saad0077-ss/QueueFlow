@@ -9,7 +9,12 @@ class DeptExpansionReqCard extends StatelessWidget {
   final ValueChanged<DeptExpansionRequestEntity> onApprove;
   final ValueChanged<DeptExpansionRequestEntity> onReject;
 
-  const DeptExpansionReqCard({super.key, required this.request, required this.onApprove, required this.onReject});
+  const DeptExpansionReqCard({
+    super.key,
+    required this.request,
+    required this.onApprove,
+    required this.onReject,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +39,19 @@ class DeptExpansionReqCard extends StatelessWidget {
                   children: [
                     Text(
                       request.clinicName,
-                      style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.bold, color: colors.textPrimary),
+                      style: GoogleFonts.inter(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: colors.textPrimary,
+                      ),
                     ),
-                    Text('By: ${request.requestedBy} • ${request.createdAt}', style: GoogleFonts.inter(fontSize: 11, color: colors.textMuted)),
+                    Text(
+                      'By: ${request.requestedBy} • ${request.createdAt}',
+                      style: GoogleFonts.inter(
+                        fontSize: 11,
+                        color: colors.textMuted,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -46,21 +61,37 @@ class DeptExpansionReqCard extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: colors.success,
                       foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
                       minimumSize: Size.zero,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
                     ),
                     onPressed: () => onApprove(request),
-                    child: const Text('✓ Approve', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600)),
+                    child: const Text(
+                      '✓ Approve',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                   const SizedBox(width: 6),
                   OutlinedButton(
                     style: OutlinedButton.styleFrom(
                       foregroundColor: colors.error,
                       side: BorderSide(color: colors.error),
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
                       minimumSize: Size.zero,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
                     ),
                     onPressed: () => onReject(request),
                     child: const Text('Reject', style: TextStyle(fontSize: 11)),
@@ -74,17 +105,25 @@ class DeptExpansionReqCard extends StatelessWidget {
             spacing: 6,
             runSpacing: 4,
             children: List.generate(request.departmentNames.length, (i) {
-              final icon = i < request.departmentIcons.length ? request.departmentIcons[i] : '🩺';
+              final icon = i < request.departmentIcons.length
+                  ? request.departmentIcons[i]
+                  : '🩺';
               return Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
                   color: colors.primary.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: colors.primary.withValues(alpha: 0.25)),
+                  border: Border.all(
+                    color: colors.primary.withValues(alpha: 0.25),
+                  ),
                 ),
                 child: Text(
                   '$icon ${request.departmentNames[i]}',
-                  style: GoogleFonts.inter(fontSize: 11, color: colors.primary, fontWeight: FontWeight.w600),
+                  style: GoogleFonts.inter(
+                    fontSize: 11,
+                    color: colors.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               );
             }),

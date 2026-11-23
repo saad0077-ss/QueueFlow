@@ -26,7 +26,11 @@ class SpecialtyFieldLabel extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 7),
       child: Text(
         text,
-        style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w700, color: colors.textPrimary),
+        style: GoogleFonts.inter(
+          fontSize: 12.5,
+          fontWeight: FontWeight.w700,
+          color: colors.textPrimary,
+        ),
       ),
     );
   }
@@ -38,7 +42,12 @@ class SpecialtyLabeled extends StatelessWidget {
   final Widget child;
   final String? helper;
 
-  const SpecialtyLabeled({super.key, required this.label, required this.child, this.helper});
+  const SpecialtyLabeled({
+    super.key,
+    required this.label,
+    required this.child,
+    this.helper,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +58,13 @@ class SpecialtyLabeled extends StatelessWidget {
       children: [
         SpecialtyFieldLabel(label),
         child,
-        if (helper != null) ...[const SizedBox(height: 5), Text(helper!, style: GoogleFonts.inter(fontSize: 11.5, color: colors.textMuted))],
+        if (helper != null) ...[
+          const SizedBox(height: 5),
+          Text(
+            helper!,
+            style: GoogleFonts.inter(fontSize: 11.5, color: colors.textMuted),
+          ),
+        ],
       ],
     );
   }
@@ -89,7 +104,11 @@ class SpecialtyTextInput extends StatelessWidget {
       onChanged: onChanged,
       cursorColor: colors.primary,
       mouseCursor: readOnly ? SystemMouseCursors.forbidden : null,
-      style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w500, color: readOnly ? colors.textMuted : colors.textPrimary),
+      style: GoogleFonts.inter(
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+        color: readOnly ? colors.textMuted : colors.textPrimary,
+      ),
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: GoogleFonts.inter(fontSize: 14, color: colors.textMuted),
@@ -100,10 +119,15 @@ class SpecialtyTextInput extends StatelessWidget {
         prefixIconConstraints: const BoxConstraints(minWidth: 40, minHeight: 0),
         suffixIcon: suffix,
         suffixIconConstraints: const BoxConstraints(minWidth: 40, minHeight: 0),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 13),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 15,
+          vertical: 13,
+        ),
         border: _outline(colors.border),
         enabledBorder: _outline(colors.border),
-        focusedBorder: readOnly ? _outline(colors.border) : _outline(colors.primary, 1.5),
+        focusedBorder: readOnly
+            ? _outline(colors.border)
+            : _outline(colors.primary, 1.5),
       ),
     );
   }
@@ -123,7 +147,13 @@ class SpecialtyDropdown extends StatelessWidget {
   final ValueChanged<String> onChanged;
   final Widget? selectedOverride;
 
-  const SpecialtyDropdown({super.key, required this.value, required this.items, required this.onChanged, this.selectedOverride});
+  const SpecialtyDropdown({
+    super.key,
+    required this.value,
+    required this.items,
+    required this.onChanged,
+    this.selectedOverride,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -144,12 +174,29 @@ class SpecialtyDropdown extends StatelessWidget {
           itemHeight: 48,
           borderRadius: BorderRadius.circular(_radius),
           dropdownColor: colors.surfaceElevated,
-          icon: Icon(Icons.keyboard_arrow_down_rounded, color: colors.textMuted, size: 20),
-          style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w700, color: colors.textPrimary),
+          icon: Icon(
+            Icons.keyboard_arrow_down_rounded,
+            color: colors.textMuted,
+            size: 20,
+          ),
+          style: GoogleFonts.inter(
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+            color: colors.textPrimary,
+          ),
           selectedItemBuilder: selectedOverride == null
               ? null
-              : (_) => items.keys.map((k) => Align(alignment: Alignment.centerLeft, child: k == value ? selectedOverride! : items[k]!)).toList(),
-          items: items.entries.map((e) => DropdownMenuItem(value: e.key, child: e.value)).toList(),
+              : (_) => items.keys
+                    .map(
+                      (k) => Align(
+                        alignment: Alignment.centerLeft,
+                        child: k == value ? selectedOverride! : items[k]!,
+                      ),
+                    )
+                    .toList(),
+          items: items.entries
+              .map((e) => DropdownMenuItem(value: e.key, child: e.value))
+              .toList(),
           onChanged: (v) {
             if (v != null) onChanged(v);
           },
@@ -170,7 +217,14 @@ Widget _optionRow(Widget leading, String text) {
 }
 
 Widget _addCustomRow(String text) {
-  return _optionRow(const Icon(Icons.add_circle_outline_rounded, size: 16, color: Color(0xFF38BDF8)), text);
+  return _optionRow(
+    const Icon(
+      Icons.add_circle_outline_rounded,
+      size: 16,
+      color: Color(0xFF38BDF8),
+    ),
+    text,
+  );
 }
 
 /// Icon dropdown with presets plus an "Add custom icon" entry that reveals an emoji input.
@@ -178,7 +232,11 @@ class SpecialtyIconPicker extends StatefulWidget {
   final String value;
   final ValueChanged<String> onChanged;
 
-  const SpecialtyIconPicker({super.key, required this.value, required this.onChanged});
+  const SpecialtyIconPicker({
+    super.key,
+    required this.value,
+    required this.onChanged,
+  });
 
   @override
   State<SpecialtyIconPicker> createState() => _SpecialtyIconPickerState();
@@ -204,10 +262,22 @@ class _SpecialtyIconPickerState extends State<SpecialtyIconPicker> {
         SpecialtyDropdown(
           value: _custom ? kCustomOptionValue : widget.value,
           items: {
-            for (final e in kSpecialtyIconOptions.entries) e.key: _optionRow(Text(e.key, style: const TextStyle(fontSize: 15)), e.value),
+            for (final e in kSpecialtyIconOptions.entries)
+              e.key: _optionRow(
+                Text(e.key, style: const TextStyle(fontSize: 15)),
+                e.value,
+              ),
             kCustomOptionValue: _addCustomRow('Add custom icon…'),
           },
-          selectedOverride: _custom ? _optionRow(Text(custom.isEmpty ? '❔' : custom, style: const TextStyle(fontSize: 15)), 'Custom Icon') : null,
+          selectedOverride: _custom
+              ? _optionRow(
+                  Text(
+                    custom.isEmpty ? '❔' : custom,
+                    style: const TextStyle(fontSize: 15),
+                  ),
+                  'Custom Icon',
+                )
+              : null,
           onChanged: (v) {
             setState(() => _custom = v == kCustomOptionValue);
             if (!_custom) {
@@ -222,7 +292,11 @@ class _SpecialtyIconPickerState extends State<SpecialtyIconPicker> {
           SpecialtyTextInput(
             controller: _ctrl,
             hint: 'Paste or type an emoji, e.g. 🫀',
-            prefix: Icon(Icons.emoji_emotions_outlined, size: 18, color: colors.textMuted),
+            prefix: Icon(
+              Icons.emoji_emotions_outlined,
+              size: 18,
+              color: colors.textMuted,
+            ),
             onChanged: (v) {
               setState(() {});
               if (v.trim().isNotEmpty) widget.onChanged(v.trim());
@@ -239,14 +313,20 @@ class SpecialtyColorPicker extends StatefulWidget {
   final String value;
   final ValueChanged<String> onChanged;
 
-  const SpecialtyColorPicker({super.key, required this.value, required this.onChanged});
+  const SpecialtyColorPicker({
+    super.key,
+    required this.value,
+    required this.onChanged,
+  });
 
   @override
   State<SpecialtyColorPicker> createState() => _SpecialtyColorPickerState();
 }
 
 class _SpecialtyColorPickerState extends State<SpecialtyColorPicker> {
-  late bool _custom = !kSpecialtyColorOptions.containsKey(widget.value.toUpperCase());
+  late bool _custom = !kSpecialtyColorOptions.containsKey(
+    widget.value.toUpperCase(),
+  );
   late final _ctrl = TextEditingController(text: _custom ? widget.value : '');
 
   @override
@@ -265,11 +345,20 @@ class _SpecialtyColorPickerState extends State<SpecialtyColorPicker> {
         SpecialtyDropdown(
           value: _custom ? kCustomOptionValue : widget.value.toUpperCase(),
           items: {
-            for (final e in kSpecialtyColorOptions.entries) e.key: _optionRow(_swatch(parseHexColor(e.key)!), '${e.value} (${e.key})'),
+            for (final e in kSpecialtyColorOptions.entries)
+              e.key: _optionRow(
+                _swatch(parseHexColor(e.key)!),
+                '${e.value} (${e.key})',
+              ),
             kCustomOptionValue: _addCustomRow('Custom color…'),
           },
           selectedOverride: _custom
-              ? _optionRow(_swatch(customColor ?? Colors.transparent), customColor == null ? 'Custom' : 'Custom (${_normalized(_ctrl.text)})')
+              ? _optionRow(
+                  _swatch(customColor ?? Colors.transparent),
+                  customColor == null
+                      ? 'Custom'
+                      : 'Custom (${_normalized(_ctrl.text)})',
+                )
               : null,
           onChanged: (v) {
             setState(() => _custom = v == kCustomOptionValue);
@@ -285,8 +374,17 @@ class _SpecialtyColorPickerState extends State<SpecialtyColorPicker> {
           SpecialtyTextInput(
             controller: _ctrl,
             hint: 'Hex code, e.g. #14B8A6',
-            prefix: Center(widthFactor: 1, child: _swatch(customColor ?? Colors.transparent)),
-            suffix: _ctrl.text.isEmpty || customColor != null ? null : Icon(Icons.error_outline_rounded, size: 18, color: colors.error),
+            prefix: Center(
+              widthFactor: 1,
+              child: _swatch(customColor ?? Colors.transparent),
+            ),
+            suffix: _ctrl.text.isEmpty || customColor != null
+                ? null
+                : Icon(
+                    Icons.error_outline_rounded,
+                    size: 18,
+                    color: colors.error,
+                  ),
             onChanged: (v) {
               setState(() {});
               if (parseHexColor(v) != null) widget.onChanged(_normalized(v));
@@ -297,7 +395,8 @@ class _SpecialtyColorPickerState extends State<SpecialtyColorPicker> {
     );
   }
 
-  String _normalized(String v) => '#${v.trim().replaceFirst('#', '').toUpperCase()}';
+  String _normalized(String v) =>
+      '#${v.trim().replaceFirst('#', '').toUpperCase()}';
 
   Widget _swatch(Color c) {
     return Container(
@@ -334,8 +433,18 @@ class GradientPillButton extends StatelessWidget {
     return DecoratedBox(
       decoration: ShapeDecoration(
         shape: const StadiumBorder(),
-        gradient: const LinearGradient(colors: [Color(0xFF2563EB), Color(0xFF14B8A6)]),
-        shadows: glow ? [BoxShadow(color: const Color(0xFF2563EB).withValues(alpha: 0.35), blurRadius: 18, offset: const Offset(0, 6))] : null,
+        gradient: const LinearGradient(
+          colors: [Color(0xFF2563EB), Color(0xFF14B8A6)],
+        ),
+        shadows: glow
+            ? [
+                BoxShadow(
+                  color: const Color(0xFF2563EB).withValues(alpha: 0.35),
+                  blurRadius: 18,
+                  offset: const Offset(0, 6),
+                ),
+              ]
+            : null,
       ),
       child: Material(
         color: Colors.transparent,
@@ -348,12 +457,23 @@ class GradientPillButton extends StatelessWidget {
             child: loading
                 ? const Center(
                     widthFactor: 1,
-                    child: SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)),
+                    child: SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    ),
                   )
                 : Text(
                     label,
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.inter(fontSize: 13.5, fontWeight: FontWeight.w700, color: Colors.white),
+                    style: GoogleFonts.inter(
+                      fontSize: 13.5,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
                   ),
           ),
         ),
@@ -367,7 +487,11 @@ class OutlinePillButton extends StatelessWidget {
   final String label;
   final VoidCallback onPressed;
 
-  const OutlinePillButton({super.key, required this.label, required this.onPressed});
+  const OutlinePillButton({
+    super.key,
+    required this.label,
+    required this.onPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -384,7 +508,11 @@ class OutlinePillButton extends StatelessWidget {
           child: Text(
             label,
             textAlign: TextAlign.center,
-            style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w700, color: colors.textPrimary),
+            style: GoogleFonts.inter(
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+              color: colors.textPrimary,
+            ),
           ),
         ),
       ),

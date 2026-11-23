@@ -21,16 +21,26 @@ class ClinicLiveQueueModalHelper {
       departments: departments,
       services: services,
       preselectedService: svc,
-      onAdd: ({required name, required phone, required service, required department, email, note}) {
-        bloc.add(QueueAddWalkInSubmitted(
-          name: name,
-          phone: phone,
-          service: service.isNotEmpty ? service : (svc ?? ''),
-          department: department,
-          email: email,
-          note: note,
-        ));
-      },
+      onAdd:
+          ({
+            required name,
+            required phone,
+            required service,
+            required department,
+            email,
+            note,
+          }) {
+            bloc.add(
+              QueueAddWalkInSubmitted(
+                name: name,
+                phone: phone,
+                service: service.isNotEmpty ? service : (svc ?? ''),
+                department: department,
+                email: email,
+                note: note,
+              ),
+            );
+          },
     );
   }
 
@@ -42,7 +52,17 @@ class ClinicLiveQueueModalHelper {
     final subs = <String, String>{'all': '${state.departments.length} total'};
     for (final d in state.departments) {
       final svcs = state.servicesForDepartment(d.id, d.name);
-      final wait = state.items.where((q) => q.isWaiting && svcs.any((s) => s.name.trim().toLowerCase() == q.serviceName.trim().toLowerCase())).length;
+      final wait = state.items
+          .where(
+            (q) =>
+                q.isWaiting &&
+                svcs.any(
+                  (s) =>
+                      s.name.trim().toLowerCase() ==
+                      q.serviceName.trim().toLowerCase(),
+                ),
+          )
+          .length;
       subs[d.id] = '${svcs.length} svcs · $wait waiting';
     }
     QueueFilterModal.show(

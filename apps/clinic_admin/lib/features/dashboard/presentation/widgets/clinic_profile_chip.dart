@@ -7,13 +7,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+import '../../../../core/services/clinic_session_manager.dart';
 import '../../../../core/services/current_clinic_resolver.dart';
 import '../../../auth/presentation/pages/clinic_staff_login_page.dart';
 
 /// Signs the admin out and returns to the staff login page.
 Future<void> clinicSignOut(BuildContext context) async {
   final navigator = Navigator.of(context, rootNavigator: true);
-  await FirebaseAuth.instance.signOut();
+  await ClinicSessionManager.clearSession();
   navigator.pushAndRemoveUntil(
     MaterialPageRoute(builder: (_) => const ClinicStaffLoginPage()),
     (_) => false,
@@ -34,8 +35,7 @@ class ClinicProfileChip extends StatefulWidget {
 
 class _ClinicProfileChipState extends State<ClinicProfileChip> {
   String _clinicName = '';
-  String _imageUrl = '';
-  Uint8List? _imageBytes;
+  ImageProvider? _cachedPhotoProvider;
   StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>? _sub;
 
   @override
@@ -81,11 +81,16 @@ class _ClinicProfileChipState extends State<ClinicProfileChip> {
         final b64 = img.data()?['data'] as String?;
         if (b64 != null && b64.isNotEmpty) bytes = base64Decode(b64);
       }
+      ImageProvider? provider;
+      if (bytes != null) {
+        provider = MemoryImage(bytes);
+      } else if (url.isNotEmpty) {
+        provider = NetworkImage(url);
+      }
       if (!mounted) return;
       setState(() {
         _clinicName = name;
-        _imageUrl = url;
-        _imageBytes = bytes;
+        _cachedPhotoProvider = provider;
       });
     } catch (_) {}
   }
@@ -101,9 +106,6 @@ class _ClinicProfileChipState extends State<ClinicProfileChip> {
         .take(2)
         .map((w) => w[0].toUpperCase())
         .join();
-    final ImageProvider? photo = _imageBytes != null
-        ? MemoryImage(_imageBytes!)
-        : (_imageUrl.isNotEmpty ? NetworkImage(_imageUrl) : null);
 
     return PopupMenuButton<String>(
       color: colors.surfaceElevated,
@@ -159,19 +161,41 @@ class _ClinicProfileChipState extends State<ClinicProfileChip> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            CircleAvatar(
-              radius: 18,
-              backgroundColor: colors.primary,
-              backgroundImage: photo,
-              onBackgroundImageError: photo == null ? null : (_, _) {},
-              child: photo != null
-                  ? null
-                  : Text(
-                      initials.isEmpty ? 'C' : initials,
-                      style: GoogleFonts.inter(
-                        fontSize: 12.5,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white,
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: colors.primary,
+              ),
+              child: _cachedPhotoProvider != null
+                  ? ClipOval(
+                      child: Image(
+                        image: _cachedPhotoProvider!,
+                        width: 36,
+                        height: 36,
+                        fit: BoxFit.cover,
+                        gaplessPlayback: true,
+                        errorBuilder: (context, error, stackTrace) => Center(
+                          child: Text(
+                            initials.isEmpty ? 'C' : initials,
+                            style: GoogleFonts.inter(
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  : Center(
+                      child: Text(
+                        initials.isEmpty ? 'C' : initials,
+                        style: GoogleFonts.inter(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
             ),

@@ -1,4 +1,5 @@
-﻿import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 import '../../domain/entities/admin_entity.dart';
 
 class AdminModel extends AdminEntity {
@@ -19,11 +20,6 @@ class AdminModel extends AdminEntity {
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'uid': uid,
-      'email': email,
-      'name': name,
-      'role': role,
-    };
+    return {'uid': uid, 'email': email, 'name': name, 'role': role};
   }
 }

@@ -38,10 +38,7 @@ class QueueFilterSortSection extends StatelessWidget {
             color: colors.textPrimary,
           ),
           items: const [
-            DropdownMenuItem(
-              value: 'default',
-              child: Text('Default Order'),
-            ),
+            DropdownMenuItem(value: 'default', child: Text('Default Order')),
             DropdownMenuItem(
               value: 'waiting',
               child: Text('Highest Waiting First'),

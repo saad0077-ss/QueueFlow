@@ -8,7 +8,7 @@ import 'package:patient_app/features/profile/domain/repositories/profile_reposit
 import 'package:patient_app/features/profile/presentation/pages/favorite_clinics_screen.dart';
 import 'package:patient_app/features/profile/presentation/pages/my_reviews_screen.dart';
 import 'package:patient_app/features/profile/presentation/pages/payment_history_screen.dart';
-import 'package:patient_app/features/profile/presentation/widgets/reviews/my_reviews_cubit.dart';
+import 'package:patient_app/features/profile/presentation/widgets/reviews/my_reviews_bloc.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 
 class _FakeExtendedProfileRepository implements ProfileRepository {
@@ -279,7 +279,7 @@ void main() {
       await tester.pumpWidget(
         wrapWidget(
           BlocProvider(
-            create: (_) => MyReviewsCubit(
+            create: (_) => MyReviewsBloc(
               repository: fakeRepo,
               initialReviews: sampleReviews,
             ),
@@ -323,7 +323,7 @@ void main() {
       await tester.pumpWidget(
         wrapWidget(
           BlocProvider(
-            create: (_) => MyReviewsCubit(
+            create: (_) => MyReviewsBloc(
               repository: fakeRepo,
               initialReviews: const [],
             ),

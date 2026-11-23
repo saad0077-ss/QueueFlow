@@ -34,8 +34,19 @@ class ClinicsFilterRow extends StatelessWidget {
       builder: (context, constraints) {
         final isCompact = constraints.maxWidth < 900;
         final searchBox = _searchBox(colors);
-        final planDropdown = _dropdown(colors, selectedPlan, const ['All Plans', 'Solo Doctor Plan', 'Multi-Doctor Clinic Plan', 'Enterprise Practice'], onPlanChanged);
-        final statusDropdown = _dropdown(colors, selectedStatus, const ['All Statuses', 'ACTIVE', 'INVITED', 'TRIAL', 'SUSPENDED'], onStatusChanged);
+        final planDropdown = _dropdown(colors, selectedPlan, const [
+          'All Plans',
+          'Solo Doctor Plan',
+          'Multi-Doctor Clinic Plan',
+          'Enterprise Practice',
+        ], onPlanChanged);
+        final statusDropdown = _dropdown(colors, selectedStatus, const [
+          'All Statuses',
+          'ACTIVE',
+          'INVITED',
+          'TRIAL',
+          'SUSPENDED',
+        ], onStatusChanged);
         final resetBtn = _resetPill(colors);
 
         final compactContent = Column(
@@ -43,7 +54,13 @@ class ClinicsFilterRow extends StatelessWidget {
           children: [
             searchBox,
             const SizedBox(height: 10),
-            Row(children: [Expanded(child: planDropdown), const SizedBox(width: 8), Expanded(child: statusDropdown)]),
+            Row(
+              children: [
+                Expanded(child: planDropdown),
+                const SizedBox(width: 8),
+                Expanded(child: statusDropdown),
+              ],
+            ),
             const SizedBox(height: 10),
             Align(alignment: Alignment.centerRight, child: resetBtn),
           ],
@@ -77,9 +94,9 @@ class ClinicsFilterRow extends StatelessWidget {
 
   Widget _searchBox(AppColorsExtension colors) {
     OutlineInputBorder outline(Color c, [double w = 1]) => OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: c, width: w),
-        );
+      borderRadius: BorderRadius.circular(10),
+      borderSide: BorderSide(color: c, width: w),
+    );
     return SizedBox(
       height: 38,
       child: TextField(
@@ -94,8 +111,15 @@ class ClinicsFilterRow extends StatelessWidget {
           contentPadding: const EdgeInsets.symmetric(horizontal: 12),
           hintText: 'Search by clinic name, doctor, city, plan...',
           hintStyle: GoogleFonts.inter(color: colors.textMuted, fontSize: 12.5),
-          prefixIcon: Icon(Icons.search_rounded, color: colors.textMuted, size: 18),
-          prefixIconConstraints: const BoxConstraints(minWidth: 38, minHeight: 38),
+          prefixIcon: Icon(
+            Icons.search_rounded,
+            color: colors.textMuted,
+            size: 18,
+          ),
+          prefixIconConstraints: const BoxConstraints(
+            minWidth: 38,
+            minHeight: 38,
+          ),
           border: outline(colors.border),
           enabledBorder: outline(colors.border),
           focusedBorder: outline(colors.primary, 1.5),
@@ -104,7 +128,12 @@ class ClinicsFilterRow extends StatelessWidget {
     );
   }
 
-  Widget _dropdown(AppColorsExtension colors, String value, List<String> items, ValueChanged<String> onChanged) {
+  Widget _dropdown(
+    AppColorsExtension colors,
+    String value,
+    List<String> items,
+    ValueChanged<String> onChanged,
+  ) {
     return Container(
       height: 38,
       padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -118,9 +147,28 @@ class ClinicsFilterRow extends StatelessWidget {
           value: items.contains(value) ? value : items.first,
           isExpanded: true,
           dropdownColor: colors.surfaceElevated,
-          style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.bold, color: colors.textPrimary),
-          icon: Icon(Icons.keyboard_arrow_down_rounded, color: colors.textMuted, size: 18),
-          items: items.map((i) => DropdownMenuItem(value: i, child: Text(i, overflow: TextOverflow.ellipsis, style: TextStyle(color: colors.textPrimary)))).toList(),
+          style: GoogleFonts.inter(
+            fontSize: 12.5,
+            fontWeight: FontWeight.bold,
+            color: colors.textPrimary,
+          ),
+          icon: Icon(
+            Icons.keyboard_arrow_down_rounded,
+            color: colors.textMuted,
+            size: 18,
+          ),
+          items: items
+              .map(
+                (i) => DropdownMenuItem(
+                  value: i,
+                  child: Text(
+                    i,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: colors.textPrimary),
+                  ),
+                ),
+              )
+              .toList(),
           onChanged: (v) => onChanged(v ?? items.first),
         ),
       ),
@@ -140,7 +188,14 @@ class ClinicsFilterRow extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: colors.border),
         ),
-        child: Text('Reset Filters', style: GoogleFonts.inter(fontSize: 11.5, fontWeight: FontWeight.bold, color: colors.textPrimary)),
+        child: Text(
+          'Reset Filters',
+          style: GoogleFonts.inter(
+            fontSize: 11.5,
+            fontWeight: FontWeight.bold,
+            color: colors.textPrimary,
+          ),
+        ),
       ),
     );
   }

@@ -4,10 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 class FavoriteClinicsHeroBanner extends StatelessWidget {
   final int count;
 
-  const FavoriteClinicsHeroBanner({
-    super.key,
-    required this.count,
-  });
+  const FavoriteClinicsHeroBanner({super.key, required this.count});
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +33,10 @@ class FavoriteClinicsHeroBanner extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(20),

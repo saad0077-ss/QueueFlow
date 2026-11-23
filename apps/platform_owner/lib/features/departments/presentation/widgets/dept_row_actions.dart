@@ -12,7 +12,7 @@ class DeptRowActions extends StatelessWidget {
   final VoidCallback onDelete;
 
   const DeptRowActions({
-    super.key, 
+    super.key,
     required this.department,
     required this.onDetails,
     required this.onEdit,
@@ -32,20 +32,33 @@ class DeptRowActions extends StatelessWidget {
           message: 'Manage services catalog',
           child: Material(
             color: colors.primaryTint,
-            shape: StadiumBorder(side: BorderSide(color: colors.primary.withValues(alpha: 0.45))),
+            shape: StadiumBorder(
+              side: BorderSide(color: colors.primary.withValues(alpha: 0.45)),
+            ),
             clipBehavior: Clip.antiAlias,
             child: InkWell(
               onTap: onDetails,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.medical_services_outlined, size: 13, color: colors.primaryLight),
+                    Icon(
+                      Icons.medical_services_outlined,
+                      size: 13,
+                      color: colors.primaryLight,
+                    ),
                     const SizedBox(width: 5),
                     Text(
                       'Services',
-                      style: GoogleFonts.inter(fontSize: 11.5, fontWeight: FontWeight.w700, color: colors.primaryLight),
+                      style: GoogleFonts.inter(
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w700,
+                        color: colors.primaryLight,
+                      ),
                     ),
                   ],
                 ),
@@ -54,7 +67,12 @@ class DeptRowActions extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 6),
-        _iconButton(icon: Icons.edit_outlined, color: colors.primaryLight, tooltip: 'Edit department', onTap: onEdit),
+        _iconButton(
+          icon: Icons.edit_outlined,
+          color: colors.primaryLight,
+          tooltip: 'Edit department',
+          onTap: onEdit,
+        ),
         const SizedBox(width: 6),
         _iconButton(
           icon: active ? Icons.pause_rounded : Icons.play_arrow_rounded,
@@ -64,14 +82,29 @@ class DeptRowActions extends StatelessWidget {
         ),
         const SizedBox(width: 6),
         if (department.isDefault)
-          _iconButton(icon: Icons.lock_outline_rounded, color: colors.textMuted, tooltip: 'Default department cannot be deleted', onTap: () {})
+          _iconButton(
+            icon: Icons.lock_outline_rounded,
+            color: colors.textMuted,
+            tooltip: 'Default department cannot be deleted',
+            onTap: () {},
+          )
         else
-          _iconButton(icon: Icons.delete_outline_rounded, color: colors.error, tooltip: 'Delete department', onTap: onDelete),
+          _iconButton(
+            icon: Icons.delete_outline_rounded,
+            color: colors.error,
+            tooltip: 'Delete department',
+            onTap: onDelete,
+          ),
       ],
     );
   }
 
-  Widget _iconButton({required IconData icon, required Color color, required String tooltip, required VoidCallback onTap}) {
+  Widget _iconButton({
+    required IconData icon,
+    required Color color,
+    required String tooltip,
+    required VoidCallback onTap,
+  }) {
     return Tooltip(
       message: tooltip,
       child: Material(
@@ -83,7 +116,11 @@ class DeptRowActions extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: onTap,
-          child: SizedBox(width: 28, height: 28, child: Icon(icon, size: 16, color: color)),
+          child: SizedBox(
+            width: 28,
+            height: 28,
+            child: Icon(icon, size: 16, color: color),
+          ),
         ),
       ),
     );

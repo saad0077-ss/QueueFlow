@@ -43,7 +43,9 @@ class _ClinicPhotoAvatarState extends State<ClinicPhotoAvatar> {
 
   void _resolveInitialPhoto() {
     _photo = _cache[widget.clinicId];
-    if (_photo == null && widget.imageUrl != null && widget.imageUrl!.trim().isNotEmpty) {
+    if (_photo == null &&
+        widget.imageUrl != null &&
+        widget.imageUrl!.trim().isNotEmpty) {
       final img = widget.imageUrl!.trim();
       if (img.startsWith('http')) {
         _photo = NetworkImage(img);
@@ -62,7 +64,8 @@ class _ClinicPhotoAvatarState extends State<ClinicPhotoAvatar> {
   @override
   void didUpdateWidget(ClinicPhotoAvatar oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.clinicId != widget.clinicId || oldWidget.imageUrl != widget.imageUrl) {
+    if (oldWidget.clinicId != widget.clinicId ||
+        oldWidget.imageUrl != widget.imageUrl) {
       _resolveInitialPhoto();
     }
   }
@@ -76,7 +79,10 @@ class _ClinicPhotoAvatarState extends State<ClinicPhotoAvatar> {
       if (url.isNotEmpty) {
         photo = NetworkImage(url);
       } else {
-        final img = await db.collection('clinic_images').doc(widget.clinicId).get();
+        final img = await db
+            .collection('clinic_images')
+            .doc(widget.clinicId)
+            .get();
         final b64 = img.data()?['data'] as String?;
         if (b64 != null && b64.isNotEmpty) {
           photo = MemoryImage(Uint8List.fromList(base64Decode(b64)));
@@ -100,11 +106,19 @@ class _ClinicPhotoAvatarState extends State<ClinicPhotoAvatar> {
     final fallback = Container(
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        gradient: LinearGradient(colors: widget.gradient, begin: Alignment.topLeft, end: Alignment.bottomRight),
+        gradient: LinearGradient(
+          colors: widget.gradient,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
       ),
       child: Text(
         initials.isEmpty ? 'C' : initials,
-        style: TextStyle(fontSize: widget.fontSize, color: Colors.white, fontWeight: FontWeight.w800),
+        style: TextStyle(
+          fontSize: widget.fontSize,
+          color: Colors.white,
+          fontWeight: FontWeight.w800,
+        ),
       ),
     );
 
@@ -115,7 +129,11 @@ class _ClinicPhotoAvatarState extends State<ClinicPhotoAvatar> {
         borderRadius: radius,
         child: _photo == null
             ? fallback
-            : Image(image: _photo!, fit: BoxFit.cover, errorBuilder: (_, _, _) => fallback),
+            : Image(
+                image: _photo!,
+                fit: BoxFit.cover,
+                errorBuilder: (_, _, _) => fallback,
+              ),
       ),
     );
   }

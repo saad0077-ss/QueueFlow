@@ -1,4 +1,4 @@
-﻿/// Built-in departments. Fixed doc IDs (prefix `default-`) mark them as non-deletable.
+/// Built-in departments. Fixed doc IDs (prefix `default-`) mark them as non-deletable.
 const defaultDepartmentIdPrefix = 'default-';
 
 const sampleDepartmentsSeed = [
@@ -20,22 +20,31 @@ const sampleDepartmentsSeed = [
         'name': 'General Consultation',
         'duration': 20,
         'suggestedPrice': 500,
-        'description': 'Comprehensive medical examination, diagnosis and clinical care.',
+        'description':
+            'Comprehensive medical examination, diagnosis and clinical care.',
       },
-      {'id': 's2', 'name': 'Follow-up Checkup', 'duration': 15, 'suggestedPrice': 350, 'description': 'Routine progress assessment and prescription renewal.'},
+      {
+        'id': 's2',
+        'name': 'Follow-up Checkup',
+        'duration': 15,
+        'suggestedPrice': 350,
+        'description': 'Routine progress assessment and prescription renewal.',
+      },
       {
         'id': 's3',
         'name': 'Blood Pressure & Vitals Screen',
         'duration': 15,
         'suggestedPrice': 200,
-        'description': 'Vitals triage, pulse oximetry, and hypertension review.',
+        'description':
+            'Vitals triage, pulse oximetry, and hypertension review.',
       },
       {
         'id': 's4',
         'name': 'Annual Preventive Health Exam',
         'duration': 30,
         'suggestedPrice': 1200,
-        'description': 'Full systemic physical checkup and preventive lab advisory.',
+        'description':
+            'Full systemic physical checkup and preventive lab advisory.',
       },
     ],
   },
@@ -52,11 +61,41 @@ const sampleDepartmentsSeed = [
     'totalVisits': 890,
     'assignedClinics': ['smile-dental', 'sunrise-health', 'sunrise-health'],
     'standardServices': [
-      {'id': 's5', 'name': 'Teeth Cleaning & Scaling', 'duration': 30, 'suggestedPrice': 800, 'description': 'Ultrasonic plaque scaling.'},
-      {'id': 's6', 'name': 'Root Canal Treatment', 'duration': 45, 'suggestedPrice': 3500, 'description': 'Precision endodontic therapy.'},
-      {'id': 's7', 'name': 'Teeth Whitening', 'duration': 40, 'suggestedPrice': 2500, 'description': 'Laser cosmetic brightening.'},
-      {'id': 's8', 'name': 'Tooth Extraction', 'duration': 30, 'suggestedPrice': 1000, 'description': 'Surgical extraction.'},
-      {'id': 's9', 'name': 'Dental Filling', 'duration': 25, 'suggestedPrice': 700, 'description': 'Composite restoration.'},
+      {
+        'id': 's5',
+        'name': 'Teeth Cleaning & Scaling',
+        'duration': 30,
+        'suggestedPrice': 800,
+        'description': 'Ultrasonic plaque scaling.',
+      },
+      {
+        'id': 's6',
+        'name': 'Root Canal Treatment',
+        'duration': 45,
+        'suggestedPrice': 3500,
+        'description': 'Precision endodontic therapy.',
+      },
+      {
+        'id': 's7',
+        'name': 'Teeth Whitening',
+        'duration': 40,
+        'suggestedPrice': 2500,
+        'description': 'Laser cosmetic brightening.',
+      },
+      {
+        'id': 's8',
+        'name': 'Tooth Extraction',
+        'duration': 30,
+        'suggestedPrice': 1000,
+        'description': 'Surgical extraction.',
+      },
+      {
+        'id': 's9',
+        'name': 'Dental Filling',
+        'duration': 25,
+        'suggestedPrice': 700,
+        'description': 'Composite restoration.',
+      },
     ],
   },
   {
@@ -72,9 +111,27 @@ const sampleDepartmentsSeed = [
     'totalVisits': 620,
     'assignedClinics': ['sunrise-health', 'kochi-family'],
     'standardServices': [
-      {'id': 's10', 'name': 'Pediatric Wellness Checkup', 'duration': 20, 'suggestedPrice': 600, 'description': 'Milestones & physical exam.'},
-      {'id': 's11', 'name': 'Infant Immunization', 'duration': 15, 'suggestedPrice': 450, 'description': 'National schedule vaccination.'},
-      {'id': 's12', 'name': 'Growth Screening', 'duration': 15, 'suggestedPrice': 350, 'description': 'Growth chart evaluation.'},
+      {
+        'id': 's10',
+        'name': 'Pediatric Wellness Checkup',
+        'duration': 20,
+        'suggestedPrice': 600,
+        'description': 'Milestones & physical exam.',
+      },
+      {
+        'id': 's11',
+        'name': 'Infant Immunization',
+        'duration': 15,
+        'suggestedPrice': 450,
+        'description': 'National schedule vaccination.',
+      },
+      {
+        'id': 's12',
+        'name': 'Growth Screening',
+        'duration': 15,
+        'suggestedPrice': 350,
+        'description': 'Growth chart evaluation.',
+      },
     ],
   },
   {
@@ -90,9 +147,27 @@ const sampleDepartmentsSeed = [
     'totalVisits': 540,
     'assignedClinics': ['wellness-skin'],
     'standardServices': [
-      {'id': 's13', 'name': 'Clinical Dermatology Consultation', 'duration': 20, 'suggestedPrice': 700, 'description': 'Skin prescription & review.'},
-      {'id': 's14', 'name': 'Laser Skin Rejuvenation', 'duration': 45, 'suggestedPrice': 2200, 'description': 'Laser skin resurfacing.'},
-      {'id': 's15', 'name': 'Acne Clear Treatment', 'duration': 30, 'suggestedPrice': 1200, 'description': 'Deep pore therapy.'},
+      {
+        'id': 's13',
+        'name': 'Clinical Dermatology Consultation',
+        'duration': 20,
+        'suggestedPrice': 700,
+        'description': 'Skin prescription & review.',
+      },
+      {
+        'id': 's14',
+        'name': 'Laser Skin Rejuvenation',
+        'duration': 45,
+        'suggestedPrice': 2200,
+        'description': 'Laser skin resurfacing.',
+      },
+      {
+        'id': 's15',
+        'name': 'Acne Clear Treatment',
+        'duration': 30,
+        'suggestedPrice': 1200,
+        'description': 'Deep pore therapy.',
+      },
     ],
   },
 ];

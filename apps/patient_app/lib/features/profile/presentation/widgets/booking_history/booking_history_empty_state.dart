@@ -9,10 +9,7 @@ class BookingHistoryEmptyState extends StatelessWidget {
     final colors = context.colors;
 
     return Container(
-      padding: const EdgeInsets.symmetric(
-        vertical: 40,
-        horizontal: 20,
-      ),
+      padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
       decoration: BoxDecoration(
         color: colors.surface,
         borderRadius: BorderRadius.circular(16),
@@ -34,10 +31,7 @@ class BookingHistoryEmptyState extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             'No booking records match your current filter.',
-            style: TextStyle(
-              fontSize: 12,
-              color: colors.textMuted,
-            ),
+            style: TextStyle(fontSize: 12, color: colors.textMuted),
             textAlign: TextAlign.center,
           ),
         ],

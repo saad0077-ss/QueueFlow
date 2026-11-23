@@ -12,7 +12,12 @@ class DepartmentRequestsTab extends StatelessWidget {
   final ValueChanged<DeptServiceRequestEntity> onApprove;
   final ValueChanged<DeptServiceRequestEntity> onReject;
 
-  const DepartmentRequestsTab({super.key, required this.requests, required this.onApprove, required this.onReject});
+  const DepartmentRequestsTab({
+    super.key,
+    required this.requests,
+    required this.onApprove,
+    required this.onReject,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -35,12 +40,19 @@ class DepartmentRequestsTab extends StatelessWidget {
                   children: [
                     Text(
                       'Specialty Approval Queue for this Department',
-                      style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.bold, color: colors.textPrimary),
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: colors.textPrimary,
+                      ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       'When clinic practitioners request a procedure not yet in this catalog, it appears here for review.',
-                      style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted),
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        color: colors.textMuted,
+                      ),
                     ),
                   ],
                 ),
@@ -59,13 +71,20 @@ class DepartmentRequestsTab extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: colors.border),
             ),
-            child: Text('No pending service requests for this department.', style: GoogleFonts.inter(fontSize: 13, color: colors.textMuted)),
+            child: Text(
+              'No pending service requests for this department.',
+              style: GoogleFonts.inter(fontSize: 13, color: colors.textMuted),
+            ),
           )
         else
           ...requests.map(
             (r) => Padding(
               padding: const EdgeInsets.only(bottom: 8),
-              child: DeptServiceReqCard(request: r, onApprove: onApprove, onReject: onReject),
+              child: DeptServiceReqCard(
+                request: r,
+                onApprove: onApprove,
+                onReject: onReject,
+              ),
             ),
           ),
       ],

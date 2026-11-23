@@ -156,7 +156,8 @@ class ClinicModel extends ClinicEntity {
         (m['scheduleSummary'] as String).isNotEmpty) {
       return m['scheduleSummary'] as String;
     }
-    if (m['openingHours'] is String && (m['openingHours'] as String).isNotEmpty) {
+    if (m['openingHours'] is String &&
+        (m['openingHours'] as String).isNotEmpty) {
       return m['openingHours'] as String;
     }
     final raw = m['operatingHours'];

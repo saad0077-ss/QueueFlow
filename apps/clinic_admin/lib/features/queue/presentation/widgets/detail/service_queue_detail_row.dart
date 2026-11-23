@@ -58,11 +58,16 @@ class ServiceQueueDetailRow extends StatelessWidget {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: colors.primaryTint,
                     borderRadius: BorderRadius.circular(6),
-                    border: Border.all(color: colors.primary.withValues(alpha: 0.25)),
+                    border: Border.all(
+                      color: colors.primary.withValues(alpha: 0.25),
+                    ),
                   ),
                   child: Text(
                     item.token,
@@ -92,12 +97,16 @@ class ServiceQueueDetailRow extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    [item.phone, if (item.email.isNotEmpty) item.email]
-                        .where((e) => e.isNotEmpty)
-                        .join(' · '),
+                    [
+                      item.phone,
+                      if (item.email.isNotEmpty) item.email,
+                    ].where((e) => e.isNotEmpty).join(' · '),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.inter(fontSize: 11.5, color: colors.textMuted),
+                    style: GoogleFonts.inter(
+                      fontSize: 11.5,
+                      color: colors.textMuted,
+                    ),
                   ),
                 ],
               ),

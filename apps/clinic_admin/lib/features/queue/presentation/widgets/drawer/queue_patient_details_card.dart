@@ -124,7 +124,10 @@ class QueuePatientDetailsCard extends StatelessWidget {
               ),
               child: Text(
                 patient.note,
-                style: GoogleFonts.inter(fontSize: 12.5, color: colors.textPrimary),
+                style: GoogleFonts.inter(
+                  fontSize: 12.5,
+                  color: colors.textPrimary,
+                ),
               ),
             ),
           ],

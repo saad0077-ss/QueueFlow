@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../../domain/entities/platform_billing_kpis.dart';
 import '../../domain/entities/platform_invoice_entity.dart';
 import '../../domain/entities/platform_plan_tier_entity.dart';
@@ -13,7 +14,7 @@ class PlatformBillingRepositoryImpl implements PlatformBillingRepository {
   final FirebaseFirestore _firestore;
 
   PlatformBillingRepositoryImpl({FirebaseFirestore? firestore})
-      : _firestore = firestore ?? FirebaseFirestore.instance;
+    : _firestore = firestore ?? FirebaseFirestore.instance;
 
   @override
   Future<PlatformBillingKpis> getKpis() async {
@@ -21,7 +22,12 @@ class PlatformBillingRepositoryImpl implements PlatformBillingRepository {
       final snap = await _firestore.collection('clinics').get();
       final subs = snap.docs
           .map((d) => PlatformTenantSubscriptionModel.fromMap(d.id, d.data()))
-          .where((s) => !TenantRepositoryImpl.isDummyClinicName(s.clinicName, s.adminEmail))
+          .where(
+            (s) => !TenantRepositoryImpl.isDummyClinicName(
+              s.clinicName,
+              s.adminEmail,
+            ),
+          )
           .toList();
 
       final invoices = await getInvoices();
@@ -40,7 +46,12 @@ class PlatformBillingRepositoryImpl implements PlatformBillingRepository {
       if (snap.docs.isEmpty) return const [];
       return snap.docs
           .map((d) => PlatformTenantSubscriptionModel.fromMap(d.id, d.data()))
-          .where((s) => !TenantRepositoryImpl.isDummyClinicName(s.clinicName, s.adminEmail))
+          .where(
+            (s) => !TenantRepositoryImpl.isDummyClinicName(
+              s.clinicName,
+              s.adminEmail,
+            ),
+          )
           .toList();
     });
   }
@@ -59,20 +70,32 @@ class PlatformBillingRepositoryImpl implements PlatformBillingRepository {
   @override
   Future<List<PlatformInvoiceEntity>> getInvoices() async {
     try {
-      final snap = await _firestore.collection('invoices').orderBy('createdAt', descending: true).limit(100).get();
+      final snap = await _firestore
+          .collection('invoices')
+          .orderBy('createdAt', descending: true)
+          .limit(100)
+          .get();
       if (snap.docs.isNotEmpty) {
         return snap.docs
             .map((d) => PlatformInvoiceModel.fromMap(d.id, d.data()))
-            .where((i) => !TenantRepositoryImpl.isDummyClinicName(i.clinicName, ''))
+            .where(
+              (i) => !TenantRepositoryImpl.isDummyClinicName(i.clinicName, ''),
+            )
             .toList();
       }
     } catch (_) {
       try {
-        final fallbackSnap = await _firestore.collection('invoices').limit(100).get();
+        final fallbackSnap = await _firestore
+            .collection('invoices')
+            .limit(100)
+            .get();
         if (fallbackSnap.docs.isNotEmpty) {
           return fallbackSnap.docs
               .map((d) => PlatformInvoiceModel.fromMap(d.id, d.data()))
-              .where((i) => !TenantRepositoryImpl.isDummyClinicName(i.clinicName, ''))
+              .where(
+                (i) =>
+                    !TenantRepositoryImpl.isDummyClinicName(i.clinicName, ''),
+              )
               .toList();
         }
       } catch (_) {}
@@ -84,7 +107,9 @@ class PlatformBillingRepositoryImpl implements PlatformBillingRepository {
   @override
   Future<void> markInvoicePaid(String invoiceId) async {
     try {
-      await _firestore.collection('invoices').doc(invoiceId).update({'status': 'completed'});
+      await _firestore.collection('invoices').doc(invoiceId).update({
+        'status': 'completed',
+      });
     } catch (_) {}
   }
 
@@ -97,7 +122,8 @@ class PlatformBillingRepositoryImpl implements PlatformBillingRepository {
     required String dueDate,
   }) async {
     final now = DateTime.now();
-    final invNum = 'QF-INV-${now.year}-${(now.millisecondsSinceEpoch % 1000).toString().padLeft(3, '0')}';
+    final invNum =
+        'QF-INV-${now.year}-${(now.millisecondsSinceEpoch % 1000).toString().padLeft(3, '0')}';
 
     await _firestore.collection('invoices').add({
       'number': invNum,
@@ -144,7 +170,20 @@ class PlatformBillingRepositoryImpl implements PlatformBillingRepository {
   }
 
   String _monthName(int m) {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
     return (m >= 1 && m <= 12) ? months[m - 1] : 'Oct';
   }
 }

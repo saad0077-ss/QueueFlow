@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 enum SnackBarType { success, error, warning, info }
 
@@ -10,7 +10,7 @@ class AppSnackBar {
   static void showError(BuildContext context, {required String message}) {
     _show(
       context,
-      SnackBarType.error,  
+      SnackBarType.error,
       message.contains('] ') ? message.split('] ').last.trim() : message,
     );
   }
@@ -23,13 +23,9 @@ class AppSnackBar {
     _show(context, SnackBarType.info, message);
   }
 
-  static void _show(
-    BuildContext context,
-    SnackBarType type,
-    String message,
-  ) {
-    final messenger = ScaffoldMessenger.of(context); 
-    messenger.hideCurrentSnackBar();   
+  static void _show(BuildContext context, SnackBarType type, String message) {
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.hideCurrentSnackBar();
 
     final colors = _colors(type);
     final icon = _icon(type);
@@ -50,7 +46,10 @@ class AppSnackBar {
                   minWidth: 160,
                   maxWidth: (screenWidth - 48).clamp(260.0, 560.0),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(colors: colors),
                   borderRadius: BorderRadius.circular(12),

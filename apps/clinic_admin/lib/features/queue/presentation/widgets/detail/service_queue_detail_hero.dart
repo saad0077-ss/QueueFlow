@@ -57,7 +57,10 @@ class ServiceQueueDetailHero extends StatelessWidget {
       child: LayoutBuilder(
         builder: (context, constraints) {
           final isNarrow = constraints.maxWidth < 750;
-          final infoBlock = ServiceQueueDetailHeroInfo(service: service, department: department);
+          final infoBlock = ServiceQueueDetailHeroInfo(
+            service: service,
+            department: department,
+          );
           final actions = ServiceQueueDetailHeroActions(
             hasWaiting: hasWaiting,
             isClosed: isClosed,

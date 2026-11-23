@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../domain/entities/patient_profile_entity.dart';
 import '../widgets/edit_profile/edit_profile_actions.dart';
 import '../widgets/edit_profile/edit_profile_avatar_banner.dart';
+import '../widgets/edit_profile/edit_profile_bloc.dart';
 import '../widgets/edit_profile/edit_profile_contact_card.dart';
-import '../widgets/edit_profile/edit_profile_cubit.dart';
 import '../widgets/edit_profile/edit_profile_personal_details_card.dart';
 
 typedef EditProfileSave = void Function({
@@ -72,9 +73,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     super.dispose();
   }
 
-  void _handleSave(BuildContext context, EditProfileCubit cubit) {
+  void _handleSave(BuildContext context, EditProfileBloc bloc) {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    final state = cubit.state;
+    final state = bloc.state;
     final name = _nameController.text.trim();
     final email = _emailController.text.trim();
     final phone = _phoneController.text.trim();
@@ -97,10 +98,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final colors = context.colors;
 
     return BlocProvider(
-      create: (_) => EditProfileCubit(widget.profile),
+      create: (_) => EditProfileBloc(widget.profile),
       child: Builder(
         builder: (context) {
-          final cubit = context.read<EditProfileCubit>();
+          final bloc = context.read<EditProfileBloc>();
 
           return Scaffold(
             backgroundColor: colors.background,
@@ -119,7 +120,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 children: [
                   Expanded(
                     child: SingleChildScrollView(
-                      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+                      keyboardDismissBehavior:
+                          ScrollViewKeyboardDismissBehavior.onDrag,
                       padding: const EdgeInsets.fromLTRB(16, 4, 16, 20),
                       child: Center(
                         child: ConstrainedBox(
@@ -149,7 +151,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   ),
                   EditProfileActions(
                     onCancel: () => Navigator.of(context).pop(),
-                    onSave: () => _handleSave(context, cubit),
+                    onSave: () => _handleSave(context, bloc),
                   ),
                 ],
               ),

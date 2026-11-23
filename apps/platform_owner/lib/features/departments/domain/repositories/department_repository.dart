@@ -1,4 +1,4 @@
-﻿import '../entities/department_entity.dart';
+import '../entities/department_entity.dart';
 import '../entities/dept_expansion_request_entity.dart';
 import '../entities/dept_service_request_entity.dart';
 import '../entities/standard_service_entity.dart';
@@ -15,8 +15,14 @@ abstract class DepartmentRepository {
   Future<void> toggleDepartmentStatus(String id, bool currentStatus);
   Future<void> deleteDepartment(String id);
 
-  Future<void> addStandardService(String departmentId, StandardServiceEntity service);
-  Future<void> updateStandardService(String departmentId, StandardServiceEntity service);
+  Future<void> addStandardService(
+    String departmentId,
+    StandardServiceEntity service,
+  );
+  Future<void> updateStandardService(
+    String departmentId,
+    StandardServiceEntity service,
+  );
   Future<void> removeStandardService(String departmentId, String serviceId);
 
   Future<void> approveExpansionRequest(String requestId);

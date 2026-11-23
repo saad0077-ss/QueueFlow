@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../../domain/entities/clinic_entity.dart';
 import '../models/live_clinic_queue_info.dart';
 import 'queue_radar_join_button.dart';
@@ -8,7 +9,8 @@ import 'queue_radar_join_button.dart';
 class QueueRadarServiceList extends StatelessWidget {
   final ClinicEntity clinic;
   final LiveInfo info;
-  final void Function(ClinicEntity clinic, LiveServiceQueue? target) onJoinClinic;
+  final void Function(ClinicEntity clinic, LiveServiceQueue? target)
+  onJoinClinic;
 
   const QueueRadarServiceList({
     super.key,

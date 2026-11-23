@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../services/domain/entities/service_department_entity.dart';
-import '../bloc/queue_filter_cubit.dart';
+import '../bloc/queue_filter_bloc.dart';
 import 'filter/queue_filter_body.dart';
 import 'filter/queue_filter_footer.dart';
 import 'filter/queue_filter_modal_header.dart';
@@ -15,7 +15,8 @@ class QueueFilterModal extends StatelessWidget {
     required String department,
     required String status,
     required String sort,
-  }) onApply;
+  })
+  onApply;
   final VoidCallback onReset;
   final Map<String, String> deptSubtitles;
 
@@ -40,7 +41,8 @@ class QueueFilterModal extends StatelessWidget {
       required String department,
       required String status,
       required String sort,
-    }) onApply,
+    })
+    onApply,
     required VoidCallback onReset,
     Map<String, String> deptSubtitles = const {},
   }) {
@@ -69,7 +71,7 @@ class QueueFilterModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => QueueFilterCubit(
+      create: (_) => QueueFilterBloc(
         initialDepartment: currentDepartment,
         initialStatus: currentStatus,
         initialSort: currentSort,
@@ -91,7 +93,8 @@ class _QueueFilterModalContent extends StatelessWidget {
     required String department,
     required String status,
     required String sort,
-  }) onApply;
+  })
+  onApply;
   final VoidCallback onReset;
 
   const _QueueFilterModalContent({
@@ -118,7 +121,7 @@ class _QueueFilterModalContent extends StatelessWidget {
           ),
         ],
       ),
-      child: BlocBuilder<QueueFilterCubit, QueueFilterState>(
+      child: BlocBuilder<QueueFilterBloc, QueueFilterState>(
         builder: (context, state) {
           return Column(
             mainAxisSize: MainAxisSize.min,

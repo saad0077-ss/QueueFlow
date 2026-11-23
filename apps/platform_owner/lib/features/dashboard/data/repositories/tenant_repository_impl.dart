@@ -1,8 +1,10 @@
 import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
+
 import '../../domain/entities/tenant_clinic_entity.dart';
 import '../../domain/repositories/tenant_repository.dart';
 
@@ -10,7 +12,7 @@ class TenantRepositoryImpl implements TenantRepository {
   final FirebaseFirestore _firestore;
 
   TenantRepositoryImpl({FirebaseFirestore? firestore})
-      : _firestore = firestore ?? FirebaseFirestore.instance;
+    : _firestore = firestore ?? FirebaseFirestore.instance;
 
   static const Set<String> dummyEmails = {
     'priya@sunrisehealth.com',
@@ -33,8 +35,12 @@ class TenantRepositoryImpl implements TenantRepository {
   static bool isDummyClinicName(String name, String email) {
     final e = email.toLowerCase().trim();
     final n = name.toLowerCase().trim();
-    if (e.isNotEmpty && dummyEmails.any((de) => de.toLowerCase() == e)) return true;
-    if (n.isNotEmpty && dummyClinicNames.any((dn) => dn.toLowerCase() == n)) return true;
+    if (e.isNotEmpty && dummyEmails.any((de) => de.toLowerCase() == e)) {
+      return true;
+    }
+    if (n.isNotEmpty && dummyClinicNames.any((dn) => dn.toLowerCase() == n)) {
+      return true;
+    }
     return false;
   }
 
@@ -60,7 +66,9 @@ class TenantRepositoryImpl implements TenantRepository {
         if (clinicId.isEmpty) continue;
         final raw = data['joinedAt'];
         // A pending serverTimestamp reads as null, which means "just now"
-        final joinedAt = raw is Timestamp ? raw.toDate() : (raw is String ? DateTime.tryParse(raw) : now);
+        final joinedAt = raw is Timestamp
+            ? raw.toDate()
+            : (raw is String ? DateTime.tryParse(raw) : now);
         if (joinedAt == null || joinedAt.isBefore(monthStart)) continue;
         counts[clinicId] = (counts[clinicId] ?? 0) + 1;
       }
@@ -79,7 +87,10 @@ class TenantRepositoryImpl implements TenantRepository {
       final snap = await _firestore.collection('clinics').get();
       for (final doc in snap.docs) {
         final data = doc.data();
-        final email = (data['adminEmail'] ?? '').toString().toLowerCase().trim();
+        final email = (data['adminEmail'] ?? '')
+            .toString()
+            .toLowerCase()
+            .trim();
         final name = (data['name'] ?? '').toString().trim();
         if (dummyEmails.contains(email) || dummyClinicNames.contains(name)) {
           await doc.reference.delete();
@@ -89,7 +100,10 @@ class TenantRepositoryImpl implements TenantRepository {
       final invitesSnap = await _firestore.collection('invites').get();
       for (final doc in invitesSnap.docs) {
         final data = doc.data();
-        final email = (data['adminEmail'] ?? doc.id).toString().toLowerCase().trim();
+        final email = (data['adminEmail'] ?? doc.id)
+            .toString()
+            .toLowerCase()
+            .trim();
         if (dummyEmails.contains(email)) {
           await doc.reference.delete();
         }
@@ -124,7 +138,8 @@ class TenantRepositoryImpl implements TenantRepository {
       final existingData = existingQuery.docs.first.data();
       final existingName = existingData['name'] ?? 'an existing clinic';
       throw Exception(
-          'A clinic with admin email "$cleanEmail" already exists ("$existingName"). Each clinic admin can only manage one clinic.');
+        'A clinic with admin email "$cleanEmail" already exists ("$existingName"). Each clinic admin can only manage one clinic.',
+      );
     }
 
     // Clear any previous tombstone in removed_clinics if this email was previously removed
@@ -148,7 +163,9 @@ class TenantRepositoryImpl implements TenantRepository {
       'name': cleanName,
       'category': category,
       'city': 'Kochi',
-      'address': address.trim().isEmpty ? 'Main Medical Center' : address.trim(),
+      'address': address.trim().isEmpty
+          ? 'Main Medical Center'
+          : address.trim(),
       'adminName': cleanAdmin,
       'adminEmail': cleanEmail,
       'planId': planId,
@@ -173,7 +190,9 @@ class TenantRepositoryImpl implements TenantRepository {
           'assignedClinics': FieldValue.arrayUnion([docRef.id]),
         });
       } catch (e) {
-        debugPrint('Error linking department $deptId to clinic ${docRef.id}: $e');
+        debugPrint(
+          'Error linking department $deptId to clinic ${docRef.id}: $e',
+        );
       }
     }
 
@@ -215,17 +234,23 @@ class TenantRepositoryImpl implements TenantRepository {
 
       if (response.statusCode == 200) {
         emailDelivered = true;
-        debugPrint('Branded clinic invite email successfully dispatched to $cleanEmail');
+        debugPrint(
+          'Branded clinic invite email successfully dispatched to $cleanEmail',
+        );
       } else {
         debugPrint(
-            'Clinic invite email warning (${response.statusCode}): ${response.body}');
+          'Clinic invite email warning (${response.statusCode}): ${response.body}',
+        );
         try {
           final data = jsonDecode(response.body);
           final errorMsg = data['error']?.toString() ?? '';
-          if (response.statusCode == 403 || errorMsg.contains('own email address')) {
+          if (response.statusCode == 403 ||
+              errorMsg.contains('own email address')) {
             emailFeedback = 'Resend test sandbox only delivers to registered email (muhammedsaad007700@gmail.com).';
           } else {
-            emailFeedback = errorMsg.isNotEmpty ? errorMsg : 'Email service returned error ${response.statusCode}';
+            emailFeedback = errorMsg.isNotEmpty
+                ? errorMsg
+                : 'Email service returned error ${response.statusCode}';
           }
         } catch (_) {
           emailFeedback = 'Email service returned error ${response.statusCode}';
@@ -293,7 +318,10 @@ class TenantRepositoryImpl implements TenantRepository {
     // 2. Sync assignedClinics in departments collection
     try {
       final allDeptsSnap = await _firestore.collection('departments').get();
-      final slug = cleanName.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '-');
+      final slug = cleanName.toLowerCase().replaceAll(
+        RegExp(r'[^a-z0-9]+'),
+        '-',
+      );
 
       for (final doc in allDeptsSnap.docs) {
         final isSelected = departmentIds.contains(doc.id);
@@ -313,10 +341,17 @@ class TenantRepositoryImpl implements TenantRepository {
 
     // 3. Update user profile document in users collection if exists
     try {
-      final clinicDoc = await _firestore.collection('clinics').doc(clinicId).get();
-      final adminEmail = (clinicDoc.data()?['adminEmail'] as String?)?.toLowerCase();
+      final clinicDoc = await _firestore
+          .collection('clinics')
+          .doc(clinicId)
+          .get();
+      final adminEmail = (clinicDoc.data()?['adminEmail'] as String?)
+          ?.toLowerCase();
       if (adminEmail != null && adminEmail.isNotEmpty) {
-        final usersSnap = await _firestore.collection('users').where('email', isEqualTo: adminEmail).get();
+        final usersSnap = await _firestore
+            .collection('users')
+            .where('email', isEqualTo: adminEmail)
+            .get();
         for (final userDoc in usersSnap.docs) {
           await userDoc.reference.update({
             'name': cleanAdmin,
@@ -346,16 +381,28 @@ class TenantRepositoryImpl implements TenantRepository {
   }
 
   @override
-  Future<void> toggleStatus(String clinicId, bool currentlyActive, {String? reason}) async {
+  Future<void> toggleStatus(
+    String clinicId,
+    bool currentlyActive, {
+    String? reason,
+  }) async {
     final doc = await _firestore.collection('clinics').doc(clinicId).get();
-    final currentStatus = (doc.data()?['status'] ?? '').toString().toUpperCase();
+    final currentStatus = (doc.data()?['status'] ?? '')
+        .toString()
+        .toUpperCase();
     if (currentStatus == 'INVITED') {
-      throw Exception('Clinic is pending activation via email. The clinic admin must activate the account first.');
+      throw Exception(
+        'Clinic is pending activation via email. The clinic admin must activate the account first.',
+      );
     }
     await _firestore.collection('clinics').doc(clinicId).update({
       'status': currentlyActive ? 'SUSPENDED' : 'ACTIVE',
-      'suspensionReason': currentlyActive ? (reason?.trim() ?? '') : FieldValue.delete(),
-      'suspendedAt': currentlyActive ? FieldValue.serverTimestamp() : FieldValue.delete(),
+      'suspensionReason': currentlyActive
+          ? (reason?.trim() ?? '')
+          : FieldValue.delete(),
+      'suspendedAt': currentlyActive
+          ? FieldValue.serverTimestamp()
+          : FieldValue.delete(),
       'updatedAt': FieldValue.serverTimestamp(),
     });
   }
@@ -407,10 +454,13 @@ class TenantRepositoryImpl implements TenantRepository {
         try {
           final data = jsonDecode(response.body);
           final errorMsg = data['error']?.toString() ?? '';
-          if (response.statusCode == 403 || errorMsg.contains('own email address')) {
+          if (response.statusCode == 403 ||
+              errorMsg.contains('own email address')) {
             emailFeedback = 'Resend test sandbox only delivers to registered email (muhammedsaad007700@gmail.com).';
           } else {
-            emailFeedback = errorMsg.isNotEmpty ? errorMsg : 'Email service returned error ${response.statusCode}';
+            emailFeedback = errorMsg.isNotEmpty
+                ? errorMsg
+                : 'Email service returned error ${response.statusCode}';
           }
         } catch (_) {
           emailFeedback = 'Email service returned error ${response.statusCode}';
@@ -447,7 +497,10 @@ class TenantRepositoryImpl implements TenantRepository {
     }
 
     final cleanEmail = resolvedAdminEmail?.trim().toLowerCase();
-    final slug = clinicName?.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '-');
+    final slug = clinicName?.toLowerCase().replaceAll(
+      RegExp(r'[^a-z0-9]+'),
+      '-',
+    );
 
     // 1. Record removal tombstones so active clinic sessions detect immediately
     if (cleanEmail != null && cleanEmail.isNotEmpty) {
@@ -457,7 +510,8 @@ class TenantRepositoryImpl implements TenantRepository {
           'clinicName': clinicName ?? 'Clinic',
           'adminEmail': cleanEmail,
           'removedAt': FieldValue.serverTimestamp(),
-          'reason': 'The platform owner has removed the clinic facility and account.',
+          'reason':
+              'The platform owner has removed the clinic facility and account.',
         });
       } catch (e) {
         debugPrint('Error recording removed_clinics entry for $cleanEmail: $e');
@@ -470,10 +524,13 @@ class TenantRepositoryImpl implements TenantRepository {
         'clinicName': clinicName ?? 'Clinic',
         'adminEmail': cleanEmail,
         'removedAt': FieldValue.serverTimestamp(),
-        'reason': 'The platform owner has removed the clinic facility and account.',
+        'reason':
+            'The platform owner has removed the clinic facility and account.',
       });
     } catch (e) {
-      debugPrint('Error recording removed_clinics entry for clinicId $clinicId: $e');
+      debugPrint(
+        'Error recording removed_clinics entry for clinicId $clinicId: $e',
+      );
     }
 
     // 2. Erase queues
@@ -485,7 +542,10 @@ class TenantRepositoryImpl implements TenantRepository {
 
     // 3. Erase services
     try {
-      final servicesSnap = await _firestore.collection('services').where('clinicId', isEqualTo: clinicId).get();
+      final servicesSnap = await _firestore
+          .collection('services')
+          .where('clinicId', isEqualTo: clinicId)
+          .get();
       for (final doc in servicesSnap.docs) {
         await doc.reference.delete();
       }
@@ -495,7 +555,10 @@ class TenantRepositoryImpl implements TenantRepository {
 
     // 4. Erase tickets
     try {
-      final ticketsSnap = await _firestore.collection('tickets').where('clinicId', isEqualTo: clinicId).get();
+      final ticketsSnap = await _firestore
+          .collection('tickets')
+          .where('clinicId', isEqualTo: clinicId)
+          .get();
       for (final doc in ticketsSnap.docs) {
         await doc.reference.delete();
       }
@@ -505,7 +568,10 @@ class TenantRepositoryImpl implements TenantRepository {
 
     // 5. Erase service_requests
     try {
-      final sReqSnap = await _firestore.collection('service_requests').where('clinicId', isEqualTo: clinicId).get();
+      final sReqSnap = await _firestore
+          .collection('service_requests')
+          .where('clinicId', isEqualTo: clinicId)
+          .get();
       for (final doc in sReqSnap.docs) {
         await doc.reference.delete();
       }
@@ -515,7 +581,10 @@ class TenantRepositoryImpl implements TenantRepository {
 
     // 6. Erase department_requests
     try {
-      final dReqSnap = await _firestore.collection('department_requests').where('clinicId', isEqualTo: clinicId).get();
+      final dReqSnap = await _firestore
+          .collection('department_requests')
+          .where('clinicId', isEqualTo: clinicId)
+          .get();
       for (final doc in dReqSnap.docs) {
         await doc.reference.delete();
       }
@@ -539,12 +608,18 @@ class TenantRepositoryImpl implements TenantRepository {
 
     // 8. Erase invites
     try {
-      final inviteByClinic = await _firestore.collection('invites').where('clinicId', isEqualTo: clinicId).get();
+      final inviteByClinic = await _firestore
+          .collection('invites')
+          .where('clinicId', isEqualTo: clinicId)
+          .get();
       for (final doc in inviteByClinic.docs) {
         await doc.reference.delete();
       }
       if (cleanEmail != null && cleanEmail.isNotEmpty) {
-        final inviteByEmail = await _firestore.collection('invites').where('adminEmail', isEqualTo: cleanEmail).get();
+        final inviteByEmail = await _firestore
+            .collection('invites')
+            .where('adminEmail', isEqualTo: cleanEmail)
+            .get();
         for (final doc in inviteByEmail.docs) {
           await doc.reference.delete();
         }
@@ -556,7 +631,10 @@ class TenantRepositoryImpl implements TenantRepository {
     // 9. Erase user profiles in users collection
     if (cleanEmail != null && cleanEmail.isNotEmpty) {
       try {
-        final userSnap = await _firestore.collection('users').where('email', isEqualTo: cleanEmail).get();
+        final userSnap = await _firestore
+            .collection('users')
+            .where('email', isEqualTo: cleanEmail)
+            .get();
         for (final doc in userSnap.docs) {
           await doc.reference.delete();
         }
@@ -566,7 +644,12 @@ class TenantRepositoryImpl implements TenantRepository {
     }
 
     // 10. Erase everything else that belongs to the clinic
-    for (final collection in const ['reviews', 'doctor_reviews', 'appointments', 'staff']) {
+    for (final collection in const [
+      'reviews',
+      'doctor_reviews',
+      'appointments',
+      'staff',
+    ]) {
       await _deleteWhereClinicId(collection, clinicId);
     }
     try {
@@ -582,7 +665,9 @@ class TenantRepositoryImpl implements TenantRepository {
     //     so it runs in a Cloud Function). Failure here must not undo the delete.
     if (cleanEmail != null && cleanEmail.isNotEmpty) {
       try {
-        await FirebaseFunctions.instance.httpsCallable('deleteClinicAdminAccount').call({'email': cleanEmail});
+        await FirebaseFunctions.instance
+            .httpsCallable('deleteClinicAdminAccount')
+            .call({'email': cleanEmail});
       } catch (e) {
         debugPrint('Error deleting auth user for $cleanEmail: $e');
         throw Exception(
@@ -595,7 +680,10 @@ class TenantRepositoryImpl implements TenantRepository {
 
   Future<void> _deleteWhereClinicId(String collection, String clinicId) async {
     try {
-      final snap = await _firestore.collection(collection).where('clinicId', isEqualTo: clinicId).get();
+      final snap = await _firestore
+          .collection(collection)
+          .where('clinicId', isEqualTo: clinicId)
+          .get();
       for (final doc in snap.docs) {
         await doc.reference.delete();
       }

@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../billing/presentation/pages/platform_billing_page.dart';
 import '../../../dashboard/presentation/pages/platform_clinics_page.dart';
 import '../../../dashboard/presentation/widgets/console_sidebar.dart';
 import '../../../dashboard/presentation/widgets/console_top_bar.dart';
 import '../../../departments/presentation/pages/platform_departments_page.dart';
+import '../../../tickets/presentation/pages/platform_support_tickets_page.dart';
 import '../../data/repositories/platform_users_repository_impl.dart';
 import '../../domain/entities/platform_user_entity.dart';
-import '../widgets/delete_patient_dialog.dart';
-import '../widgets/platform_users_data_table.dart';
-import '../widgets/platform_users_filter_toolbar.dart';
-import '../widgets/platform_users_header_bar.dart';
-import '../widgets/platform_users_kpi_cards.dart';
+import '../widgets/platform_users_content_view.dart';
+import '../widgets/platform_users_dialog_actions.dart';
+import '../widgets/platform_users_filter_modal.dart';
+import '../widgets/platform_users_filter_resolver.dart';
 
 class PlatformUsersPage extends StatefulWidget {
   const PlatformUsersPage({super.key});
@@ -25,62 +26,68 @@ class _PlatformUsersPageState extends State<PlatformUsersPage> {
   final _repo = PlatformUsersRepositoryImpl();
   final _searchController = TextEditingController();
 
+  late Stream<List<PlatformUserEntity>> _usersStream;
   String _searchQuery = '';
-  String _selectedClinic = 'all';
-  String _selectedStatus = 'all';
+  PlatformUsersFilterOptions _filterOptions =
+      const PlatformUsersFilterOptions();
+  List<Map<String, String>> _activeClinics = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _usersStream = _repo.watchPlatformUsers();
+    _loadActiveClinics();
+  }
+
+  void _refresh() {
+    setState(() => _usersStream = _repo.watchPlatformUsers());
+    _loadActiveClinics();
+  }
+
+  Future<void> _loadActiveClinics() async {
+    final clinics = await _repo.getActiveClinics();
+    if (mounted) setState(() => _activeClinics = clinics);
+  }
 
   void _onSidebarNav(int i) {
-    if (i == 0) {
+    final page = switch (i) {
+      0 => const PlatformClinicsPage(),
+      1 => const PlatformDepartmentsPage(),
+      3 => const PlatformSupportTicketsPage(),
+      4 => const PlatformBillingPage(),
+      _ => null,
+    };
+    if (page != null) {
       Navigator.pushReplacement(
         context,
         PageRouteBuilder(
-          pageBuilder: (_, _, _) => const PlatformClinicsPage(),
-          transitionDuration: Duration.zero,
-        ),
-      );
-    } else if (i == 1) {
-      Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (_, _, _) => const PlatformDepartmentsPage(),
-          transitionDuration: Duration.zero,
-        ),
-      );
-    } else if (i == 4) {
-      Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (_, _, _) => const PlatformBillingPage(),
+          pageBuilder: (_, _, _) => page,
           transitionDuration: Duration.zero,
         ),
       );
     }
   }
 
-  void _confirmDeleteUser(PlatformUserEntity user) async {
-    final deleted = await showDialog<bool>(
-      context: context,
-      builder: (_) => DeletePatientDialog(
-        user: user,
-        onConfirm: () async {
-          await _repo.deletePatientAccount(user.id, email: user.email);
-        },
-      ),
-    );
-
-    if (deleted == true && mounted) {
-      AppSnackBar.showSuccess(
-        context,
-        message: 'Patient ${user.name} and all records permanently purged from Firestore & Storage.',
-      );
+  void _toggleUserStatus(PlatformUserEntity user) async {
+    final nextStatus = user.status.toLowerCase() == 'suspended'
+        ? 'active'
+        : 'suspended';
+    try {
+      await _repo.setUserStatus(user.id, nextStatus);
+      if (mounted) {
+        AppSnackBar.showSuccess(
+          context,
+          message: 'User status set to: ${nextStatus.toUpperCase()}',
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        AppSnackBar.showError(
+          context,
+          message: 'Failed to update user status: $e',
+        );
+      }
     }
-  }
-
-  void _exportCsv(List<PlatformUserEntity> users) {
-    AppSnackBar.showSuccess(
-      context,
-      message: 'Exported ${users.length} patient records to CSV.',
-    );
   }
 
   @override
@@ -107,16 +114,15 @@ class _PlatformUsersPageState extends State<PlatformUsersPage> {
       body: Row(
         children: [
           if (isDesktop)
-            ConsoleSidebar(
-              activeIndex: 2,
-              onIndexChanged: _onSidebarNav,
-            ),
+            ConsoleSidebar(activeIndex: 2, onIndexChanged: _onSidebarNav),
           Expanded(
             child: Builder(
               builder: (ctx) => Column(
                 children: [
                   ConsoleTopBar(
-                    onMenuPressed: isDesktop ? null : () => Scaffold.of(ctx).openDrawer(),
+                    onMenuPressed: isDesktop
+                        ? null
+                        : () => Scaffold.of(ctx).openDrawer(),
                     onSearch: (q) => setState(() {
                       _searchQuery = q.trim().toLowerCase();
                       _searchController.text = q;
@@ -124,91 +130,94 @@ class _PlatformUsersPageState extends State<PlatformUsersPage> {
                   ),
                   Expanded(
                     child: StreamBuilder<List<PlatformUserEntity>>(
-                      stream: _repo.watchPlatformUsers(),
+                      stream: _usersStream,
                       builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting &&
+                        if (snapshot.connectionState ==
+                                ConnectionState.waiting &&
                             !snapshot.hasData) {
                           return const Center(
                             child: CircularProgressIndicator(strokeWidth: 2),
                           );
                         }
-
                         final allUsers = snapshot.data ?? const [];
-
-                        // Compute list of available clinic names for dropdown filter
-                        final clinicsSet = <String>{};
-                        for (final u in allUsers) {
-                          if (u.homeClinicName.isNotEmpty) {
-                            clinicsSet.add(u.homeClinicName);
-                          }
-                        }
-                        final availableClinics = clinicsSet.toList()..sort();
-
-                        // Filter users based on search, clinic, and status
-                        final filteredUsers = allUsers.where((u) {
-                          if (_searchQuery.isNotEmpty) {
-                            final matchName = u.name.toLowerCase().contains(_searchQuery);
-                            final matchEmail = u.email.toLowerCase().contains(_searchQuery);
-                            final matchPhone = u.phone.toLowerCase().contains(_searchQuery);
-                            final matchHealth = u.healthId.toLowerCase().contains(_searchQuery);
-                            final matchToken = (u.activeQueueToken ?? '').toLowerCase().contains(_searchQuery);
-                            final matchClinic = u.homeClinicName.toLowerCase().contains(_searchQuery);
-                            if (!matchName && !matchEmail && !matchPhone && !matchHealth && !matchToken && !matchClinic) {
-                              return false;
-                            }
-                          }
-
-                          if (_selectedClinic != 'all' && u.homeClinicName != _selectedClinic) {
-                            return false;
-                          }
-
-                          if (_selectedStatus == 'in-queue') {
-                            if (u.activeQueueToken == null || u.activeQueueToken!.isEmpty) return false;
-                          } else if (_selectedStatus == 'verified') {
-                            if (!u.isVerified) return false;
-                          } else if (_selectedStatus == 'active') {
-                            if (u.status != 'active') return false;
-                          }
-
-                          return true;
-                        }).toList();
-
-                        return SingleChildScrollView(
-                          padding: const EdgeInsets.all(24),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              PlatformUsersHeaderBar(
-                                totalCount: allUsers.length,
-                                onRefresh: () => setState(() {}),
-                                onExport: () => _exportCsv(filteredUsers),
-                              ),
-                              const SizedBox(height: 20),
-                              PlatformUsersKpiCards(users: allUsers),
-                              const SizedBox(height: 20),
-                              PlatformUsersFilterToolbar(
-                                searchController: _searchController,
-                                selectedClinic: _selectedClinic,
-                                selectedStatus: _selectedStatus,
-                                availableClinics: availableClinics,
-                                filteredCount: filteredUsers.length,
-                                onSearchChanged: (val) => setState(() => _searchQuery = val.trim().toLowerCase()),
-                                onClinicChanged: (val) => setState(() => _selectedClinic = val),
-                                onStatusChanged: (val) => setState(() => _selectedStatus = val),
-                                onReset: () => setState(() {
-                                  _searchQuery = '';
-                                  _searchController.clear();
-                                  _selectedClinic = 'all';
-                                  _selectedStatus = 'all';
-                                }),
-                              ),
-                              const SizedBox(height: 16),
-                              PlatformUsersDataTable(
-                                users: filteredUsers,
-                                onDeleteUser: _confirmDeleteUser,
-                              ),
-                            ],
+                        final filteredUsers =
+                            PlatformUsersFilterResolver.resolve(
+                              allUsers: allUsers,
+                              searchQuery: _searchQuery,
+                              filterOptions: _filterOptions,
+                            );
+                        return PlatformUsersContentView(
+                          allUsers: allUsers,
+                          filteredUsers: filteredUsers,
+                          searchController: _searchController,
+                          filterOptions: _filterOptions,
+                          onRefresh: _refresh,
+                          onExport: () => AppSnackBar.showSuccess(
+                            context,
+                            message:
+                                'Exported ${filteredUsers.length} records to CSV.',
                           ),
+                          onBroadcast: () =>
+                              PlatformUsersDialogActions.sendNotification(
+                                context,
+                                repo: _repo,
+                                totalCount: allUsers.length,
+                              ),
+                          onRegisterUser: () =>
+                              PlatformUsersDialogActions.registerUser(
+                                context,
+                                repo: _repo,
+                                availableClinics: _activeClinics,
+                                onSuccess: _refresh,
+                              ),
+                          onSearchChanged: (val) => setState(
+                            () => _searchQuery = val.trim().toLowerCase(),
+                          ),
+                          onOpenFilter: () =>
+                              PlatformUsersDialogActions.openFilter(
+                                context,
+                                currentOptions: _filterOptions,
+                                onApply: (opts) =>
+                                    setState(() => _filterOptions = opts),
+                              ),
+                          onReset: () => setState(() {
+                            _searchQuery = '';
+                            _searchController.clear();
+                            _filterOptions = const PlatformUsersFilterOptions();
+                          }),
+                          onViewUser: (u) =>
+                              PlatformUsersDialogActions.openUserDetails(
+                                context,
+                                user: u,
+                                onSendNotification: () =>
+                                    PlatformUsersDialogActions.sendNotification(
+                                      context,
+                                      repo: _repo,
+                                      targetUser: u,
+                                      totalCount: 1,
+                                    ),
+                                onToggleStatus: () => _toggleUserStatus(u),
+                                onDelete: () =>
+                                    PlatformUsersDialogActions.deleteUser(
+                                      context,
+                                      repo: _repo,
+                                      user: u,
+                                    ),
+                              ),
+                          onSendNotification: (u) =>
+                              PlatformUsersDialogActions.sendNotification(
+                                context,
+                                repo: _repo,
+                                targetUser: u,
+                                totalCount: 1,
+                              ),
+                          onToggleStatus: _toggleUserStatus,
+                          onDeleteUser: (u) =>
+                              PlatformUsersDialogActions.deleteUser(
+                                context,
+                                repo: _repo,
+                                user: u,
+                              ),
                         );
                       },
                     ),

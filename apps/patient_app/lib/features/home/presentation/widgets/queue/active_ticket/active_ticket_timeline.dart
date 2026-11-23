@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../../domain/entities/active_ticket_entity.dart';
 
 class _TimelineStepData {
@@ -51,7 +52,11 @@ class ActiveTicketTimeline extends StatelessWidget {
         isDone: isCompleted,
         isActive: !isCompleted && (isCalled || ticket.position <= 0),
       ),
-      _TimelineStepData(label: 'Completed', isDone: isCompleted, isActive: false),
+      _TimelineStepData(
+        label: 'Completed',
+        isDone: isCompleted,
+        isActive: false,
+      ),
     ];
 
     return Container(
@@ -90,8 +95,8 @@ class ActiveTicketTimeline extends StatelessWidget {
                       color: step.isActive
                           ? colors.primary
                           : (step.isDone
-                              ? colors.textPrimary
-                              : colors.textSubtle),
+                                ? colors.textPrimary
+                                : colors.textSubtle),
                       height: 1.2,
                     ),
                   ),

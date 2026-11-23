@@ -9,7 +9,11 @@ service cloud.firestore {
 
     function isPlatformOwner() {
       return request.auth != null
-        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'platform_owner';
+        && (
+          (request.auth.token.email != null && request.auth.token.email.lower() == 'admin@queueflow.com')
+          || (exists(/databases/$(database)/documents/users/$(request.auth.uid))
+              && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'platform_owner')
+        );
     }
 
     // 1. Clinics, Services & Doctors (Publicly viewable by patients)
@@ -57,12 +61,14 @@ service cloud.firestore {
 
     // 2. User Profiles
     match /users/{userId} {
-      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+      allow read: if true;
+      allow create: if isAuthenticated();
+      allow update, delete: if isPlatformOwner() || (isAuthenticated() && request.auth.uid == userId);
     }
 
     // 3. Appointments (Patients can create & view their own bookings)
     match /appointments/{appointmentId} {
-      allow read: if isAuthenticated();
+      allow read: if true;
       allow create: if isAuthenticated();
       allow update, delete: if isAuthenticated();
     }
@@ -148,6 +154,11 @@ service cloud.firestore {
     }
     match /staff/{staffId} {
       allow read, write: if isAuthenticated();
+    }
+
+    // 10. Patient Support Tickets & Platform SLA Concerns
+    match /support_tickets/{ticketId=**} {
+      allow read, write: if true;
     }
   }
 }

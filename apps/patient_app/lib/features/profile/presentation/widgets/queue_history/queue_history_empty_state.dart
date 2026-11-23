@@ -11,32 +11,23 @@ class QueueHistoryEmptyState extends StatelessWidget {
     final colors = context.colors;
 
     return Container(
-      padding: const EdgeInsets.symmetric(
-        vertical: 40,
-        horizontal: 20,
-      ),
+      padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
       decoration: BoxDecoration(
         color: colors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: colors.border,
-          style: BorderStyle.solid,
-        ),
+        border: Border.all(color: colors.border, style: BorderStyle.solid),
       ),
       alignment: Alignment.center,
       child: Column(
         children: [
-          const Text(
-            '🎟️',
-            style: TextStyle(fontSize: 36),
-          ),
+          const Text('🎟️', style: TextStyle(fontSize: 36)),
           const SizedBox(height: 8),
           Text(
             filterIndex == 1
                 ? 'No active queue tokens'
                 : (filterIndex == 2
-                    ? 'No completed queue tokens'
-                    : 'No queue tokens'),
+                      ? 'No completed queue tokens'
+                      : 'No queue tokens'),
             style: TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.w800,
@@ -46,10 +37,7 @@ class QueueHistoryEmptyState extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             'You have no joined queues matching this filter.',
-            style: TextStyle(
-              fontSize: 12,
-              color: colors.textMuted,
-            ),
+            style: TextStyle(fontSize: 12, color: colors.textMuted),
             textAlign: TextAlign.center,
           ),
         ],

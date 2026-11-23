@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../appointments/domain/entities/clinic_appointment_entity.dart';
@@ -15,6 +15,7 @@ import '../../../services/domain/entities/clinic_service_entity.dart';
 import '../../../services/domain/entities/service_department_entity.dart';
 import '../../../services/presentation/pages/clinic_services_view.dart';
 import '../../../settings/presentation/pages/clinic_settings_view.dart';
+import '../../../tickets/presentation/pages/clinic_patient_tickets_view.dart';
 import '../../data/dashboard_appointments_source.dart';
 import '../../domain/entities/dashboard_overview.dart';
 import '../bloc/clinic_dashboard_bloc.dart';
@@ -29,7 +30,7 @@ class ClinicDashboardContentSwitcher extends StatefulWidget {
   final ClinicDashboardBloc bloc;
   final String doctorName;
 
-  const ClinicDashboardContentSwitcher({ 
+  const ClinicDashboardContentSwitcher({
     super.key,
     required this.state,
     required this.bloc,
@@ -51,6 +52,7 @@ class _ClinicDashboardContentSwitcherState
   StreamSubscription<List<ClinicServiceEntity>>? _servicesSub;
 
   String _clinicName = '';
+  String _clinicId = '';
   List<ServiceDepartmentEntity> _departments = const [];
   List<ClinicDoctorEntity> _doctors = const [];
   List<ClinicServiceEntity> _services = const [];
@@ -80,6 +82,7 @@ class _ClinicDashboardContentSwitcherState
     try {
       final clinicId = await _servicesRepo.currentClinicId();
       if (!mounted) return;
+      setState(() => _clinicId = clinicId);
       _apptSub = _appointmentsSource
           .watch(clinicId: clinicId, departmentOfService: _departmentOf)
           .listen((list) {
@@ -176,6 +179,20 @@ class _ClinicDashboardContentSwitcherState
       return const ClinicSettingsView();
     }
 
+    if (state.activeNav == 'Patient Tickets') {
+      return ClinicPatientTicketsView(
+        clinicId: _clinicId,
+        clinicName: _clinicName,
+        staffName: widget.doctorName.isNotEmpty
+            ? widget.doctorName
+            : 'Reception Care Desk',
+        liveWaitingCount: state.queue.waitingCount,
+        liveNowServing: state.queue.currentToken,
+        onNavigateToQueue: () =>
+            bloc.add(const DashboardNavTabChanged('Live Queue')),
+      );
+    }
+
     if (_selectedAppointment != null) {
       return AppointmentDetailPage(
         appointment: _selectedAppointment!,
@@ -211,8 +228,8 @@ class _ClinicDashboardContentSwitcherState
               setState(() {
                 _selectedAppointment = _selectedAppointment!.copyWith(
                   dateRaw: newDate,
-                  timeRaw: newTime, 
-                  dateTime: '$newDate · $newTime', 
+                  timeRaw: newTime,
+                  dateTime: '$newDate · $newTime',
                   status: 'confirmed',
                 );
               });

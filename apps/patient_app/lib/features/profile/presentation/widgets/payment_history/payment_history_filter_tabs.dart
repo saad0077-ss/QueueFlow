@@ -36,7 +36,11 @@ class PaymentHistoryFilterTabs extends StatelessWidget {
     );
   }
 
-  Widget _tab(BuildContext context, {required String id, required String label}) {
+  Widget _tab(
+    BuildContext context, {
+    required String id,
+    required String label,
+  }) {
     final colors = context.colors;
     final isSelected = activeFilter == id;
 

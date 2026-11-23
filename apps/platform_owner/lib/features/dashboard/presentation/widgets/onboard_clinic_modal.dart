@@ -1,8 +1,10 @@
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../departments/data/repositories/department_repository_impl.dart';
 import '../../../departments/domain/entities/department_entity.dart';
@@ -15,7 +17,7 @@ class OnboardClinicModal {
       context: context,
       builder: (ctx) => _OnboardClinicDialog(parentContext: context),
     );
-  } 
+  }
 }
 
 class _OnboardClinicDialog extends StatefulWidget {
@@ -152,7 +154,10 @@ class _OnboardClinicDialogState extends State<_OnboardClinicDialog> {
                           return OnboardDepartmentDropdown(
                             departments: departments,
                             selectedDepartmentIds: _selectedDepartmentIds,
-                            isLoading: snapshot.connectionState == ConnectionState.waiting && !snapshot.hasData,
+                            isLoading:
+                                snapshot.connectionState ==
+                                    ConnectionState.waiting &&
+                                !snapshot.hasData,
                             onChanged: (updated) {
                               setState(() {
                                 _selectedDepartmentIds = updated;
@@ -177,7 +182,9 @@ class _OnboardClinicDialogState extends State<_OnboardClinicDialog> {
                     child: SizedBox(
                       height: 44,
                       child: OutlinedButton(
-                        onPressed: _isSubmitting ? null : () => Navigator.pop(context),
+                        onPressed: _isSubmitting
+                            ? null
+                            : () => Navigator.pop(context),
                         style: OutlinedButton.styleFrom(
                           backgroundColor: colors.surfaceSecondary,
                           foregroundColor: colors.textPrimary,
@@ -207,7 +214,8 @@ class _OnboardClinicDialogState extends State<_OnboardClinicDialog> {
                         borderRadius: BorderRadius.circular(24),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF06B6D4).withValues(alpha: 0.35),
+                            color: const Color(0xFF06B6D4)
+                                .withValues(alpha: 0.35),
                             blurRadius: 16,
                             offset: const Offset(0, 4),
                           ),
@@ -255,11 +263,17 @@ class _OnboardClinicDialogState extends State<_OnboardClinicDialog> {
     final cleanName = _nameCtrl.text.trim();
     final cleanEmail = _adminEmailCtrl.text.trim();
     if (cleanName.isEmpty) {
-      AppSnackBar.showWarning(context, message: 'Please enter a practice / clinic name.');
+      AppSnackBar.showWarning(
+        context,
+        message: 'Please enter a practice / clinic name.',
+      );
       return;
     }
     if (cleanEmail.isEmpty || !cleanEmail.contains('@')) {
-      AppSnackBar.showWarning(context, message: 'Please enter a valid administrator email.');
+      AppSnackBar.showWarning(
+        context,
+        message: 'Please enter a valid administrator email.',
+      );
       return;
     }
 

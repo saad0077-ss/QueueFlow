@@ -26,9 +26,24 @@ class MyReviewsFilterTabs extends StatelessWidget {
 
     final tabs = [
       {'key': 'all', 'label': 'All', 'count': countAll, 'icon': ''},
-      {'key': 'doctors', 'label': 'Doctors Rated', 'count': countDoctors, 'icon': '👨‍⚕️ '},
-      {'key': 'clinics', 'label': 'Clinic Care', 'count': countClinics, 'icon': '🏥 '},
-      {'key': '5star', 'label': '5 Stars', 'count': count5Star, 'icon': '⭐⭐⭐⭐⭐ '},
+      {
+        'key': 'doctors',
+        'label': 'Doctors Rated',
+        'count': countDoctors,
+        'icon': '👨‍⚕️ ',
+      },
+      {
+        'key': 'clinics',
+        'label': 'Clinic Care',
+        'count': countClinics,
+        'icon': '🏥 ',
+      },
+      {
+        'key': '5star',
+        'label': '5 Stars',
+        'count': count5Star,
+        'icon': '⭐⭐⭐⭐⭐ ',
+      },
     ];
 
     return SingleChildScrollView(
@@ -48,7 +63,10 @@ class MyReviewsFilterTabs extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 150),
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: isSelected ? colors.primary : colors.surfaceSecondary,
                   borderRadius: BorderRadius.circular(10),

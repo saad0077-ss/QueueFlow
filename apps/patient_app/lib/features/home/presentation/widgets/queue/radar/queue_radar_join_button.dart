@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../../data/repositories/home_repository_impl.dart'
     show completedTicketsQuery, hasCompletedServiceToday;
 import '../../../../domain/entities/clinic_entity.dart';

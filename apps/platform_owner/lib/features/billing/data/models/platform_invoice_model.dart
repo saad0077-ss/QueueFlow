@@ -1,4 +1,4 @@
-﻿import '../../domain/entities/platform_invoice_entity.dart';
+import '../../domain/entities/platform_invoice_entity.dart';
 
 class PlatformInvoiceModel extends PlatformInvoiceEntity {
   const PlatformInvoiceModel({
@@ -19,10 +19,14 @@ class PlatformInvoiceModel extends PlatformInvoiceEntity {
       id: id,
       number: data['number'] as String? ?? 'QF-INV-2026-001',
       clinicId: data['clinicId'] as String? ?? 'clinic',
-      clinicName: data['clinic'] as String? ?? (data['clinicName'] as String? ?? 'Partner Clinic'),
+      clinicName:
+          data['clinic'] as String? ??
+          (data['clinicName'] as String? ?? 'Partner Clinic'),
       plan: data['plan'] as String? ?? 'Solo Doctor Plan',
       amount: data['amount'] as String? ?? '₹999',
-      dueDate: data['due'] as String? ?? (data['dueDate'] as String? ?? '15 Oct 2026'),
+      dueDate:
+          data['due'] as String? ??
+          (data['dueDate'] as String? ?? '15 Oct 2026'),
       date: data['date'] as String? ?? '1 Oct 2026',
       status: data['status'] as String? ?? 'completed',
       method: data['method'] as String? ?? 'Razorpay AutoPay',

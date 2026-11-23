@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+
 import 'platform_invoice_entity.dart';
 import 'platform_tenant_subscription_entity.dart';
 
@@ -72,12 +73,18 @@ class PlatformBillingKpis extends Equatable {
 
     // ARPU & Churn
     final arpuInt = activeCount > 0 ? (totalMrrInt / activeCount).round() : 0;
-    final churn = totalCount > 0 ? (((totalCount - activeCount) / totalCount) * 100) : 0.0;
-    final retentionPct = totalCount > 0 ? ((activeCount / totalCount) * 100).round() : 100;
+    final churn = totalCount > 0
+        ? (((totalCount - activeCount) / totalCount) * 100)
+        : 0.0;
+    final retentionPct = totalCount > 0
+        ? ((activeCount / totalCount) * 100).round()
+        : 100;
 
     return PlatformBillingKpis(
       totalMrr: '₹${_formatNum(totalMrrInt)}',
-      mrrTrend: totalMrrInt > 0 ? '₹${_formatNum(totalMrrInt * 12)} ARR' : 'Live MRR',
+      mrrTrend: totalMrrInt > 0
+          ? '₹${_formatNum(totalMrrInt * 12)} ARR'
+          : 'Live MRR',
       activeSubscriptions: activeCount,
       retentionRate: '$retentionPct% Active',
       overdueCount: overdueCount,

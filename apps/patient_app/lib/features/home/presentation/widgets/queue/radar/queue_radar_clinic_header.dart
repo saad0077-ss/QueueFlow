@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../../../../core/widgets/clinic_photo.dart';
 import '../../../../../../core/widgets/distance_builder.dart';
 import '../../../../domain/entities/clinic_entity.dart';

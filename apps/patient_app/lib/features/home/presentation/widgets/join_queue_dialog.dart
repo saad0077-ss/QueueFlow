@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../domain/entities/clinic_entity.dart';
 import 'queue/dialog/join_queue_actions.dart';
-import 'queue/dialog/join_queue_cubit.dart';
+import 'queue/dialog/join_queue_bloc.dart';
 import 'queue/dialog/join_queue_fee_box.dart';
 import 'queue/dialog/join_queue_header.dart';
 import 'queue/dialog/join_queue_info_box.dart';
@@ -49,14 +50,14 @@ class JoinQueueDialog extends StatelessWidget {
     final colors = context.colors;
 
     return BlocProvider(
-      create: (_) => JoinQueueCubit(
+      create: (_) => JoinQueueBloc(
         clinic: clinic,
         presetService: service,
         presetDepartment: department,
       ),
-      child: BlocBuilder<JoinQueueCubit, JoinQueueState>(
+      child: BlocBuilder<JoinQueueBloc, JoinQueueState>(
         builder: (context, state) {
-          final cubit = context.read<JoinQueueCubit>();
+          final bloc = context.read<JoinQueueBloc>();
 
           return Dialog(
             backgroundColor: colors.surfaceElevated,
@@ -97,7 +98,7 @@ class JoinQueueDialog extends StatelessWidget {
                   JoinQueueActions(
                     canJoin: state.canJoin,
                     onCancel: () => Navigator.of(context).pop(),
-                    onProceed: () => cubit.checkout(
+                    onProceed: () => bloc.checkout(
                       context: context,
                       onSuccess: onJoinSuccess,
                     ),

@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+import '../../../../core/services/clinic_session_manager.dart';
 
 /// Monitors in real-time whether the current clinic facility has been deleted
 /// or removed by the platform owner. If removed while the clinic staff/admin is
@@ -105,10 +106,17 @@ class _ClinicAccountRemovalGuardState extends State<ClinicAccountRemovalGuard> {
   Future<void> _checkIfRemovedTombstoneExists(String email) async {
     try {
       if (!mounted || _dialogShown) return;
-      // Tombstone present, or the clinic no longer exists at all -> removed.
-      _showRemovalDialog(
-        'The platform owner has removed your clinic facility and account.',
-      );
+      final snap = await FirebaseFirestore.instance
+          .collection('removed_clinics')
+          .doc(email)
+          .get();
+      if (snap.exists && mounted && !_dialogShown) {
+        final data = snap.data();
+        final message =
+            data?['reason'] as String? ??
+            'The platform owner has removed your clinic facility and account.';
+        _showRemovalDialog(message);
+      }
     } catch (_) {}
   }
 
@@ -213,7 +221,7 @@ class _ClinicAccountRemovalGuardState extends State<ClinicAccountRemovalGuard> {
                         ),
                         onPressed: () async {
                           Navigator.of(dialogCtx, rootNavigator: true).pop();
-                          await FirebaseAuth.instance.signOut();
+                          await ClinicSessionManager.clearSession();
                         },
                         child: Text(
                           suspended ? 'Sign Out' : 'Acknowledge & Sign Out',

@@ -31,28 +31,71 @@ class ClinicsKpiCards extends StatelessWidget {
         final cardWidth = (w - 14 * (perRow - 1)) / perRow;
 
         final cards = [
-          _card(colors, Icons.domain_rounded, const Color(0xFF38BDF8), _fmt(totalClinics), 'Total Clinics',
-              invitedClinics > 0 ? '$invitedClinics awaiting activation' : 'All onboarded'),
-          _card(colors, Icons.check_circle_outline_rounded, const Color(0xFF10B981), _fmt(activePractices), 'Active Clinics',
-              totalClinics == 0 ? 'No clinics yet' : '${(activePractices * 100 / totalClinics).round()}% of network'),
-          _card(colors, Icons.medical_services_outlined, const Color(0xFFA855F7), _fmt(totalDoctors), 'Doctors on Roster',
-              'Across all clinics'),
-          _card(colors, Icons.calendar_today_rounded, const Color(0xFFF59E0B), _fmt(appointmentsMonth), 'Appointments This Month',
-              'Queue tickets since the 1st'),
-          _card(colors, Icons.credit_card_rounded, const Color(0xFF14B8A6), '₹${_fmt(totalMrr)}', 'Monthly Recurring Revenue',
-              'From active subscriptions'),
+          _card(
+            colors,
+            Icons.domain_rounded,
+            const Color(0xFF38BDF8),
+            _fmt(totalClinics),
+            'Total Clinics',
+            invitedClinics > 0
+                ? '$invitedClinics awaiting activation'
+                : 'All onboarded',
+          ),
+          _card(
+            colors,
+            Icons.check_circle_outline_rounded,
+            const Color(0xFF10B981),
+            _fmt(activePractices),
+            'Active Clinics',
+            totalClinics == 0
+                ? 'No clinics yet'
+                : '${(activePractices * 100 / totalClinics).round()}% of network',
+          ),
+          _card(
+            colors,
+            Icons.medical_services_outlined,
+            const Color(0xFFA855F7),
+            _fmt(totalDoctors),
+            'Doctors on Roster',
+            'Across all clinics',
+          ),
+          _card(
+            colors,
+            Icons.calendar_today_rounded,
+            const Color(0xFFF59E0B),
+            _fmt(appointmentsMonth),
+            'Appointments This Month',
+            'Queue tickets since the 1st',
+          ),
+          _card(
+            colors,
+            Icons.credit_card_rounded,
+            const Color(0xFF14B8A6),
+            '₹${_fmt(totalMrr)}',
+            'Monthly Recurring Revenue',
+            'From active subscriptions',
+          ),
         ];
 
         return Wrap(
           spacing: 14,
           runSpacing: 14,
-          children: [for (final c in cards) SizedBox(width: cardWidth, child: c)],
+          children: [
+            for (final c in cards) SizedBox(width: cardWidth, child: c),
+          ],
         );
       },
     );
   }
 
-  Widget _card(AppColorsExtension colors, IconData icon, Color iconColor, String value, String label, String caption) {
+  Widget _card(
+    AppColorsExtension colors,
+    IconData icon,
+    Color iconColor,
+    String value,
+    String label,
+    String caption,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -72,15 +115,39 @@ class ClinicsKpiCards extends StatelessWidget {
             child: Icon(icon, color: iconColor, size: 19),
           ),
           const SizedBox(height: 14),
-          Text(value, style: GoogleFonts.inter(fontSize: 22, fontWeight: FontWeight.bold, color: colors.textPrimary)),
+          Text(
+            value,
+            style: GoogleFonts.inter(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: colors.textPrimary,
+            ),
+          ),
           const SizedBox(height: 4),
-          Text(label, maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted, fontWeight: FontWeight.w500)),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.inter(
+              fontSize: 12,
+              color: colors.textMuted,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
           const SizedBox(height: 2),
-          Text(caption, maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.inter(fontSize: 10.5, color: colors.textSubtle)),
+          Text(
+            caption,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.inter(fontSize: 10.5, color: colors.textSubtle),
+          ),
         ],
       ),
     );
   }
 
-  String _fmt(int n) => n.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},');
+  String _fmt(int n) => n.toString().replaceAllMapped(
+    RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+    (m) => '${m[1]},',
+  );
 }

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
-import 'edit_profile_cubit.dart';
+
+import 'edit_profile_bloc.dart';
 
 class EditProfileContactCard extends StatelessWidget {
   final TextEditingController emailController;
@@ -16,7 +17,7 @@ class EditProfileContactCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final cubit = context.read<EditProfileCubit>();
+    final bloc = context.read<EditProfileBloc>();
     final textStyle = TextStyle(
       fontSize: 14,
       color: colors.textPrimary,
@@ -41,7 +42,11 @@ class EditProfileContactCard extends StatelessWidget {
                   color: colors.primaryTint,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(Icons.contact_phone_rounded, size: 16, color: colors.primary),
+                child: Icon(
+                  Icons.contact_phone_rounded,
+                  size: 16,
+                  color: colors.primary,
+                ),
               ),
               const SizedBox(width: 10),
               Text(
@@ -61,8 +66,13 @@ class EditProfileContactCard extends StatelessWidget {
             style: textStyle,
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.next,
-            decoration: _inputDeco(context, 'Email address', Icons.mail_outline_rounded, 'name@email.com'),
-            onChanged: cubit.updateEmail,
+            decoration: _inputDeco(
+              context,
+              'Email address',
+              Icons.mail_outline_rounded,
+              'name@email.com',
+            ),
+            onChanged: bloc.updateEmail,
           ),
           const SizedBox(height: 16),
           TextFormField(
@@ -70,15 +80,25 @@ class EditProfileContactCard extends StatelessWidget {
             style: textStyle,
             keyboardType: TextInputType.phone,
             textInputAction: TextInputAction.done,
-            decoration: _inputDeco(context, 'Phone number', Icons.phone_outlined, '+91 00000 00000'),
-            onChanged: cubit.updatePhone,
+            decoration: _inputDeco(
+              context,
+              'Phone number',
+              Icons.phone_outlined,
+              '+91 00000 00000',
+            ),
+            onChanged: bloc.updatePhone,
           ),
         ],
       ),
     );
   }
 
-  static InputDecoration _inputDeco(BuildContext context, String label, IconData icon, String hint) {
+  static InputDecoration _inputDeco(
+    BuildContext context,
+    String label,
+    IconData icon,
+    String hint,
+  ) {
     final colors = context.colors;
     return InputDecoration(
       labelText: label,
@@ -89,9 +109,18 @@ class EditProfileContactCard extends StatelessWidget {
       hintStyle: TextStyle(color: colors.textSubtle),
       filled: true,
       fillColor: colors.surfaceSecondary,
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: colors.border)),
-      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: colors.border)),
-      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: colors.primary, width: 1.5)),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: colors.border),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: colors.border),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: colors.primary, width: 1.5),
+      ),
     );
   }
 }

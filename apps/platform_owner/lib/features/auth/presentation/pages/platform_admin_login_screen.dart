@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../../core/widgets/gradient_submit_button.dart';
 import '../../../dashboard/presentation/pages/platform_clinics_page.dart';
@@ -46,7 +47,9 @@ class _PlatformAdminLoginView extends StatelessWidget {
               if (state.admin != null) {
                 AppSnackBar.showSuccess(context, message: 'Signed in.');
                 Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (_) => const PlatformClinicsPage()),
+                  MaterialPageRoute(
+                    builder: (_) => const PlatformClinicsPage(),
+                  ),
                 );
               }
               if (state.errorMessage != null) {
@@ -55,16 +58,16 @@ class _PlatformAdminLoginView extends StatelessWidget {
             },
             builder: (context, state) => Row(
               children: [
-                if (isDesktop) const Expanded(flex: 5, child: HeroAnalyticsBanner()),
-                Expanded(flex: isDesktop ? 6 : 1, child: _buildForm(context, state, isDesktop)),
+                if (isDesktop)
+                  const Expanded(flex: 5, child: HeroAnalyticsBanner()),
+                Expanded(
+                  flex: isDesktop ? 6 : 1,
+                  child: _buildForm(context, state, isDesktop),
+                ),
               ],
             ),
           ),
-          const Positioned(
-            top: 20,
-            right: 20,
-            child: ThemeModeToggleButton(),
-          ),
+          const Positioned(top: 20, right: 20, child: ThemeModeToggleButton()),
         ],
       ),
     );
@@ -76,7 +79,10 @@ class _PlatformAdminLoginView extends StatelessWidget {
 
     return Center(
       child: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: isDesktop ? 64 : 24, vertical: 36),
+        padding: EdgeInsets.symmetric(
+          horizontal: isDesktop ? 64 : 24,
+          vertical: 36,
+        ),
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 430),
           child: Column(
@@ -84,12 +90,20 @@ class _PlatformAdminLoginView extends StatelessWidget {
             children: [
               Text(
                 'Platform Owner Console',
-                style: GoogleFonts.inter(fontSize: 28, fontWeight: FontWeight.bold, color: colors.textPrimary),
+                style: GoogleFonts.inter(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: colors.textPrimary,
+                ),
               ),
               const SizedBox(height: 6),
               Text(
                 'Manage tenant registry, SaaS plan tiers, financial intelligence, and audit logs.',
-                style: GoogleFonts.inter(fontSize: 14, color: colors.textMuted, height: 1.4),
+                style: GoogleFonts.inter(
+                  fontSize: 14,
+                  color: colors.textMuted,
+                  height: 1.4,
+                ),
               ),
               const SizedBox(height: 28),
               AdminInputField(
@@ -113,11 +127,14 @@ class _PlatformAdminLoginView extends StatelessWidget {
                 onFieldSubmitted: (_) => bloc.add(const SignInSubmitted()),
                 suffixIcon: IconButton(
                   icon: Icon(
-                    state.isPasswordObscured ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                    state.isPasswordObscured
+                        ? Icons.visibility_outlined
+                        : Icons.visibility_off_outlined,
                     color: colors.textMuted,
                     size: 20,
                   ),
-                  onPressed: () => bloc.add(const SignInTogglePasswordVisibility()),
+                  onPressed: () =>
+                      bloc.add(const SignInTogglePasswordVisibility()),
                 ),
               ),
               const SizedBox(height: 28),
@@ -131,7 +148,11 @@ class _PlatformAdminLoginView extends StatelessWidget {
                 child: Text(
                   'Access is restricted to authorized platform owners.\nContact system security if you require administrative access.',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.inter(fontSize: 12, color: colors.textSubtle, height: 1.5),
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    color: colors.textSubtle,
+                    height: 1.5,
+                  ),
                 ),
               ),
             ],

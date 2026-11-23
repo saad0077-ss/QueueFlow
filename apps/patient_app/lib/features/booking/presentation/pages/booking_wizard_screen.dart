@@ -104,11 +104,15 @@ class _BookingWizardViewState extends State<_BookingWizardView> {
     return BlocConsumer<BookingBloc, BookingState>(
       listener: (context, state) {
         if (state.errorMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.errorMessage!),
-              backgroundColor: colors.error,
-            ),
+          AppSnackBar.showError(context, message: state.errorMessage!);
+        } else if (state.status == BookingStatus.success &&
+            state.step == 5 &&
+            state.confirmedAppointment != null) {
+          AppSnackBar.showSuccess(
+            context,
+            title: 'Booking Confirmed!',
+            message:
+                'Appointment #${state.confirmedAppointment!.bookingRef} scheduled successfully.',
           );
         }
       },

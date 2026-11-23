@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../domain/entities/patient_queue_history_entity.dart';
 
 class QueueHistoryCompletedCard extends StatelessWidget {
@@ -128,7 +129,10 @@ class QueueHistoryCompletedCard extends StatelessWidget {
                 onPressed: onBookAgain,
                 style: OutlinedButton.styleFrom(
                   side: BorderSide(color: colors.border),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 5,
+                  ),
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   shape: RoundedRectangleBorder(

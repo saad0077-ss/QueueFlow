@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../profile_avatar.dart';
-import 'edit_profile_cubit.dart';
+import 'edit_profile_bloc.dart';
 import 'edit_profile_photo_service.dart';
 
 class EditProfileAvatarBanner extends StatelessWidget {
@@ -12,9 +13,9 @@ class EditProfileAvatarBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
 
-    return BlocBuilder<EditProfileCubit, EditProfileState>(
+    return BlocBuilder<EditProfileBloc, EditProfileState>(
       builder: (context, state) {
-        final cubit = context.read<EditProfileCubit>();
+        final bloc = context.read<EditProfileBloc>();
         final name = state.name.trim();
 
         return Container(
@@ -30,7 +31,7 @@ class EditProfileAvatarBanner extends StatelessWidget {
           child: Column(
             children: [
               GestureDetector(
-                onTap: () => EditProfilePhotoService.showOptions(context, cubit),
+                onTap: () => EditProfilePhotoService.showOptions(context, bloc),
                 child: Stack(
                   clipBehavior: Clip.none,
                   children: [
@@ -96,9 +97,10 @@ class EditProfileAvatarBanner extends StatelessWidget {
                   fontSize: 12,
                 ),
               ),
-              if (state.photoBase64 != null && !EditProfilePhotoService.isMobile)
+              if (state.photoBase64 != null &&
+                  !EditProfilePhotoService.isMobile)
                 TextButton(
-                  onPressed: cubit.removePhoto,
+                  onPressed: bloc.removePhoto,
                   style: TextButton.styleFrom(foregroundColor: Colors.white),
                   child: const Text('Remove photo'),
                 ),

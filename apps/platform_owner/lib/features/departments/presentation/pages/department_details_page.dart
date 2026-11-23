@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../domain/entities/department_entity.dart';
@@ -17,7 +17,12 @@ class DepartmentDetailsPage extends StatefulWidget {
   final DepartmentRepository repository;
   final VoidCallback onBack;
 
-  const DepartmentDetailsPage({super.key, required this.department, required this.repository, required this.onBack});
+  const DepartmentDetailsPage({
+    super.key,
+    required this.department,
+    required this.repository,
+    required this.onBack,
+  });
 
   @override
   State<DepartmentDetailsPage> createState() => _DepartmentDetailsPageState();
@@ -39,7 +44,9 @@ class _DepartmentDetailsPageState extends State<DepartmentDetailsPage> {
       stream: widget.repository.watchDepartments(),
       builder: (context, deptSnap) {
         if (deptSnap.hasData && deptSnap.data != null) {
-          final found = deptSnap.data!.where((d) => d.id == widget.department.id).firstOrNull;
+          final found = deptSnap.data!
+              .where((d) => d.id == widget.department.id)
+              .firstOrNull;
           if (found != null) {
             _dept = found;
           }
@@ -50,18 +57,27 @@ class _DepartmentDetailsPageState extends State<DepartmentDetailsPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              DeptDetailsTopBar(department: _dept, onBack: widget.onBack, onToggleStatus: _toggleStatus),
+              DeptDetailsTopBar(
+                department: _dept,
+                onBack: widget.onBack,
+                onToggleStatus: _toggleStatus,
+              ),
               const SizedBox(height: 20),
               DepartmentDetailsHeader(department: _dept),
               const SizedBox(height: 20),
               StreamBuilder<List<DeptServiceRequestEntity>>(
                 stream: widget.repository.watchServiceRequests(),
                 builder: (context, snap) {
-                  final pending = (snap.data ?? []).where((r) =>
-                      (r.departmentId == _dept.id ||
-                       r.departmentId == _dept.code ||
-                       r.departmentName.toLowerCase().trim() == _dept.name.toLowerCase().trim()) &&
-                      r.isPending).length;
+                  final pending = (snap.data ?? [])
+                      .where(
+                        (r) =>
+                            (r.departmentId == _dept.id ||
+                                r.departmentId == _dept.code ||
+                                r.departmentName.toLowerCase().trim() ==
+                                    _dept.name.toLowerCase().trim()) &&
+                            r.isPending,
+                      )
+                      .length;
                   return DeptDetailsTabBar(
                     activeTab: _activeTab,
                     onTabChanged: (idx) => setState(() => _activeTab = idx),
@@ -76,50 +92,95 @@ class _DepartmentDetailsPageState extends State<DepartmentDetailsPage> {
                   services: _dept.standardServices,
                   onAddService: (s) async {
                     await widget.repository.addStandardService(_dept.id, s);
-                    if (context.mounted) AppSnackBar.showSuccess(context, message: 'Added "${s.name}" to catalog.');
+                    if (context.mounted) {
+                      AppSnackBar.showSuccess(
+                        context,
+                        message: 'Added "${s.name}" to catalog.',
+                      );
+                    }
                   },
                   onEditService: (s) => EditServiceDialog.show(
                     context,
                     service: s,
                     existingServices: _dept.standardServices,
                     onSave: (up) async {
-                      await widget.repository.updateStandardService(_dept.id, up);
-                      if (context.mounted) AppSnackBar.showSuccess(context, message: 'Updated "${up.name}".');
+                      await widget.repository.updateStandardService(
+                        _dept.id,
+                        up,
+                      );
+                      if (context.mounted) {
+                        AppSnackBar.showSuccess(
+                          context,
+                          message: 'Updated "${up.name}".',
+                        );
+                      }
                     },
                   ),
                   onRemoveService: (sid) async {
-                    await widget.repository.removeStandardService(_dept.id, sid);
-                    if (context.mounted) AppSnackBar.showSuccess(context, message: 'Removed procedure.');
+                    await widget.repository.removeStandardService(
+                      _dept.id,
+                      sid,
+                    );
+                    if (context.mounted) {
+                      AppSnackBar.showSuccess(
+                        context,
+                        message: 'Removed procedure.',
+                      );
+                    }
                   },
                 )
               else if (_activeTab == 1)
                 StreamBuilder<List<DeptServiceRequestEntity>>(
                   stream: widget.repository.watchServiceRequests(),
                   builder: (context, snap) {
-                    final list = (snap.data ?? []).where((r) =>
-                        (r.departmentId == _dept.id ||
-                         r.departmentId == _dept.code ||
-                         r.departmentName.toLowerCase().trim() == _dept.name.toLowerCase().trim()) &&
-                        r.isPending).toList();
+                    final list = (snap.data ?? [])
+                        .where(
+                          (r) =>
+                              (r.departmentId == _dept.id ||
+                                  r.departmentId == _dept.code ||
+                                  r.departmentName.toLowerCase().trim() ==
+                                      _dept.name.toLowerCase().trim()) &&
+                              r.isPending,
+                        )
+                        .toList();
                     return DepartmentRequestsTab(
                       requests: list,
                       onApprove: (r) async {
                         await widget.repository.approveServiceRequest(r.id);
-                        if (context.mounted) AppSnackBar.showSuccess(context, message: 'Approved "${r.serviceName}" and added to department catalog.');
+                        if (context.mounted) {
+                          AppSnackBar.showSuccess(
+                            context,
+                            message:
+                                'Approved "${r.serviceName}" and added to department catalog.',
+                          );
+                        }
                       },
                       onReject: (r) async {
-                        await widget.repository.rejectServiceRequest(r.id, 'Standard catalog guidelines.');
-                        if (context.mounted) AppSnackBar.showWarning(context, message: 'Request rejected.');
+                        await widget.repository.rejectServiceRequest(
+                          r.id,
+                          'Standard catalog guidelines.',
+                        );
+                        if (context.mounted) {
+                          AppSnackBar.showWarning(
+                            context,
+                            message: 'Request rejected.',
+                          );
+                        }
                       },
                     );
                   },
                 )
               else
-                DepartmentSettingsTab(   
+                DepartmentSettingsTab(
                   department: _dept,
                   onSave: (up) async {
                     await widget.repository.updateDepartment(up);
-                    if (context.mounted) AppSnackBar.showSuccess(context, message: 'Specialty rules updated.');
+                    if (context.mounted) {
+                      AppSnackBar.showSuccess(
+                        context,
+                        message: 'Specialty rules updated.',
+                      );
+                    }
                   },
                 ),
             ],

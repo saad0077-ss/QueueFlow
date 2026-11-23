@@ -29,10 +29,7 @@ class BookingHistoryCardActions extends StatelessWidget {
               backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,
               elevation: 0,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 14,
-                vertical: 6,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
               minimumSize: Size.zero,
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               shape: RoundedRectangleBorder(
@@ -41,10 +38,7 @@ class BookingHistoryCardActions extends StatelessWidget {
             ),
             child: const Text(
               'Join / Track Queue',
-              style: TextStyle(
-                fontSize: 11.5,
-                fontWeight: FontWeight.w700,
-              ),
+              style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700),
             ),
           ),
         if (!isUpcoming) ...[
@@ -55,8 +49,8 @@ class BookingHistoryCardActions extends StatelessWidget {
                 side: BorderSide(
                   color: const Color(0xFFF59E0B).withValues(alpha: 0.35),
                 ),
-                backgroundColor:
-                    const Color(0xFFF59E0B).withValues(alpha: 0.08),
+                backgroundColor: const Color(0xFFF59E0B)
+                    .withValues(alpha: 0.08),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 10,
                   vertical: 5,

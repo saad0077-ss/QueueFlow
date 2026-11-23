@@ -1,4 +1,5 @@
-﻿import 'package:equatable/equatable.dart';
+import 'package:equatable/equatable.dart';
+
 import '../../domain/entities/tenant_clinic_entity.dart';
 
 class ClinicsDirectoryState extends Equatable {
@@ -45,19 +46,18 @@ class ClinicsDirectoryState extends Equatable {
       filteredClinics: filteredClinics ?? this.filteredClinics,
       searchQuery: searchQuery ?? this.searchQuery,
       selectedPlanFilter: selectedPlanFilter ?? this.selectedPlanFilter,
-      selectedStatusFilter:
-          selectedStatusFilter ?? this.selectedStatusFilter,
+      selectedStatusFilter: selectedStatusFilter ?? this.selectedStatusFilter,
       isLoading: isLoading ?? this.isLoading,
     );
   }
 
   @override
   List<Object?> get props => [
-        allClinics,
-        filteredClinics,
-        searchQuery,
-        selectedPlanFilter,
-        selectedStatusFilter,
-        isLoading,
-      ];
+    allClinics,
+    filteredClinics,
+    searchQuery,
+    selectedPlanFilter,
+    selectedStatusFilter,
+    isLoading,
+  ];
 }

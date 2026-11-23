@@ -1,5 +1,6 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import 'glass_analytics_card.dart';
 
 class HeroAnalyticsBanner extends StatelessWidget {
@@ -12,7 +13,12 @@ class HeroAnalyticsBanner extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF1D4ED8), Color(0xFF2563EB), Color(0xFF0284C7), Color(0xFF0D9488)],
+          colors: [
+            Color(0xFF1D4ED8),
+            Color(0xFF2563EB),
+            Color(0xFF0284C7),
+            Color(0xFF0D9488),
+          ],
         ),
       ),
       child: Stack(
@@ -23,7 +29,10 @@ class HeroAnalyticsBanner extends StatelessWidget {
             child: Container(
               width: 360,
               height: 360,
-              decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: 0.06)),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.06),
+              ),
             ),
           ),
           Padding(
@@ -37,12 +46,25 @@ class HeroAnalyticsBanner extends StatelessWidget {
                     Container(
                       width: 40,
                       height: 40,
-                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                       clipBehavior: Clip.antiAlias,
-                      child: Image.asset('assets/icons/app_icon_128.png', fit: BoxFit.contain),
+                      child: Image.asset(
+                        'assets/icons/app_icon_128.png',
+                        fit: BoxFit.contain,
+                      ),
                     ),
                     const SizedBox(width: 12),
-                    Text('QueueFlow', style: GoogleFonts.inter(fontSize: 22, fontWeight: FontWeight.w700, color: Colors.white)),
+                    Text(
+                      'QueueFlow',
+                      style: GoogleFonts.inter(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
                   ],
                 ),
                 Center(
@@ -58,7 +80,12 @@ class HeroAnalyticsBanner extends StatelessWidget {
                   constraints: const BoxConstraints(maxWidth: 440),
                   child: Text(
                     'Manage multi-clinic tenants, SaaS subscriptions, MRR, and audit trails, all in one place.',
-                    style: GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.white, height: 1.4),
+                    style: GoogleFonts.inter(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                      height: 1.4,
+                    ),
                   ),
                 ),
               ],

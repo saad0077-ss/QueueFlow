@@ -19,25 +19,31 @@ class ServiceQueueDetailRowActions extends StatelessWidget {
     required this.onSkip,
   });
 
-  ButtonStyle _small(AppColorsExtension colors, {Color? fg, Color? bg, Color? side}) =>
-      ButtonStyle(
-        minimumSize: const WidgetStatePropertyAll(Size(0, 30)),
-        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        visualDensity: VisualDensity.compact,
-        padding: const WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 8, vertical: 4)),
-        textStyle: WidgetStatePropertyAll(
-          GoogleFonts.inter(fontSize: 11.5, fontWeight: FontWeight.w700),
-        ),
-        foregroundColor: WidgetStatePropertyAll(fg ?? colors.textPrimary),
-        backgroundColor: bg == null ? null : WidgetStatePropertyAll(bg),
-        elevation: const WidgetStatePropertyAll(0),
-        side: side == null
-            ? WidgetStatePropertyAll(BorderSide(color: colors.border))
-            : WidgetStatePropertyAll(BorderSide(color: side)),
-        shape: WidgetStatePropertyAll(
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-        ),
-      );
+  ButtonStyle _small(
+    AppColorsExtension colors, {
+    Color? fg,
+    Color? bg,
+    Color? side,
+  }) => ButtonStyle(
+    minimumSize: const WidgetStatePropertyAll(Size(0, 30)),
+    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    visualDensity: VisualDensity.compact,
+    padding: const WidgetStatePropertyAll(
+      EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+    ),
+    textStyle: WidgetStatePropertyAll(
+      GoogleFonts.inter(fontSize: 11.5, fontWeight: FontWeight.w700),
+    ),
+    foregroundColor: WidgetStatePropertyAll(fg ?? colors.textPrimary),
+    backgroundColor: bg == null ? null : WidgetStatePropertyAll(bg),
+    elevation: const WidgetStatePropertyAll(0),
+    side: side == null
+        ? WidgetStatePropertyAll(BorderSide(color: colors.border))
+        : WidgetStatePropertyAll(BorderSide(color: side)),
+    shape: WidgetStatePropertyAll(
+      RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +72,11 @@ class ServiceQueueDetailRowActions extends StatelessWidget {
           ] else if (isCalled) ...[
             OutlinedButton(
               onPressed: () => onComplete(item.token),
-              style: _small(colors, fg: const Color(0xFF10B981), side: const Color(0xFF10B981)),
+              style: _small(
+                colors,
+                fg: const Color(0xFF10B981),
+                side: const Color(0xFF10B981),
+              ),
               child: const Text('✓ Complete'),
             ),
             const SizedBox(width: 6),

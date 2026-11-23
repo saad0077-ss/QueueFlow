@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../../../../core/widgets/clinic_photo.dart';
 import '../../../../../../core/widgets/distance_builder.dart';
 import '../../../../domain/entities/clinic_entity.dart';
@@ -13,7 +14,8 @@ import 'queue_radar_phase_helper.dart';
 class QueueRadarCardBody extends StatelessWidget {
   final ClinicEntity clinic;
   final LiveInfo info;
-  final void Function(ClinicEntity clinic, LiveServiceQueue? target) onJoinClinic;
+  final void Function(ClinicEntity clinic, LiveServiceQueue? target)
+  onJoinClinic;
 
   const QueueRadarCardBody({
     super.key,
@@ -64,8 +66,21 @@ class QueueRadarCardBody extends StatelessWidget {
                 if (started)
                   Row(
                     children: [
-                      Text('Now serving: ', style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted)),
-                      Text(info.serving, style: GoogleFonts.jetBrainsMono(fontSize: 12.5, fontWeight: FontWeight.w700, color: colors.textPrimary)),
+                      Text(
+                        'Now serving: ',
+                        style: GoogleFonts.inter(
+                          fontSize: 12,
+                          color: colors.textMuted,
+                        ),
+                      ),
+                      Text(
+                        info.serving,
+                        style: GoogleFonts.jetBrainsMono(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w700,
+                          color: colors.textPrimary,
+                        ),
+                      ),
                     ],
                   )
                 else
@@ -73,11 +88,25 @@ class QueueRadarCardBody extends StatelessWidget {
                     children: [
                       Icon(notice.$1, size: 14, color: colors.textMuted),
                       const SizedBox(width: 6),
-                      Text(notice.$2, style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: colors.textMuted)),
+                      Text(
+                        notice.$2,
+                        style: GoogleFonts.inter(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: colors.textMuted,
+                        ),
+                      ),
                     ],
                   ),
                 if (started)
-                  Text('~$waitMin min wait', style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w700, color: accent)),
+                  Text(
+                    '~$waitMin min wait',
+                    style: GoogleFonts.inter(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: accent,
+                    ),
+                  ),
               ],
             ),
           ),
@@ -108,7 +137,14 @@ class QueueRadarCardBody extends StatelessWidget {
               placeholder: Container(
                 color: colors.primaryTint,
                 alignment: Alignment.center,
-                child: Text(clinic.initials, style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w800, color: colors.primary)),
+                child: Text(
+                  clinic.initials,
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w800,
+                    color: colors.primary,
+                  ),
+                ),
               ),
             ),
           ),
@@ -118,13 +154,26 @@ class QueueRadarCardBody extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(clinic.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w800, color: colors.textPrimary, letterSpacing: -0.2)),
+              Text(
+                clinic.name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.inter(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
+                  color: colors.textPrimary,
+                  letterSpacing: -0.2,
+                ),
+              ),
               const SizedBox(height: 6),
               DistanceBuilder(
                 clinic: clinic,
                 builder: (ctx, dist) => dist.isEmpty
                     ? const SizedBox.shrink()
-                    : QueueRadarInfoChip(icon: Icons.location_on_outlined, label: dist),
+                    : QueueRadarInfoChip(
+                        icon: Icons.location_on_outlined,
+                        label: dist,
+                      ),
               ),
             ],
           ),
@@ -133,7 +182,9 @@ class QueueRadarCardBody extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3.5),
           decoration: BoxDecoration(
-            color: context.isDarkMode ? const Color(0xFF133633) : colors.accentTint,
+            color: context.isDarkMode
+                ? const Color(0xFF133633)
+                : colors.accentTint,
             borderRadius: BorderRadius.circular(999),
           ),
           child: Row(
@@ -141,7 +192,14 @@ class QueueRadarCardBody extends StatelessWidget {
             children: [
               const LivePulsingDot(),
               const SizedBox(width: 4),
-              Text(QueueRadarPhaseHelper.phaseLabel(info), style: GoogleFonts.inter(fontSize: 10.5, fontWeight: FontWeight.w700, color: accent)),
+              Text(
+                QueueRadarPhaseHelper.phaseLabel(info),
+                style: GoogleFonts.inter(
+                  fontSize: 10.5,
+                  fontWeight: FontWeight.w700,
+                  color: accent,
+                ),
+              ),
             ],
           ),
         ),

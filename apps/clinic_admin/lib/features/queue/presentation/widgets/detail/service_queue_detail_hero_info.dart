@@ -45,7 +45,10 @@ class ServiceQueueDetailHeroInfo extends StatelessWidget {
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: colors.primaryTint,
                       borderRadius: BorderRadius.circular(6),
@@ -61,11 +64,17 @@ class ServiceQueueDetailHeroInfo extends StatelessWidget {
                   ),
                   Text(
                     '${service.duration} mins per patient',
-                    style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted),
+                    style: GoogleFonts.inter(
+                      fontSize: 12,
+                      color: colors.textMuted,
+                    ),
                   ),
                   Text(
                     '•  ₹${service.price} Fee',
-                    style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted),
+                    style: GoogleFonts.inter(
+                      fontSize: 12,
+                      color: colors.textMuted,
+                    ),
                   ),
                 ],
               ),

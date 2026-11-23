@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:patient_app/features/booking/domain/entities/appointment_entity.dart';
+
 import 'booking_history_card.dart';
 
 class BookingHistoryList extends StatelessWidget {
@@ -26,7 +27,9 @@ class BookingHistoryList extends StatelessWidget {
         final apt = appointments[idx];
         return BookingHistoryCard(
           appointment: apt,
-          onBookAgain: onBookAgain != null ? () => onBookAgain!(apt.clinicId) : null,
+          onBookAgain: onBookAgain != null
+              ? () => onBookAgain!(apt.clinicId)
+              : null,
           onRateVisit: onRateVisit != null ? () => onRateVisit!(apt) : null,
           onTrackQueue: onTrackQueue,
         );

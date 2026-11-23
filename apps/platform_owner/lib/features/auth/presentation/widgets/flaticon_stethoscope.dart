@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 /// Vector Flaticon Medical Stethoscope Icon Widget
 class FlaticonStethoscope extends StatelessWidget {
@@ -58,14 +58,7 @@ class _StethoscopePainter extends CustomPainter {
 
     final tubePath = Path()
       ..moveTo(w * 0.33, h * 0.45)
-      ..cubicTo(
-        w * 0.33,
-        h * 0.72,
-        w * 0.48,
-        h * 0.88,
-        w * 0.64,
-        h * 0.72,
-      )
+      ..cubicTo(w * 0.33, h * 0.72, w * 0.48, h * 0.88, w * 0.64, h * 0.72)
       ..quadraticBezierTo(w * 0.72, h * 0.60, w * 0.76, h * 0.46);
     canvas.drawPath(tubePath, strokePaint);
 

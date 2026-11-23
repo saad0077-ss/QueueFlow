@@ -51,7 +51,8 @@ class ServiceQueueDetailView extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final sQueue = allQueueItems.where((q) {
-      return q.serviceName.trim().toLowerCase() == service.name.trim().toLowerCase();
+      return q.serviceName.trim().toLowerCase() ==
+          service.name.trim().toLowerCase();
     }).toList();
 
     final sServing = sQueue.where((q) => q.isCalled).firstOrNull;
@@ -74,7 +75,11 @@ class ServiceQueueDetailView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        ServiceQueueDetailBreadcrumb(service: service, department: department, onBack: onBack),
+        ServiceQueueDetailBreadcrumb(
+          service: service,
+          department: department,
+          onBack: onBack,
+        ),
         const SizedBox(height: 18),
         ServiceQueueDetailHero(
           service: service,

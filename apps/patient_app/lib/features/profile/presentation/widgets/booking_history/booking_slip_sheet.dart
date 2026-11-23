@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 import 'package:patient_app/core/widgets/app_snack_bar.dart';
 import 'package:patient_app/features/booking/domain/entities/appointment_entity.dart';
+
 import 'booking_slip_receipt_card.dart';
 
 class BookingSlipSheet extends StatelessWidget {
@@ -10,7 +11,10 @@ class BookingSlipSheet extends StatelessWidget {
 
   const BookingSlipSheet({super.key, required this.appointment});
 
-  static Future<void> show(BuildContext context, {required AppointmentEntity appointment}) {
+  static Future<void> show(
+    BuildContext context, {
+    required AppointmentEntity appointment,
+  }) {
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -60,7 +64,11 @@ class BookingSlipSheet extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                    icon: Icon(Icons.close_rounded, color: colors.textMuted, size: 20),
+                    icon: Icon(
+                      Icons.close_rounded,
+                      color: colors.textMuted,
+                      size: 20,
+                    ),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ],
@@ -73,10 +81,13 @@ class BookingSlipSheet extends StatelessWidget {
                   Expanded(
                     child: OutlinedButton.icon(
                       onPressed: () {
-                        Clipboard.setData(ClipboardData(text: appointment.bookingRef));
+                        Clipboard.setData(
+                          ClipboardData(text: appointment.bookingRef),
+                        );
                         AppSnackBar.showSuccess(
                           context,
-                          message: 'Booking ID ${appointment.bookingRef} copied to clipboard',
+                          message:
+                              'Booking ID ${appointment.bookingRef} copied to clipboard',
                         );
                       },
                       style: OutlinedButton.styleFrom(

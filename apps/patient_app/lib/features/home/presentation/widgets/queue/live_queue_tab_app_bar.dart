@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import 'radar/live_pulsing_dot.dart';
 
-class LiveQueueTabAppBar extends StatelessWidget implements PreferredSizeWidget {
+class LiveQueueTabAppBar extends StatelessWidget
+    implements PreferredSizeWidget {
   final bool hasActiveTicket;
 
-  const LiveQueueTabAppBar({
-    super.key,
-    required this.hasActiveTicket,
-  });
+  const LiveQueueTabAppBar({super.key, required this.hasActiveTicket});
 
   @override
   Size get preferredSize => const Size.fromHeight(64);

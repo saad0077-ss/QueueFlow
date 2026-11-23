@@ -9,9 +9,17 @@ class DeptDeleteDialog extends StatelessWidget {
   final DepartmentEntity department;
   final VoidCallback onConfirm;
 
-  const DeptDeleteDialog({super.key, required this.department, required this.onConfirm});
+  const DeptDeleteDialog({
+    super.key,
+    required this.department,
+    required this.onConfirm,
+  });
 
-  static Future<void> show(BuildContext context, DepartmentEntity d, VoidCallback onConfirm) {
+  static Future<void> show(
+    BuildContext context,
+    DepartmentEntity d,
+    VoidCallback onConfirm,
+  ) {
     return showDialog(
       context: context,
       builder: (_) => DeptDeleteDialog(department: d, onConfirm: onConfirm),
@@ -34,7 +42,11 @@ class DeptDeleteDialog extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: colors.border),
             boxShadow: [
-              BoxShadow(color: Colors.black.withValues(alpha: 0.35), blurRadius: 40, offset: const Offset(0, 16)),
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.35),
+                blurRadius: 40,
+                offset: const Offset(0, 16),
+              ),
             ],
           ),
           child: Column(
@@ -45,13 +57,24 @@ class DeptDeleteDialog extends StatelessWidget {
                 children: [
                   Container(
                     padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(color: colors.errorTint, shape: BoxShape.circle),
-                    child: Icon(Icons.delete_outline_rounded, color: colors.error, size: 20),
+                    decoration: BoxDecoration(
+                      color: colors.errorTint,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.delete_outline_rounded,
+                      color: colors.error,
+                      size: 20,
+                    ),
                   ),
                   const SizedBox(width: 10),
                   Text(
                     'Delete Department',
-                    style: TextStyle(color: colors.textPrimary, fontSize: 16, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      color: colors.textPrimary,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
@@ -66,11 +89,17 @@ class DeptDeleteDialog extends StatelessWidget {
                 children: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: Text('Cancel', style: TextStyle(color: colors.textMuted)),
+                    child: Text(
+                      'Cancel',
+                      style: TextStyle(color: colors.textMuted),
+                    ),
                   ),
                   const SizedBox(width: 8),
                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(backgroundColor: colors.error, foregroundColor: Colors.white),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: colors.error,
+                      foregroundColor: Colors.white,
+                    ),
                     onPressed: () {
                       Navigator.pop(context);
                       onConfirm();

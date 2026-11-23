@@ -3,8 +3,8 @@ import '../entities/patient_payment_item_entity.dart';
 import '../entities/patient_profile_entity.dart';
 import '../entities/patient_queue_history_entity.dart';
 import '../entities/patient_review_entity.dart';
-import '../entities/support_ticket_entity.dart';
 import '../repositories/profile_repository.dart';
+export 'ticket_usecases.dart';
 
 class GetProfileUseCase {
   final ProfileRepository repository;
@@ -92,51 +92,6 @@ class DeleteReviewUseCase {
   DeleteReviewUseCase(this.repository);
 
   Future<void> call(String reviewId) => repository.deleteReview(reviewId);
-}
-
-class GetSupportTicketsUseCase {
-  final ProfileRepository repository;
-  GetSupportTicketsUseCase(this.repository);
-
-  Future<List<SupportTicketEntity>> call() => repository.getSupportTickets();
-}
-
-class CreateSupportTicketUseCase {
-  final ProfileRepository repository;
-  CreateSupportTicketUseCase(this.repository);
-
-  Future<SupportTicketEntity> call({
-    required String clinicId,
-    required String clinicName,
-    required String category,
-    required String subject,
-    required String description,
-  }) {
-    return repository.createSupportTicket(
-      clinicId: clinicId,
-      clinicName: clinicName,
-      category: category,
-      subject: subject,
-      description: description,
-    );
-  }
-}
-
-class SendTicketReplyUseCase {
-  final ProfileRepository repository;
-  SendTicketReplyUseCase(this.repository);
-
-  Future<SupportTicketEntity> call({
-    required String ticketId,
-    required String text,
-    required String senderName,
-  }) {
-    return repository.sendTicketReply(
-      ticketId: ticketId,
-      text: text,
-      senderName: senderName,
-    );
-  }
 }
 
 class LogoutUseCase {

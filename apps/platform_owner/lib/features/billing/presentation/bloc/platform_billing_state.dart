@@ -1,4 +1,5 @@
-﻿import 'package:equatable/equatable.dart';
+import 'package:equatable/equatable.dart';
+
 import '../../domain/entities/platform_billing_kpis.dart';
 import '../../domain/entities/platform_invoice_entity.dart';
 import '../../domain/entities/platform_plan_tier_entity.dart';
@@ -48,7 +49,9 @@ class PlatformBillingState extends Equatable {
 
   List<PlatformInvoiceEntity> get filteredInvoices {
     if (invoiceFilter == 'all') return invoices;
-    return invoices.where((i) => i.status.toLowerCase() == invoiceFilter.toLowerCase()).toList();
+    return invoices
+        .where((i) => i.status.toLowerCase() == invoiceFilter.toLowerCase())
+        .toList();
   }
 
   PlatformBillingState copyWith({

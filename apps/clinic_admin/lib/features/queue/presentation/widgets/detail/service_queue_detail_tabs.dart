@@ -22,7 +22,11 @@ class ServiceQueueDetailTabs extends StatelessWidget {
     required this.onTabChanged,
   });
 
-  Widget _tabPill(BuildContext context, {required String id, required String label}) {
+  Widget _tabPill(
+    BuildContext context, {
+    required String id,
+    required String label,
+  }) {
     final colors = context.colors;
     final isActive = activeTab == id;
 
@@ -59,7 +63,11 @@ class ServiceQueueDetailTabs extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _tabPill(context, id: 'active', label: 'Active Queue ($activeCount)'),
+            _tabPill(
+              context,
+              id: 'active',
+              label: 'Active Queue ($activeCount)',
+            ),
             _tabPill(context, id: 'waiting', label: 'Waiting ($waitingCount)'),
             _tabPill(context, id: 'called', label: 'Serving ($servingCount)'),
             _tabPill(

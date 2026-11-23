@@ -10,7 +10,14 @@ const double kCatalogFeeColWidth = 150;
 const double kCatalogActionsColWidth = 200;
 
 /// Accent cycle for the leading procedure tiles.
-const _accents = [Color(0xFF3B82F6), Color(0xFF14B8A6), Color(0xFFA855F7), Color(0xFFF59E0B), Color(0xFFEC4899), Color(0xFF06B6D4)];
+const _accents = [
+  Color(0xFF3B82F6),
+  Color(0xFF14B8A6),
+  Color(0xFFA855F7),
+  Color(0xFFF59E0B),
+  Color(0xFFEC4899),
+  Color(0xFF06B6D4),
+];
 
 class DeptCatalogRowItem extends StatefulWidget {
   final StandardServiceEntity service;
@@ -40,7 +47,10 @@ class _DeptCatalogRowItemState extends State<DeptCatalogRowItem> {
     final colors = context.colors;
     final service = widget.service;
     final accent = _accents[widget.index % _accents.length];
-    final formattedPrice = service.suggestedPrice.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},');
+    final formattedPrice = service.suggestedPrice.toString().replaceAllMapped(
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+      (Match m) => '${m[1]},',
+    );
 
     return MouseRegion(
       onEnter: (_) => setState(() => _hover = true),
@@ -49,10 +59,17 @@ class _DeptCatalogRowItemState extends State<DeptCatalogRowItem> {
         duration: const Duration(milliseconds: 140),
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
         decoration: BoxDecoration(
-          color: _hover ? colors.surfaceSecondary.withValues(alpha: 0.6) : Colors.transparent,
+          color: _hover
+              ? colors.surfaceSecondary.withValues(alpha: 0.6)
+              : Colors.transparent,
           border: Border(
-            left: BorderSide(color: _hover ? accent : Colors.transparent, width: 3),
-            bottom: widget.isLast ? BorderSide.none : BorderSide(color: colors.border),
+            left: BorderSide(
+              color: _hover ? accent : Colors.transparent,
+              width: 3,
+            ),
+            bottom: widget.isLast
+                ? BorderSide.none
+                : BorderSide(color: colors.border),
           ),
         ),
         child: Row(
@@ -68,7 +85,11 @@ class _DeptCatalogRowItemState extends State<DeptCatalogRowItem> {
                       borderRadius: BorderRadius.circular(11),
                       border: Border.all(color: accent.withValues(alpha: 0.3)),
                     ),
-                    child: Icon(Icons.medical_services_outlined, size: 19, color: accent),
+                    child: Icon(
+                      Icons.medical_services_outlined,
+                      size: 19,
+                      color: accent,
+                    ),
                   ),
                   const SizedBox(width: 14),
                   Expanded(
@@ -77,14 +98,22 @@ class _DeptCatalogRowItemState extends State<DeptCatalogRowItem> {
                       children: [
                         Text(
                           service.name,
-                          style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w700, color: colors.textPrimary),
+                          style: GoogleFonts.inter(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            color: colors.textPrimary,
+                          ),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           service.description,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.inter(fontSize: 12.5, color: colors.textMuted, height: 1.35),
+                          style: GoogleFonts.inter(
+                            fontSize: 12.5,
+                            color: colors.textMuted,
+                            height: 1.35,
+                          ),
                         ),
                       ],
                     ),
@@ -112,15 +141,24 @@ class _DeptCatalogRowItemState extends State<DeptCatalogRowItem> {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 11,
+                    vertical: 5,
+                  ),
                   decoration: BoxDecoration(
                     color: colors.primary.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: colors.primary.withValues(alpha: 0.3)),
+                    border: Border.all(
+                      color: colors.primary.withValues(alpha: 0.3),
+                    ),
                   ),
                   child: Text(
                     '₹$formattedPrice',
-                    style: GoogleFonts.jetBrainsMono(fontSize: 13, fontWeight: FontWeight.w700, color: colors.primary),
+                    style: GoogleFonts.jetBrainsMono(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: colors.primary,
+                    ),
                   ),
                 ),
               ),
@@ -157,7 +195,14 @@ class _DeptCatalogRowItemState extends State<DeptCatalogRowItem> {
     );
   }
 
-  Widget _chip({required BuildContext context, required IconData icon, required String label, required Color fg, required Color iconColor, required Color bg}) {
+  Widget _chip({
+    required BuildContext context,
+    required IconData icon,
+    required String label,
+    required Color fg,
+    required Color iconColor,
+    required Color bg,
+  }) {
     final colors = context.colors;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -173,7 +218,11 @@ class _DeptCatalogRowItemState extends State<DeptCatalogRowItem> {
           const SizedBox(width: 6),
           Text(
             label,
-            style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w700, color: fg),
+            style: GoogleFonts.inter(
+              fontSize: 12.5,
+              fontWeight: FontWeight.w700,
+              color: fg,
+            ),
           ),
         ],
       ),
@@ -188,7 +237,13 @@ class _ActionPill extends StatefulWidget {
   final Color color;
   final VoidCallback onTap;
 
-  const _ActionPill({required this.icon, required this.label, required this.tooltip, required this.color, required this.onTap});
+  const _ActionPill({
+    required this.icon,
+    required this.label,
+    required this.tooltip,
+    required this.color,
+    required this.onTap,
+  });
 
   @override
   State<_ActionPill> createState() => _ActionPillState();
@@ -214,7 +269,9 @@ class _ActionPillState extends State<_ActionPill> {
             decoration: BoxDecoration(
               color: color.withValues(alpha: _hover ? 0.22 : 0.08),
               borderRadius: BorderRadius.circular(9),
-              border: Border.all(color: color.withValues(alpha: _hover ? 0.6 : 0.3)),
+              border: Border.all(
+                color: color.withValues(alpha: _hover ? 0.6 : 0.3),
+              ),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -223,7 +280,11 @@ class _ActionPillState extends State<_ActionPill> {
                 const SizedBox(width: 5),
                 Text(
                   widget.label,
-                  style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w700, color: color),
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: color,
+                  ),
                 ),
               ],
             ),

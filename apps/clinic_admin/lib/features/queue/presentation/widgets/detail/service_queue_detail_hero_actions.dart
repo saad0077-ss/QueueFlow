@@ -39,7 +39,9 @@ class ServiceQueueDetailHeroActions extends StatelessWidget {
             disabledBackgroundColor: colors.textMuted.withValues(alpha: 0.2),
             elevation: 0,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
         ),
         OutlinedButton.icon(
@@ -53,7 +55,9 @@ class ServiceQueueDetailHeroActions extends StatelessWidget {
             foregroundColor: colors.textPrimary,
             side: BorderSide(color: colors.border),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
         ),
         OutlinedButton.icon(
@@ -67,10 +71,16 @@ class ServiceQueueDetailHeroActions extends StatelessWidget {
             style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w700),
           ),
           style: OutlinedButton.styleFrom(
-            foregroundColor: isClosed ? const Color(0xFF10B981) : colors.textPrimary,
-            side: BorderSide(color: isClosed ? const Color(0xFF10B981) : colors.border),
+            foregroundColor: isClosed
+                ? const Color(0xFF10B981)
+                : colors.textPrimary,
+            side: BorderSide(
+              color: isClosed ? const Color(0xFF10B981) : colors.border,
+            ),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
         ),
       ],

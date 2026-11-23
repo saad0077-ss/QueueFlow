@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../../core/layout/clinic_breakpoints.dart';
-import '../../../../core/layout/dashboard_chrome.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../data/repositories/clinic_dashboard_repository_impl.dart';
 import '../../domain/usecases/call_next_token_usecase.dart';
@@ -15,24 +14,43 @@ import '../bloc/clinic_dashboard_event.dart';
 import '../bloc/clinic_dashboard_state.dart';
 import '../widgets/clinic_account_removal_guard.dart';
 import '../widgets/clinic_dashboard_content_switcher.dart';
-import '../widgets/clinic_profile_chip.dart';
+import '../widgets/clinic_dashboard_drawer.dart';
+import '../widgets/clinic_dashboard_top_bar_wrapper.dart';
 import '../widgets/clinic_sidebar.dart';
-import '../widgets/clinic_top_bar.dart';
 
-class ClinicDashboardPage extends StatelessWidget {
+class ClinicDashboardPage extends StatefulWidget {
   const ClinicDashboardPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final repository = ClinicDashboardRepositoryImpl();
+  State<ClinicDashboardPage> createState() => _ClinicDashboardPageState();
+}
 
-    return BlocProvider(
-      create: (_) => ClinicDashboardBloc(
-        watchQueueUseCase: WatchQueueUseCase(repository),
-        callNextTokenUseCase: CallNextTokenUseCase(repository),
-        issueWalkInTokenUseCase: IssueWalkInTokenUseCase(repository),
-        togglePauseQueueUseCase: TogglePauseQueueUseCase(repository),
-      )..add(const DashboardSubscriptionRequested()),
+class _ClinicDashboardPageState extends State<ClinicDashboardPage> {
+  late final ClinicDashboardRepositoryImpl _repository;
+  late final ClinicDashboardBloc _bloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _repository = ClinicDashboardRepositoryImpl();
+    _bloc = ClinicDashboardBloc(
+      watchQueueUseCase: WatchQueueUseCase(_repository),
+      callNextTokenUseCase: CallNextTokenUseCase(_repository),
+      issueWalkInTokenUseCase: IssueWalkInTokenUseCase(_repository),
+      togglePauseQueueUseCase: TogglePauseQueueUseCase(_repository),
+    )..add(const DashboardSubscriptionRequested());
+  }
+
+  @override
+  void dispose() {
+    _bloc.close();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider.value(
+      value: _bloc,
       child: const ClinicAccountRemovalGuard(child: _ClinicDashboardView()),
     );
   }
@@ -47,7 +65,6 @@ class _ClinicDashboardView extends StatelessWidget {
     final doctorName = user?.displayName?.trim().isNotEmpty == true
         ? user!.displayName!
         : '';
-
     final isMobile = ClinicBreakpoints.isMobile(context);
     final isDesktop = ClinicBreakpoints.isDesktop(context);
     final hPad = isMobile ? 16.0 : 28.0;
@@ -72,26 +89,7 @@ class _ClinicDashboardView extends StatelessWidget {
         return Scaffold(
           backgroundColor: colors.background,
           drawer: isMobile
-              ? Drawer(
-                  width: 260,
-                  backgroundColor: colors.surface,
-                  shape: const RoundedRectangleBorder(),
-                  child: SafeArea(
-                    child: Builder(
-                      builder: (drawerContext) => ClinicSidebar(
-                        activeItem: state.activeNav,
-                        onItemTap: (nav) {
-                          Navigator.of(drawerContext).pop();
-                          bloc.add(DashboardNavTabChanged(nav));
-                        },
-                        onSignOut: () {
-                          Navigator.of(drawerContext).pop();
-                          clinicSignOut(context);
-                        },
-                      ),
-                    ),
-                  ),
-                )
+              ? ClinicDashboardDrawer(activeNav: state.activeNav, bloc: bloc)
               : null,
           body: SafeArea(
             child: Row(
@@ -105,56 +103,32 @@ class _ClinicDashboardView extends StatelessWidget {
                 Expanded(
                   child: Column(
                     children: [
-                      ValueListenableBuilder<String?>(
-                        valueListenable: DashboardChrome.detailOwner,
-                        builder: (context, owner, _) {
-                          // Detail screens (appointment / doctor) hide the top bar.
-                          if (owner != null && owner == state.activeNav) {
-                            return const SizedBox.shrink();
-                          }
-                          return Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: hPad,
-                              vertical: isMobile ? 10 : 14,
-                            ),
-                            decoration: BoxDecoration(
-                              color: colors.surface,
-                              border: Border(
-                                bottom: BorderSide(
-                                  color: colors.border,
-                                  width: 1,
-                                ),
-                              ),
-                            ),
-                            child: Builder(
-                              builder: (scaffoldContext) => ClinicTopBar(
-                                compact: isMobile,
-                                onMenuTap: isMobile
-                                    ? () => Scaffold.of(
-                                        scaffoldContext,
-                                      ).openDrawer()
-                                    : null,
-                                onSearchChanged: (q) =>
-                                    bloc.add(DashboardSearchQueryChanged(q)),
-                              ),
-                            ),
-                          );
-                        },
+                      ClinicDashboardTopBarWrapper(
+                        activeNav: state.activeNav,
+                        isMobile: isMobile,
+                        horizontalPadding: hPad,
+                        bloc: bloc,
                       ),
                       Expanded(
-                        child: SingleChildScrollView(
-                          padding: EdgeInsets.fromLTRB(
-                            hPad,
-                            isMobile ? 16 : 22,
-                            hPad,
-                            32,
-                          ),
-                          child: ClinicDashboardContentSwitcher(
-                            state: state,
-                            bloc: bloc,
-                            doctorName: doctorName,
-                          ),
-                        ),
+                        child: state.activeNav == 'Patient Tickets'
+                            ? ClinicDashboardContentSwitcher(
+                                state: state,
+                                bloc: bloc,
+                                doctorName: doctorName,
+                              )
+                            : SingleChildScrollView(
+                                padding: EdgeInsets.fromLTRB(
+                                  hPad,
+                                  isMobile ? 16 : 22,
+                                  hPad,
+                                  32,
+                                ),
+                                child: ClinicDashboardContentSwitcher(
+                                  state: state,
+                                  bloc: bloc,
+                                  doctorName: doctorName,
+                                ),
+                              ),
                       ),
                     ],
                   ),

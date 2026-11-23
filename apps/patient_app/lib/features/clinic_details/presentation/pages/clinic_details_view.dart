@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+import 'package:patient_app/core/widgets/app_snack_bar.dart';
 
 import '../../../booking/presentation/pages/booking_wizard_screen.dart';
 import '../../domain/entities/clinic_doctor_item.dart';
@@ -47,12 +48,14 @@ class ClinicDetailsView extends StatelessWidget {
     return BlocConsumer<ClinicDetailsBloc, ClinicDetailsState>(
       listener: (context, state) {
         if (state.reviewSubmittedSuccessfully) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text('Thank you! Your review has been submitted.'),
-              backgroundColor: colors.success,
-            ),
+          AppSnackBar.showSuccess(
+            context,
+            title: 'Review Published',
+            message: 'Thank you! Your verified review has been submitted.',
           );
+        }
+        if (state.errorMessage != null) {
+          AppSnackBar.showError(context, message: state.errorMessage!);
         }
       },
       builder: (context, state) {

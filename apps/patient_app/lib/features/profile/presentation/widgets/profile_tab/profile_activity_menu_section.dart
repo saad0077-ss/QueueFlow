@@ -9,6 +9,7 @@ import 'package:patient_app/features/profile/presentation/pages/favorite_clinics
 import 'package:patient_app/features/profile/presentation/pages/live_queue_history_screen.dart';
 import 'package:patient_app/features/profile/presentation/pages/my_reviews_screen.dart';
 import 'package:patient_app/features/profile/presentation/pages/payment_history_screen.dart';
+
 import '../profile_menu_section.dart';
 
 class ProfileActivityMenuSection extends StatelessWidget {
@@ -38,7 +39,9 @@ class ProfileActivityMenuSection extends StatelessWidget {
           title: 'Joined Live Queue History',
           subtitle: 'Tokens, live triage wait times & status',
           trailing: _badge(
-            state.activeQueueTicket != null ? const Color(0xFF10B981) : AppColors.primary,
+            state.activeQueueTicket != null
+                ? const Color(0xFF10B981)
+                : AppColors.primary,
             state.activeQueueTicket != null
                 ? '● ${state.activeQueueTicket!.token} Active'
                 : '${state.queueHistory.length} Joined',
@@ -95,23 +98,38 @@ class ProfileActivityMenuSection extends StatelessWidget {
           ),
         ),
         ProfileMenuItem(
-          icon: const Icon(Icons.favorite_rounded, size: 18, color: Color(0xFF14B8A6)),
+          icon: const Icon(
+            Icons.favorite_rounded,
+            size: 18,
+            color: Color(0xFF14B8A6),
+          ),
           iconBgColor: const Color(0xFF14B8A6).withValues(alpha: 0.15),
           title: 'Favorite clinics',
           subtitle: 'Bookmarked healthcare centers',
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('${state.favoriteClinics.length} Clinics', style: TextStyle(fontSize: 12, color: colors.textMuted)),
+              Text(
+                '${state.favoriteClinics.length} Clinics',
+                style: TextStyle(fontSize: 12, color: colors.textMuted),
+              ),
               const SizedBox(width: 4),
-              Icon(Icons.chevron_right_rounded, size: 18, color: colors.textSubtle),
+              Icon(
+                Icons.chevron_right_rounded,
+                size: 18,
+                color: colors.textSubtle,
+              ),
             ],
           ),
           onTap: () => FavoriteClinicsScreen.open(
             context,
             initialClinics: state.favoriteClinics,
-            onBookClinic: onVisitsTap != null ? (_) => onVisitsTap?.call() : null,
-            onQueueClinic: onTrackLiveQueue != null ? (_) => onTrackLiveQueue?.call() : null,
+            onBookClinic: onVisitsTap != null
+                ? (_) => onVisitsTap?.call()
+                : null,
+            onQueueClinic: onTrackLiveQueue != null
+                ? (_) => onTrackLiveQueue?.call()
+                : null,
           ),
         ),
       ],
@@ -128,7 +146,14 @@ class ProfileActivityMenuSection extends StatelessWidget {
             color: color.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(999),
           ),
-          child: Text(text, style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: color)),
+          child: Text(
+            text,
+            style: TextStyle(
+              fontSize: 11.5,
+              fontWeight: FontWeight.w700,
+              color: color,
+            ),
+          ),
         ),
         const SizedBox(width: 4),
         Icon(Icons.chevron_right_rounded, size: 18, color: colors.textSubtle),

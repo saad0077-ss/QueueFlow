@@ -42,7 +42,10 @@ class ServiceQueueCardServingBox extends StatelessWidget {
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 7,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: colors.primaryTint,
                     borderRadius: BorderRadius.circular(6),

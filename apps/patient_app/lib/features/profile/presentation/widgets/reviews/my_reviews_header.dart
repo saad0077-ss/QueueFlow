@@ -38,7 +38,11 @@ class MyReviewsHeader extends StatelessWidget {
                   border: Border.all(color: colors.border),
                 ),
                 alignment: Alignment.center,
-                child: Icon(Icons.arrow_back_ios_new_rounded, size: 16, color: colors.textPrimary),
+                child: Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  size: 16,
+                  color: colors.textPrimary,
+                ),
               ),
             ),
             const SizedBox(width: 12),
@@ -73,14 +77,22 @@ class MyReviewsHeader extends StatelessWidget {
               icon: const Text('⭐', style: TextStyle(fontSize: 11)),
               label: Text(
                 '+ Review',
-                style: GoogleFonts.inter(fontSize: 11.5, fontWeight: FontWeight.w700),
+                style: GoogleFonts.inter(
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: colors.primary,
                 foregroundColor: Colors.white,
                 elevation: 0,
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
             ),
           ],

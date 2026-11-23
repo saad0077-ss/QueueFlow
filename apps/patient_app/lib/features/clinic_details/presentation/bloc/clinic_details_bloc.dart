@@ -34,7 +34,9 @@ class ClinicDetailsBloc extends Bloc<ClinicDetailsEvent, ClinicDetailsState> {
         details.clinic.id,
         details.clinic,
       );
-      emit(state.copyWith(details: reloaded));
+      emit(
+        state.copyWith(details: reloaded, reviewSubmittedSuccessfully: true),
+      );
     } catch (e) {
       emit(state.copyWith(errorMessage: 'Failed to submit rating: $e'));
     }

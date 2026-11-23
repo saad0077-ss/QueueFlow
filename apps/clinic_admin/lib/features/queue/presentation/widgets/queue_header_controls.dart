@@ -27,7 +27,9 @@ class QueueHeaderControls extends StatelessWidget {
         DecoratedBox(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(24),
-            gradient: LinearGradient(colors: [colors.primary, const Color(0xFF14B8A6)]),
+            gradient: LinearGradient(
+              colors: [colors.primary, const Color(0xFF14B8A6)],
+            ),
             boxShadow: [
               BoxShadow(
                 color: colors.primary.withValues(alpha: 0.35),
@@ -45,11 +47,16 @@ class QueueHeaderControls extends StatelessWidget {
               foregroundColor: Colors.white,
               elevation: 0,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
+              ),
             ),
             label: Text(
               'Add Walk-In Patient',
-              style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w700),
+              style: GoogleFonts.inter(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ),
@@ -119,11 +126,16 @@ class QueueHeaderControls extends StatelessWidget {
                         ? colors.primary
                         : colors.textMuted.withValues(alpha: 0.3),
                   ),
-                  alignment: isQueueOpen ? Alignment.centerRight : Alignment.centerLeft,
+                  alignment: isQueueOpen
+                      ? Alignment.centerRight
+                      : Alignment.centerLeft,
                   child: Container(
                     width: 16,
                     height: 16,
-                    decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ],

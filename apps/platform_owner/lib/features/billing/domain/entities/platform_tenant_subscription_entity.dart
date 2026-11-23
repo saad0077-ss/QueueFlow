@@ -34,7 +34,8 @@ class PlatformTenantSubscriptionEntity extends Equatable {
   bool get isActive => status.toUpperCase() == 'ACTIVE';
   bool get isTrial => status.toUpperCase() == 'TRIAL';
   bool get isSuspended => status.toUpperCase() == 'SUSPENDED';
-  bool get isPastDue => status.toUpperCase() == 'PAST_DUE' || status.toUpperCase() == 'OVERDUE';
+  bool get isPastDue =>
+      status.toUpperCase() == 'PAST_DUE' || status.toUpperCase() == 'OVERDUE';
 
   @override
   List<Object?> get props => [

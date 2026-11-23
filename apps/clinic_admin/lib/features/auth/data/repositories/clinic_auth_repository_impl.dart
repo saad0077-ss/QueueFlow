@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '../../../../core/services/clinic_session_manager.dart';
 import '../../domain/entities/clinic_staff_entity.dart';
 import '../../domain/repositories/clinic_auth_repository.dart';
 import '../models/clinic_staff_model.dart';
@@ -35,7 +36,7 @@ class ClinicAuthRepositoryImpl implements ClinicAuthRepository {
           .doc(cleanEmail)
           .get();
       if (removedSnap.exists) {
-        await _auth.signOut();
+        await ClinicSessionManager.clearSession();
         throw Exception(
           'The platform owner has removed this clinic facility and account.',
         );
@@ -46,7 +47,7 @@ class ClinicAuthRepositoryImpl implements ClinicAuthRepository {
           .where('adminEmail', isEqualTo: cleanEmail)
           .get();
       if (clinicSnap.docs.isEmpty) {
-        await _auth.signOut();
+        await ClinicSessionManager.clearSession();
         throw Exception(
           'The platform owner has removed this clinic facility and account.',
         );
@@ -56,7 +57,7 @@ class ClinicAuthRepositoryImpl implements ClinicAuthRepository {
       for (final doc in clinicSnap.docs) {
         final data = doc.data();
         if ((data['status'] ?? '').toString().toUpperCase() == 'SUSPENDED') {
-          await _auth.signOut();
+          await ClinicSessionManager.clearSession();
           final reason = (data['suspensionReason'] ?? '').toString().trim();
           throw Exception(
             reason.isEmpty
@@ -67,7 +68,17 @@ class ClinicAuthRepositoryImpl implements ClinicAuthRepository {
       }
 
       await _markClinicAsActive(cleanEmail);
-      return ClinicStaffModel.fromFirebaseUser(credential.user!);
+      final staff = ClinicStaffModel.fromFirebaseUser(credential.user!);
+      final clinicDoc = clinicSnap.docs.first;
+      final clinicData = clinicDoc.data();
+      final clinicId = clinicDoc.id;
+      final cName = (clinicData['name'] ?? staff.clinicName).toString();
+      await ClinicSessionManager.saveSession(
+        email: cleanEmail,
+        clinicId: clinicId,
+        clinicName: cName,
+      );
+      return staff;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found' ||
           e.code == 'invalid-credential' ||
@@ -106,12 +117,17 @@ class ClinicAuthRepositoryImpl implements ClinicAuthRepository {
       );
       final user = credential.user!;
       await _saveUserProfile(user, doctorName, cleanEmail, clinicName);
-      return ClinicStaffModel.fromFirebaseUser(
+      final staff = ClinicStaffModel.fromFirebaseUser(
         user,
         fallbackName: doctorName,
         role: role,
         clinicName: clinicName,
       );
+      await ClinicSessionManager.saveSession(
+        email: email.trim().toLowerCase(),
+        clinicName: clinicName,
+      );
+      return staff;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
         return _handleExistingUserActivation(
@@ -144,12 +160,17 @@ class ClinicAuthRepositoryImpl implements ClinicAuthRepository {
       );
       final user = credential.user!;
       await _saveUserProfile(user, doctorName, email, clinicName);
-      return ClinicStaffModel.fromFirebaseUser(
+      final staff = ClinicStaffModel.fromFirebaseUser(
         user,
         fallbackName: doctorName,
         role: role,
         clinicName: clinicName,
       );
+      await ClinicSessionManager.saveSession(
+        email: email.trim().toLowerCase(),
+        clinicName: clinicName,
+      );
+      return staff;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'invalid-credential' || e.code == 'wrong-password') {
         throw Exception(
@@ -231,5 +252,5 @@ class ClinicAuthRepositoryImpl implements ClinicAuthRepository {
   }
 
   @override
-  Future<void> signOut() async => _auth.signOut();
+  Future<void> signOut() async => ClinicSessionManager.clearSession();
 }

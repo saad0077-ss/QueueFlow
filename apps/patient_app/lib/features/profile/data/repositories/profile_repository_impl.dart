@@ -25,15 +25,15 @@ class ProfileRepositoryImpl implements ProfileRepository {
   // In-memory cache for snappy reactivity and offline resilience
   PatientProfileModel? _cachedProfile;
   List<PatientReviewModel>? _cachedReviews;
-  List<SupportTicketModel>? _cachedTickets;
+  List<SupportTicketEntity>? _cachedTickets;
 
   ProfileRepositoryImpl({
     FirebaseFirestore? firestore,
     FirebaseAuth? auth,
     FirebaseStorage? storage,
-  })  : _firestore = firestore ?? _safeFirestore(),
-        _auth = auth ?? _safeAuth(),
-        _storage = storage ?? _safeStorage();
+  }) : _firestore = firestore ?? _safeFirestore(),
+       _auth = auth ?? _safeAuth(),
+       _storage = storage ?? _safeStorage();
 
   static FirebaseFirestore? _safeFirestore() {
     try {
@@ -225,7 +225,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
           final list = <FavoriteClinicModel>[];
           for (final v in favs.values) {
             if (v is Map) {
-              list.add(FavoriteClinicModel.fromJson(Map<String, dynamic>.from(v)));
+              list.add(
+                FavoriteClinicModel.fromJson(Map<String, dynamic>.from(v)),
+              );
             }
           }
           if (list.isNotEmpty) {
@@ -241,7 +243,10 @@ class ProfileRepositoryImpl implements ProfileRepository {
   }
 
   @override
-  Future<void> toggleFavorite(String clinicId, {required bool isFavorite}) async {
+  Future<void> toggleFavorite(
+    String clinicId, {
+    required bool isFavorite,
+  }) async {
     final user = _auth?.currentUser;
     if (user == null || _firestore == null) return;
     try {
@@ -254,13 +259,17 @@ class ProfileRepositoryImpl implements ProfileRepository {
         String address = '';
         String initials = 'CF';
         try {
-          final clinicDoc = await _firestore.collection('clinics').doc(clinicId).get();
+          final clinicDoc = await _firestore
+              .collection('clinics')
+              .doc(clinicId)
+              .get();
           final cData = clinicDoc.data();
           if (cData != null) {
             clinicName = cData['name'] ?? clinicName;
             department = cData['category'] ?? cData['department'] ?? department;
             rating = (cData['rating'] as num?)?.toDouble() ?? rating;
-            reviewCount = (cData['reviewCount'] as num?)?.toInt() ?? reviewCount;
+            reviewCount =
+                (cData['reviewCount'] as num?)?.toInt() ?? reviewCount;
             address = cData['address'] ?? address;
             initials = cData['initials'] ?? initials;
           }
@@ -303,7 +312,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
             .where('userId', isEqualTo: user.uid)
             .get();
         if (snap.docs.isNotEmpty) {
-          _cachedReviews = snap.docs.map(PatientReviewModel.fromFirestore).toList();
+          _cachedReviews = snap.docs
+              .map(PatientReviewModel.fromFirestore)
+              .toList();
           return _cachedReviews!;
         }
 
@@ -313,7 +324,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
               .where('userEmail', isEqualTo: user.email!.trim().toLowerCase())
               .get();
           if (snapEmail.docs.isNotEmpty) {
-            _cachedReviews = snapEmail.docs.map(PatientReviewModel.fromFirestore).toList();
+            _cachedReviews = snapEmail.docs
+                .map(PatientReviewModel.fromFirestore)
+                .toList();
             return _cachedReviews!;
           }
         }
@@ -398,13 +411,11 @@ class ProfileRepositoryImpl implements ProfileRepository {
           if (user.email != null) {
             json['userEmail'] = user.email!.trim().toLowerCase();
           }
-          json['userName'] = _cachedProfile?.name ?? user.displayName ?? 'Patient';
+          json['userName'] =
+              _cachedProfile?.name ?? user.displayName ?? 'Patient';
         }
         json['createdAt'] = FieldValue.serverTimestamp();
-        await _firestore
-            .collection('reviews')
-            .doc(newReview.id)
-            .set(json);
+        await _firestore.collection('reviews').doc(newReview.id).set(json);
       } catch (e) {
         debugPrint('Firestore review write skipped/failed: $e');
       }
@@ -466,12 +477,72 @@ class ProfileRepositoryImpl implements ProfileRepository {
   }
 
   @override
-  Future<List<SupportTicketEntity>> getSupportTickets() async {
-    if (_cachedTickets != null) {
-      return _cachedTickets!;
+  Stream<List<SupportTicketEntity>> watchSupportTickets() {
+    if (_firestore == null) {
+      return Stream.value(_cachedTickets ?? const []);
     }
-    _cachedTickets = List.from(SupportTicketModel.defaultTickets);
-    return _cachedTickets!;
+
+    final user = _auth?.currentUser;
+    final uid = user?.uid ?? '';
+    final email = user?.email?.trim().toLowerCase() ?? '';
+
+    Query<Map<String, dynamic>> query = _firestore.collection(
+      'support_tickets',
+    );
+    if (uid.isNotEmpty) {
+      query = query.where('patientId', isEqualTo: uid);
+    } else if (email.isNotEmpty) {
+      query = query.where('patientEmail', isEqualTo: email);
+    }
+
+    return query.snapshots().map((snap) {
+      final list = snap.docs
+          .map((d) => SupportTicketModel.fromFirestore(d))
+          .toList();
+      list.sort((a, b) {
+        final da = a.createdAtDate ?? DateTime(2000);
+        final db = b.createdAtDate ?? DateTime(2000);
+        return db.compareTo(da);
+      });
+      _cachedTickets = list;
+      return list;
+    });
+  }
+
+  @override
+  Future<List<SupportTicketEntity>> getSupportTickets() async {
+    if (_firestore != null) {
+      try {
+        final user = _auth?.currentUser;
+        final uid = user?.uid ?? '';
+        final email = user?.email?.trim().toLowerCase() ?? '';
+
+        Query<Map<String, dynamic>> query = _firestore.collection(
+          'support_tickets',
+        );
+        if (uid.isNotEmpty) {
+          query = query.where('patientId', isEqualTo: uid);
+        } else if (email.isNotEmpty) {
+          query = query.where('patientEmail', isEqualTo: email);
+        }
+
+        final snap = await query.get();
+        final list = snap.docs
+            .map((d) => SupportTicketModel.fromFirestore(d))
+            .toList();
+        list.sort((a, b) {
+          final da = a.createdAtDate ?? DateTime(2000);
+          final db = b.createdAtDate ?? DateTime(2000);
+          return db.compareTo(da);
+        });
+        _cachedTickets = list;
+        return list;
+      } catch (e) {
+        debugPrint('Error fetching support tickets from firestore: $e');
+      }
+    }
+
+    return _cachedTickets ?? const [];
   }
 
   @override
@@ -481,38 +552,108 @@ class ProfileRepositoryImpl implements ProfileRepository {
     required String category,
     required String subject,
     required String description,
+    String priority = 'medium',
+    String? linkedTokenNumber,
+    bool isClinicRelated = true,
   }) async {
-    final ticketNum = (DateTime.now().millisecondsSinceEpoch % 900) + 100;
-    final newId = 'TKT-$ticketNum';
+    final user = _auth?.currentUser;
     final profile = await getProfile();
+    final uid = user?.uid ?? profile.id;
+    final patientEmail = user?.email ?? profile.email;
+    final patientPhone = profile.phone;
+    final patientName = profile.name.isNotEmpty ? profile.name : 'Patient';
 
-    final newTicket = SupportTicketModel(
-      id: newId,
+    final ticketNum = (DateTime.now().millisecondsSinceEpoch % 9000) + 1000;
+    final ticketCode = 'TK-$ticketNum';
+    final prio = priority.toLowerCase();
+    final slaMinutes = prio == 'high' ? 5 : (prio == 'medium' ? 15 : 25);
+    final slaNotice = '< ${slaMinutes}m SLA';
+
+    final initialMessage = TicketMessageModel(
+      sender: patientName,
+      text: description.isNotEmpty ? description : subject,
+      time: 'Just now',
+      isUser: true,
+      senderRole: 'patient',
+      createdAt: DateTime.now(),
+    );
+
+    if (_firestore != null) {
+      final docRef = await _firestore.collection('support_tickets').add({
+        'ticketNumber': ticketCode,
+        'patientId': uid,
+        'userId': uid,
+        'patientName': patientName,
+        'patientEmail': patientEmail,
+        'patientPhone': patientPhone,
+        'patientPhoto': profile.photoBase64 ?? '',
+        'photoBase64': profile.photoBase64 ?? '',
+        'clinicId': clinicId,
+        'clinicName': clinicName,
+        'isClinicRelated': isClinicRelated,
+        'linkedTokenNumber': linkedTokenNumber,
+        'category': category,
+        'priority': prio,
+        'subject': subject,
+        'description': description,
+        'status': 'open',
+        'slaMinutes': slaMinutes,
+        'slaNotice': slaNotice,
+        'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+        'messages': [initialMessage.toJson()],
+      });
+
+      final model = SupportTicketModel(
+        id: docRef.id,
+        ticketNumber: ticketCode,
+        patientId: uid,
+        patientName: patientName,
+        patientEmail: patientEmail,
+        patientPhone: patientPhone,
+        clinicId: clinicId,
+        clinicName: clinicName,
+        isClinicRelated: isClinicRelated,
+        linkedTokenNumber: linkedTokenNumber,
+        category: category,
+        subject: subject,
+        description: description,
+        status: 'open',
+        priority: prio,
+        createdAt: 'Just now',
+        createdAtDate: DateTime.now(),
+        updatedAtDate: DateTime.now(),
+        slaNotice: slaNotice,
+        slaMinutes: slaMinutes,
+        messages: [initialMessage],
+      );
+
+      _cachedTickets = [model, ...?_cachedTickets];
+      return model;
+    }
+
+    final fallback = SupportTicketModel(
+      id: ticketCode,
+      ticketNumber: ticketCode,
+      patientId: uid,
+      patientName: patientName,
+      patientEmail: patientEmail,
       clinicId: clinicId,
       clinicName: clinicName,
+      isClinicRelated: isClinicRelated,
+      linkedTokenNumber: linkedTokenNumber,
       category: category,
       subject: subject,
       description: description,
       status: 'open',
-      priority: category == 'queue' ? 'high' : 'medium',
+      priority: prio,
       createdAt: 'Just now',
-      slaNotice: 'Est. SLA: Resolution within 2 hrs',
-      messages: [
-        TicketMessageModel(
-          sender: profile.name,
-          text: description.isNotEmpty ? description : subject,
-          time: 'Just now',
-          isUser: true,
-        ),
-      ],
+      slaNotice: slaNotice,
+      slaMinutes: slaMinutes,
+      messages: [initialMessage],
     );
-
-    final tickets = await getSupportTickets();
-    _cachedTickets = [
-      newTicket,
-      ...tickets.map((t) => t as SupportTicketModel),
-    ];
-    return newTicket;
+    _cachedTickets = [fallback, ...?_cachedTickets];
+    return fallback;
   }
 
   @override
@@ -520,50 +661,116 @@ class ProfileRepositoryImpl implements ProfileRepository {
     required String ticketId,
     required String text,
     required String senderName,
+    String senderRole = 'patient',
   }) async {
-    final tickets = await getSupportTickets();
-    final idx = tickets.indexWhere((t) => t.id == ticketId);
-    if (idx == -1) {
-      throw Exception('Ticket not found');
-    }
-
-    final ticket = tickets[idx] as SupportTicketModel;
-    final updatedMessages = [
-      ...ticket.messages,
-      TicketMessageModel(
-        sender: senderName,
-        text: text,
-        time: 'Just now',
-        isUser: true,
-      ),
-      // Auto clinic desk acknowledgement simulation
-      const TicketMessageModel(
-        sender: 'Clinic Front Desk (Auto)',
-        text: 'Message received. A care coordinator has been notified.',
-        time: 'Just now',
-        isUser: false,
-      ),
-    ];
-
-    final updatedTicket = SupportTicketModel(
-      id: ticket.id,
-      clinicId: ticket.clinicId,
-      clinicName: ticket.clinicName,
-      category: ticket.category,
-      subject: ticket.subject,
-      description: ticket.description,
-      status: 'in_progress',
-      priority: ticket.priority,
-      createdAt: ticket.createdAt,
-      slaNotice: ticket.slaNotice,
-      messages: updatedMessages,
+    final newMsg = TicketMessageModel(
+      sender: senderName,
+      text: text,
+      time: 'Just now',
+      isUser: senderRole == 'patient',
+      senderRole: senderRole,
+      createdAt: DateTime.now(),
     );
 
-    final updatedList = List<SupportTicketModel>.from(_cachedTickets!);
-    updatedList[idx] = updatedTicket;
-    _cachedTickets = updatedList;
+    if (_firestore != null) {
+      final docRef = _firestore.collection('support_tickets').doc(ticketId);
+      await docRef.update({
+        'messages': FieldValue.arrayUnion([newMsg.toJson()]),
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+      final updatedSnap = await docRef.get();
+      return SupportTicketModel.fromFirestore(updatedSnap);
+    }
 
-    return updatedTicket;
+    final tickets = await getSupportTickets();
+    final idx = tickets.indexWhere((t) => t.id == ticketId);
+    if (idx != -1) {
+      final t = tickets[idx];
+      final updated = t.copyWith(messages: [...t.messages, newMsg]);
+      return updated;
+    }
+    throw Exception('Ticket not found');
+  }
+
+  @override
+  Future<void> updateTicketStatus(String ticketId, String status) async {
+    final isReopen = status.toLowerCase() != 'resolved';
+    final profile = await getProfile();
+    final patientName = profile.name.isNotEmpty ? profile.name : 'Patient';
+    final sysText = isReopen
+        ? '🔄 Concern reopened by $patientName. Live chat is now active.'
+        : '✓ Concern marked as resolved by $patientName.';
+
+    final sysMsgMap = {
+      'sender': 'System',
+      'senderRole': 'system',
+      'text': sysText,
+      'time': 'Just now',
+      'isUser': false,
+      'isInternalNote': false,
+      'createdAt': Timestamp.now(),
+    };
+
+    if (_firestore != null) {
+      try {
+        final Map<String, dynamic> updateData = {
+          'status': status,
+          'messages': FieldValue.arrayUnion([sysMsgMap]),
+          'updatedAt': FieldValue.serverTimestamp(),
+        };
+        if (status == 'resolved') {
+          updateData['resolvedAt'] = 'Just now';
+        }
+        await _firestore
+            .collection('support_tickets')
+            .doc(ticketId)
+            .update(updateData);
+      } catch (e) {
+        debugPrint('Error updating ticket status in firestore: $e');
+      }
+    }
+    if (_cachedTickets != null) {
+      _cachedTickets = _cachedTickets!.map((t) {
+        if (t.id == ticketId) {
+          final sysEntity = TicketMessageEntity(
+            sender: 'System',
+            senderRole: 'system',
+            text: sysText,
+            time: 'Just now',
+            isUser: false,
+            createdAt: DateTime.now(),
+          );
+          return t.copyWith(
+            status: status,
+            resolvedAt: status == 'resolved' ? 'Just now' : null,
+            messages: [...t.messages, sysEntity],
+          );
+        }
+        return t;
+      }).toList();
+    }
+  }
+
+  @override
+  Future<void> rateTicket(String ticketId, int rating) async {
+    if (_firestore != null) {
+      try {
+        await _firestore.collection('support_tickets').doc(ticketId).update({
+          'rating': rating,
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+      } catch (e) {
+        debugPrint('Error updating ticket rating in firestore: $e');
+      }
+    }
+    if (_cachedTickets != null) {
+      _cachedTickets = _cachedTickets!.map((t) {
+        if (t.id == ticketId) {
+          return t.copyWith(rating: rating);
+        }
+        return t;
+      }).toList();
+    }
   }
 
   @override
@@ -600,14 +807,13 @@ class ProfileRepositoryImpl implements ProfileRepository {
               id: d.id,
               token: (data['token'] ?? 'T-001').toString(),
               clinicId: (data['clinicId'] ?? 'sunrise-health').toString(),
-              clinicName:
-                  (data['clinicName'] ?? 'Sunrise Health Clinic').toString(),
-              departmentName:
-                  (data['departmentName'] ?? 'General Medicine').toString(),
-              serviceName:
-                  (data['serviceName'] ?? 'General Consultation').toString(),
-              doctorName:
-                  (data['doctorName'] ?? 'Dr. Priya Sharma').toString(),
+              clinicName: (data['clinicName'] ?? 'Sunrise Health Clinic')
+                  .toString(),
+              departmentName: (data['departmentName'] ?? 'General Medicine')
+                  .toString(),
+              serviceName: (data['serviceName'] ?? 'General Consultation')
+                  .toString(),
+              doctorName: (data['doctorName'] ?? 'Dr. Priya Sharma').toString(),
               joinedTime: (data['joinedTime'] ?? '10:00 AM').toString(),
               date: (data['date'] ?? 'Today').toString(),
               waitTime: data['waitTime']?.toString(),
@@ -671,14 +877,13 @@ class ProfileRepositoryImpl implements ProfileRepository {
               id: d.id,
               token: (data['token'] ?? 'T-001').toString(),
               clinicId: (data['clinicId'] ?? 'sunrise-health').toString(),
-              clinicName:
-                  (data['clinicName'] ?? 'Sunrise Health Clinic').toString(),
-              departmentName:
-                  (data['departmentName'] ?? 'General Medicine').toString(),
-              serviceName:
-                  (data['serviceName'] ?? 'General Consultation').toString(),
-              doctorName:
-                  (data['doctorName'] ?? 'Dr. Priya Sharma').toString(),
+              clinicName: (data['clinicName'] ?? 'Sunrise Health Clinic')
+                  .toString(),
+              departmentName: (data['departmentName'] ?? 'General Medicine')
+                  .toString(),
+              serviceName: (data['serviceName'] ?? 'General Consultation')
+                  .toString(),
+              doctorName: (data['doctorName'] ?? 'Dr. Priya Sharma').toString(),
               joinedTime: (data['joinedTime'] ?? '10:00 AM').toString(),
               date: (data['date'] ?? 'Today').toString(),
               waitTime: data['waitTime']?.toString(),
@@ -713,8 +918,18 @@ class ProfileRepositoryImpl implements ProfileRepository {
 
   static String _monthName(int month) {
     const m = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return (month >= 1 && month <= 12) ? m[month - 1] : 'Jan';
   }
@@ -734,7 +949,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
 
     try {
       // 1. Fetch from 'appointments' collection (Consultation bookings)
-      Query<Map<String, dynamic>> aptQuery = _firestore.collection('appointments');
+      Query<Map<String, dynamic>> aptQuery = _firestore.collection(
+        'appointments',
+      );
       if (email != null && email.isNotEmpty) {
         aptQuery = aptQuery.where('customerEmail', isEqualTo: email);
       } else if (uid != null && uid.isNotEmpty) {
@@ -747,19 +964,28 @@ class ProfileRepositoryImpl implements ProfileRepository {
         final rawPayment = data['payment'];
         final paymentMap = rawPayment is Map<String, dynamic>
             ? rawPayment
-            : (rawPayment is Map ? Map<String, dynamic>.from(rawPayment) : null);
+            : (rawPayment is Map
+                  ? Map<String, dynamic>.from(rawPayment)
+                  : null);
 
         final docStatus = (data['status'] ?? '').toString().toLowerCase();
-        final paymentStatus = (paymentMap?['status'] ?? '').toString().toLowerCase();
+        final paymentStatus = (paymentMap?['status'] ?? '')
+            .toString()
+            .toLowerCase();
 
-        final isCancelled = docStatus == 'cancelled' || paymentStatus == 'refunded';
-        final status = isCancelled ? 'refunded' : (paymentStatus.isNotEmpty ? paymentStatus : 'paid');
+        final isCancelled =
+            docStatus == 'cancelled' || paymentStatus == 'refunded';
+        final status = isCancelled
+            ? 'refunded'
+            : (paymentStatus.isNotEmpty ? paymentStatus : 'paid');
 
-        final amount = (paymentMap?['amount'] as num?)?.toDouble() ??
+        final amount =
+            (paymentMap?['amount'] as num?)?.toDouble() ??
             (data['servicePrice'] as num?)?.toDouble() ??
             500.0;
 
-        final rawDate = paymentMap?['paidAt'] ?? data['dateTime'] ?? data['createdAt'];
+        final rawDate =
+            paymentMap?['paidAt'] ?? data['dateTime'] ?? data['createdAt'];
         String formattedDate = 'Recent';
         if (rawDate is Timestamp) {
           final dt = rawDate.toDate();
@@ -770,10 +996,13 @@ class ProfileRepositoryImpl implements ProfileRepository {
 
         final id = doc.id;
         final shortId = id.length > 5 ? id.substring(0, 5) : id;
-        final receiptNo = (paymentMap?['receiptNo'] ?? 'REC-2026-$shortId').toString();
+        final receiptNo = (paymentMap?['receiptNo'] ?? 'REC-2026-$shortId')
+            .toString();
         final bookingId = (data['bookingRef'] ?? 'QF-$shortId').toString();
-        final type = (paymentMap?['type'] ?? data['type'] ?? 'appointment').toString();
-        final token = data['token']?.toString() ?? paymentMap?['token']?.toString();
+        final type = (paymentMap?['type'] ?? data['type'] ?? 'appointment')
+            .toString();
+        final token =
+            data['token']?.toString() ?? paymentMap?['token']?.toString();
 
         seenIds.add(id);
         seenIds.add(receiptNo);
@@ -784,21 +1013,35 @@ class ProfileRepositoryImpl implements ProfileRepository {
             receiptNo: receiptNo,
             bookingId: bookingId,
             clinicId: (data['clinicId'] ?? 'sunrise-health').toString(),
-            clinicName: (data['clinicName'] ?? 'Sunrise Health Clinic').toString(),
-            department: (data['departmentName'] ?? data['serviceCategory'] ?? 'General Medicine').toString(),
+            clinicName: (data['clinicName'] ?? 'Sunrise Health Clinic')
+                .toString(),
+            department:
+                (data['departmentName'] ??
+                        data['serviceCategory'] ??
+                        'General Medicine')
+                    .toString(),
             service: (data['serviceName'] ?? 'General Consultation').toString(),
             doctor: (data['doctorName'] ?? 'Attending Specialist').toString(),
             amount: amount,
             status: status,
             date: formattedDate,
             method: (paymentMap?['method'] ?? 'Razorpay UPI').toString(),
-            transactionId: (paymentMap?['paymentId'] ?? 'pay_$shortId').toString(),
+            transactionId: (paymentMap?['paymentId'] ?? 'pay_$shortId')
+                .toString(),
             type: type,
             token: token,
-            refundId: paymentMap?['refundId']?.toString() ?? (isCancelled ? 'RFND-$shortId' : null),
-            refundReason: paymentMap?['refundReason']?.toString() ?? (isCancelled ? 'Appointment cancelled by patient' : null),
-            refundToAccount: paymentMap?['refundToAccount']?.toString() ?? (isCancelled ? 'Original Payment Source' : null),
-            refundedAt: paymentMap?['refundedAt']?.toString() ?? (isCancelled ? formattedDate : null),
+            refundId:
+                paymentMap?['refundId']?.toString() ??
+                (isCancelled ? 'RFND-$shortId' : null),
+            refundReason:
+                paymentMap?['refundReason']?.toString() ??
+                (isCancelled ? 'Appointment cancelled by patient' : null),
+            refundToAccount:
+                paymentMap?['refundToAccount']?.toString() ??
+                (isCancelled ? 'Original Payment Source' : null),
+            refundedAt:
+                paymentMap?['refundedAt']?.toString() ??
+                (isCancelled ? formattedDate : null),
           ),
         );
       }
@@ -824,13 +1067,16 @@ class ProfileRepositoryImpl implements ProfileRepository {
         final rawPayment = data['payment'];
         final paymentMap = rawPayment is Map<String, dynamic>
             ? rawPayment
-            : (rawPayment is Map ? Map<String, dynamic>.from(rawPayment) : null);
+            : (rawPayment is Map
+                  ? Map<String, dynamic>.from(rawPayment)
+                  : null);
 
         final docStatus = (data['status'] ?? '').toString().toLowerCase();
         final isCancelled = docStatus == 'cancelled';
         final status = isCancelled ? 'refunded' : 'paid';
 
-        final amount = (paymentMap?['amount'] as num?)?.toDouble() ??
+        final amount =
+            (paymentMap?['amount'] as num?)?.toDouble() ??
             (data['fee'] as num?)?.toDouble() ??
             100.0;
 
@@ -849,15 +1095,18 @@ class ProfileRepositoryImpl implements ProfileRepository {
             receiptNo: receiptNo,
             bookingId: (data['token'] ?? 'TK-$shortId').toString(),
             clinicId: (data['clinicId'] ?? 'smile-dental').toString(),
-            clinicName: (data['clinicName'] ?? 'Smile Dental Clinic').toString(),
-            department: (data['departmentName'] ?? 'General Medicine').toString(),
+            clinicName: (data['clinicName'] ?? 'Smile Dental Clinic')
+                .toString(),
+            department: (data['departmentName'] ?? 'General Medicine')
+                .toString(),
             service: (data['serviceName'] ?? 'Queue Consultation').toString(),
             doctor: (data['doctorName'] ?? 'Attending Doctor').toString(),
             amount: amount,
             status: status,
             date: formattedDate,
             method: (paymentMap?['method'] ?? 'Razorpay UPI').toString(),
-            transactionId: (paymentMap?['paymentId'] ?? 'pay_tk_$shortId').toString(),
+            transactionId: (paymentMap?['paymentId'] ?? 'pay_tk_$shortId')
+                .toString(),
             type: 'queue',
             token: (data['token'] ?? 'T-$shortId').toString(),
             refundId: isCancelled ? 'RFND-TK-$shortId' : null,
@@ -879,7 +1128,8 @@ class ProfileRepositoryImpl implements ProfileRepository {
           seenIds.add(doc.id);
           final data = doc.data();
           final shortId = doc.id.length > 5 ? doc.id.substring(0, 5) : doc.id;
-          final isCancelled = (data['status'] ?? '').toString().toLowerCase() == 'cancelled';
+          final isCancelled =
+              (data['status'] ?? '').toString().toLowerCase() == 'cancelled';
           payments.add(
             PatientPaymentItemEntity(
               id: doc.id,
@@ -983,14 +1233,30 @@ class ProfileRepositoryImpl implements ProfileRepository {
 
         // A. Appointments (Booking History)
         final apptQueries = <Query<Map<String, dynamic>>>[
-          _firestore.collection('appointments').where('customerId', isEqualTo: uid),
+          _firestore
+              .collection('appointments')
+              .where('customerId', isEqualTo: uid),
           _firestore.collection('appointments').where('userId', isEqualTo: uid),
-          _firestore.collection('appointments').where('patientId', isEqualTo: uid),
+          _firestore
+              .collection('appointments')
+              .where('patientId', isEqualTo: uid),
         ];
         if (email != null && email.isNotEmpty) {
-          apptQueries.add(_firestore.collection('appointments').where('customerEmail', isEqualTo: email));
-          apptQueries.add(_firestore.collection('appointments').where('patientEmail', isEqualTo: email));
-          apptQueries.add(_firestore.collection('appointments').where('userEmail', isEqualTo: email));
+          apptQueries.add(
+            _firestore
+                .collection('appointments')
+                .where('customerEmail', isEqualTo: email),
+          );
+          apptQueries.add(
+            _firestore
+                .collection('appointments')
+                .where('patientEmail', isEqualTo: email),
+          );
+          apptQueries.add(
+            _firestore
+                .collection('appointments')
+                .where('userEmail', isEqualTo: email),
+          );
         }
         await collectDocs('appointments', apptQueries);
 
@@ -1001,8 +1267,16 @@ class ProfileRepositoryImpl implements ProfileRepository {
           _firestore.collection('tickets').where('customerId', isEqualTo: uid),
         ];
         if (email != null && email.isNotEmpty) {
-          ticketQueries.add(_firestore.collection('tickets').where('patientEmail', isEqualTo: email));
-          ticketQueries.add(_firestore.collection('tickets').where('userEmail', isEqualTo: email));
+          ticketQueries.add(
+            _firestore
+                .collection('tickets')
+                .where('patientEmail', isEqualTo: email),
+          );
+          ticketQueries.add(
+            _firestore
+                .collection('tickets')
+                .where('userEmail', isEqualTo: email),
+          );
         }
         await collectDocs('tickets', ticketQueries);
 
@@ -1013,41 +1287,79 @@ class ProfileRepositoryImpl implements ProfileRepository {
           _firestore.collection('reviews').where('customerId', isEqualTo: uid),
         ];
         if (email != null && email.isNotEmpty) {
-          reviewQueries.add(_firestore.collection('reviews').where('userEmail', isEqualTo: email));
+          reviewQueries.add(
+            _firestore
+                .collection('reviews')
+                .where('userEmail', isEqualTo: email),
+          );
         }
         await collectDocs('reviews', reviewQueries);
 
         // D. Doctor Reviews & Ratings
         final doctorReviewQueries = <Query<Map<String, dynamic>>>[
-          _firestore.collection('doctor_reviews').where('userId', isEqualTo: uid),
-          _firestore.collection('doctor_reviews').where('patientId', isEqualTo: uid),
-          _firestore.collection('doctor_reviews').where('customerId', isEqualTo: uid),
+          _firestore
+              .collection('doctor_reviews')
+              .where('userId', isEqualTo: uid),
+          _firestore
+              .collection('doctor_reviews')
+              .where('patientId', isEqualTo: uid),
+          _firestore
+              .collection('doctor_reviews')
+              .where('customerId', isEqualTo: uid),
         ];
         if (email != null && email.isNotEmpty) {
-          doctorReviewQueries.add(_firestore.collection('doctor_reviews').where('userEmail', isEqualTo: email));
+          doctorReviewQueries.add(
+            _firestore
+                .collection('doctor_reviews')
+                .where('userEmail', isEqualTo: email),
+          );
         }
         await collectDocs('doctor_reviews', doctorReviewQueries);
 
         // E. Notifications
         final notifQueries = <Query<Map<String, dynamic>>>[
-          _firestore.collection('notifications').where('userId', isEqualTo: uid),
-          _firestore.collection('notifications').where('patientId', isEqualTo: uid),
-          _firestore.collection('notifications').where('customerId', isEqualTo: uid),
+          _firestore
+              .collection('notifications')
+              .where('userId', isEqualTo: uid),
+          _firestore
+              .collection('notifications')
+              .where('patientId', isEqualTo: uid),
+          _firestore
+              .collection('notifications')
+              .where('customerId', isEqualTo: uid),
         ];
         if (email != null && email.isNotEmpty) {
-          notifQueries.add(_firestore.collection('notifications').where('userEmail', isEqualTo: email));
+          notifQueries.add(
+            _firestore
+                .collection('notifications')
+                .where('userEmail', isEqualTo: email),
+          );
         }
         await collectDocs('notifications', notifQueries);
 
         // F. Support Tickets
         final supportQueries = <Query<Map<String, dynamic>>>[
-          _firestore.collection('support_tickets').where('patientId', isEqualTo: uid),
-          _firestore.collection('support_tickets').where('userId', isEqualTo: uid),
-          _firestore.collection('support_tickets').where('customerId', isEqualTo: uid),
+          _firestore
+              .collection('support_tickets')
+              .where('patientId', isEqualTo: uid),
+          _firestore
+              .collection('support_tickets')
+              .where('userId', isEqualTo: uid),
+          _firestore
+              .collection('support_tickets')
+              .where('customerId', isEqualTo: uid),
         ];
         if (email != null && email.isNotEmpty) {
-          supportQueries.add(_firestore.collection('support_tickets').where('userEmail', isEqualTo: email));
-          supportQueries.add(_firestore.collection('support_tickets').where('patientEmail', isEqualTo: email));
+          supportQueries.add(
+            _firestore
+                .collection('support_tickets')
+                .where('userEmail', isEqualTo: email),
+          );
+          supportQueries.add(
+            _firestore
+                .collection('support_tickets')
+                .where('patientEmail', isEqualTo: email),
+          );
         }
         await collectDocs('support_tickets', supportQueries);
 
@@ -1058,8 +1370,16 @@ class ProfileRepositoryImpl implements ProfileRepository {
           _firestore.collection('payments').where('patientId', isEqualTo: uid),
         ];
         if (email != null && email.isNotEmpty) {
-          paymentQueries.add(_firestore.collection('payments').where('userEmail', isEqualTo: email));
-          paymentQueries.add(_firestore.collection('payments').where('customerEmail', isEqualTo: email));
+          paymentQueries.add(
+            _firestore
+                .collection('payments')
+                .where('userEmail', isEqualTo: email),
+          );
+          paymentQueries.add(
+            _firestore
+                .collection('payments')
+                .where('customerEmail', isEqualTo: email),
+          );
         }
         await collectDocs('payments', paymentQueries);
 
@@ -1075,7 +1395,11 @@ class ProfileRepositoryImpl implements ProfileRepository {
         ];
         for (final sub in subcollections) {
           try {
-            final subSnap = await _firestore.collection('users').doc(uid).collection(sub).get();
+            final subSnap = await _firestore
+                .collection('users')
+                .doc(uid)
+                .collection(sub)
+                .get();
             for (final d in subSnap.docs) {
               docsToDelete[d.reference.path] = d.reference;
             }
@@ -1111,7 +1435,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
       await user.delete();
     } on FirebaseAuthException catch (authErr) {
       if (authErr.code == 'requires-recent-login') {
-        debugPrint('User requires re-authentication before Auth deletion: ${authErr.message}');
+        debugPrint(
+          'User requires re-authentication before Auth deletion: ${authErr.message}',
+        );
         rethrow;
       }
       debugPrint('FirebaseAuth user.delete error: $authErr');

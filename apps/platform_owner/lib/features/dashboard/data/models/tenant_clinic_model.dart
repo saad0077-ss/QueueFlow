@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../../domain/entities/tenant_clinic_entity.dart';
 
 class TenantClinicModel extends TenantClinicEntity {
@@ -86,20 +87,23 @@ class TenantClinicModel extends TenantClinicEntity {
     if (addr is String && addr.isNotEmpty) return addr;
     if (d['location'] is Map) {
       final loc = d['location'] as Map;
-      final parts = [loc['building'], loc['street'], loc['city']]
-          .whereType<String>()
-          .where((s) => s.trim().isNotEmpty)
-          .toList();
+      final parts = [
+        loc['building'],
+        loc['street'],
+        loc['city'],
+      ].whereType<String>().where((s) => s.trim().isNotEmpty).toList();
       if (parts.isNotEmpty) return parts.join(', ');
     }
     return addr?.toString() ?? '';
   }
 
   static String _parseHours(Map<String, dynamic> d) {
-    if (d['scheduleSummary'] is String && (d['scheduleSummary'] as String).isNotEmpty) {
+    if (d['scheduleSummary'] is String &&
+        (d['scheduleSummary'] as String).isNotEmpty) {
       return d['scheduleSummary'] as String;
     }
-    if (d['openingHours'] is String && (d['openingHours'] as String).isNotEmpty) {
+    if (d['openingHours'] is String &&
+        (d['openingHours'] as String).isNotEmpty) {
       return d['openingHours'] as String;
     }
     final raw = d['operatingHours'];
@@ -111,9 +115,15 @@ class TenantClinicModel extends TenantClinicEntity {
       final monOpen = mon is Map && mon['isOpen'] == true;
       final satOpen = sat is Map && sat['isOpen'] == true;
       final sunOpen = sun is Map && sun['isOpen'] == true;
-      final monStr = monOpen ? '${mon['openTime']} – ${mon['closeTime']}' : 'Closed';
-      if (monOpen && satOpen && !sunOpen) return 'Mon–Sat: $monStr · Sun: Closed';
-      if (monOpen && !satOpen && !sunOpen) return 'Mon–Fri: $monStr · Sun: Closed';
+      final monStr = monOpen
+          ? '${mon['openTime']} – ${mon['closeTime']}'
+          : 'Closed';
+      if (monOpen && satOpen && !sunOpen) {
+        return 'Mon–Sat: $monStr · Sun: Closed';
+      }
+      if (monOpen && !satOpen && !sunOpen) {
+        return 'Mon–Fri: $monStr · Sun: Closed';
+      }
       return 'Standard OPD Schedule';
     }
     return '';

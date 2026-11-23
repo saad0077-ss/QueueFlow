@@ -1,4 +1,4 @@
-﻿import '../entities/admin_entity.dart';
+import '../entities/admin_entity.dart';
 import '../repositories/auth_repository.dart';
 
 class SignInUseCase {
@@ -6,10 +6,7 @@ class SignInUseCase {
 
   const SignInUseCase(this.repository);
 
-  Future<AdminEntity> call({
-    required String email,
-    required String password,
-  }) {
+  Future<AdminEntity> call({required String email, required String password}) {
     return repository.signIn(email: email, password: password);
   }
 }

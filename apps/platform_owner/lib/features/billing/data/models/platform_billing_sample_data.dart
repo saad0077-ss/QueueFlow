@@ -1,4 +1,4 @@
-﻿import '../../domain/entities/platform_invoice_entity.dart';
+import '../../domain/entities/platform_invoice_entity.dart';
 import '../../domain/entities/platform_plan_tier_entity.dart';
 
 class PlatformBillingSampleData {
@@ -14,7 +14,8 @@ class PlatformBillingSampleData {
       doctorLimit: 1,
       serviceLimit: 1,
       staffLimit: 1,
-      description: 'Designed for small home clinics and single-practitioner practices.',
+      description:
+          'Designed for small home clinics and single-practitioner practices.',
       features: [
         '1 Doctor queue management',
         '1 Clinical Service offering (1 service per doctor)',
@@ -27,7 +28,8 @@ class PlatformBillingSampleData {
     PlatformPlanTierEntity(
       id: 'multi',
       name: 'Multi-Doctor Clinic Plan',
-      tagline: 'For polyclinics & group practices (Up to 10 Doctors · 10 Services)',
+      tagline:
+          'For polyclinics & group practices (Up to 10 Doctors · 10 Services)',
       monthlyPrice: 2999,
       annualPrice: 2399,
       badge: 'Most Popular',
@@ -35,7 +37,8 @@ class PlatformBillingSampleData {
       doctorLimit: 10,
       serviceLimit: 10,
       staffLimit: 5,
-      description: 'Built for polyclinics and medium clinics with multiple doctors.',
+      description:
+          'Built for polyclinics and medium clinics with multiple doctors.',
       features: [
         'Up to 10 Doctors queue management',
         'Up to 10 Clinical Services (1 per doctor limit)',

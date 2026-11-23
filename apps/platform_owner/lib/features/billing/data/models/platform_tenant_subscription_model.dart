@@ -17,20 +17,31 @@ class PlatformTenantSubscriptionModel extends PlatformTenantSubscriptionEntity {
     super.imageUrl,
   });
 
-  factory PlatformTenantSubscriptionModel.fromMap(String id, Map<String, dynamic> data) {
+  factory PlatformTenantSubscriptionModel.fromMap(
+    String id,
+    Map<String, dynamic> data,
+  ) {
     final planId = data['planId'] as String? ?? 'solo';
     final isEnterprise = planId == 'unlimited' || planId == 'enterprise';
     final isMulti = planId == 'multi';
 
     final doctors = (data['doctors'] as List<dynamic>?) ?? [];
-    final docCount = doctors.isNotEmpty ? doctors.length : (data['practicingDoctors'] as int? ?? 1);
+    final docCount = doctors.isNotEmpty
+        ? doctors.length
+        : (data['practicingDoctors'] as int? ?? 1);
 
-    final planName = data['planName'] as String? ??
-        (isEnterprise ? 'Unlimited Doctors Plan' : (isMulti ? 'Multi-Doctor Clinic Plan' : 'Solo Doctor Plan'));
+    final planName =
+        data['planName'] as String? ??
+        (isEnterprise
+            ? 'Unlimited Doctors Plan'
+            : (isMulti ? 'Multi-Doctor Clinic Plan' : 'Solo Doctor Plan'));
 
-    final mrr = isEnterprise ? '₹6,999/mo' : (isMulti ? '₹2,999/mo' : '₹999/mo');
+    final mrr = isEnterprise
+        ? '₹6,999/mo'
+        : (isMulti ? '₹2,999/mo' : '₹999/mo');
 
-    final rawImage = (data['imageUrl'] as String? ?? data['image'] as String? ?? '').trim();
+    final rawImage =
+        (data['imageUrl'] as String? ?? data['image'] as String? ?? '').trim();
 
     return PlatformTenantSubscriptionModel(
       clinicId: id,

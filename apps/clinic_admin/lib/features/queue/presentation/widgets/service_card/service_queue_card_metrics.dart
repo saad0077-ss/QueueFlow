@@ -29,7 +29,10 @@ class ServiceQueueCardMetrics extends StatelessWidget {
                 const SizedBox(width: 6),
                 RichText(
                   text: TextSpan(
-                    style: GoogleFonts.inter(fontSize: 12.5, color: colors.textPrimary),
+                    style: GoogleFonts.inter(
+                      fontSize: 12.5,
+                      color: colors.textPrimary,
+                    ),
                     children: [
                       TextSpan(
                         text: '${waitingItems.length} ',
@@ -75,7 +78,10 @@ class ServiceQueueCardMetrics extends StatelessWidget {
               for (final w in waitingItems.take(3)) ...[
                 Container(
                   margin: const EdgeInsets.only(right: 5),
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: colors.surfaceSecondary,
                     borderRadius: BorderRadius.circular(4),

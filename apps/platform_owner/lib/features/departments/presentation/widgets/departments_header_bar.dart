@@ -8,7 +8,13 @@ class DepartmentsHeaderBar extends StatelessWidget {
   final VoidCallback onRefresh;
   final VoidCallback onAddDepartment;
 
-  const DepartmentsHeaderBar({super.key, required this.activeCount, required this.onExportPdf, required this.onRefresh, required this.onAddDepartment});
+  const DepartmentsHeaderBar({
+    super.key,
+    required this.activeCount,
+    required this.onExportPdf,
+    required this.onRefresh,
+    required this.onAddDepartment,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -25,15 +31,24 @@ class DepartmentsHeaderBar extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: colors.badgeOpenBg,
                     borderRadius: BorderRadius.circular(6),
-                    border: Border.all(color: colors.success.withValues(alpha: 0.3)),
+                    border: Border.all(
+                      color: colors.success.withValues(alpha: 0.3),
+                    ),
                   ),
                   child: Text(
                     'SPECIALTY MANAGEMENT',
-                    style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w700, color: colors.badgeOpenText),
+                    style: GoogleFonts.inter(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      color: colors.badgeOpenText,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -41,7 +56,10 @@ class DepartmentsHeaderBar extends StatelessWidget {
                   child: Text(
                     '$activeCount Active Specialties',
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted),
+                    style: GoogleFonts.inter(
+                      fontSize: 12,
+                      color: colors.textMuted,
+                    ),
                   ),
                 ),
               ],
@@ -49,7 +67,11 @@ class DepartmentsHeaderBar extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               'Platform Medical Departments',
-              style: GoogleFonts.inter(fontSize: 24, fontWeight: FontWeight.w800, color: colors.textPrimary),
+              style: GoogleFonts.inter(
+                fontSize: 24,
+                fontWeight: FontWeight.w800,
+                color: colors.textPrimary,
+              ),
             ),
             const SizedBox(height: 2),
             Text(
@@ -70,18 +92,32 @@ class DepartmentsHeaderBar extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: colors.primary,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 11,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 elevation: 0,
               ),
               onPressed: onAddDepartment,
-              child: Text('+ Add Department', style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.bold)),
+              child: Text(
+                '+ Add Department',
+                style: GoogleFonts.inter(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ],
         );
 
         if (isCompact) {
-          return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [titleCol, const SizedBox(height: 16), actionRow]);
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [titleCol, const SizedBox(height: 16), actionRow],
+          );
         }
 
         return Row(
@@ -96,7 +132,11 @@ class DepartmentsHeaderBar extends StatelessWidget {
     );
   }
 
-  Widget _secondaryBtn(AppColorsExtension colors, String label, VoidCallback onPressed) {
+  Widget _secondaryBtn(
+    AppColorsExtension colors,
+    String label,
+    VoidCallback onPressed,
+  ) {
     return OutlinedButton(
       style: OutlinedButton.styleFrom(
         backgroundColor: colors.surface,
@@ -106,7 +146,10 @@ class DepartmentsHeaderBar extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
       onPressed: onPressed,
-      child: Text(label, style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w500)),
+      child: Text(
+        label,
+        style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w500),
+      ),
     );
   }
 }

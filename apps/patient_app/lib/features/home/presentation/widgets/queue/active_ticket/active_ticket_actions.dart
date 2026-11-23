@@ -5,11 +5,13 @@ import 'package:queueflow_ui/queueflow_ui.dart';
 class ActiveTicketActions extends StatelessWidget {
   final VoidCallback onGetDirections;
   final VoidCallback onCancelSpot;
+  final VoidCallback? onRaiseConcern;
 
   const ActiveTicketActions({
     super.key,
     required this.onGetDirections,
     required this.onCancelSpot,
+    this.onRaiseConcern,
   });
 
   @override
@@ -71,6 +73,35 @@ class ActiveTicketActions extends StatelessWidget {
             ),
           ),
         ),
+        if (onRaiseConcern != null) ...[
+          const SizedBox(height: 12),
+          OutlinedButton(
+            onPressed: onRaiseConcern,
+            style: OutlinedButton.styleFrom(
+              side: BorderSide(color: colors.primary, width: 1.5),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 13),
+              backgroundColor: colors.primary.withValues(alpha: 0.05),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text('⚠️', style: TextStyle(fontSize: 14)),
+                const SizedBox(width: 8),
+                Text(
+                  'Delay or Concern? Raise Inquiry',
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: colors.primary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ],
     );
   }

@@ -20,7 +20,11 @@ class DeptContentView extends StatelessWidget {
   final DepartmentRepository repository;
   final ValueChanged<DepartmentEntity> onDetails;
 
-  const DeptContentView({super.key, required this.repository, required this.onDetails});
+  const DeptContentView({
+    super.key,
+    required this.repository,
+    required this.onDetails,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +37,14 @@ class DeptContentView extends StatelessWidget {
             children: [
               DepartmentsHeaderBar(
                 activeCount: state.activeDepartments,
-                onExportPdf: () => PdfExporter.exportDepartments(context, state.filteredDepartments),
-                onRefresh: () => AppSnackBar.showSuccess(context, message: 'Departments refreshed.'),
+                onExportPdf: () => PdfExporter.exportDepartments(
+                  context,
+                  state.filteredDepartments,
+                ),
+                onRefresh: () => AppSnackBar.showSuccess(
+                  context,
+                  message: 'Departments refreshed.',
+                ),
                 onAddDepartment: () => AddDepartmentModal.show(
                   context,
                   (d) => repository.addDepartment(d),
@@ -48,26 +58,54 @@ class DeptContentView extends StatelessWidget {
                 doctorsAssigned: state.totalDoctors,
                 monthlyVisits: state.totalMonthlyVisits,
               ),
-              if (state.pendingExpansionRequests.isNotEmpty || state.pendingServiceRequests.isNotEmpty) ...[
+              if (state.pendingExpansionRequests.isNotEmpty ||
+                  state.pendingServiceRequests.isNotEmpty) ...[
                 const SizedBox(height: 18),
                 DepartmentApprovalQueue(
                   expansionRequests: state.pendingExpansionRequests,
                   serviceRequests: state.pendingServiceRequests,
                   onApproveExpansion: (r) async {
                     await repository.approveExpansionRequest(r.id);
-                    if (context.mounted) AppSnackBar.showSuccess(context, message: 'Approved expansion for "${r.clinicName}".');
+                    if (context.mounted) {
+                      AppSnackBar.showSuccess(
+                        context,
+                        message: 'Approved expansion for "${r.clinicName}".',
+                      );
+                    }
                   },
                   onRejectExpansion: (r) async {
-                    await repository.rejectExpansionRequest(r.id, 'Capacity limit.');
-                    if (context.mounted) AppSnackBar.showWarning(context, message: 'Request rejected.');
+                    await repository.rejectExpansionRequest(
+                      r.id,
+                      'Capacity limit.',
+                    );
+                    if (context.mounted) {
+                      AppSnackBar.showWarning(
+                        context,
+                        message: 'Request rejected.',
+                      );
+                    }
                   },
                   onApproveService: (s) async {
                     await repository.approveServiceRequest(s.id);
-                    if (context.mounted) AppSnackBar.showSuccess(context, message: 'Approved "${s.serviceName}" and added to department catalog.');
+                    if (context.mounted) {
+                      AppSnackBar.showSuccess(
+                        context,
+                        message:
+                            'Approved "${s.serviceName}" and added to department catalog.',
+                      );
+                    }
                   },
                   onRejectService: (s) async {
-                    await repository.rejectServiceRequest(s.id, 'Standard catalog guidelines.');
-                    if (context.mounted) AppSnackBar.showWarning(context, message: 'Service rejected.');
+                    await repository.rejectServiceRequest(
+                      s.id,
+                      'Standard catalog guidelines.',
+                    );
+                    if (context.mounted) {
+                      AppSnackBar.showWarning(
+                        context,
+                        message: 'Service rejected.',
+                      );
+                    }
                   },
                 ),
               ],
@@ -75,9 +113,15 @@ class DeptContentView extends StatelessWidget {
               DepartmentsFilterRow(
                 searchQuery: state.searchQuery,
                 selectedStatus: state.selectedStatusFilter,
-                onSearch: (q) => context.read<DepartmentsBloc>().add(DepartmentSearchQueryChanged(q)),
-                onStatusChanged: (s) => context.read<DepartmentsBloc>().add(DepartmentStatusFilterChanged(s)),
-                onReset: () => context.read<DepartmentsBloc>().add(const DepartmentsResetFilters()),
+                onSearch: (q) => context.read<DepartmentsBloc>().add(
+                  DepartmentSearchQueryChanged(q),
+                ),
+                onStatusChanged: (s) => context.read<DepartmentsBloc>().add(
+                  DepartmentStatusFilterChanged(s),
+                ),
+                onReset: () => context.read<DepartmentsBloc>().add(
+                  const DepartmentsResetFilters(),
+                ),
               ),
               const SizedBox(height: 18),
               DepartmentsDataTable(
@@ -87,13 +131,23 @@ class DeptContentView extends StatelessWidget {
                   context,
                   (up) async {
                     await repository.updateDepartment(up);
-                    if (context.mounted) AppSnackBar.showSuccess(context, message: 'Updated "${up.name}".');
+                    if (context.mounted) {
+                      AppSnackBar.showSuccess(
+                        context,
+                        message: 'Updated "${up.name}".',
+                      );
+                    }
                   },
                   existingDepartments: state.allDepartments,
                   initial: d,
                 ),
-                onToggleStatus: (d) => repository.toggleDepartmentStatus(d.id, d.isActive),
-                onDelete: (d) => DeptDeleteDialog.show(context, d, () => repository.deleteDepartment(d.id)),
+                onToggleStatus: (d) =>
+                    repository.toggleDepartmentStatus(d.id, d.isActive),
+                onDelete: (d) => DeptDeleteDialog.show(
+                  context,
+                  d,
+                  () => repository.deleteDepartment(d.id),
+                ),
               ),
             ],
           ),

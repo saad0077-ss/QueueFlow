@@ -55,9 +55,13 @@ class _SignInView extends StatelessWidget {
                   (route) => false,
                 );
               } else {
+                final name = state.user!.fullName.isNotEmpty
+                    ? state.user!.fullName
+                    : 'Patient';
                 AppSnackBar.showSuccess(
                   context,
-                  message: 'Signed in successfully.',
+                  title: 'Welcome Back',
+                  message: 'Welcome back, $name! Signed in successfully.',
                 );
                 Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(builder: (_) => const PatientHomeScreen()),

@@ -1,4 +1,5 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../bloc/platform_billing_bloc.dart';
 import '../bloc/platform_billing_event.dart';
@@ -34,17 +35,26 @@ class PlatformBillingContentView extends StatelessWidget {
           onEditTier: (tier) => EditPlatformPlanDialog.show(
             context,
             existingTier: tier,
-            onSave: (updated) => bloc.add(PlatformBillingPlanTierSaved(updated)),
+            onSave: (updated) =>
+                bloc.add(PlatformBillingPlanTierSaved(updated)),
           ),
         );
       case 2:
         return PlatformInvoicesLedgerView(
           invoices: state.filteredInvoices,
           activeFilter: state.invoiceFilter,
-          onFilterChanged: (filter) => bloc.add(PlatformBillingInvoiceFilterChanged(filter)),
-          onDownloadInvoice: (inv) => AppSnackBar.showInfo(context, message: 'Downloading invoice ${inv.number}...'),
+          onFilterChanged: (filter) =>
+              bloc.add(PlatformBillingInvoiceFilterChanged(filter)),
+          onDownloadInvoice: (inv) => AppSnackBar.showInfo(
+            context,
+            message: 'Downloading invoice ${inv.number}...',
+          ),
           onMarkPaid: (inv) => bloc.add(PlatformBillingInvoiceMarkedPaid(inv)),
-          onRemind: (inv) => AppSnackBar.showInfo(context, message: 'Payment reminder sent to ${inv.clinicName} for ${inv.number}.'),
+          onRemind: (inv) => AppSnackBar.showInfo(
+            context,
+            message:
+                'Payment reminder sent to ${inv.clinicName} for ${inv.number}.',
+          ),
         );
       case 0:
       default:
@@ -54,27 +64,44 @@ class PlatformBillingContentView extends StatelessWidget {
           onIssueInvoice: (clinic) => IssueInvoiceDialog.show(
             context,
             clinics: [clinic],
-            onSubmit: ({required clinicId, required clinicName, required plan, required amount, required dueDate}) {
-              bloc.add(PlatformBillingIssueInvoiceSubmitted(
-                clinicId: clinicId,
-                clinicName: clinicName,
-                plan: plan,
-                amount: amount,
-                dueDate: dueDate,
-              ));
-            },
+            onSubmit:
+                ({
+                  required clinicId,
+                  required clinicName,
+                  required plan,
+                  required amount,
+                  required dueDate,
+                }) {
+                  bloc.add(
+                    PlatformBillingIssueInvoiceSubmitted(
+                      clinicId: clinicId,
+                      clinicName: clinicName,
+                      plan: plan,
+                      amount: amount,
+                      dueDate: dueDate,
+                    ),
+                  );
+                },
           ),
           onManageSubscription: (clinic) => ManageClinicPlanDialog.show(
             context,
             clinic: clinic,
-            onSave: ({required billingCadence, required clinicId, required planId, required status}) {
-              bloc.add(PlatformBillingSubscriptionUpdated(
-                clinicId: clinicId,
-                planId: planId,
-                billingCadence: billingCadence,
-                status: status,
-              ));
-            },
+            onSave:
+                ({
+                  required billingCadence,
+                  required clinicId,
+                  required planId,
+                  required status,
+                }) {
+                  bloc.add(
+                    PlatformBillingSubscriptionUpdated(
+                      clinicId: clinicId,
+                      planId: planId,
+                      billingCadence: billingCadence,
+                      status: status,
+                    ),
+                  );
+                },
           ),
         );
     }

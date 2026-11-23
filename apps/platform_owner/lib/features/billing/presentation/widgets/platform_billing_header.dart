@@ -36,9 +36,24 @@ class PlatformBillingHeader extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Container(width: 6, height: 6, decoration: BoxDecoration(color: colors.success, shape: BoxShape.circle)),
+                  Container(
+                    width: 6,
+                    height: 6,
+                    decoration: BoxDecoration(
+                      color: colors.success,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
                   const SizedBox(width: 6),
-                  Text('ENTERPRISE REVENUE ENGINE • ACTIVE', style: GoogleFonts.inter(fontSize: 10.5, fontWeight: FontWeight.w700, color: colors.primaryLight, letterSpacing: 0.5)),
+                  Text(
+                    'ENTERPRISE REVENUE ENGINE • ACTIVE',
+                    style: GoogleFonts.inter(
+                      fontSize: 10.5,
+                      fontWeight: FontWeight.w700,
+                      color: colors.primaryLight,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -52,9 +67,23 @@ class PlatformBillingHeader extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Platform Plans & Billing Command', style: GoogleFonts.inter(fontSize: 24, fontWeight: FontWeight.w800, color: colors.textPrimary, letterSpacing: -0.5)),
+                  Text(
+                    'Platform Plans & Billing Command',
+                    style: GoogleFonts.inter(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w800,
+                      color: colors.textPrimary,
+                      letterSpacing: -0.5,
+                    ),
+                  ),
                   const SizedBox(height: 4),
-                  Text('Multi-clinic subscription tiers, automated invoicing, MRR collection and clinic upgrade controls', style: GoogleFonts.inter(fontSize: 13, color: colors.textMuted)),
+                  Text(
+                    'Multi-clinic subscription tiers, automated invoicing, MRR collection and clinic upgrade controls',
+                    style: GoogleFonts.inter(
+                      fontSize: 13,
+                      color: colors.textMuted,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -67,11 +96,22 @@ class PlatformBillingHeader extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
                     backgroundColor: colors.primary,
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                   icon: const Icon(Icons.add_rounded, size: 16),
-                  label: Text('Issue Invoice', style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w600)),
+                  label: Text(
+                    'Issue Invoice',
+                    style: GoogleFonts.inter(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
                 OutlinedButton.icon(
                   onPressed: onExportPdf,
@@ -79,11 +119,22 @@ class PlatformBillingHeader extends StatelessWidget {
                     foregroundColor: colors.textPrimary,
                     side: BorderSide(color: colors.border),
                     backgroundColor: colors.surface,
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                   icon: const Icon(Icons.download_rounded, size: 15),
-                  label: Text('Export PDF', style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w600)),
+                  label: Text(
+                    'Export PDF',
+                    style: GoogleFonts.inter(
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
               ],
             ),

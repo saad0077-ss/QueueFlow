@@ -66,11 +66,19 @@ class AdminInputField extends StatelessWidget {
               color: showValid ? colors.success : colors.textMuted,
               size: 20,
             ),
-            suffixIcon: suffixIcon ??
+            suffixIcon:
+                suffixIcon ??
                 (showValid
-                    ? Icon(Icons.check_circle_rounded, color: colors.success, size: 20)
+                    ? Icon(
+                        Icons.check_circle_rounded,
+                        color: colors.success,
+                        size: 20,
+                      )
                     : null),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
+            ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide(

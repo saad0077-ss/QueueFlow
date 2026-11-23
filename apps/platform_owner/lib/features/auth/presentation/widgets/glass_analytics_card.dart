@@ -1,6 +1,8 @@
-﻿import 'dart:ui';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import 'flaticon_stethoscope.dart';
 
 class GlassAnalyticsCard extends StatelessWidget {
@@ -22,7 +24,10 @@ class GlassAnalyticsCard extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.13),
                 borderRadius: BorderRadius.circular(26),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.22), width: 1.5),
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.22),
+                  width: 1.5,
+                ),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -44,7 +49,10 @@ class GlassAnalyticsCard extends StatelessWidget {
                         Expanded(
                           child: Container(
                             height: barHeights[i],
-                            decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.38), borderRadius: BorderRadius.circular(8)),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.38),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
                           ),
                         ),
                       ],
@@ -63,8 +71,13 @@ class GlassAnalyticsCard extends StatelessWidget {
             child: Container(
               width: 68,
               height: 68,
-              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
-              child: const Center(child: FlaticonStethoscope(size: 36, color: Color(0xFF2563EB))),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Center(
+                child: FlaticonStethoscope(size: 36, color: Color(0xFF2563EB)),
+              ),
             ),
           ),
         ),
@@ -83,12 +96,26 @@ class GlassAnalyticsCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(count, style: GoogleFonts.inter(fontSize: 30, fontWeight: FontWeight.w700, color: Colors.white, height: 1.1)),
+          Text(
+            count,
+            style: GoogleFonts.inter(
+              fontSize: 30,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
+              height: 1.1,
+            ),
+          ),
           const SizedBox(height: 6),
           FittedBox(
             fit: BoxFit.scaleDown,
             alignment: Alignment.centerLeft,
-            child: Text(label, style: GoogleFonts.inter(fontSize: 12.5, color: Colors.white.withValues(alpha: 0.88))),
+            child: Text(
+              label,
+              style: GoogleFonts.inter(
+                fontSize: 12.5,
+                color: Colors.white.withValues(alpha: 0.88),
+              ),
+            ),
           ),
         ],
       ),
