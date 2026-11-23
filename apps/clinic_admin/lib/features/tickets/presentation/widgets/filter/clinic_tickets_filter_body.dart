@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
+
 import 'clinic_tickets_filter_category_section.dart';
 import 'clinic_tickets_filter_services_section.dart';
 import 'clinic_tickets_filter_urgency_section.dart';
@@ -22,18 +23,6 @@ class ClinicTicketsFilterBody extends StatelessWidget {
     required this.onSelectCategory,
   });
 
-  Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: GoogleFonts.inter(
-        fontSize: 10.5,
-        fontWeight: FontWeight.w800,
-        color: const Color(0xFF94A3B8),
-        letterSpacing: 0.6,
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -41,21 +30,21 @@ class ClinicTicketsFilterBody extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildSectionTitle('CLINICAL SERVICE & SPECIALTY'),
+          const AppFilterSectionTitle('CLINICAL SERVICE & SPECIALTY'),
           const SizedBox(height: 10),
           ClinicTicketsFilterServicesSection(
             selectedService: selectedService,
             onSelectService: onSelectService,
           ),
           const SizedBox(height: 20),
-          _buildSectionTitle('URGENCY & QUEUE PRIORITY'),
+          const AppFilterSectionTitle('URGENCY & QUEUE PRIORITY'),
           const SizedBox(height: 10),
           ClinicTicketsFilterUrgencySection(
             selectedUrgency: selectedUrgency,
             onSelectUrgency: onSelectUrgency,
           ),
           const SizedBox(height: 20),
-          _buildSectionTitle('ISSUE CATEGORY'),
+          const AppFilterSectionTitle('ISSUE CATEGORY'),
           const SizedBox(height: 10),
           ClinicTicketsFilterCategorySection(
             selectedCategory: selectedCategory,

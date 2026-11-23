@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import '../../../../core/utils/clinic_pdf_exporter.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../services/data/repositories/clinic_services_repository_impl.dart';
 import '../../../services/domain/entities/clinic_doctor_entity.dart';
 import '../../../services/domain/entities/clinic_service_entity.dart';
 import '../../../services/domain/entities/service_department_entity.dart';
-import '../../data/services/appointments_report_pdf.dart';
 import '../../domain/entities/clinic_appointment_entity.dart';
 import '../bloc/clinic_appointments_bloc.dart';
 import '../bloc/clinic_appointments_event.dart';
@@ -37,28 +36,11 @@ class ClinicAppointmentsActionsHelper {
     }
   }
 
-  static void exportCsv(
-    BuildContext context,
-    ClinicAppointmentsBloc bloc,
-  ) async {
-    try {
-      await AppointmentsReportPdf.download(bloc.state.filteredAppointments);
-      if (context.mounted) {
-        AppSnackBar.showSuccess(
-          context,
-          message: 'Appointments report generated.',
-        );
-      }
-    } catch (_) {
-      final csvData = await bloc.repository.exportAppointmentsCsv();
-      await Clipboard.setData(ClipboardData(text: csvData));
-      if (context.mounted) {
-        AppSnackBar.showError(
-          context,
-          message: 'Could not build the PDF. CSV copied to clipboard instead.',
-        );
-      }
-    }
+  static void exportPdf(BuildContext context, ClinicAppointmentsBloc bloc) {
+    ClinicPdfExporter.exportAppointments(
+      context,
+      bloc.state.filteredAppointments,
+    );
   }
 
   static void handleCheckIn(

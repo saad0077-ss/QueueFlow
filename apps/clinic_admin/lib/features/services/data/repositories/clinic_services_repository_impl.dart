@@ -99,39 +99,148 @@ class ClinicServicesRepositoryImpl implements ClinicServicesRepository {
   }
 
   @override
+  Stream<List<ServiceDepartmentEntity>> watchDepartments() {
+    return _firestore
+        .collection('departments')
+        .snapshots()
+        .asyncMap((_) => getDepartments());
+  }
+
+  @override
   Future<List<ServiceDepartmentEntity>> getDepartments() async {
     final clinic = await _clinicDoc();
     final clinicId = clinic.id;
-    final slug = _slug(clinic.data()?['name'] as String? ?? '');
+    final clinicData = clinic.data() ?? const <String, dynamic>{};
+    final clinicName = (clinicData['name'] as String? ?? '').trim();
+    final slug = _slug(clinicName);
 
-    final snap = await _firestore.collection('departments').get();
-    final list = snap.docs
-        .where((doc) {
-          final data = doc.data();
-          final status = (data['status'] ?? 'active').toString().toLowerCase();
-          if (status != 'active') return false;
-          final assigned = (data['assignedClinics'] as List<dynamic>? ?? [])
-              .map((e) => e.toString());
-          // Same matching as the platform admin: Firestore id, or the
-          // legacy name slug used in seed data (e.g. `sunrise-health`).
-          return assigned.any(
-            (k) =>
-                k == clinicId ||
-                (k.isNotEmpty && slug.isNotEmpty && slug.startsWith(k)),
-          );
-        })
-        .map(ServiceDepartmentModel.fromFirestore)
-        .toList();
+    // 1. Direct assigned departments in clinic document if present
+    final clinicDeptIds = <String>{};
+    if (clinicData['departmentIds'] is List) {
+      for (final item in (clinicData['departmentIds'] as List)) {
+        if (item != null && item.toString().trim().isNotEmpty) {
+          clinicDeptIds.add(item.toString().trim());
+        }
+      }
+    }
 
+    final clinicDeptNames = <String>{};
+    if (clinicData['departments'] is List) {
+      for (final item in (clinicData['departments'] as List)) {
+        if (item is String && item.trim().isNotEmpty) {
+          clinicDeptNames.add(item.trim().toLowerCase());
+        } else if (item is Map && item['name'] is String) {
+          clinicDeptNames.add((item['name'] as String).trim().toLowerCase());
+        }
+      }
+    }
+    if (clinicData['department'] is String &&
+        (clinicData['department'] as String).trim().isNotEmpty) {
+      clinicDeptNames.add(
+        (clinicData['department'] as String).trim().toLowerCase(),
+      );
+    }
+
+    // 2. Active services configured for this clinic
+    final serviceDeptIds = <String>{};
+    final serviceDeptNames = <String>{};
+    final List<ClinicServiceEntity> clinicServices = [];
+    try {
+      final svcsSnap = await _firestore
+          .collection('services')
+          .where('clinicId', isEqualTo: clinicId)
+          .get();
+      for (final doc in svcsSnap.docs) {
+        final s = ClinicServiceModel.fromFirestore(doc);
+        clinicServices.add(s);
+        final sId = s.departmentId.trim();
+        final sName = s.departmentName.trim().toLowerCase();
+        if (sId.isNotEmpty) serviceDeptIds.add(sId);
+        if (sName.isNotEmpty) serviceDeptNames.add(sName);
+      }
+    } catch (_) {}
+
+    final List<ServiceDepartmentEntity> result = [];
+
+    // 3. Fetch master departments collection
+    try {
+      final snap = await _firestore.collection('departments').get();
+      for (final doc in snap.docs) {
+        final data = doc.data();
+        final status = (data['status'] ?? 'active').toString().toLowerCase();
+        if (status == 'inactive') continue;
+
+        final docId = doc.id.trim();
+        final deptName = (data['name'] ?? '').toString().trim();
+        final deptNameLower = deptName.toLowerCase();
+
+        final assignedClinics =
+            (data['assignedClinics'] as List<dynamic>? ?? [])
+                .map((e) => e.toString().trim().toLowerCase())
+                .toList();
+
+        final isExplicitlyAssigned = assignedClinics.any(
+          (k) =>
+              k == clinicId.toLowerCase() ||
+              k == 'all' ||
+              (slug.isNotEmpty &&
+                  (slug == k || slug.startsWith(k) || k.startsWith(slug))) ||
+              (clinicName.isNotEmpty && k == clinicName.toLowerCase()),
+        );
+
+        final isLinkedToClinic =
+            clinicDeptIds.contains(docId) ||
+            clinicDeptNames.contains(deptNameLower);
+
+        final hasServiceForClinic =
+            serviceDeptIds.contains(docId) ||
+            serviceDeptNames.contains(deptNameLower);
+
+        // Global platform department (assignedClinics is empty, meaning available across platform)
+        final isGlobalDepartment = assignedClinics.isEmpty;
+
+        if (isExplicitlyAssigned ||
+            isLinkedToClinic ||
+            hasServiceForClinic ||
+            isGlobalDepartment) {
+          result.add(ServiceDepartmentModel.fromFirestore(doc));
+        }
+      }
+    } catch (_) {}
+
+    // 4. Synthesize any service department defined in clinic services not in master departments
+    for (final s in clinicServices) {
+      final sDeptName = s.departmentName.trim();
+      final sDeptId = s.departmentId.trim();
+      if (sDeptName.isNotEmpty &&
+          !result.any(
+            (d) =>
+                (sDeptId.isNotEmpty && d.id == sDeptId) ||
+                d.name.trim().toLowerCase() == sDeptName.toLowerCase(),
+          )) {
+        result.add(
+          ServiceDepartmentEntity(
+            id: sDeptId.isNotEmpty ? sDeptId : 'dept-${_slug(sDeptName)}',
+            code: _departmentCodeFor(sDeptName),
+            name: sDeptName,
+            icon: _departmentIconFor(sDeptName),
+          ),
+        );
+      }
+    }
+
+    // 5. Strictly deduplicate by normalized name
     final Map<String, ServiceDepartmentEntity> uniqueByName = {};
-    for (final dept in list) {
+    for (final dept in result) {
       final key = dept.name.trim().toLowerCase();
       if (!uniqueByName.containsKey(key)) {
         uniqueByName[key] = dept;
       }
     }
-    return uniqueByName.values.toList()
+
+    final deduped = uniqueByName.values.toList()
       ..sort((a, b) => a.name.compareTo(b.name));
+    return deduped;
   }
 
   @override
@@ -249,4 +358,37 @@ class ClinicServicesRepositoryImpl implements ClinicServicesRepository {
 
   static String _slug(String name) =>
       name.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '-');
+
+  static String _departmentCodeFor(String name) {
+    final lower = name.toLowerCase();
+    if (lower.contains('general') || lower.contains('medicine')) return 'GM';
+    if (lower.contains('dental') || lower.contains('oral')) return 'DENT';
+    if (lower.contains('pediatric') || lower.contains('child')) return 'PED';
+    if (lower.contains('derma') || lower.contains('skin')) return 'DERM';
+    if (lower.contains('cardio') || lower.contains('heart')) return 'CARD';
+    if (lower.contains('ortho') || lower.contains('bone')) return 'ORTHO';
+    if (lower.contains('ent') || lower.contains('throat')) return 'ENT';
+    if (lower.contains('eye') || lower.contains('ophthal')) return 'EYE';
+    final words = name
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((w) => w.isNotEmpty)
+        .toList();
+    if (words.length >= 2) {
+      return (words[0][0] + words[1][0]).toUpperCase();
+    }
+    return name.substring(0, name.length >= 3 ? 3 : name.length).toUpperCase();
+  }
+
+  static String _departmentIconFor(String name) {
+    final lower = name.toLowerCase();
+    if (lower.contains('dental') || lower.contains('teeth')) return '🦷';
+    if (lower.contains('pediatric') || lower.contains('child')) return '👶';
+    if (lower.contains('derma') || lower.contains('skin')) return '🔬';
+    if (lower.contains('cardio') || lower.contains('heart')) return '❤️';
+    if (lower.contains('ortho') || lower.contains('bone')) return '🦴';
+    if (lower.contains('eye') || lower.contains('ophthal')) return '👁️';
+    if (lower.contains('ent') || lower.contains('ear')) return '👂';
+    return '🩺';
+  }
 }

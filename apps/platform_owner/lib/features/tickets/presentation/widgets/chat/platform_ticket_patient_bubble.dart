@@ -49,6 +49,8 @@ class PlatformTicketPatientBubble extends StatelessWidget {
           photo: ticket.patientPhoto,
           patientId: ticket.patientId,
           patientEmail: ticket.patientEmail,
+          patientPhone: ticket.patientPhone,
+          patientName: ticket.patientName,
           avatarProvider: avatarProvider,
         ),
         const SizedBox(width: 8),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 
 class QueueFilterSortSection extends StatelessWidget {
@@ -14,49 +13,54 @@ class QueueFilterSortSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
+    final sortOptions = [
+      {
+        'id': 'default',
+        'title': 'Default Order',
+        'sub': 'Standard list',
+        'icon': '📋',
+      },
+      {
+        'id': 'waiting',
+        'title': 'Most Waiting',
+        'sub': 'Highest queue first',
+        'icon': '⏳',
+      },
+      {
+        'id': 'name',
+        'title': 'Name (A–Z)',
+        'sub': 'Alphabetical',
+        'icon': '🔤',
+      },
+      {
+        'id': 'services',
+        'title': 'Most Services',
+        'sub': 'Largest count',
+        'icon': '🏥',
+      },
+    ];
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14),
-      decoration: BoxDecoration(
-        color: colors.background,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: colors.primary, width: 1.5),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: currentSort,
-          isExpanded: true,
-          dropdownColor: colors.surface,
-          icon: Icon(
-            Icons.keyboard_arrow_down_rounded,
-            color: colors.textPrimary,
-          ),
-          style: GoogleFonts.inter(
-            fontSize: 13,
-            fontWeight: FontWeight.w700,
-            color: colors.textPrimary,
-          ),
-          items: const [
-            DropdownMenuItem(value: 'default', child: Text('Default Order')),
-            DropdownMenuItem(
-              value: 'waiting',
-              child: Text('Highest Waiting First'),
-            ),
-            DropdownMenuItem(
-              value: 'name',
-              child: Text('Department Name (A–Z)'),
-            ),
-            DropdownMenuItem(
-              value: 'services',
-              child: Text('Most Services Configured'),
-            ),
-          ],
-          onChanged: (v) {
-            if (v != null) onSortChanged(v);
-          },
-        ),
-      ),
+    return LayoutBuilder(
+      builder: (context, c) {
+        final w = (c.maxWidth - 10) / 2;
+        return Wrap(
+          spacing: 10,
+          runSpacing: 10,
+          children: sortOptions.map((opt) {
+            final isSel = currentSort == opt['id'];
+            return SizedBox(
+              width: w,
+              child: AppFilterSelectableCard(
+                isSelected: isSel,
+                onTap: () => onSortChanged(opt['id']!),
+                emojiIcon: opt['icon'],
+                title: opt['title']!,
+                subtitle: opt['sub']!,
+              ),
+            );
+          }).toList(),
+        );
+      },
     );
   }
 }

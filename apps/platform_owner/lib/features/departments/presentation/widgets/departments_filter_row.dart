@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
+import 'filter/platform_departments_filter_modal.dart';
 
 class DepartmentsFilterRow extends StatelessWidget {
   final String searchQuery;
@@ -18,161 +19,50 @@ class DepartmentsFilterRow extends StatelessWidget {
     required this.onReset,
   });
 
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
+  bool get _isFiltered => selectedStatus != 'All Statuses';
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final isCompact = constraints.maxWidth < 900;
-        final searchBox = _searchBox(colors);
-        final statusDropdown = _dropdown(colors, selectedStatus, const [
-          'All Statuses',
-          'Active Specialties',
-          'Inactive',
-        ], onStatusChanged);
-        final resetBtn = _resetPill(colors);
+  bool get _hasActiveFilters => _isFiltered || searchQuery.trim().isNotEmpty;
 
-        final compactContent = Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            searchBox,
-            const SizedBox(height: 10),
-            statusDropdown,
-            const SizedBox(height: 10),
-            Align(alignment: Alignment.centerRight, child: resetBtn),
-          ],
-        );
-
-        final desktopContent = Row(
-          children: [
-            Expanded(flex: 3, child: searchBox),
-            const SizedBox(width: 10),
-            Expanded(flex: 3, child: statusDropdown),
-            const SizedBox(width: 10),
-            const SizedBox(width: 14),
-            resetBtn,
-          ],
-        );
-
-        return Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(
-            color: colors.surface,
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: colors.border),
-          ),
-          child: isCompact ? compactContent : desktopContent,
-        );
+  void _openFilters(BuildContext context) {
+    PlatformDepartmentsFilterModal.show(
+      context,
+      initialStatus: selectedStatus,
+      onApply: (status) {
+        if (status != selectedStatus) onStatusChanged(status);
       },
     );
   }
 
-  Widget _searchBox(AppColorsExtension colors) {
-    OutlineInputBorder outline(Color c, [double w = 1]) => OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10),
-      borderSide: BorderSide(color: c, width: w),
-    );
-    return SizedBox(
-      height: 38,
-      child: TextField(
-        onChanged: onSearch,
-        cursorColor: colors.primary,
-        textAlignVertical: TextAlignVertical.center,
-        style: GoogleFonts.inter(color: colors.textPrimary, fontSize: 12.5),
-        decoration: InputDecoration(
-          isDense: true,
-          filled: true,
-          fillColor: colors.surfaceSecondary,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-          hintText: 'Search by name, code, doctor, specialty...',
-          hintStyle: GoogleFonts.inter(color: colors.textMuted, fontSize: 12.5),
-          prefixIcon: Icon(
-            Icons.search_rounded,
-            color: colors.textMuted,
-            size: 18,
-          ),
-          prefixIconConstraints: const BoxConstraints(
-            minWidth: 38,
-            minHeight: 38,
-          ),
-          border: outline(colors.border),
-          enabledBorder: outline(colors.border),
-          focusedBorder: outline(colors.primary, 1.5),
-        ),
-      ),
-    );
-  }
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
 
-  Widget _dropdown(
-    AppColorsExtension colors,
-    String value,
-    List<String> items,
-    ValueChanged<String> onChanged,
-  ) {
     return Container(
-      height: 38,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: colors.surfaceSecondary,
-        borderRadius: BorderRadius.circular(10),
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(color: colors.border),
       ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: items.contains(value) ? value : items.first,
-          isExpanded: true,
-          dropdownColor: colors.surfaceElevated,
-          style: GoogleFonts.inter(
-            fontSize: 12.5,
-            fontWeight: FontWeight.bold,
-            color: colors.textPrimary,
+      child: Row(
+        children: [
+          Expanded(
+            child: AppFilterSearchField(
+              hintText: 'Search departments, specialties...',
+              onChanged: onSearch,
+            ),
           ),
-          icon: Icon(
-            Icons.keyboard_arrow_down_rounded,
-            color: colors.textMuted,
-            size: 18,
+          const SizedBox(width: 10),
+          AppFilterTriggerButton(
+            activeCount: _isFiltered ? 1 : 0,
+            onTap: () => _openFilters(context),
           ),
-          items: items
-              .map(
-                (i) => DropdownMenuItem(
-                  value: i,
-                  child: Text(
-                    i,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: colors.textPrimary),
-                  ),
-                ),
-              )
-              .toList(),
-          onChanged: (v) => onChanged(v ?? items.first),
-        ),
-      ),
-    );
-  }
-
-  Widget _resetPill(AppColorsExtension colors) {
-    return InkWell(
-      onTap: onReset,
-      borderRadius: BorderRadius.circular(20),
-      child: Container(
-        height: 32,
-        padding: const EdgeInsets.symmetric(horizontal: 14),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: colors.surfaceSecondary,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: colors.border),
-        ),
-        child: Text(
-          'Reset Filters',
-          style: GoogleFonts.inter(
-            fontSize: 11.5,
-            fontWeight: FontWeight.bold,
-            color: colors.textPrimary,
-          ),
-        ),
+          if (_hasActiveFilters) ...[
+            const SizedBox(width: 8),
+            AppFilterResetButton(onTap: onReset),
+          ],
+        ],
       ),
     );
   }

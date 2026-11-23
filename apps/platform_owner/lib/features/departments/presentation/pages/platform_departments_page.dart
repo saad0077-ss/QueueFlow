@@ -2,187 +2,93 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 
-import '../../../dashboard/presentation/pages/platform_clinics_page.dart';
+import '../../../../core/navigation/platform_navigation_helper.dart';
 import '../../../dashboard/presentation/widgets/console_sidebar.dart';
 import '../../../dashboard/presentation/widgets/console_top_bar.dart';
-import '../../../billing/presentation/pages/platform_billing_page.dart';
-import '../../../users/presentation/pages/platform_users_page.dart';
-import '../../../tickets/presentation/pages/platform_support_tickets_page.dart';
 import '../../data/repositories/department_repository_impl.dart';
 import '../../domain/entities/department_entity.dart';
 import '../bloc/departments_bloc.dart';
 import '../bloc/departments_event.dart';
+import '../widgets/departments_stream_listener.dart';
 import '../widgets/dept_content_view.dart';
 import 'department_details_page.dart';
 
-class PlatformDepartmentsPage extends StatelessWidget {
+class PlatformDepartmentsPage extends StatefulWidget {
   const PlatformDepartmentsPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => DepartmentsBloc(),
-      child: const _PlatformDepartmentsView(),
-    );
-  }
+  State<PlatformDepartmentsPage> createState() =>
+      _PlatformDepartmentsPageState();
 }
 
-class _PlatformDepartmentsView extends StatefulWidget {
-  const _PlatformDepartmentsView();
-
-  @override
-  State<_PlatformDepartmentsView> createState() =>
-      _PlatformDepartmentsViewState();
-}
-
-class _PlatformDepartmentsViewState extends State<_PlatformDepartmentsView> {
+class _PlatformDepartmentsPageState extends State<PlatformDepartmentsPage> {
   final _repo = DepartmentRepositoryImpl();
   DepartmentEntity? _selectedDepartment;
 
-  @override
-  void initState() {
-    super.initState();
-    _repo.seedDepartmentsIfEmpty();
-    _repo.purgeSampleRequests();
-  }
-
-  void _onSidebarNav(int index) {
-    if (index == 0) {
-      Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (_, _, _) => const PlatformClinicsPage(),
-          transitionDuration: Duration.zero,
-        ),
-      );
-    } else if (index == 2) {
-      Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (_, _, _) => const PlatformUsersPage(),
-          transitionDuration: Duration.zero,
-        ),
-      );
-    } else if (index == 3) {
-      Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (_, _, _) => const PlatformSupportTicketsPage(),
-          transitionDuration: Duration.zero,
-        ),
-      );
-    } else if (index == 4) {
-      Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (_, _, _) => const PlatformBillingPage(),
-          transitionDuration: Duration.zero,
-        ),
-      );
-    }
+  void _onSidebarNav(int i) {
+    PlatformNavigationHelper.navigateTo(context, i, 1);
   }
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final isDesktop = MediaQuery.sizeOf(context).width >= 1000;
 
-    final colors = context.colors;
-
-    return Scaffold(
-      backgroundColor: colors.background,
-      drawer: isDesktop
-          ? null
-          : Drawer(
-              child: ConsoleSidebar(
-                activeIndex: 1,
-                onIndexChanged: _onSidebarNav,
+    return BlocProvider(
+      create: (context) => DepartmentsBloc(),
+      child: Scaffold(
+        backgroundColor: colors.background,
+        drawer: isDesktop
+            ? null
+            : Drawer(
+                child: ConsoleSidebar(
+                  activeIndex: 1,
+                  onIndexChanged: _onSidebarNav,
+                ),
               ),
-            ),
-      body: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          if (isDesktop)
-            ConsoleSidebar(activeIndex: 1, onIndexChanged: _onSidebarNav),
-          Expanded(
-            child: Builder(
-              builder: (ctx) {
-                if (_selectedDepartment != null) {
-                  return DepartmentDetailsPage(
-                    department: _selectedDepartment!,
-                    repository: _repo,
-                    onBack: () => setState(() => _selectedDepartment = null),
-                  );
-                }
+        body: Row(
+          children: [
+            if (isDesktop)
+              ConsoleSidebar(activeIndex: 1, onIndexChanged: _onSidebarNav),
+            Expanded(
+              child: Builder(
+                builder: (ctx) {
+                  if (_selectedDepartment != null) {
+                    return DepartmentDetailsPage(
+                      department: _selectedDepartment!,
+                      repository: _repo,
+                      onBack: () => setState(() => _selectedDepartment = null),
+                    );
+                  }
 
-                return Column(
-                  children: [
-                    ConsoleTopBar(
-                      onMenuPressed: isDesktop
-                          ? null
-                          : () => Scaffold.of(ctx).openDrawer(),
-                      onSearch: (q) => ctx.read<DepartmentsBloc>().add(
-                        DepartmentSearchQueryChanged(q),
-                      ),
-                    ),
-                    Expanded(
-                      child: _StreamListener(
-                        repo: _repo,
-                        child: DeptContentView(
-                          repository: _repo,
-                          onDetails: (d) =>
-                              setState(() => _selectedDepartment = d),
+                  return Column(
+                    children: [
+                      ConsoleTopBar(
+                        onMenuPressed: isDesktop
+                            ? null
+                            : () => Scaffold.of(ctx).openDrawer(),
+                        onSearch: (q) => ctx.read<DepartmentsBloc>().add(
+                          DepartmentSearchQueryChanged(q),
                         ),
                       ),
-                    ),
-                  ],
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _StreamListener extends StatelessWidget {
-  final DepartmentRepositoryImpl repo;
-  final Widget child;
-
-  const _StreamListener({required this.repo, required this.child});
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<List<DepartmentEntity>>(
-      stream: repo.watchDepartments(),
-      builder: (context, dSnap) {
-        if (dSnap.hasData && dSnap.data != null) {
-          context.read<DepartmentsBloc>().add(
-            DepartmentsListUpdated(dSnap.data!),
-          );
-        }
-        return StreamBuilder(
-          stream: repo.watchExpansionRequests(),
-          builder: (context, eSnap) {
-            if (eSnap.hasData && eSnap.data != null) {
-              context.read<DepartmentsBloc>().add(
-                ExpansionRequestsUpdated(eSnap.data!),
-              );
-            }
-            return StreamBuilder(
-              stream: repo.watchServiceRequests(),
-              builder: (context, sSnap) {
-                if (sSnap.hasData && sSnap.data != null) {
-                  context.read<DepartmentsBloc>().add(
-                    ServiceRequestsUpdated(sSnap.data!),
+                      Expanded(
+                        child: DepartmentsStreamListener(
+                          repo: _repo,
+                          child: DeptContentView(
+                            repository: _repo,
+                            onDetails: (d) =>
+                                setState(() => _selectedDepartment = d),
+                          ),
+                        ),
+                      ),
+                    ],
                   );
-                }
-                return child;
-              },
-            );
-          },
-        );
-      },
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

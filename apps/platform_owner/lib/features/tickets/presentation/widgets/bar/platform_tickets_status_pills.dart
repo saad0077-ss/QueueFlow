@@ -20,102 +20,62 @@ class PlatformTicketsStatusPills extends StatelessWidget {
     required this.countResolved,
   });
 
-  @override
-  Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 6,
-      runSpacing: 6,
-      children: [
-        _pill(context, id: 'all', label: 'All', count: countAll),
-        _pill(
-          context,
-          id: 'open',
-          label: 'Open',
-          count: countOpen,
-          activeColor: const Color(0xFFEF4444),
+  Widget _statusPill(BuildContext context, String key, String label) {
+    final colors = context.colors;
+    final isSel = selectedStatus == key;
+
+    return InkWell(
+      onTap: () => onStatusChanged(key),
+      borderRadius: BorderRadius.circular(16),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 6),
+        decoration: BoxDecoration(
+          color: isSel ? const Color(0xFF2563EB) : Colors.transparent,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: isSel
+              ? [
+                  BoxShadow(
+                    color: const Color(0xFF2563EB).withValues(alpha: 0.35),
+                    blurRadius: 6,
+                    offset: const Offset(0, 1),
+                  ),
+                ]
+              : null,
         ),
-        _pill(
-          context,
-          id: 'in_progress',
-          label: 'In Progress',
-          count: countInProgress,
-          activeColor: const Color(0xFFF59E0B),
+        child: Text(
+          label,
+          style: GoogleFonts.inter(
+            fontSize: 12,
+            fontWeight: isSel ? FontWeight.w700 : FontWeight.w600,
+            color: isSel ? Colors.white : colors.textMuted,
+          ),
         ),
-        _pill(
-          context,
-          id: 'resolved',
-          label: 'Resolved',
-          count: countResolved,
-          activeColor: const Color(0xFF10B981),
-        ),
-      ],
+      ),
     );
   }
 
-  Widget _pill(
-    BuildContext context, {
-    required String id,
-    required String label,
-    required int count,
-    Color activeColor = const Color(0xFF2563EB),
-  }) {
+  @override
+  Widget build(BuildContext context) {
     final colors = context.colors;
     final isDark = colors.isDark;
-    final isSel = selectedStatus == id;
 
-    return InkWell(
-      onTap: () => onStatusChanged(id),
-      borderRadius: BorderRadius.circular(20),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 140),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-        decoration: BoxDecoration(
-          color: isSel
-              ? activeColor.withValues(alpha: isDark ? 0.2 : 0.12)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isSel
-                ? activeColor
-                : (isDark ? const Color(0xFF1E293B) : colors.border),
-            width: isSel ? 1.4 : 1,
-          ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              label,
-              style: GoogleFonts.inter(
-                fontSize: 11.5,
-                fontWeight: isSel ? FontWeight.w700 : FontWeight.w500,
-                color: isSel
-                    ? (isDark ? Colors.white : activeColor)
-                    : colors.textMuted,
-              ),
-            ),
-            const SizedBox(width: 5),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-              decoration: BoxDecoration(
-                color: isSel
-                    ? activeColor
-                    : (isDark
-                          ? const Color(0xFF1E293B)
-                          : colors.surfaceSecondary),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                '$count',
-                style: GoogleFonts.inter(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w700,
-                  color: isSel ? Colors.white : colors.textMuted,
-                ),
-              ),
-            ),
-          ],
-        ),
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF0B0F19) : colors.surfaceSecondary,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: colors.border),
+      ),
+      padding: const EdgeInsets.all(3),
+      child: Wrap(
+        spacing: 4,
+        runSpacing: 4,
+        children: [
+          _statusPill(context, 'all', 'All ($countAll)'),
+          _statusPill(context, 'open', 'Open ($countOpen)'),
+          _statusPill(context, 'in_progress', 'In Progress ($countInProgress)'),
+          _statusPill(context, 'resolved', 'Resolved ($countResolved)'),
+        ],
       ),
     );
   }

@@ -9,6 +9,7 @@ import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../departments/data/repositories/department_repository_impl.dart';
 import '../../../departments/domain/entities/department_entity.dart';
 import '../../data/repositories/tenant_repository_impl.dart';
+import 'clinic_invite_share_helper.dart';
 import 'onboard_modal_fields.dart';
 
 class OnboardClinicModal {
@@ -262,6 +263,7 @@ class _OnboardClinicDialogState extends State<_OnboardClinicDialog> {
   Future<void> _submit() async {
     final cleanName = _nameCtrl.text.trim();
     final cleanEmail = _adminEmailCtrl.text.trim();
+    final cleanAdmin = _adminNameCtrl.text.trim();
     if (cleanName.isEmpty) {
       AppSnackBar.showWarning(
         context,
@@ -290,7 +292,7 @@ class _OnboardClinicDialogState extends State<_OnboardClinicDialog> {
       final result = await _tenantRepo.onboardClinic(
         name: cleanName,
         address: _addressCtrl.text.trim(),
-        adminName: _adminNameCtrl.text.trim(),
+        adminName: cleanAdmin,
         adminEmail: cleanEmail,
         planId: _selectedPlan,
         departmentIds: _selectedDepartmentIds,
@@ -308,10 +310,13 @@ class _OnboardClinicDialogState extends State<_OnboardClinicDialog> {
               message: 'Clinic onboarded! Invite email sent to $cleanEmail.',
             );
           } else {
-            AppSnackBar.showWarning(
+            ClinicInviteShareHelper.showInviteShareModal(
               widget.parentContext,
-              message:
-                  '${result.emailFeedback}\nActivation link copied to clipboard!',
+              toEmail: cleanEmail,
+              clinicName: cleanName,
+              adminName: cleanAdmin,
+              inviteUrl: result.inviteUrl,
+              emailDelivered: false,
             );
           }
         }

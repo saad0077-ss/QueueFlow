@@ -8,6 +8,9 @@ abstract class ClinicServicesRepository {
   /// Watches real-time list of clinic services.
   Stream<List<ClinicServiceEntity>> watchServices();
 
+  /// Watches real-time list of active departments available to this clinic.
+  Stream<List<ServiceDepartmentEntity>> watchDepartments();
+
   /// Gets the active departments the platform admin assigned to this clinic,
   /// along with their standard service catalog.
   Future<List<ServiceDepartmentEntity>> getDepartments();

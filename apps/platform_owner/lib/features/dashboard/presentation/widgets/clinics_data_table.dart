@@ -1,3 +1,4 @@
+import 'clinic_departments_dialog.dart';
 import 'clinic_photo_avatar.dart';
 
 import 'package:flutter/material.dart';
@@ -157,12 +158,27 @@ class ClinicsDataTable extends StatelessWidget {
   /// Departments linked to [c], matched by clinic departmentIds, Firestore id or legacy name slug
   List<DepartmentEntity> _departmentsFor(TenantClinicEntity c) {
     final slug = c.name.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '-');
-    return departments.where((d) {
-      if (c.departmentIds.contains(d.id)) return true;
-      return d.assignedClinics.any(
-        (k) => k == c.id || (k.isNotEmpty && slug.startsWith(k)),
-      );
-    }).toList();
+    final Map<String, DepartmentEntity> unique = {};
+    for (final d in departments) {
+      final isLinked = c.departmentIds.contains(d.id) ||
+          d.assignedClinics.isEmpty ||
+          d.assignedClinics.contains('all') ||
+          d.assignedClinics.any(
+            (k) =>
+                k == c.id ||
+                k == slug ||
+                (k.isNotEmpty && slug.startsWith(k)),
+          );
+      if (isLinked) {
+        final key = d.name.trim().toLowerCase();
+        if (!unique.containsKey(key)) {
+          unique[key] = d;
+        }
+      }
+    }
+    final list = unique.values.toList()
+      ..sort((a, b) => a.name.compareTo(b.name));
+    return list;
   }
 }
 
@@ -288,10 +304,52 @@ class _ClinicRowState extends State<_ClinicRow> {
               ),
               if (widget.departments.isNotEmpty) ...[
                 const SizedBox(height: 6),
-                Wrap(
-                  spacing: 5,
-                  runSpacing: 5,
-                  children: [for (final d in widget.departments) _deptChip(d)],
+                InkWell(
+                  onTap: () => ClinicDepartmentsDialog.show(
+                    context,
+                    clinic: c,
+                    departments: widget.departments,
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF064E3B).withValues(alpha: 0.35),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: const Color(0xFF10B981).withValues(alpha: 0.35),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.medical_services_outlined,
+                          size: 11,
+                          color: Color(0xFF34D399),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '${widget.departments.length} Department${widget.departments.length == 1 ? '' : 's'}',
+                          style: const TextStyle(
+                            color: Color(0xFF34D399),
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.2,
+                          ),
+                        ),
+                        const SizedBox(width: 2),
+                        const Icon(
+                          Icons.arrow_drop_down_rounded,
+                          size: 14,
+                          color: Color(0xFF34D399),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ],
@@ -417,30 +475,6 @@ class _ClinicRowState extends State<_ClinicRow> {
     );
   }
 
-  Widget _deptChip(DepartmentEntity d) {
-    return Tooltip(
-      message: d.name,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-        decoration: BoxDecoration(
-          color: const Color(0xFF064E3B).withValues(alpha: 0.45),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: const Color(0xFF10B981).withValues(alpha: 0.25),
-          ),
-        ),
-        child: Text(
-          d.code,
-          style: const TextStyle(
-            color: Color(0xFF34D399),
-            fontSize: 10,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 0.3,
-          ),
-        ),
-      ),
-    );
-  }
 
   Widget _statusChip(TenantClinicEntity c) {
     final (Color fg, String tip) = switch (c.status) {

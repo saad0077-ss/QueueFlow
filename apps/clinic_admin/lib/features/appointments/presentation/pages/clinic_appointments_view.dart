@@ -83,8 +83,8 @@ class _ClinicAppointmentsBody extends StatelessWidget {
                 viewMode: state.viewMode,
                 onViewModeChanged: (mode) =>
                     bloc.add(ToggleAppointmentViewMode(mode)),
-                onExportCsv: () =>
-                    ClinicAppointmentsActionsHelper.exportCsv(context, bloc),
+                onExportPdf: () =>
+                    ClinicAppointmentsActionsHelper.exportPdf(context, bloc),
                 onCreateAppointment: () =>
                     ClinicAppointmentsActionsHelper.handleCreateAppointment(
                       context,

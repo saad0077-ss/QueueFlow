@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
+
 import 'filter/clinic_tickets_filter_body.dart';
 import 'filter/clinic_tickets_filter_footer.dart';
 import 'filter/clinic_tickets_filter_header.dart';
@@ -34,9 +36,8 @@ class ClinicTicketsFilterModal extends StatefulWidget {
     })
     onApply,
   }) {
-    return showDialog(
-      context: context,
-      barrierColor: Colors.black.withValues(alpha: 0.65),
+    return AppFilterDialogScaffold.show(
+      context,
       builder: (ctx) => ClinicTicketsFilterModal(
         initialCategory: initialCategory,
         initialUrgency: initialUrgency,
@@ -83,48 +84,20 @@ class _ClinicTicketsFilterModalState extends State<ClinicTicketsFilterModal> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      backgroundColor: Colors.transparent,
-      insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-      child: Container(
-        width: 580,
-        constraints: const BoxConstraints(maxHeight: 700),
-        decoration: BoxDecoration(
-          color: const Color(0xFF0F172A),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: const Color(0xFF1E293B)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.5),
-              blurRadius: 28,
-              offset: const Offset(0, 14),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClinicTicketsFilterHeader(onClose: () => Navigator.pop(context)),
-            const Divider(height: 1, color: Color(0xFF1E293B)),
-            Flexible(
-              child: ClinicTicketsFilterBody(
-                selectedService: _selectedService,
-                onSelectService: (s) => setState(() => _selectedService = s),
-                selectedUrgency: _selectedUrgency,
-                onSelectUrgency: (u) => setState(() => _selectedUrgency = u),
-                selectedCategory: _selectedCategory,
-                onSelectCategory: (c) => setState(() => _selectedCategory = c),
-              ),
-            ),
-            const Divider(height: 1, color: Color(0xFF1E293B)),
-            ClinicTicketsFilterFooter(
-              onReset: _resetAll,
-              onApply: _apply,
-              onCancel: () => Navigator.pop(context),
-            ),
-          ],
-        ),
+    return AppFilterDialogScaffold(
+      header: ClinicTicketsFilterHeader(onClose: () => Navigator.pop(context)),
+      body: ClinicTicketsFilterBody(
+        selectedService: _selectedService,
+        onSelectService: (s) => setState(() => _selectedService = s),
+        selectedUrgency: _selectedUrgency,
+        onSelectUrgency: (u) => setState(() => _selectedUrgency = u),
+        selectedCategory: _selectedCategory,
+        onSelectCategory: (c) => setState(() => _selectedCategory = c),
+      ),
+      footer: ClinicTicketsFilterFooter(
+        onResetAll: _resetAll,
+        onApply: _apply,
+        onCancel: () => Navigator.pop(context),
       ),
     );
   }

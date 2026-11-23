@@ -22,23 +22,24 @@ class PlatformTicketMessageModel extends PlatformTicketMessage {
       created = DateTime.tryParse(raw);
     }
 
-    final role =
-        (json['senderRole'] ??
-                (json['isUser'] == true ? 'patient' : 'platform_owner'))
-            .toString();
-    final isInternal =
-        json['isInternalNote'] as bool? ?? json['isInternal'] as bool? ?? false;
+    final isUserVal = json['isUser'] == true || json['isUser'] == 'true';
+    final role = (json['senderRole'] ??
+            (isUserVal ? 'patient' : 'platform_owner'))
+        .toString();
+    final isInternal = json['isInternalNote'] == true ||
+        json['isInternalNote'] == 'true' ||
+        json['isInternal'] == true ||
+        json['isInternal'] == 'true';
 
     return PlatformTicketMessageModel(
-      sender:
-          (json['sender'] ??
-                  json['senderName'] ??
-                  (role == 'patient' ? 'Patient' : 'Platform Support'))
-              .toString(),
+      sender: (json['sender'] ??
+              json['senderName'] ??
+              (role == 'patient' ? 'Patient' : 'Platform Support'))
+          .toString(),
       senderRole: role,
       text: (json['text'] ?? '').toString(),
       time: (json['time'] ?? 'Just now').toString(),
-      isUser: json['isUser'] as bool? ?? (role == 'patient'),
+      isUser: json['isUser'] != null ? isUserVal : (role == 'patient'),
       isInternalNote: isInternal,
       createdAt: created,
     );

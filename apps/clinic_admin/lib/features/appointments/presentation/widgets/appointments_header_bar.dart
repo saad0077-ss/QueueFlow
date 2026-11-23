@@ -5,14 +5,14 @@ import 'package:queueflow_ui/queueflow_ui.dart';
 class AppointmentsHeaderBar extends StatelessWidget {
   final String viewMode; // 'list' or 'calendar'
   final ValueChanged<String> onViewModeChanged;
-  final VoidCallback onExportCsv;
+  final VoidCallback onExportPdf;
   final VoidCallback onCreateAppointment;
 
   const AppointmentsHeaderBar({
     super.key,
     required this.viewMode,
     required this.onViewModeChanged,
-    required this.onExportCsv,
+    required this.onExportPdf,
     required this.onCreateAppointment,
   });
 
@@ -81,16 +81,16 @@ class AppointmentsHeaderBar extends StatelessWidget {
               ),
             ),
 
-            // Export CSV Button
+            // Export PDF Button
             OutlinedButton.icon(
-              onPressed: onExportCsv,
+              onPressed: onExportPdf,
               icon: Icon(
-                Icons.file_download_outlined,
+                Icons.picture_as_pdf_outlined,
                 size: 16,
                 color: colors.textPrimary,
               ),
               label: Text(
-                'Export Report',
+                'Export PDF',
                 style: GoogleFonts.inter(
                   fontSize: 12.5,
                   fontWeight: FontWeight.w600,

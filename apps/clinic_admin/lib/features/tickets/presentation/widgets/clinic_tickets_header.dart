@@ -6,13 +6,15 @@ import 'header/clinic_tickets_header_actions.dart';
 class ClinicTicketsHeader extends StatelessWidget {
   final String clinicName;
   final VoidCallback onLogTicket;
-  final VoidCallback onSync;
+  final VoidCallback? onSync;
+  final VoidCallback? onExportPdf;
 
   const ClinicTicketsHeader({
     super.key,
     required this.clinicName,
     required this.onLogTicket,
-    required this.onSync,
+    this.onSync,
+    this.onExportPdf,
   });
 
   @override
@@ -51,57 +53,27 @@ class ClinicTicketsHeader extends StatelessWidget {
           final actionsWidget = ClinicTicketsHeaderActions(
             onLogTicket: onLogTicket,
             onSync: onSync,
+            onExportPdf: onExportPdf,
           );
 
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: colors.surfaceSecondary,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: colors.border),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.apartment_rounded,
-                      size: 13,
-                      color: colors.textMuted,
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      '${clinicName.toUpperCase()} • CLINIC ADMIN DESK',
-                      style: GoogleFonts.inter(
-                        fontSize: 10.5,
-                        fontWeight: FontWeight.w700,
-                        color: colors.textPrimary,
-                        letterSpacing: 0.3,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 12),
-              if (isNarrow) ...[
+          if (isNarrow) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                 titleWidget,
                 const SizedBox(height: 14),
                 actionsWidget,
-              ] else
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(child: titleWidget),
-                    const SizedBox(width: 16),
-                    actionsWidget,
-                  ],
-                ),
+              ],
+            );
+          }
+
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(child: titleWidget),
+              const SizedBox(width: 16),
+              actionsWidget,
             ],
           );
         },

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+
 import 'theme_wave_scope.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../app_colors_extension.dart';
 import '../bloc/theme_bloc.dart';
 import '../bloc/theme_event.dart';
@@ -9,10 +12,7 @@ import '../bloc/theme_state.dart';
 class ThemeModeToggleButton extends StatelessWidget {
   final double size;
 
-  const ThemeModeToggleButton({
-    super.key,
-    this.size = 38,
-  });
+  const ThemeModeToggleButton({super.key, this.size = 38});
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +30,7 @@ class ThemeModeToggleButton extends StatelessWidget {
               final bloc = context.read<ThemeBloc>();
               ThemeWaveScope.run(
                 context,
-                origin: origin, 
+                origin: origin,
                 applyTheme: () => bloc.add(const ThemeToggleRequested()),
               );
             },
@@ -54,7 +54,9 @@ class ThemeModeToggleButton extends StatelessWidget {
                   isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
                   key: ValueKey<bool>(isDark),
                   size: 19,
-                  color: isDark ? const Color(0xFFF59E0B) : const Color(0xFF6366F1),
+                  color: isDark
+                      ? const Color(0xFFF59E0B)
+                      : const Color(0xFF6366F1),
                 ),
               ),
             ),

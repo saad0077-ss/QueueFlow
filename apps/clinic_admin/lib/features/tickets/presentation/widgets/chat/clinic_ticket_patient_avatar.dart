@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import 'clinic_ticket_photo_resolver.dart';
 
 class ClinicTicketPatientAvatar extends StatefulWidget {
@@ -8,6 +9,8 @@ class ClinicTicketPatientAvatar extends StatefulWidget {
   final String initials;
   final String? patientId;
   final String? patientEmail;
+  final String? patientPhone;
+  final String? patientName;
   final double size;
 
   const ClinicTicketPatientAvatar({
@@ -16,6 +19,8 @@ class ClinicTicketPatientAvatar extends StatefulWidget {
     required this.initials,
     this.patientId,
     this.patientEmail,
+    this.patientPhone,
+    this.patientName,
     this.size = 28,
   });
 
@@ -37,7 +42,8 @@ class _ClinicTicketPatientAvatarState extends State<ClinicTicketPatientAvatar> {
   void didUpdateWidget(ClinicTicketPatientAvatar oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.photo != widget.photo ||
-        oldWidget.patientId != widget.patientId) {
+        oldWidget.patientId != widget.patientId ||
+        oldWidget.patientEmail != widget.patientEmail) {
       _initPhoto();
     }
   }
@@ -49,10 +55,10 @@ class _ClinicTicketPatientAvatarState extends State<ClinicTicketPatientAvatar> {
         photo: widget.photo,
         patientId: widget.patientId,
         patientEmail: widget.patientEmail,
+        patientPhone: widget.patientPhone,
+        patientName: widget.patientName,
       ).then((p) {
-        if (mounted && p.isNotEmpty) {
-          setState(() => _resolvedPhoto = p);
-        }
+        if (mounted && p.isNotEmpty) setState(() => _resolvedPhoto = p);
       });
     }
   }

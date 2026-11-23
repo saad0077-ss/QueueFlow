@@ -14,41 +14,6 @@ class QueueHeaderTitle extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Wrap(
-          spacing: 8,
-          runSpacing: 4,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-              decoration: BoxDecoration(
-                color: const Color(0xFF10B981).withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(6),
-                border: Border.all(
-                  color: const Color(0xFF10B981).withValues(alpha: 0.3),
-                ),
-              ),
-              child: Text(
-                'LIVE QUEUE CONSOLE',
-                style: GoogleFonts.inter(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w800,
-                  color: const Color(0xFF059669),
-                  letterSpacing: 0.5,
-                ),
-              ),
-            ),
-            Text(
-              '• Dynamic Multi-Department Triage',
-              style: GoogleFonts.inter(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: colors.textMuted,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 5),
         Text(
           'Live Queue Management',
           style: GoogleFonts.inter(

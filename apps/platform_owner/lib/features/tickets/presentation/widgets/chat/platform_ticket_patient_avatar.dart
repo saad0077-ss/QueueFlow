@@ -8,6 +8,8 @@ class PlatformTicketPatientAvatar extends StatefulWidget {
   final String? photo;
   final String? patientId;
   final String? patientEmail;
+  final String? patientPhone;
+  final String? patientName;
   final ImageProvider? avatarProvider;
   final double size;
 
@@ -17,6 +19,8 @@ class PlatformTicketPatientAvatar extends StatefulWidget {
     this.photo,
     this.patientId,
     this.patientEmail,
+    this.patientPhone,
+    this.patientName,
     this.avatarProvider,
     this.size = 28,
   });
@@ -40,7 +44,8 @@ class _PlatformTicketPatientAvatarState
   void didUpdateWidget(PlatformTicketPatientAvatar oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.photo != widget.photo ||
-        oldWidget.patientId != widget.patientId) {
+        oldWidget.patientId != widget.patientId ||
+        oldWidget.patientEmail != widget.patientEmail) {
       _initPhoto();
     }
   }
@@ -52,10 +57,10 @@ class _PlatformTicketPatientAvatarState
         photo: widget.photo,
         patientId: widget.patientId,
         patientEmail: widget.patientEmail,
+        patientPhone: widget.patientPhone,
+        patientName: widget.patientName,
       ).then((p) {
-        if (mounted && p.isNotEmpty) {
-          setState(() => _resolvedPhoto = p);
-        }
+        if (mounted && p.isNotEmpty) setState(() => _resolvedPhoto = p);
       });
     }
   }

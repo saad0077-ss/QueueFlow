@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 import 'app_colors_extension.dart';
 
 /// Pre-configured theme variants for QueueFlow apps.
@@ -20,10 +21,8 @@ class AppTheme {
       canvasColor: ext.surfaceElevated,
       useMaterial3: true,
       fontFamily: GoogleFonts.inter().fontFamily,
-      textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme).apply(
-        bodyColor: ext.textPrimary,
-        displayColor: ext.textPrimary,
-      ),
+      textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme)
+          .apply(bodyColor: ext.textPrimary, displayColor: ext.textPrimary),
       extensions: [ext],
       colorScheme: ColorScheme.dark(
         primary: ext.primary,
@@ -58,7 +57,10 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: ext.surfaceSecondary,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
         hintStyle: TextStyle(color: ext.textMuted, fontSize: 13.5),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
@@ -88,10 +90,8 @@ class AppTheme {
       canvasColor: ext.surfaceElevated,
       useMaterial3: true,
       fontFamily: GoogleFonts.inter().fontFamily,
-      textTheme: GoogleFonts.interTextTheme(ThemeData.light().textTheme).apply(
-        bodyColor: ext.textPrimary,
-        displayColor: ext.textPrimary,
-      ),
+      textTheme: GoogleFonts.interTextTheme(ThemeData.light().textTheme)
+          .apply(bodyColor: ext.textPrimary, displayColor: ext.textPrimary),
       extensions: [ext],
       colorScheme: ColorScheme.light(
         primary: ext.primary,
@@ -126,7 +126,10 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: ext.surfaceSecondary,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
         hintStyle: TextStyle(color: ext.textMuted, fontSize: 13.5),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
@@ -135,7 +138,7 @@ class AppTheme {
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide(color: ext.border, width: 1),
-        ),    
+        ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide(color: ext.primary, width: 1.5),

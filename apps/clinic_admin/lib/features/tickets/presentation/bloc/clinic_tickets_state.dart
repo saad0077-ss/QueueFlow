@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import '../../core/utils/clinic_tickets_filter_util.dart';
 import '../../domain/entities/clinic_support_ticket_entity.dart';
 
 enum ClinicTicketsStatus { initial, loading, loaded, error }
@@ -29,20 +30,22 @@ class ClinicTicketsState extends Equatable {
   });
 
   static bool _isClinicTicket(ClinicSupportTicketEntity t) {
-    return t.isClinicRelated &&
-        t.category.toLowerCase() != 'technical' &&
-        !t.category.toLowerCase().contains('bug') &&
-        t.clinicId != 'platform';
+    return !ClinicTicketsFilterUtil.isAppRelatedBug(
+      isClinicRelated: t.isClinicRelated,
+      clinicId: t.clinicId,
+      category: t.category,
+      subject: t.subject,
+      description: t.description,
+    );
   }
 
+  int get countAll => allTickets.where(_isClinicTicket).length;
   int get countOpen =>
       allTickets.where((t) => _isClinicTicket(t) && t.status == 'open').length;
-  int get countInProgress => allTickets
-      .where((t) => _isClinicTicket(t) && t.status == 'in_progress')
-      .length;
-  int get countResolved => allTickets
-      .where((t) => _isClinicTicket(t) && t.status == 'resolved')
-      .length;
+  int get countInProgress =>
+      allTickets.where((t) => _isClinicTicket(t) && t.status == 'in_progress').length;
+  int get countResolved =>
+      allTickets.where((t) => _isClinicTicket(t) && t.status == 'resolved').length;
 
   int get activeFilterCount {
     int c = 0;
@@ -116,20 +119,18 @@ class ClinicTicketsState extends Equatable {
     String? selectedTicketId,
     bool? isViewingChat,
     String? errorMessage,
-  }) {
-    return ClinicTicketsState(
-      status: status ?? this.status,
-      allTickets: allTickets ?? this.allTickets,
-      statusFilter: statusFilter ?? this.statusFilter,
-      categoryFilter: categoryFilter ?? this.categoryFilter,
-      urgencyFilter: urgencyFilter ?? this.urgencyFilter,
-      serviceFilter: serviceFilter ?? this.serviceFilter,
-      searchQuery: searchQuery ?? this.searchQuery,
-      selectedTicketId: selectedTicketId ?? this.selectedTicketId,
-      isViewingChat: isViewingChat ?? this.isViewingChat,
-      errorMessage: errorMessage ?? this.errorMessage,
-    );
-  }
+  }) => ClinicTicketsState(
+    status: status ?? this.status,
+    allTickets: allTickets ?? this.allTickets,
+    statusFilter: statusFilter ?? this.statusFilter,
+    categoryFilter: categoryFilter ?? this.categoryFilter,
+    urgencyFilter: urgencyFilter ?? this.urgencyFilter,
+    serviceFilter: serviceFilter ?? this.serviceFilter,
+    searchQuery: searchQuery ?? this.searchQuery,
+    selectedTicketId: selectedTicketId ?? this.selectedTicketId,
+    isViewingChat: isViewingChat ?? this.isViewingChat,
+    errorMessage: errorMessage ?? this.errorMessage,
+  );
 
   @override
   List<Object?> get props => [

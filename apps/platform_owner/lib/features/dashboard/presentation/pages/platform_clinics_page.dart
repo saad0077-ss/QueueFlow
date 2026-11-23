@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 
-import '../../../../core/widgets/app_snack_bar.dart';
+import '../../../../core/navigation/platform_navigation_helper.dart';
 import '../../data/repositories/tenant_repository_impl.dart';
 import '../../domain/entities/tenant_clinic_entity.dart';
 import '../bloc/clinics_directory_bloc.dart';
 import '../widgets/clinic_details/clinic_details_view.dart';
+import '../widgets/clinic_invite_helper.dart';
 import '../../../departments/data/repositories/department_repository_impl.dart';
-import '../../../departments/presentation/pages/platform_departments_page.dart';
-import '../../../billing/presentation/pages/platform_billing_page.dart';
-import '../../../users/presentation/pages/platform_users_page.dart';
-import '../../../tickets/presentation/pages/platform_support_tickets_page.dart';
 import '../widgets/console_sidebar.dart';
 import '../widgets/platform_clinics_directory_view.dart';
 
@@ -49,74 +45,7 @@ class _PlatformClinicsViewState extends State<_PlatformClinicsView> {
   }
 
   void _onSidebarNav(int i) {
-    if (i == 1) {
-      Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (_, _, _) => const PlatformDepartmentsPage(),
-          transitionDuration: Duration.zero,
-        ),
-      );
-    } else if (i == 2) {
-      Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (_, _, _) => const PlatformUsersPage(),
-          transitionDuration: Duration.zero,
-        ),
-      );
-    } else if (i == 3) {
-      Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (_, _, _) => const PlatformSupportTicketsPage(),
-          transitionDuration: Duration.zero,
-        ),
-      );
-    } else if (i == 4) {
-      Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (_, _, _) => const PlatformBillingPage(),
-          transitionDuration: Duration.zero,
-        ),
-      );
-    }
-  }
-
-  void _resendClinicInvite(TenantClinicEntity c) async {
-    try {
-      final res = await repo.resendInvite(
-        clinicId: c.id,
-        clinicName: c.name,
-        adminName: c.adminName,
-        adminEmail: c.adminEmail,
-      );
-      await Clipboard.setData(ClipboardData(text: res.inviteUrl));
-      if (!mounted) return;
-      if (res.emailDelivered) {
-        AppSnackBar.showSuccess(
-          context,
-          message:
-              'Invite resent to ${c.adminEmail}! Activation link copied to clipboard.',
-        );
-      } else if (res.emailFeedback != null) {
-        AppSnackBar.showWarning(
-          context,
-          message:
-              'Link copied to clipboard. Sandbox note: ${res.emailFeedback}',
-        );
-      } else {
-        AppSnackBar.showSuccess(
-          context,
-          message: 'Activation link copied to clipboard for ${c.adminEmail}.',
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        AppSnackBar.showError(context, message: 'Failed to resend invite: $e');
-      }
-    }
+    PlatformNavigationHelper.navigateTo(context, i, 0);
   }
 
   @override
@@ -151,7 +80,11 @@ class _PlatformClinicsViewState extends State<_PlatformClinicsView> {
                       departmentsStream: _departments$,
                       repo: repo,
                       onDetails: (c) => setState(() => _selectedClinic = c),
-                      onResendInvite: _resendClinicInvite,
+                      onResendInvite: (c) => ClinicInviteHelper.resendInvite(
+                        context: context,
+                        repo: repo,
+                        clinic: c,
+                      ),
                       onClinicDeleted: () {
                         if (_selectedClinic != null) {
                           setState(() => _selectedClinic = null);

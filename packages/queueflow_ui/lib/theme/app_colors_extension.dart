@@ -123,31 +123,33 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
 
   /// Light Theme Semantic Color Palette (Clean Modern Medical System)
   static const light = AppColorsExtension(
-    background: Color(0xFFF8FAFC),       // Clean slate light background
-    surface: Color(0xFFFFFFFF),          // Pure white card surfaces
-    surfaceSecondary: Color(0xFFEEF2F7), // Slightly deeper for secondary containers/inputs
-    surfaceElevated: Color(0xFFFFFFFF),  // White for sheets & dialogs
-    headerBg: Color(0xFFFFFFFF),         // White header bar in light mode
-    navBarBg: Color(0xFFFFFFFF),         // White bottom navigation bar
+    background: Color(0xFFF8FAFC), // Clean slate light background
+    surface: Color(0xFFFFFFFF), // Pure white card surfaces
+    surfaceSecondary: Color(
+      0xFFEEF2F7,
+    ), // Slightly deeper for secondary containers/inputs
+    surfaceElevated: Color(0xFFFFFFFF), // White for sheets & dialogs
+    headerBg: Color(0xFFFFFFFF), // White header bar in light mode
+    navBarBg: Color(0xFFFFFFFF), // White bottom navigation bar
 
-    border: Color(0xFFCBD5E1),          // Slate 300 clearly visible borders
-    borderSubtle: Color(0xFFE2E8F0),    // Slate 200 dividers
-    navBarBorder: Color(0xFFCBD5E1),    // Slate 300
+    border: Color(0xFFCBD5E1), // Slate 300 clearly visible borders
+    borderSubtle: Color(0xFFE2E8F0), // Slate 200 dividers
+    navBarBorder: Color(0xFFCBD5E1), // Slate 300
 
-    textPrimary: Color(0xFF0F172A),     // Slate 900 strong dark text
-    textMuted: Color(0xFF64748B),       // Slate 500 readable secondary text
-    textSubtle: Color(0xFF94A3B8),      // Slate 400 captions & meta text
+    textPrimary: Color(0xFF0F172A), // Slate 900 strong dark text
+    textMuted: Color(0xFF64748B), // Slate 500 readable secondary text
+    textSubtle: Color(0xFF94A3B8), // Slate 400 captions & meta text
 
     primary: Color(0xFF2563EB),
     primaryLight: Color(0xFF3B82F6),
-    primaryTint: Color(0xFFDBEAFE),     // Blue 100 tint
-    accent: Color(0xFF0D9488),          // Accessible teal for light surfaces
+    primaryTint: Color(0xFFDBEAFE), // Blue 100 tint
+    accent: Color(0xFF0D9488), // Accessible teal for light surfaces
     accentLight: Color(0xFF14B8A6),
-    accentTint: Color(0xFFCCFBF1),      // Teal 100 tint
+    accentTint: Color(0xFFCCFBF1), // Teal 100 tint
 
-    badgeOpenBg: Color(0xFFBBF7D0),     // Green 200 visible chip
-    badgeOpenText: Color(0xFF166534),   // Green 800 accessible text
-    ratingGold: Color(0xFFB45309),      // Amber 700 high-contrast rating
+    badgeOpenBg: Color(0xFFBBF7D0), // Green 200 visible chip
+    badgeOpenText: Color(0xFF166534), // Green 800 accessible text
+    ratingGold: Color(0xFFB45309), // Amber 700 high-contrast rating
     success: Color(0xFF15803D),
     successTint: Color(0xFFBBF7D0),
     warning: Color(0xFFB45309),
@@ -229,8 +231,10 @@ class AppColorsExtension extends ThemeExtension<AppColorsExtension> {
 
   // The wave reveal replaces color interpolation, so just switch instantly.
   @override
-  AppColorsExtension lerp(ThemeExtension<AppColorsExtension>? other, double t) =>
-      other is AppColorsExtension && t >= 0.5 ? other : this;
+  AppColorsExtension lerp(
+    ThemeExtension<AppColorsExtension>? other,
+    double t,
+  ) => other is AppColorsExtension && t >= 0.5 ? other : this;
 }
 
 /// Convenience extensions on [BuildContext] to access semantic tokens easily.
