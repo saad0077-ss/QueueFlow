@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../../profile/presentation/bloc/profile_bloc.dart';
+import '../../../../../profile/presentation/pages/help_support/help_support_screen.dart';
 import '../../../../domain/entities/active_ticket_entity.dart';
 import '../../../../domain/entities/clinic_entity.dart';
 import '../../../bloc/home_bloc.dart';
@@ -36,6 +39,36 @@ class ActiveTicketView extends StatelessWidget {
     return null;
   }
 
+  void _openRaiseConcern(BuildContext context, ActiveTicketEntity t) {
+    try {
+      final profileBloc = context.read<ProfileBloc>();
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => BlocProvider.value(
+            value: profileBloc,
+            child: HelpSupportScreen(
+              initialTabIndex: 1,
+              initialClinicId: t.clinicId,
+              initialClinicName: t.clinicName,
+              initialTokenNumber: t.token,
+            ),
+          ),
+        ),
+      );
+    } catch (_) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => HelpSupportScreen(
+            initialTabIndex: 1,
+            initialClinicId: t.clinicId,
+            initialClinicName: t.clinicName,
+            initialTokenNumber: t.token,
+          ),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final fs = safeFirestore();
@@ -45,6 +78,7 @@ class ActiveTicketView extends StatelessWidget {
         allClinics: allClinics,
         onCancelSpot: onCancelSpot,
         onGetDirections: onGetDirections,
+        onRaiseConcern: () => _openRaiseConcern(context, ticket),
       );
     }
 
@@ -103,6 +137,7 @@ class ActiveTicketView extends StatelessWidget {
               allClinics: allClinics,
               onCancelSpot: onCancelSpot,
               onGetDirections: onGetDirections,
+              onRaiseConcern: () => _openRaiseConcern(context, live),
             );
           },
         );

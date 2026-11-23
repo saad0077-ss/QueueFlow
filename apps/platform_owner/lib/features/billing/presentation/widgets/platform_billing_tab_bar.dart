@@ -15,7 +15,11 @@ class PlatformBillingTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    const tabs = ['Clinic Subscriptions', 'Platform Plan Tiers', 'Invoice Ledger'];
+    const tabs = [
+      'Clinic Subscriptions',
+      'Platform Plan Tiers',
+      'Invoice Ledger',
+    ];
 
     return Container(
       decoration: BoxDecoration(

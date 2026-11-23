@@ -34,7 +34,11 @@ class DepartmentQueueMetrics extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: GoogleFonts.inter(fontSize: 11.5, fontWeight: FontWeight.w700, color: fg),
+        style: GoogleFonts.inter(
+          fontSize: 11.5,
+          fontWeight: FontWeight.w700,
+          color: fg,
+        ),
       ),
     );
   }
@@ -117,7 +121,8 @@ class DepartmentQueueMetrics extends StatelessWidget {
         if (deptServing.isNotEmpty)
           _metricPill(
             context,
-            label: '👨‍⚕️ ${deptServing.length} Serving: ${deptServing.take(2).map((s) => s.token).join(", ")}',
+            label:
+                '👨‍⚕️ ${deptServing.length} Serving: ${deptServing.take(2).map((s) => s.token).join(", ")}',
             bg: const Color(0xFF10B981).withValues(alpha: 0.14),
             fg: const Color(0xFF059669),
           ),
@@ -127,13 +132,19 @@ class DepartmentQueueMetrics extends StatelessWidget {
           bg: deptWaiting.isNotEmpty
               ? const Color(0xFFF59E0B).withValues(alpha: 0.14)
               : colors.surfaceSecondary,
-          fg: deptWaiting.isNotEmpty ? const Color(0xFFD97706) : colors.textMuted,
+          fg: deptWaiting.isNotEmpty
+              ? const Color(0xFFD97706)
+              : colors.textMuted,
         ),
         _buildStatusBadge(context),
         AnimatedRotation(
           turns: isCollapsed ? 0 : 0.5,
           duration: const Duration(milliseconds: 200),
-          child: Icon(Icons.keyboard_arrow_down_rounded, color: colors.textMuted, size: 22),
+          child: Icon(
+            Icons.keyboard_arrow_down_rounded,
+            color: colors.textMuted,
+            size: 22,
+          ),
         ),
       ],
     );

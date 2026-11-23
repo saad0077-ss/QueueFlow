@@ -34,17 +34,28 @@ class ClinicsHeaderBar extends StatelessWidget {
               decoration: BoxDecoration(
                 color: colors.badgeOpenBg,
                 borderRadius: BorderRadius.circular(6),
-                border: Border.all(color: colors.success.withValues(alpha: 0.5)),
+                border: Border.all(
+                  color: colors.success.withValues(alpha: 0.5),
+                ),
               ),
               child: Text(
                 'NETWORK MANAGEMENT  •  $activeCount of $totalCount Facilities Active',
-                style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w600, color: colors.badgeOpenText),
+                style: TextStyle(
+                  fontSize: 10.5,
+                  fontWeight: FontWeight.w600,
+                  color: colors.badgeOpenText,
+                ),
               ),
             ),
             const SizedBox(height: 8),
             Text(
               'Platform Clinics Directory',
-              style: GoogleFonts.inter(fontSize: 24, fontWeight: FontWeight.bold, color: colors.textPrimary, letterSpacing: -0.4),
+              style: GoogleFonts.inter(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: colors.textPrimary,
+                letterSpacing: -0.4,
+              ),
             ),
             const SizedBox(height: 4),
             Text(
@@ -65,8 +76,13 @@ class ClinicsHeaderBar extends StatelessWidget {
                 foregroundColor: colors.textPrimary,
                 backgroundColor: colors.surface,
                 side: BorderSide(color: colors.border),
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 12,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
               icon: const Icon(Icons.file_download_outlined, size: 16),
               label: const Text('Export PDF', style: TextStyle(fontSize: 12.5)),
@@ -77,15 +93,22 @@ class ClinicsHeaderBar extends StatelessWidget {
                 foregroundColor: colors.textPrimary,
                 backgroundColor: colors.surface,
                 side: BorderSide(color: colors.border),
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 12,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
               icon: const Icon(Icons.refresh_rounded, size: 16),
               label: const Text('Refresh', style: TextStyle(fontSize: 12.5)),
             ),
             Container(
               decoration: BoxDecoration(
-                gradient: const LinearGradient(colors: [Color(0xFF2563EB), Color(0xFF06B6D4)]),
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF2563EB), Color(0xFF06B6D4)],
+                ),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: ElevatedButton.icon(
@@ -94,11 +117,19 @@ class ClinicsHeaderBar extends StatelessWidget {
                   backgroundColor: Colors.transparent,
                   shadowColor: Colors.transparent,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
                 ),
                 icon: const Icon(Icons.add_rounded, size: 18),
-                label: const Text('Onboard Clinic', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                label: const Text(
+                  'Onboard Clinic',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                ),
               ),
             ),
           ],
@@ -114,7 +145,11 @@ class ClinicsHeaderBar extends StatelessWidget {
         return Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [Expanded(child: titleCol), const SizedBox(width: 16), actionRow],
+          children: [
+            Expanded(child: titleCol),
+            const SizedBox(width: 16),
+            actionRow,
+          ],
         );
       },
     );

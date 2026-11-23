@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
-import '../../bloc/walk_in_cubit.dart';
+import '../../bloc/walk_in_bloc.dart';
 import 'walk_in_department_picker.dart';
 import 'walk_in_patient_fields.dart';
 import 'walk_in_service_picker.dart';
@@ -36,9 +36,9 @@ class WalkInFormBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<WalkInCubit, WalkInState>(
+    return BlocBuilder<WalkInBloc, WalkInState>(
       builder: (context, state) {
-        final cubit = context.read<WalkInCubit>();
+        final bloc = context.read<WalkInBloc>();
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -54,7 +54,7 @@ class WalkInFormBody extends StatelessWidget {
             WalkInDepartmentPicker(
               departments: state.departments,
               selectedDeptKey: state.deptKey,
-              onDepartmentChanged: cubit.selectDepartment,
+              onDepartmentChanged: bloc.selectDepartment,
             ),
             const SizedBox(height: 14),
             _label(context, 'Clinical Service *'),
@@ -62,7 +62,7 @@ class WalkInFormBody extends StatelessWidget {
               deptServices: state.departmentServices,
               selectedServiceId: state.selectedService?.id,
               deptKey: state.deptKey,
-              onServiceChanged: cubit.selectService,
+              onServiceChanged: bloc.selectService,
             ),
             const SizedBox(height: 14),
             WalkInTriageNotesField(controller: noteController),

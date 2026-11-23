@@ -4,11 +4,15 @@ import 'package:flutter/material.dart';
 enum SnackBarType { success, error, warning, info }
 
 /// QueueFlow Design System SnackBar
-/// Provides styled, floating pill feedback notifications with gradient backgrounds.
+/// Provides a unified, high-contrast floating pill feedback notification across all patient app flows.
 class AppSnackBar {
-  /// Displays a Success SnackBar with blue-to-cyan gradient branding and checkmark icon.
+  /// Global ScaffoldMessengerKey allowing reliable SnackBar presentation across route transitions.
+  static final GlobalKey<ScaffoldMessengerState> messengerKey =
+      GlobalKey<ScaffoldMessengerState>();
+
+  /// Displays a Success SnackBar with emerald-to-teal gradient branding and checkmark icon.
   static void showSuccess(
-    BuildContext context, {
+    BuildContext? context, {
     required String message,
     String? title,
     Duration duration = const Duration(milliseconds: 3500),
@@ -24,9 +28,9 @@ class AppSnackBar {
     );
   }
 
-  /// Displays an Error SnackBar with red-to-rose gradient branding and alert icon.
+  /// Displays an Error SnackBar with crimson-to-rose gradient branding and alert icon.
   static void showError(
-    BuildContext context, {
+    BuildContext? context, {
     required String message,
     String? title,
     Duration duration = const Duration(milliseconds: 4000),
@@ -42,9 +46,9 @@ class AppSnackBar {
     );
   }
 
-  /// Displays a Warning SnackBar with amber gradient branding and warning icon.
+  /// Displays a Warning SnackBar with warm amber gradient branding and warning icon.
   static void showWarning(
-    BuildContext context, {
+    BuildContext? context, {
     required String message,
     String? title,
     Duration duration = const Duration(milliseconds: 3500),
@@ -60,9 +64,9 @@ class AppSnackBar {
     );
   }
 
-  /// Displays an Info SnackBar with brand blue gradient branding and info icon.
+  /// Displays an Info SnackBar with royal blue gradient branding and info icon.
   static void showInfo(
-    BuildContext context, {
+    BuildContext? context, {
     required String message,
     String? title,
     Duration duration = const Duration(milliseconds: 3500),
@@ -80,16 +84,18 @@ class AppSnackBar {
 
   /// Core helper to build and present the floating SnackBar.
   static void _show(
-    BuildContext context, {
+    BuildContext? context, {
     required SnackBarType type,
     required String message,
     String? title,
     required Duration duration,
     VoidCallback? onDismiss,
   }) {
-    if (!context.mounted) return;
-
-    final messenger = ScaffoldMessenger.maybeOf(context);
+    final messenger =
+        messengerKey.currentState ??
+        (context != null && context.mounted
+            ? ScaffoldMessenger.maybeOf(context)
+            : null);
     if (messenger == null) return;
 
     messenger.hideCurrentSnackBar();
@@ -108,7 +114,7 @@ class AppSnackBar {
 
   /// Builds the [SnackBar] widget directly.
   static SnackBar buildSnackBar({
-    required BuildContext context,
+    BuildContext? context,
     required SnackBarType type,
     required String message,
     String? title,
@@ -128,17 +134,20 @@ class AppSnackBar {
       content: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () {
-          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          messengerKey.currentState?.hideCurrentSnackBar();
+          if (context != null && context.mounted) {
+            ScaffoldMessenger.maybeOf(context)?.hideCurrentSnackBar();
+          }
           if (onDismiss != null) onDismiss();
         },
         child: Container(
-          constraints: const BoxConstraints(maxWidth: 520),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          constraints: const BoxConstraints(maxWidth: 540),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
           decoration: BoxDecoration(
             gradient: style.gradient,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.18),
+              color: Colors.white.withValues(alpha: 0.22),
               width: 1.0,
             ),
             boxShadow: [
@@ -148,8 +157,8 @@ class AppSnackBar {
                 offset: const Offset(0, 6),
               ),
               BoxShadow(
-                color: style.glowColor.withValues(alpha: 0.3),
-                blurRadius: 14,
+                color: style.glowColor.withValues(alpha: 0.35),
+                blurRadius: 16,
                 offset: const Offset(0, 2),
               ),
             ],
@@ -160,14 +169,14 @@ class AppSnackBar {
             children: [
               // Circular badge with white translucent background
               Container(
-                width: 30,
-                height: 30,
+                width: 32,
+                height: 32,
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.22),
                   shape: BoxShape.circle,
                 ),
                 child: Center(
-                  child: Icon(style.icon, color: Colors.white, size: 18),
+                  child: Icon(style.icon, color: Colors.white, size: 19),
                 ),
               ),
               const SizedBox(width: 12),
@@ -184,7 +193,7 @@ class AppSnackBar {
                             style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w800,
-                              fontSize: 14,
+                              fontSize: 13.5,
                               letterSpacing: -0.2,
                             ),
                           ),
@@ -194,7 +203,8 @@ class AppSnackBar {
                             style: TextStyle(
                               color: Colors.white.withValues(alpha: 0.95),
                               fontWeight: FontWeight.w500,
-                              fontSize: 13,
+                              fontSize: 12.5,
+                              height: 1.3,
                             ),
                           ),
                         ],
@@ -204,7 +214,7 @@ class AppSnackBar {
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w700,
-                          fontSize: 14.5,
+                          fontSize: 13.5,
                           letterSpacing: -0.2,
                         ),
                       ),
@@ -221,11 +231,11 @@ class AppSnackBar {
       case SnackBarType.success:
         return const _SnackBarConfig(
           gradient: LinearGradient(
-            colors: [Color(0xFF2563EB), Color(0xFF06B6D4)],
+            colors: [Color(0xFF059669), Color(0xFF10B981)],
             begin: Alignment.centerLeft,
             end: Alignment.centerRight,
           ),
-          glowColor: Color(0xFF06B6D4),
+          glowColor: Color(0xFF10B981),
           icon: Icons.check_circle_rounded,
         );
       case SnackBarType.error:
@@ -251,12 +261,12 @@ class AppSnackBar {
       case SnackBarType.info:
         return const _SnackBarConfig(
           gradient: LinearGradient(
-            colors: [Color(0xFF2563EB), Color(0xFF38BDF8)],
+            colors: [Color(0xFF1D4ED8), Color(0xFF0284C7)],
             begin: Alignment.centerLeft,
             end: Alignment.centerRight,
           ),
           glowColor: Color(0xFF2563EB),
-          icon: Icons.info_outline_rounded,
+          icon: Icons.info_rounded,
         );
     }
   }
@@ -286,6 +296,9 @@ class AppSnackBar {
     }
     if (lower.contains('too-many-requests')) {
       return 'Too many attempts. Please try again in a few moments.';
+    }
+    if (lower.contains('requires-recent-login')) {
+      return 'For security, please sign in again to perform this sensitive action.';
     }
     if (lower.contains('sign_in_canceled') ||
         lower.contains('cancelled') ||

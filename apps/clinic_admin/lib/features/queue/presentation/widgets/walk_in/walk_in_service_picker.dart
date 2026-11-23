@@ -26,10 +26,7 @@ class WalkInServicePicker extends StatelessWidget {
       initialValue: selectedServiceId,
       isExpanded: true,
       dropdownColor: colors.surface,
-      icon: Icon(
-        Icons.keyboard_arrow_down_rounded,
-        color: colors.textPrimary,
-      ),
+      icon: Icon(Icons.keyboard_arrow_down_rounded, color: colors.textPrimary),
       items: [
         for (final s in deptServices)
           DropdownMenuItem(
@@ -62,7 +59,10 @@ class WalkInServicePicker extends StatelessWidget {
         hintStyle: GoogleFonts.inter(fontSize: 13, color: colors.textMuted),
         filled: true,
         fillColor: colors.background,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 12,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: colors.border),

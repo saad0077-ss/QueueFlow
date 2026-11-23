@@ -6,7 +6,9 @@ class ClinicLiveQueueFilterHelper {
     if (state.activeFiltersCount == 0) return null;
     final labels = <String>[];
     if (state.departmentFilter != 'all') {
-      final d = state.departments.where((dept) => dept.id == state.departmentFilter).firstOrNull;
+      final d = state.departments
+          .where((dept) => dept.id == state.departmentFilter)
+          .firstOrNull;
       if (d != null) labels.add(d.name);
     }
     if (state.statusFilter != 'all') {
@@ -37,13 +39,15 @@ class ClinicLiveQueueFilterHelper {
       if (seenDeptNames.contains(deptKey)) return false;
       seenDeptNames.add(deptKey);
 
-      if (state.departmentFilter != 'all' && dept.id != state.departmentFilter) {
+      if (state.departmentFilter != 'all' &&
+          dept.id != state.departmentFilter) {
         return false;
       }
       final svcs = state.servicesForDepartment(dept.id, dept.name);
       final dQueue = state.items.where((q) {
         return svcs.any(
-          (s) => s.name.trim().toLowerCase() == q.serviceName.trim().toLowerCase(),
+          (s) =>
+              s.name.trim().toLowerCase() == q.serviceName.trim().toLowerCase(),
         );
       }).toList();
       final dWaiting = dQueue.where((q) => q.isWaiting).toList();

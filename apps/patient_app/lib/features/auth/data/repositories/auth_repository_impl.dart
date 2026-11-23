@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -8,19 +9,24 @@ import '../models/user_model.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final FirebaseAuth _firebaseAuth;
+  final FirebaseFirestore _firestore;
   final GoogleSignIn _googleSignIn;
 
   static const String _webClientId =
       '1070765440897-a9u9ma9rks2ncd3660he26qams1a4krd.apps.googleusercontent.com';
 
-  AuthRepositoryImpl({FirebaseAuth? firebaseAuth, GoogleSignIn? googleSignIn})
-    : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
-      _googleSignIn =
-          googleSignIn ??
-          GoogleSignIn(
-            clientId: kIsWeb ? _webClientId : null,
-            serverClientId: _webClientId,
-          );
+  AuthRepositoryImpl({
+    FirebaseAuth? firebaseAuth,
+    FirebaseFirestore? firestore,
+    GoogleSignIn? googleSignIn,
+  }) : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
+       _firestore = firestore ?? FirebaseFirestore.instance,
+       _googleSignIn =
+           googleSignIn ??
+           GoogleSignIn(
+             clientId: kIsWeb ? _webClientId : null,
+             serverClientId: _webClientId,
+           );
 
   @override
   UserEntity? getCurrentUser() {
@@ -72,6 +78,31 @@ class AuthRepositoryImpl implements AuthRepository {
     } catch (e) {
       debugPrint('sendEmailVerification exception: $e');
     }
+
+    // Immediately create patient profile document in Firestore so platform admin sees the new user
+    try {
+      final healthId =
+          'QF-${user.uid.substring(0, user.uid.length >= 6 ? 6 : user.uid.length).toUpperCase()}';
+      await _firestore.collection('users').doc(user.uid).set({
+        'name': fullName.trim(),
+        'fullName': fullName.trim(),
+        'email': email.trim().toLowerCase(),
+        'phone': phoneNumber.trim(),
+        'phoneNumber': phoneNumber.trim(),
+        'role': 'patient',
+        'status': 'active',
+        'isVerified': false,
+        'healthId': healthId,
+        'userType': 'platform_user',
+        'visitsCount': 0,
+        'queuesCount': 0,
+        'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+    } catch (e) {
+      debugPrint('Error creating user profile in Firestore: $e');
+    }
+
     return UserModel(
       id: user.uid,
       fullName: fullName,
@@ -107,6 +138,36 @@ class AuthRepositoryImpl implements AuthRepository {
         credential,
       );
       final user = userCredential.user!;
+
+      // Ensure patient document exists in Firestore for Google accounts
+      try {
+        final docRef = _firestore.collection('users').doc(user.uid);
+        final docSnap = await docRef.get();
+        if (!docSnap.exists) {
+          final healthId =
+              'QF-${user.uid.substring(0, user.uid.length >= 6 ? 6 : user.uid.length).toUpperCase()}';
+          final name =
+              user.displayName ?? googleUser.displayName ?? 'Google User';
+          await docRef.set({
+            'name': name.trim(),
+            'fullName': name.trim(),
+            'email': (user.email ?? googleUser.email).trim().toLowerCase(),
+            'phone': (user.phoneNumber ?? '').trim(),
+            'phoneNumber': (user.phoneNumber ?? '').trim(),
+            'role': 'patient',
+            'status': 'active',
+            'isVerified': true,
+            'healthId': healthId,
+            'userType': 'platform_user',
+            'visitsCount': 0,
+            'queuesCount': 0,
+            'createdAt': FieldValue.serverTimestamp(),
+            'updatedAt': FieldValue.serverTimestamp(),
+          }, SetOptions(merge: true));
+        }
+      } catch (e) {
+        debugPrint('Error syncing Google user to Firestore: $e');
+      }
 
       return UserModel(
         id: user.uid,

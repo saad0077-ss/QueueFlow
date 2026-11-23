@@ -1,7 +1,9 @@
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../departments/data/repositories/department_repository_impl.dart';
 import '../../../departments/domain/entities/department_entity.dart';
@@ -13,8 +15,9 @@ class EditClinicModal {
   static void show(BuildContext context, TenantClinicEntity clinic) {
     showDialog(
       context: context,
-      builder: (ctx) => _EditClinicDialog(clinic: clinic, parentContext: context),
-    );  
+      builder: (ctx) =>
+          _EditClinicDialog(clinic: clinic, parentContext: context),
+    );
   }
 }
 
@@ -64,20 +67,31 @@ class _EditClinicDialogState extends State<_EditClinicDialog> {
     _adminNameCtrl.dispose();
     _adminEmailCtrl.dispose();
     super.dispose();
-  }     
+  }
 
   void _initDepartmentsIfLegacy(List<DepartmentEntity> allDepartments) {
     if (_departmentsInitialized) return;
     _departmentsInitialized = true;
 
     if (_selectedDepartmentIds.isEmpty && allDepartments.isNotEmpty) {
-      final slug = widget.clinic.name.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '-');
-      final matched = allDepartments.where((d) {
-        final assigned = d.assignedClinics;
-        final matchesAssigned = assigned.any((k) => k == widget.clinic.id || (k.isNotEmpty && slug.startsWith(k)));
-        final matchesCategory = widget.clinic.category.toLowerCase().contains(d.name.toLowerCase());
-        return matchesAssigned || matchesCategory;
-      }).map((d) => d.id).toList();
+      final slug = widget.clinic.name.toLowerCase().replaceAll(
+        RegExp(r'[^a-z0-9]+'),
+        '-',
+      );
+      final matched = allDepartments
+          .where((d) {
+            final assigned = d.assignedClinics;
+            final matchesAssigned = assigned.any(
+              (k) =>
+                  k == widget.clinic.id || (k.isNotEmpty && slug.startsWith(k)),
+            );
+            final matchesCategory = widget.clinic.category
+                .toLowerCase()
+                .contains(d.name.toLowerCase());
+            return matchesAssigned || matchesCategory;
+          })
+          .map((d) => d.id)
+          .toList();
 
       if (matched.isNotEmpty) {
         setState(() {
@@ -128,7 +142,9 @@ class _EditClinicDialogState extends State<_EditClinicDialog> {
                         decoration: BoxDecoration(
                           color: colors.primaryTint,
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: colors.primary.withValues(alpha: 0.3)),
+                          border: Border.all(
+                            color: colors.primary.withValues(alpha: 0.3),
+                          ),
                         ),
                         child: Icon(
                           Icons.edit_note_rounded,
@@ -231,7 +247,8 @@ class _EditClinicDialogState extends State<_EditClinicDialog> {
                         stream: _deptRepo.watchDepartments(),
                         builder: (context, snapshot) {
                           final departments = snapshot.data ?? const [];
-                          if (departments.isNotEmpty && !_departmentsInitialized) {
+                          if (departments.isNotEmpty &&
+                              !_departmentsInitialized) {
                             WidgetsBinding.instance.addPostFrameCallback((_) {
                               _initDepartmentsIfLegacy(departments);
                             });
@@ -239,7 +256,10 @@ class _EditClinicDialogState extends State<_EditClinicDialog> {
                           return OnboardDepartmentDropdown(
                             departments: departments,
                             selectedDepartmentIds: _selectedDepartmentIds,
-                            isLoading: snapshot.connectionState == ConnectionState.waiting && !snapshot.hasData,
+                            isLoading:
+                                snapshot.connectionState ==
+                                    ConnectionState.waiting &&
+                                !snapshot.hasData,
                             onChanged: (updated) {
                               setState(() {
                                 _selectedDepartmentIds = updated;
@@ -264,7 +284,9 @@ class _EditClinicDialogState extends State<_EditClinicDialog> {
                     child: SizedBox(
                       height: 44,
                       child: OutlinedButton(
-                        onPressed: _isSaving ? null : () => Navigator.pop(context),
+                        onPressed: _isSaving
+                            ? null
+                            : () => Navigator.pop(context),
                         style: OutlinedButton.styleFrom(
                           backgroundColor: colors.surfaceSecondary,
                           foregroundColor: colors.textPrimary,
@@ -294,7 +316,8 @@ class _EditClinicDialogState extends State<_EditClinicDialog> {
                         borderRadius: BorderRadius.circular(24),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF06B6D4).withValues(alpha: 0.35),
+                            color: const Color(0xFF06B6D4)
+                                .withValues(alpha: 0.35),
                             blurRadius: 16,
                             offset: const Offset(0, 4),
                           ),
@@ -341,7 +364,10 @@ class _EditClinicDialogState extends State<_EditClinicDialog> {
   Future<void> _handleSave() async {
     final cleanName = _nameCtrl.text.trim();
     if (cleanName.isEmpty) {
-      AppSnackBar.showWarning(context, message: 'Practice / clinic name cannot be empty.');
+      AppSnackBar.showWarning(
+        context,
+        message: 'Practice / clinic name cannot be empty.',
+      );
       return;
     }
 
@@ -378,10 +404,7 @@ class _EditClinicDialogState extends State<_EditClinicDialog> {
     } catch (e) {
       if (mounted) {
         setState(() => _isSaving = false);
-        AppSnackBar.showError(
-          context,
-          message: 'Failed to update clinic: $e',
-        );
+        AppSnackBar.showError(context, message: 'Failed to update clinic: $e');
       }
     }
   }

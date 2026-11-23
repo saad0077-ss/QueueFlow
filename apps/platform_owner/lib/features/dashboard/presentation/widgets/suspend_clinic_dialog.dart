@@ -1,6 +1,8 @@
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../domain/entities/tenant_clinic_entity.dart';
 
 /// Asks the platform owner why a clinic is being suspended. Resolves to the
@@ -60,7 +62,13 @@ class _SuspendClinicDialogState extends State<SuspendClinicDialog> {
             color: colors.surfaceElevated,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(color: colors.border, width: 1.2),
-            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.35), blurRadius: 40, offset: const Offset(0, 16))],
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.35),
+                blurRadius: 40,
+                offset: const Offset(0, 16),
+              ),
+            ],
           ),
           child: SingleChildScrollView(
             child: Column(
@@ -71,15 +79,33 @@ class _SuspendClinicDialogState extends State<SuspendClinicDialog> {
                   children: [
                     Container(
                       padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(color: colors.errorTint, shape: BoxShape.circle),
-                      child: Icon(Icons.pause_circle_outline_rounded, color: colors.error, size: 22),
+                      decoration: BoxDecoration(
+                        color: colors.errorTint,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.pause_circle_outline_rounded,
+                        color: colors.error,
+                        size: 22,
+                      ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
-                      child: Text('Suspend Clinic', style: TextStyle(color: colors.textPrimary, fontSize: 17, fontWeight: FontWeight.bold)),
+                      child: Text(
+                        'Suspend Clinic',
+                        style: TextStyle(
+                          color: colors.textPrimary,
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                     IconButton(
-                      icon: Icon(Icons.close_rounded, color: colors.textMuted, size: 20),
+                      icon: Icon(
+                        Icons.close_rounded,
+                        color: colors.textMuted,
+                        size: 20,
+                      ),
                       onPressed: () => Navigator.pop(context),
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
@@ -89,7 +115,11 @@ class _SuspendClinicDialogState extends State<SuspendClinicDialog> {
                 const SizedBox(height: 14),
                 Text(
                   'Suspending "${widget.clinic.name}" blocks its admin from signing in. They will see the reason below.',
-                  style: TextStyle(color: colors.textMuted, fontSize: 13, height: 1.45),
+                  style: TextStyle(
+                    color: colors.textMuted,
+                    fontSize: 13,
+                    height: 1.45,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 Wrap(
@@ -98,13 +128,24 @@ class _SuspendClinicDialogState extends State<SuspendClinicDialog> {
                   children: [
                     for (final p in _presets)
                       ChoiceChip(
-                        label: Text(p, style: TextStyle(fontSize: 12, color: _preset == p ? colors.primary : colors.textMuted)),
+                        label: Text(
+                          p,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: _preset == p
+                                ? colors.primary
+                                : colors.textMuted,
+                          ),
+                        ),
                         selected: _preset == p,
                         selectedColor: colors.primaryTint,
                         backgroundColor: colors.surfaceSecondary,
-                        side: BorderSide(color: _preset == p ? colors.primary : colors.border),
+                        side: BorderSide(
+                          color: _preset == p ? colors.primary : colors.border,
+                        ),
                         showCheckmark: false,
-                        onSelected: (_) => setState(() => _preset = _preset == p ? null : p),
+                        onSelected: (_) =>
+                            setState(() => _preset = _preset == p ? null : p),
                       ),
                   ],
                 ),
@@ -115,29 +156,52 @@ class _SuspendClinicDialogState extends State<SuspendClinicDialog> {
                   onChanged: (_) => setState(() {}),
                   style: TextStyle(color: colors.textPrimary, fontSize: 13),
                   decoration: InputDecoration(
-                    hintText: 'Add more details (optional if a reason is selected)',
+                    hintText:
+                        'Add more details (optional if a reason is selected)',
                     hintStyle: TextStyle(color: colors.textMuted, fontSize: 13),
                     filled: true,
                     fillColor: colors.surfaceSecondary,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: colors.border)),
-                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: colors.border)),
-                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: colors.primary, width: 1.5)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: colors.border),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: colors.border),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: colors.primary, width: 1.5),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 22),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    TextButton(onPressed: () => Navigator.pop(context), child: Text('Cancel', style: TextStyle(color: colors.textMuted))),
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(color: colors.textMuted),
+                      ),
+                    ),
                     const SizedBox(width: 12),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: colors.error,
                         foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
-                      onPressed: _reason.isEmpty ? null : () => Navigator.pop(context, _reason),
+                      onPressed: _reason.isEmpty
+                          ? null
+                          : () => Navigator.pop(context, _reason),
                       child: const Text('Suspend Clinic'),
                     ),
                   ],

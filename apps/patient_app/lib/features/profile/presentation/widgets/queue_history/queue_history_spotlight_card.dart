@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../domain/entities/patient_queue_history_entity.dart';
 import 'queue_history_spotlight_header.dart';
 import 'queue_history_spotlight_metrics.dart';
@@ -67,7 +68,11 @@ class QueueHistorySpotlightCard extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: 6),
-                Icon(Icons.arrow_forward_rounded, size: 16, color: AppColors.primary),
+                Icon(
+                  Icons.arrow_forward_rounded,
+                  size: 16,
+                  color: AppColors.primary,
+                ),
               ],
             ),
           ),

@@ -9,7 +9,11 @@ class DepartmentSettingsTab extends StatefulWidget {
   final DepartmentEntity department;
   final ValueChanged<DepartmentEntity> onSave;
 
-  const DepartmentSettingsTab({super.key, required this.department, required this.onSave});
+  const DepartmentSettingsTab({
+    super.key,
+    required this.department,
+    required this.onSave,
+  });
 
   @override
   State<DepartmentSettingsTab> createState() => _DepartmentSettingsTabState();
@@ -73,7 +77,11 @@ class _DepartmentSettingsTabState extends State<DepartmentSettingsTab> {
                 children: [
                   Text(
                     'Specialty Configuration & Triage Rules',
-                    style: GoogleFonts.inter(fontSize: 16.5, fontWeight: FontWeight.w800, color: colors.textPrimary),
+                    style: GoogleFonts.inter(
+                      fontSize: 16.5,
+                      fontWeight: FontWeight.w800,
+                      color: colors.textPrimary,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   _pair(
@@ -93,11 +101,17 @@ class _DepartmentSettingsTabState extends State<DepartmentSettingsTab> {
                     isNarrow,
                     SpecialtyLabeled(
                       label: 'Specialty Icon / Emoji',
-                      child: SpecialtyIconPicker(value: _icon, onChanged: (v) => setState(() => _icon = v)),
+                      child: SpecialtyIconPicker(
+                        value: _icon,
+                        onChanged: (v) => setState(() => _icon = v),
+                      ),
                     ),
                     SpecialtyLabeled(
                       label: 'Accent Color',
-                      child: SpecialtyColorPicker(value: _color, onChanged: (v) => setState(() => _color = v)),
+                      child: SpecialtyColorPicker(
+                        value: _color,
+                        onChanged: (v) => setState(() => _color = v),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 14),
@@ -108,7 +122,11 @@ class _DepartmentSettingsTabState extends State<DepartmentSettingsTab> {
                   const SizedBox(height: 14),
                   SpecialtyLabeled(
                     label: 'Department Overview & Triage Rules',
-                    child: SpecialtyTextInput(controller: _descCtrl, minLines: 2, maxLines: 5),
+                    child: SpecialtyTextInput(
+                      controller: _descCtrl,
+                      minLines: 2,
+                      maxLines: 5,
+                    ),
                   ),
                   const SizedBox(height: 14),
                   _pair(
@@ -117,7 +135,10 @@ class _DepartmentSettingsTabState extends State<DepartmentSettingsTab> {
                       label: 'Status',
                       child: SpecialtyDropdown(
                         value: _status,
-                        items: const {'active': Text('Active'), 'inactive': Text('Inactive')},
+                        items: const {
+                          'active': Text('Active'),
+                          'inactive': Text('Inactive'),
+                        },
                         onChanged: (v) => setState(() => _status = v),
                       ),
                     ),
@@ -128,7 +149,11 @@ class _DepartmentSettingsTabState extends State<DepartmentSettingsTab> {
                         child: SpecialtyTextInput(
                           controller: _doctorsCtrl,
                           readOnly: true,
-                          suffix: Icon(Icons.lock_outline_rounded, size: 16, color: colors.textMuted),
+                          suffix: Icon(
+                            Icons.lock_outline_rounded,
+                            size: 16,
+                            color: colors.textMuted,
+                          ),
                         ),
                       ),
                     ),
@@ -137,7 +162,10 @@ class _DepartmentSettingsTabState extends State<DepartmentSettingsTab> {
                   GradientPillButton(
                     label: 'Save Specialty Settings',
                     glow: true,
-                    padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 26,
+                      vertical: 12,
+                    ),
                     onPressed: _save,
                   ),
                 ],
@@ -150,7 +178,9 @@ class _DepartmentSettingsTabState extends State<DepartmentSettingsTab> {
   }
 
   Widget _pair(bool isNarrow, Widget left, Widget right, {int leftFlex = 1}) {
-    if (isNarrow) return Column(children: [left, const SizedBox(height: 14), right]);
+    if (isNarrow) {
+      return Column(children: [left, const SizedBox(height: 14), right]);
+    }
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

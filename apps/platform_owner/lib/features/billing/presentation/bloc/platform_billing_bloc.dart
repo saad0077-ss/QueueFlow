@@ -1,26 +1,40 @@
 import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../domain/entities/platform_billing_kpis.dart';
 import '../../domain/entities/platform_invoice_entity.dart';
 import '../../domain/repositories/platform_billing_repository.dart';
 import 'platform_billing_event.dart';
 import 'platform_billing_state.dart';
 
-class PlatformBillingBloc extends Bloc<PlatformBillingEvent, PlatformBillingState> {
+class PlatformBillingBloc
+    extends Bloc<PlatformBillingEvent, PlatformBillingState> {
   final PlatformBillingRepository repository;
   StreamSubscription? _subscriptionsSub;
 
-  PlatformBillingBloc({required this.repository}) : super(const PlatformBillingState()) {
+  PlatformBillingBloc({required this.repository})
+    : super(const PlatformBillingState()) {
     on<PlatformBillingStarted>(_onStarted);
-    on<PlatformBillingTabChanged>((e, emit) => emit(state.copyWith(activeTab: e.activeTab)));
-    on<PlatformBillingSearchChanged>((e, emit) => emit(state.copyWith(searchQuery: e.query)));
-    on<PlatformBillingInvoiceFilterChanged>((e, emit) => emit(state.copyWith(invoiceFilter: e.filter)));
-    on<PlatformBillingSubscriptionsStreamUpdated>(_onSubscriptionsStreamUpdated);
+    on<PlatformBillingTabChanged>(
+      (e, emit) => emit(state.copyWith(activeTab: e.activeTab)),
+    );
+    on<PlatformBillingSearchChanged>(
+      (e, emit) => emit(state.copyWith(searchQuery: e.query)),
+    );
+    on<PlatformBillingInvoiceFilterChanged>(
+      (e, emit) => emit(state.copyWith(invoiceFilter: e.filter)),
+    );
+    on<PlatformBillingSubscriptionsStreamUpdated>(
+      _onSubscriptionsStreamUpdated,
+    );
     on<PlatformBillingIssueInvoiceSubmitted>(_onIssueInvoice);
     on<PlatformBillingSubscriptionUpdated>(_onUpdateSubscription);
     on<PlatformBillingPlanTierSaved>(_onSavePlanTier);
     on<PlatformBillingInvoiceMarkedPaid>(_onMarkInvoicePaid);
-    on<PlatformBillingFeedbackDismissed>((e, emit) => emit(state.copyWith(feedbackMessage: null, isError: false)));
+    on<PlatformBillingFeedbackDismissed>(
+      (e, emit) => emit(state.copyWith(feedbackMessage: null, isError: false)),
+    );
   }
 
   void _onSubscriptionsStreamUpdated(
@@ -34,7 +48,10 @@ class PlatformBillingBloc extends Bloc<PlatformBillingEvent, PlatformBillingStat
     emit(state.copyWith(subscriptions: event.subscriptions, kpis: kpis));
   }
 
-  Future<void> _onStarted(PlatformBillingStarted event, Emitter<PlatformBillingState> emit) async {
+  Future<void> _onStarted(
+    PlatformBillingStarted event,
+    Emitter<PlatformBillingState> emit,
+  ) async {
     emit(state.copyWith(status: PlatformBillingStatus.loading));
     try {
       final tiers = await repository.getPlanTiers();
@@ -46,14 +63,22 @@ class PlatformBillingBloc extends Bloc<PlatformBillingEvent, PlatformBillingStat
         add(PlatformBillingSubscriptionsStreamUpdated(subs));
       });
 
-      emit(state.copyWith(
-        status: PlatformBillingStatus.success,
-        kpis: kpis,
-        tiers: tiers,
-        invoices: invoices,
-      ));
+      emit(
+        state.copyWith(
+          status: PlatformBillingStatus.success,
+          kpis: kpis,
+          tiers: tiers,
+          invoices: invoices,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(status: PlatformBillingStatus.failure, feedbackMessage: 'Failed to load: $e', isError: true));
+      emit(
+        state.copyWith(
+          status: PlatformBillingStatus.failure,
+          feedbackMessage: 'Failed to load: $e',
+          isError: true,
+        ),
+      );
     }
   }
 
@@ -75,15 +100,24 @@ class PlatformBillingBloc extends Bloc<PlatformBillingEvent, PlatformBillingStat
         subscriptions: state.subscriptions,
         invoices: updatedInvoices,
       );
-      emit(state.copyWith(
-        isSubmitting: false,
-        invoices: updatedInvoices,
-        kpis: kpis,
-        feedbackMessage: 'Invoice issued successfully to ${event.clinicName}.',
-        isError: false,
-      ));
+      emit(
+        state.copyWith(
+          isSubmitting: false,
+          invoices: updatedInvoices,
+          kpis: kpis,
+          feedbackMessage:
+              'Invoice issued successfully to ${event.clinicName}.',
+          isError: false,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(isSubmitting: false, feedbackMessage: 'Failed to issue invoice: $e', isError: true));
+      emit(
+        state.copyWith(
+          isSubmitting: false,
+          feedbackMessage: 'Failed to issue invoice: $e',
+          isError: true,
+        ),
+      );
     }
   }
 
@@ -99,13 +133,21 @@ class PlatformBillingBloc extends Bloc<PlatformBillingEvent, PlatformBillingStat
         billingCadence: event.billingCadence,
         status: event.status,
       );
-      emit(state.copyWith(
-        isSubmitting: false,
-        feedbackMessage: 'Clinic subscription updated successfully.',
-        isError: false,
-      ));
+      emit(
+        state.copyWith(
+          isSubmitting: false,
+          feedbackMessage: 'Clinic subscription updated successfully.',
+          isError: false,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(isSubmitting: false, feedbackMessage: 'Failed to update: $e', isError: true));
+      emit(
+        state.copyWith(
+          isSubmitting: false,
+          feedbackMessage: 'Failed to update: $e',
+          isError: true,
+        ),
+      );
     }
   }
 
@@ -117,14 +159,23 @@ class PlatformBillingBloc extends Bloc<PlatformBillingEvent, PlatformBillingStat
     try {
       await repository.savePlanTier(event.tier);
       final tiers = await repository.getPlanTiers();
-      emit(state.copyWith(
-        isSubmitting: false,
-        tiers: tiers,
-        feedbackMessage: '${event.tier.name} configuration saved successfully.',
-        isError: false,
-      ));
+      emit(
+        state.copyWith(
+          isSubmitting: false,
+          tiers: tiers,
+          feedbackMessage:
+              '${event.tier.name} configuration saved successfully.',
+          isError: false,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(isSubmitting: false, feedbackMessage: 'Failed to save tier: $e', isError: true));
+      emit(
+        state.copyWith(
+          isSubmitting: false,
+          feedbackMessage: 'Failed to save tier: $e',
+          isError: true,
+        ),
+      );
     }
   }
 
@@ -134,31 +185,35 @@ class PlatformBillingBloc extends Bloc<PlatformBillingEvent, PlatformBillingStat
   ) async {
     await repository.markInvoicePaid(event.invoice.id);
     final invoices = state.invoices
-        .map((i) => i.id == event.invoice.id
-            ? PlatformInvoiceEntity(
-                id: i.id,
-                number: i.number,
-                clinicId: i.clinicId,
-                clinicName: i.clinicName,
-                plan: i.plan,
-                amount: i.amount,
-                dueDate: i.dueDate,
-                date: i.date,
-                status: 'completed',
-                method: i.method,
-              )
-            : i)
+        .map(
+          (i) => i.id == event.invoice.id
+              ? PlatformInvoiceEntity(
+                  id: i.id,
+                  number: i.number,
+                  clinicId: i.clinicId,
+                  clinicName: i.clinicName,
+                  plan: i.plan,
+                  amount: i.amount,
+                  dueDate: i.dueDate,
+                  date: i.date,
+                  status: 'completed',
+                  method: i.method,
+                )
+              : i,
+        )
         .toList();
     final kpis = PlatformBillingKpis.compute(
       subscriptions: state.subscriptions,
       invoices: invoices,
     );
-    emit(state.copyWith(
-      invoices: invoices,
-      kpis: kpis,
-      feedbackMessage: 'Invoice ${event.invoice.number} marked as paid.',
-      isError: false,
-    ));
+    emit(
+      state.copyWith(
+        invoices: invoices,
+        kpis: kpis,
+        feedbackMessage: 'Invoice ${event.invoice.number} marked as paid.',
+        isError: false,
+      ),
+    );
   }
 
   @override

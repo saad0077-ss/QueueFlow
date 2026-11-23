@@ -27,9 +27,23 @@ class PaymentHistorySummaryBanner extends StatelessWidget {
           Expanded(
             child: Column(
               children: [
-                Text('TOTAL SPENT', style: TextStyle(fontSize: 9.5, fontWeight: FontWeight.w700, color: colors.textMuted)),
+                Text(
+                  'TOTAL SPENT',
+                  style: TextStyle(
+                    fontSize: 9.5,
+                    fontWeight: FontWeight.w700,
+                    color: colors.textMuted,
+                  ),
+                ),
                 const SizedBox(height: 2),
-                Text('₹${totalSpent.toStringAsFixed(0)}', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: AppColors.primary)),
+                Text(
+                  '₹${totalSpent.toStringAsFixed(0)}',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.primary,
+                  ),
+                ),
               ],
             ),
           ),
@@ -37,9 +51,23 @@ class PaymentHistorySummaryBanner extends StatelessWidget {
           Expanded(
             child: Column(
               children: [
-                Text('INVOICES', style: TextStyle(fontSize: 9.5, fontWeight: FontWeight.w700, color: colors.textMuted)),
+                Text(
+                  'INVOICES',
+                  style: TextStyle(
+                    fontSize: 9.5,
+                    fontWeight: FontWeight.w700,
+                    color: colors.textMuted,
+                  ),
+                ),
                 const SizedBox(height: 2),
-                Text('$count Paid', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: colors.textPrimary)),
+                Text(
+                  '$count Paid',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w800,
+                    color: colors.textPrimary,
+                  ),
+                ),
               ],
             ),
           ),
@@ -47,9 +75,23 @@ class PaymentHistorySummaryBanner extends StatelessWidget {
           const Expanded(
             child: Column(
               children: [
-                Text('SECURITY', style: TextStyle(fontSize: 9.5, fontWeight: FontWeight.w700, color: Color(0xFF10B981))),
+                Text(
+                  'SECURITY',
+                  style: TextStyle(
+                    fontSize: 9.5,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF10B981),
+                  ),
+                ),
                 SizedBox(height: 2),
-                Text('✓ Verified', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: Color(0xFF10B981))),
+                Text(
+                  '✓ Verified',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFF10B981),
+                  ),
+                ),
               ],
             ),
           ),

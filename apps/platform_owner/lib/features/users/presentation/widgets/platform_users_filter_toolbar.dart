@@ -4,48 +4,57 @@ import 'package:queueflow_ui/queueflow_ui.dart';
 
 class PlatformUsersFilterToolbar extends StatelessWidget {
   final TextEditingController searchController;
-  final String selectedClinic;
-  final String selectedStatus;
-  final List<String> availableClinics;
-  final int filteredCount;
+  final int activeFiltersCount;
   final ValueChanged<String> onSearchChanged;
-  final ValueChanged<String> onClinicChanged;
-  final ValueChanged<String> onStatusChanged;
+  final VoidCallback onOpenFilter;
   final VoidCallback onReset;
 
   const PlatformUsersFilterToolbar({
     super.key,
     required this.searchController,
-    required this.selectedClinic,
-    required this.selectedStatus,
-    required this.availableClinics,
-    required this.filteredCount,
+    required this.activeFiltersCount,
     required this.onSearchChanged,
-    required this.onClinicChanged,
-    required this.onStatusChanged,
+    required this.onOpenFilter,
     required this.onReset,
   });
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final hasActiveSearchOrFilter =
+        searchController.text.trim().isNotEmpty || activeFiltersCount > 0;
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final isMobile = constraints.maxWidth < 850;
+        final isMobile = constraints.maxWidth < 600;
 
         final searchField = SizedBox(
-          width: isMobile ? double.infinity : 280,
-          height: 40,
+          height: 42,
           child: TextField(
             controller: searchController,
             onChanged: onSearchChanged,
             style: GoogleFonts.inter(fontSize: 13, color: colors.textPrimary),
             decoration: InputDecoration(
               isDense: true,
-              hintText: 'Search name, phone, email, token...',
-              hintStyle: GoogleFonts.inter(fontSize: 12.5, color: colors.textMuted),
-              prefixIcon: Icon(Icons.search_rounded, size: 18, color: colors.textMuted),
+              hintText: 'Search by name, phone, email, token...',
+              hintStyle: GoogleFonts.inter(
+                fontSize: 12.5,
+                color: colors.textMuted,
+              ),
+              prefixIcon: Icon(
+                Icons.search_rounded,
+                size: 18,
+                color: colors.textMuted,
+              ),
+              suffixIcon: searchController.text.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.clear_rounded, size: 16),
+                      onPressed: () {
+                        searchController.clear();
+                        onSearchChanged('');
+                      },
+                    )
+                  : null,
               filled: true,
               fillColor: colors.surfaceSecondary,
               contentPadding: const EdgeInsets.symmetric(horizontal: 12),
@@ -59,77 +68,70 @@ class PlatformUsersFilterToolbar extends StatelessWidget {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(color: colors.primary),
+                borderSide: const BorderSide(color: Color(0xFF0072FF)),
               ),
             ),
           ),
         );
 
-        final clinicDropdown = Container(
-          height: 40,
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: colors.surfaceSecondary,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: colors.border),
+        final filterBtn = OutlinedButton.icon(
+          onPressed: onOpenFilter,
+          icon: Icon(
+            Icons.tune_rounded,
+            size: 16,
+            color: activeFiltersCount > 0
+                ? const Color(0xFF0072FF)
+                : colors.textPrimary,
           ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: selectedClinic,
-              dropdownColor: colors.surface,
-              style: GoogleFonts.inter(fontSize: 12.5, color: colors.textPrimary),
-              icon: Icon(Icons.keyboard_arrow_down_rounded, size: 18, color: colors.textMuted),
-              items: [
-                const DropdownMenuItem(value: 'all', child: Text('All Clinics')),
-                for (final c in availableClinics)
-                  DropdownMenuItem(value: c, child: Text(c)),
+          label: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Filter',
+                style: GoogleFonts.inter(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w600,
+                  color: activeFiltersCount > 0
+                      ? const Color(0xFF0072FF)
+                      : colors.textPrimary,
+                ),
+              ),
+              if (activeFiltersCount > 0) ...[
+                const SizedBox(width: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 1.5,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF0072FF),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    '$activeFiltersCount',
+                    style: GoogleFonts.inter(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
               ],
-              onChanged: (val) {
-                if (val != null) onClinicChanged(val);
-              },
+            ],
+          ),
+          style: OutlinedButton.styleFrom(
+            backgroundColor: activeFiltersCount > 0
+                ? const Color(0xFF0072FF).withAlpha(15)
+                : colors.surfaceSecondary,
+            side: BorderSide(
+              color: activeFiltersCount > 0
+                  ? const Color(0xFF0072FF)
+                  : colors.border,
             ),
-          ),
-        );
-
-        final statusDropdown = Container(
-          height: 40,
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: colors.surfaceSecondary,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: colors.border),
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: selectedStatus,
-              dropdownColor: colors.surface,
-              style: GoogleFonts.inter(fontSize: 12.5, color: colors.textPrimary),
-              icon: Icon(Icons.keyboard_arrow_down_rounded, size: 18, color: colors.textMuted),
-              items: const [
-                DropdownMenuItem(value: 'all', child: Text('All Statuses')),
-                DropdownMenuItem(value: 'in-queue', child: Text('In Live Queue')),
-                DropdownMenuItem(value: 'active', child: Text('Active Accounts')),
-                DropdownMenuItem(value: 'verified', child: Text('Verified Only')),
-              ],
-              onChanged: (val) {
-                if (val != null) onStatusChanged(val);
-              },
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
             ),
-          ),
-        );
-
-        final countBadge = Container(
-          height: 40,
-          alignment: Alignment.center,
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: colors.surfaceSecondary,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: colors.border),
-          ),
-          child: Text(
-            'Showing $filteredCount users',
-            style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600, color: colors.textPrimary),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
           ),
         );
 
@@ -138,10 +140,15 @@ class PlatformUsersFilterToolbar extends StatelessWidget {
           style: OutlinedButton.styleFrom(
             foregroundColor: colors.textMuted,
             side: BorderSide(color: colors.border),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
           ),
-          child: Text('Reset Filters', style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600)),
+          child: Text(
+            'Reset Filters',
+            style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600),
+          ),
         );
 
         if (isMobile) {
@@ -151,19 +158,8 @@ class PlatformUsersFilterToolbar extends StatelessWidget {
               searchField,
               const SizedBox(height: 10),
               Row(
-                children: [
-                  Expanded(child: clinicDropdown),
-                  const SizedBox(width: 8),
-                  Expanded(child: statusDropdown),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  countBadge,
-                  resetBtn,
-                ],
+                children: [filterBtn, if (hasActiveSearchOrFilter) resetBtn],
               ),
             ],
           );
@@ -171,15 +167,13 @@ class PlatformUsersFilterToolbar extends StatelessWidget {
 
         return Row(
           children: [
-            searchField,
+            Expanded(child: searchField),
             const SizedBox(width: 10),
-            clinicDropdown,
-            const SizedBox(width: 10),
-            statusDropdown,
-            const Spacer(),
-            countBadge,
-            const SizedBox(width: 10),
-            resetBtn,
+            filterBtn,
+            if (hasActiveSearchOrFilter) ...[
+              const SizedBox(width: 10),
+              resetBtn,
+            ],
           ],
         );
       },

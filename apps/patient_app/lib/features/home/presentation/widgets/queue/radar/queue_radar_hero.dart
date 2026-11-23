@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import 'live_pulsing_dot.dart';
 
 class QueueRadarHero extends StatelessWidget {

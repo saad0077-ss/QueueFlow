@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../domain/entities/favorite_clinic_entity.dart';
 
 class FavoriteClinicCard extends StatelessWidget {
@@ -53,7 +54,10 @@ class FavoriteClinicCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(14),
                 ),
                 alignment: Alignment.center,
-                child: Text(clinic.iconEmoji, style: const TextStyle(fontSize: 24)),
+                child: Text(
+                  clinic.iconEmoji,
+                  style: const TextStyle(fontSize: 24),
+                ),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -76,7 +80,11 @@ class FavoriteClinicCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 5),
-                        const Icon(Icons.check_circle_rounded, size: 15, color: Color(0xFF10B981)),
+                        const Icon(
+                          Icons.check_circle_rounded,
+                          size: 15,
+                          color: Color(0xFF10B981),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 2),
@@ -148,7 +156,13 @@ class FavoriteClinicCard extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 6),
-                  child: Text('·', style: TextStyle(color: colors.textSubtle, fontWeight: FontWeight.bold)),
+                  child: Text(
+                    '·',
+                    style: TextStyle(
+                      color: colors.textSubtle,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
                 Row(
                   mainAxisSize: MainAxisSize.min,
@@ -167,7 +181,10 @@ class FavoriteClinicCard extends StatelessWidget {
                 ),
                 const Spacer(),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: isFast
                         ? const Color(0xFF10B981).withValues(alpha: 0.12)
@@ -181,7 +198,9 @@ class FavoriteClinicCard extends StatelessWidget {
                         width: 5,
                         height: 5,
                         decoration: BoxDecoration(
-                          color: isFast ? const Color(0xFF10B981) : const Color(0xFFF59E0B),
+                          color: isFast
+                              ? const Color(0xFF10B981)
+                              : const Color(0xFFF59E0B),
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -191,7 +210,9 @@ class FavoriteClinicCard extends StatelessWidget {
                         style: GoogleFonts.inter(
                           fontSize: 10.5,
                           fontWeight: FontWeight.w700,
-                          color: isFast ? const Color(0xFF10B981) : const Color(0xFFF59E0B),
+                          color: isFast
+                              ? const Color(0xFF10B981)
+                              : const Color(0xFFF59E0B),
                         ),
                       ),
                     ],
@@ -235,14 +256,19 @@ class FavoriteClinicCard extends StatelessWidget {
                   icon: const Text('📅', style: TextStyle(fontSize: 13)),
                   label: Text(
                     'Book',
-                    style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w700),
+                    style: GoogleFonts.inter(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: colors.primary,
                     foregroundColor: Colors.white,
                     elevation: 0,
                     padding: const EdgeInsets.symmetric(vertical: 9),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                 ),
               ),
@@ -253,14 +279,19 @@ class FavoriteClinicCard extends StatelessWidget {
                   icon: const Text('🎟️', style: TextStyle(fontSize: 13)),
                   label: Text(
                     'Live Queue',
-                    style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w700),
+                    style: GoogleFonts.inter(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                   style: OutlinedButton.styleFrom(
                     backgroundColor: colors.primaryTint,
                     foregroundColor: colors.primary,
                     side: BorderSide.none,
                     padding: const EdgeInsets.symmetric(vertical: 9),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                 ),
               ),

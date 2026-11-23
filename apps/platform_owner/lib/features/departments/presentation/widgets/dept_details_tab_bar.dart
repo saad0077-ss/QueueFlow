@@ -8,7 +8,13 @@ class DeptDetailsTabBar extends StatelessWidget {
   final int catalogCount;
   final int pendingRequestsCount;
 
-  const DeptDetailsTabBar({super.key, required this.activeTab, required this.onTabChanged, required this.catalogCount, this.pendingRequestsCount = 0});
+  const DeptDetailsTabBar({
+    super.key,
+    required this.activeTab,
+    required this.onTabChanged,
+    required this.catalogCount,
+    this.pendingRequestsCount = 0,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -24,9 +30,21 @@ class DeptDetailsTabBar extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            _tab(context, 0, '🩺', 'Sub-Departments & Services Catalog', catalogCount.toString()),
+            _tab(
+              context,
+              0,
+              '🩺',
+              'Sub-Departments & Services Catalog',
+              catalogCount.toString(),
+            ),
             const SizedBox(width: 14),
-            _tab(context, 1, '📩', 'Clinic Staff Requests', pendingRequestsCount.toString()),
+            _tab(
+              context,
+              1,
+              '📩',
+              'Clinic Staff Requests',
+              pendingRequestsCount.toString(),
+            ),
             const SizedBox(width: 14),
             _tab(context, 2, '⚙️', 'Specialty Rules & Configuration', null),
           ],
@@ -35,7 +53,13 @@ class DeptDetailsTabBar extends StatelessWidget {
     );
   }
 
-  Widget _tab(BuildContext context, int idx, String icon, String title, String? badge) {
+  Widget _tab(
+    BuildContext context,
+    int idx,
+    String icon,
+    String title,
+    String? badge,
+  ) {
     final colors = context.colors;
     final sel = activeTab == idx;
     return InkWell(
@@ -43,7 +67,12 @@ class DeptDetailsTabBar extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.fromLTRB(6, 12, 6, 12),
         decoration: BoxDecoration(
-          border: Border(bottom: BorderSide(color: sel ? colors.primary : Colors.transparent, width: 2.5)),
+          border: Border(
+            bottom: BorderSide(
+              color: sel ? colors.primary : Colors.transparent,
+              width: 2.5,
+            ),
+          ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -52,16 +81,30 @@ class DeptDetailsTabBar extends StatelessWidget {
             const SizedBox(width: 7),
             Text(
               title,
-              style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w700, color: sel ? colors.primary : colors.textMuted),
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: sel ? colors.primary : colors.textMuted,
+              ),
             ),
             if (badge != null) ...[
               const SizedBox(width: 10),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 1.5),
-                decoration: BoxDecoration(color: colors.primary.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(10)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 7,
+                  vertical: 1.5,
+                ),
+                decoration: BoxDecoration(
+                  color: colors.primary.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 child: Text(
                   badge,
-                  style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.bold, color: colors.primary),
+                  style: GoogleFonts.inter(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: colors.primary,
+                  ),
                 ),
               ),
             ],

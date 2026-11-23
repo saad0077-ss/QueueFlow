@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 import 'package:patient_app/features/booking/domain/entities/appointment_entity.dart';
+
 import 'booking_history_card_actions.dart';
 import 'booking_history_card_header.dart';
 import 'booking_slip_sheet.dart';
@@ -71,7 +72,11 @@ class BookingHistoryCard extends StatelessWidget {
             Expanded(
               child: Text(
                 appointment.doctorName,
-                style: TextStyle(fontSize: 12, color: colors.textMuted, fontWeight: FontWeight.w500),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: colors.textMuted,
+                  fontWeight: FontWeight.w500,
+                ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -86,7 +91,11 @@ class BookingHistoryCard extends StatelessWidget {
             Expanded(
               child: Text(
                 appointment.dateTime,
-                style: TextStyle(fontSize: 12, color: colors.textMuted, fontWeight: FontWeight.w500),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: colors.textMuted,
+                  fontWeight: FontWeight.w500,
+                ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -100,7 +109,10 @@ class BookingHistoryCard extends StatelessWidget {
   Widget _buildBookingRef(BuildContext context, dynamic colors) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(color: colors.surfaceSecondary, borderRadius: BorderRadius.circular(8)),
+      decoration: BoxDecoration(
+        color: colors.surfaceSecondary,
+        borderRadius: BorderRadius.circular(8),
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -113,12 +125,17 @@ class BookingHistoryCard extends StatelessWidget {
             ),
           ),
           InkWell(
-            onTap: () => BookingSlipSheet.show(context, appointment: appointment),
+            onTap: () =>
+                BookingSlipSheet.show(context, appointment: appointment),
             child: const Padding(
               padding: EdgeInsets.symmetric(horizontal: 4, vertical: 2),
               child: Text(
                 'Receipt & Slip ↗',
-                style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.primary),
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.primary,
+                ),
               ),
             ),
           ),

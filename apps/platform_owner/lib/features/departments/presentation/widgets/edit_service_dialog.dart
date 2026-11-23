@@ -14,7 +14,12 @@ class EditServiceDialog extends StatefulWidget {
   final List<StandardServiceEntity> existingServices;
   final Future<void> Function(StandardServiceEntity) onSave;
 
-  const EditServiceDialog({super.key, required this.service, required this.existingServices, required this.onSave});
+  const EditServiceDialog({
+    super.key,
+    required this.service,
+    required this.existingServices,
+    required this.onSave,
+  });
 
   static Future<void> show(
     BuildContext context, {
@@ -24,7 +29,11 @@ class EditServiceDialog extends StatefulWidget {
   }) {
     return showDialog(
       context: context,
-      builder: (_) => EditServiceDialog(service: service, existingServices: existingServices, onSave: onSave),
+      builder: (_) => EditServiceDialog(
+        service: service,
+        existingServices: existingServices,
+        onSave: onSave,
+      ),
     );
   }
 
@@ -34,9 +43,15 @@ class EditServiceDialog extends StatefulWidget {
 
 class _EditServiceDialogState extends State<EditServiceDialog> {
   late final _nameCtrl = TextEditingController(text: widget.service.name);
-  late final _durationCtrl = TextEditingController(text: widget.service.duration.toString());
-  late final _priceCtrl = TextEditingController(text: widget.service.suggestedPrice.toString());
-  late final _descCtrl = TextEditingController(text: widget.service.description);
+  late final _durationCtrl = TextEditingController(
+    text: widget.service.duration.toString(),
+  );
+  late final _priceCtrl = TextEditingController(
+    text: widget.service.suggestedPrice.toString(),
+  );
+  late final _descCtrl = TextEditingController(
+    text: widget.service.description,
+  );
   bool _isSaving = false;
   String? _error;
 
@@ -64,7 +79,13 @@ class _EditServiceDialogState extends State<EditServiceDialog> {
             color: colors.surfaceElevated,
             borderRadius: BorderRadius.circular(22),
             border: Border.all(color: colors.border),
-            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.5), blurRadius: 40, offset: const Offset(0, 16))],
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.5),
+                blurRadius: 40,
+                offset: const Offset(0, 16),
+              ),
+            ],
           ),
           child: SingleChildScrollView(
             child: Column(
@@ -76,14 +97,22 @@ class _EditServiceDialogState extends State<EditServiceDialog> {
                   children: [
                     Text(
                       'Edit Procedure / Service',
-                      style: GoogleFonts.inter(fontSize: 17.5, fontWeight: FontWeight.w800, color: colors.textPrimary),
+                      style: GoogleFonts.inter(
+                        fontSize: 17.5,
+                        fontWeight: FontWeight.w800,
+                        color: colors.textPrimary,
+                      ),
                     ),
                     InkWell(
                       onTap: () => Navigator.pop(context),
                       borderRadius: BorderRadius.circular(6),
                       child: Padding(
                         padding: const EdgeInsets.all(4),
-                        child: Icon(Icons.close_rounded, size: 16, color: colors.textMuted),
+                        child: Icon(
+                          Icons.close_rounded,
+                          size: 16,
+                          color: colors.textMuted,
+                        ),
                       ),
                     ),
                   ],
@@ -91,7 +120,10 @@ class _EditServiceDialogState extends State<EditServiceDialog> {
                 const SizedBox(height: 16),
                 SpecialtyLabeled(
                   label: 'Procedure / Service Name',
-                  child: SpecialtyTextInput(controller: _nameCtrl, hint: 'e.g. Root Canal Therapy'),
+                  child: SpecialtyTextInput(
+                    controller: _nameCtrl,
+                    hint: 'e.g. Root Canal Therapy',
+                  ),
                 ),
                 const SizedBox(height: 14),
                 Row(
@@ -100,14 +132,20 @@ class _EditServiceDialogState extends State<EditServiceDialog> {
                     Expanded(
                       child: SpecialtyLabeled(
                         label: 'Standard Duration (Mins)',
-                        child: SpecialtyTextInput(controller: _durationCtrl, hint: '30'),
+                        child: SpecialtyTextInput(
+                          controller: _durationCtrl,
+                          hint: '30',
+                        ),
                       ),
                     ),
                     const SizedBox(width: 14),
                     Expanded(
                       child: SpecialtyLabeled(
                         label: 'Suggested Baseline Fee (₹)',
-                        child: SpecialtyTextInput(controller: _priceCtrl, hint: '500'),
+                        child: SpecialtyTextInput(
+                          controller: _priceCtrl,
+                          hint: '500',
+                        ),
                       ),
                     ),
                   ],
@@ -115,14 +153,25 @@ class _EditServiceDialogState extends State<EditServiceDialog> {
                 const SizedBox(height: 14),
                 SpecialtyLabeled(
                   label: 'Clinical Description, Preparation & Scope',
-                  child: SpecialtyTextInput(controller: _descCtrl, hint: 'Clinical scope and preparation...', minLines: 2, maxLines: 4),
+                  child: SpecialtyTextInput(
+                    controller: _descCtrl,
+                    hint: 'Clinical scope and preparation...',
+                    minLines: 2,
+                    maxLines: 4,
+                  ),
                 ),
-                if (_error != null) ...[const SizedBox(height: 16), FormErrorText(_error!)],
+                if (_error != null) ...[
+                  const SizedBox(height: 16),
+                  FormErrorText(_error!),
+                ],
                 const SizedBox(height: 22),
                 Row(
                   children: [
                     Expanded(
-                      child: OutlinePillButton(label: 'Cancel', onPressed: () => Navigator.pop(context)),
+                      child: OutlinePillButton(
+                        label: 'Cancel',
+                        onPressed: () => Navigator.pop(context),
+                      ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -130,7 +179,10 @@ class _EditServiceDialogState extends State<EditServiceDialog> {
                         label: 'Save Changes',
                         loading: _isSaving,
                         glow: true,
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 13),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 13,
+                        ),
                         onPressed: _submit,
                       ),
                     ),
@@ -148,9 +200,13 @@ class _EditServiceDialogState extends State<EditServiceDialog> {
     final name = _nameCtrl.text.trim().replaceAll(RegExp(r'\s+'), ' ');
     final error = name.isEmpty
         ? 'Procedure / service name is required.'
-        : widget.existingServices.any((s) => s.id != widget.service.id && catalogKey(s.name) == catalogKey(name))
-            ? '"$name" already exists in this department\'s catalog.'
-            : null;
+        : widget.existingServices.any(
+            (s) =>
+                s.id != widget.service.id &&
+                catalogKey(s.name) == catalogKey(name),
+          )
+        ? '"$name" already exists in this department\'s catalog.'
+        : null;
     setState(() => _error = error);
     if (error != null) return;
     setState(() => _isSaving = true);
@@ -158,9 +214,14 @@ class _EditServiceDialogState extends State<EditServiceDialog> {
       StandardServiceEntity(
         id: widget.service.id,
         name: name,
-        duration: int.tryParse(_durationCtrl.text.trim()) ?? widget.service.duration,
-        suggestedPrice: int.tryParse(_priceCtrl.text.trim()) ?? widget.service.suggestedPrice,
-        description: _descCtrl.text.trim().isNotEmpty ? _descCtrl.text.trim() : '$name standard clinical procedure.',
+        duration:
+            int.tryParse(_durationCtrl.text.trim()) ?? widget.service.duration,
+        suggestedPrice:
+            int.tryParse(_priceCtrl.text.trim()) ??
+            widget.service.suggestedPrice,
+        description: _descCtrl.text.trim().isNotEmpty
+            ? _descCtrl.text.trim()
+            : '$name standard clinical procedure.',
       ),
     );
     if (mounted) Navigator.pop(context);

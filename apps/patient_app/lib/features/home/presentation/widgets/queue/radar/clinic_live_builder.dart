@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../../domain/entities/clinic_entity.dart';
 import '../models/live_clinic_queue_info.dart';
-import 'clinic_live_cubit.dart';
+import 'clinic_live_bloc.dart';
 
 class ClinicLiveBuilder extends StatelessWidget {
   final ClinicEntity clinic;
@@ -17,10 +18,8 @@ class ClinicLiveBuilder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => ClinicLiveCubit(clinic),
-      child: BlocBuilder<ClinicLiveCubit, LiveInfo>(
-        builder: builder,
-      ),
+      create: (_) => ClinicLiveBloc(clinic),
+      child: BlocBuilder<ClinicLiveBloc, LiveInfo>(builder: builder),
     );
   }
 }

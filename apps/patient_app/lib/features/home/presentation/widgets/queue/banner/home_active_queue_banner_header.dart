@@ -9,13 +9,8 @@ class HomeActiveQueueBannerHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 18,
-        vertical: 12,
-      ),
-      decoration: const BoxDecoration(
-        gradient: AppColors.primaryGradient,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+      decoration: const BoxDecoration(gradient: AppColors.primaryGradient),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

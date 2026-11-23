@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../../domain/entities/active_ticket_entity.dart';
 import 'active_ticket_bottom_row.dart';
 import 'active_ticket_metric_box.dart';
@@ -129,8 +130,8 @@ class ActiveTicketHeroCard extends StatelessWidget {
             value: isCalled
                 ? 'Your turn!'
                 : ticket.position <= 0
-                    ? "You're next!"
-                    : '${ticket.position}',
+                ? "You're next!"
+                : '${ticket.position}',
             label: 'Ahead of you',
             isCompact: ticket.position <= 0 || isCalled,
           ),

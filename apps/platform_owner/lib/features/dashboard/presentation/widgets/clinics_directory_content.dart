@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../../core/utils/pdf_exporter.dart';
 import '../../data/repositories/tenant_repository_impl.dart';
@@ -43,13 +44,21 @@ class ClinicsDirectoryContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: EdgeInsets.symmetric(horizontal: isDesktop ? 24.0 : 14.0, vertical: 20.0),
+      padding: EdgeInsets.symmetric(
+        horizontal: isDesktop ? 24.0 : 14.0,
+        vertical: 20.0,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClinicsHeaderBar(
-            onExportPdf: () => PdfExporter.exportClinics(context, state.filteredClinics, appointments),
-            onRefresh: () => AppSnackBar.showSuccess(context, message: 'Clinics refreshed.'),
+            onExportPdf: () => PdfExporter.exportClinics(
+              context,
+              state.filteredClinics,
+              appointments,
+            ),
+            onRefresh: () =>
+                AppSnackBar.showSuccess(context, message: 'Clinics refreshed.'),
             onOnboard: () => OnboardClinicModal.show(context),
             activeCount: state.activePractices,
             totalCount: state.totalClinics,
@@ -60,7 +69,10 @@ class ClinicsDirectoryContent extends StatelessWidget {
             activePractices: state.activePractices,
             invitedClinics: state.invitedClinics,
             totalDoctors: state.totalDoctors,
-            appointmentsMonth: state.allClinics.fold(0, (total, c) => total + (appointments[c.id] ?? 0)),
+            appointmentsMonth: state.allClinics.fold(
+              0,
+              (total, c) => total + (appointments[c.id] ?? 0),
+            ),
             totalMrr: state.totalMrr,
           ),
           const SizedBox(height: 18),
@@ -70,10 +82,18 @@ class ClinicsDirectoryContent extends StatelessWidget {
             selectedStatus: state.selectedStatusFilter,
             count: state.filteredClinics.length,
             total: state.totalClinics,
-            onSearch: (q) => context.read<ClinicsDirectoryBloc>().add(ClinicsSearchQueryChanged(q)),
-            onPlanChanged: (p) => context.read<ClinicsDirectoryBloc>().add(ClinicsPlanFilterChanged(p)),
-            onStatusChanged: (s) => context.read<ClinicsDirectoryBloc>().add(ClinicsStatusFilterChanged(s)),
-            onReset: () => context.read<ClinicsDirectoryBloc>().add(const ClinicsResetFilters()),
+            onSearch: (q) => context.read<ClinicsDirectoryBloc>().add(
+              ClinicsSearchQueryChanged(q),
+            ),
+            onPlanChanged: (p) => context.read<ClinicsDirectoryBloc>().add(
+              ClinicsPlanFilterChanged(p),
+            ),
+            onStatusChanged: (s) => context.read<ClinicsDirectoryBloc>().add(
+              ClinicsStatusFilterChanged(s),
+            ),
+            onReset: () => context.read<ClinicsDirectoryBloc>().add(
+              const ClinicsResetFilters(),
+            ),
           ),
           const SizedBox(height: 18),
           ClinicsDataTable(
@@ -91,13 +111,30 @@ class ClinicsDirectoryContent extends StatelessWidget {
                   if (reason == null) return; // cancelled
                 }
                 await repo.toggleStatus(c.id, c.isActive, reason: reason);
-                if (context.mounted) AppSnackBar.showSuccess(context, message: c.isActive ? 'Clinic paused.' : 'Clinic activated.');
+                if (context.mounted) {
+                  AppSnackBar.showSuccess(
+                    context,
+                    message: c.isActive
+                        ? 'Clinic paused.'
+                        : 'Clinic activated.',
+                  );
+                }
               } catch (e) {
-                if (context.mounted) AppSnackBar.showWarning(context, message: e.toString().replaceFirst('Exception: ', ''));
+                if (context.mounted) {
+                  AppSnackBar.showWarning(
+                    context,
+                    message: e.toString().replaceFirst('Exception: ', ''),
+                  );
+                }
               }
             },
             onResendInvite: onResendInvite,
-            onDelete: (c) => DeleteClinicDialog.show(context, c, repo, onDeleted: onClinicDeleted),
+            onDelete: (c) => DeleteClinicDialog.show(
+              context,
+              c,
+              repo,
+              onDeleted: onClinicDeleted,
+            ),
           ),
         ],
       ),

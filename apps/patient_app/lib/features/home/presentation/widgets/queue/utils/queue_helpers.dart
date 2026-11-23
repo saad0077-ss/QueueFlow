@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../../../../../../core/widgets/app_snack_bar.dart';
 import '../../../../domain/entities/clinic_entity.dart';
 
 FirebaseFirestore? safeFirestore() {
@@ -19,11 +21,7 @@ FirebaseAuth? safeAuth() {
   return null;
 }
 
-Future<void> openGoogleMaps(
-  BuildContext context,
-  ClinicEntity clinic,
-) async {
-  final messenger = ScaffoldMessenger.of(context);
+Future<void> openGoogleMaps(BuildContext context, ClinicEntity clinic) async {
   final address = clinic.address;
   final query = [
     clinic.name,
@@ -37,13 +35,21 @@ Future<void> openGoogleMaps(
   });
   try {
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
-      messenger.showSnackBar(
-        const SnackBar(content: Text('Could not open Google Maps')),
-      );
+      if (context.mounted) {
+        AppSnackBar.showError(
+          context,
+          title: 'Navigation Error',
+          message: 'Could not open Google Maps.',
+        );
+      }
     }
   } catch (_) {
-    messenger.showSnackBar(
-      const SnackBar(content: Text('Could not open Google Maps')),
-    );
+    if (context.mounted) {
+      AppSnackBar.showError(
+        context,
+        title: 'Navigation Error',
+        message: 'Could not open Google Maps.',
+      );
+    }
   }
 }

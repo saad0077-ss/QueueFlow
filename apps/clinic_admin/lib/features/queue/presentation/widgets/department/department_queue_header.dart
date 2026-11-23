@@ -46,7 +46,9 @@ class DepartmentQueueHeader extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: colors.primaryTint,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: colors.primary.withValues(alpha: 0.15)),
+                    border: Border.all(
+                      color: colors.primary.withValues(alpha: 0.15),
+                    ),
                   ),
                   alignment: Alignment.center,
                   child: Text(
@@ -76,13 +78,18 @@ class DepartmentQueueHeader extends StatelessWidget {
                           ),
                           const SizedBox(width: 8),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 7,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
                               color: colors.primaryTint,
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
-                              department.code.isNotEmpty ? department.code : 'DEPT',
+                              department.code.isNotEmpty
+                                  ? department.code
+                                  : 'DEPT',
                               style: GoogleFonts.inter(
                                 fontSize: 10.5,
                                 fontWeight: FontWeight.w800,

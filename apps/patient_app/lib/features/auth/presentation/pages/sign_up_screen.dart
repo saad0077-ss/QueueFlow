@@ -43,6 +43,11 @@ class _SignUpView extends StatelessWidget {
         child: BlocConsumer<SignUpBloc, SignUpState>(
           listener: (context, state) {
             if (state.user != null) {
+              AppSnackBar.showSuccess(
+                context,
+                title: 'Account Created',
+                message: 'Your QueueFlow account is created! Please verify your email.',
+              );
               Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
                   builder: (_) =>

@@ -16,7 +16,12 @@ class AddDepartmentModal extends StatefulWidget {
   final List<DepartmentEntity> existingDepartments;
   final DepartmentEntity? initial;
 
-  const AddDepartmentModal({super.key, required this.onSave, this.existingDepartments = const [], this.initial});
+  const AddDepartmentModal({
+    super.key,
+    required this.onSave,
+    this.existingDepartments = const [],
+    this.initial,
+  });
 
   static Future<void> show(
     BuildContext context,
@@ -26,7 +31,11 @@ class AddDepartmentModal extends StatefulWidget {
   }) {
     return showDialog(
       context: context,
-      builder: (_) => AddDepartmentModal(onSave: onSave, existingDepartments: existingDepartments, initial: initial),
+      builder: (_) => AddDepartmentModal(
+        onSave: onSave,
+        existingDepartments: existingDepartments,
+        initial: initial,
+      ),
     );
   }
 
@@ -35,10 +44,18 @@ class AddDepartmentModal extends StatefulWidget {
 }
 
 class _AddDepartmentModalState extends State<AddDepartmentModal> {
-  late final _nameCtrl = TextEditingController(text: widget.initial?.name ?? '');
-  late final _codeCtrl = TextEditingController(text: widget.initial?.code ?? '');
-  late final _durationCtrl = TextEditingController(text: widget.initial?.avgConsultationTime ?? '20 mins');
-  late final _descCtrl = TextEditingController(text: widget.initial?.description ?? '');
+  late final _nameCtrl = TextEditingController(
+    text: widget.initial?.name ?? '',
+  );
+  late final _codeCtrl = TextEditingController(
+    text: widget.initial?.code ?? '',
+  );
+  late final _durationCtrl = TextEditingController(
+    text: widget.initial?.avgConsultationTime ?? '20 mins',
+  );
+  late final _descCtrl = TextEditingController(
+    text: widget.initial?.description ?? '',
+  );
   final _servicesCtrl = TextEditingController();
   late String _icon = widget.initial?.icon ?? '🩺';
   late String _color = widget.initial?.color ?? '#2563EB';
@@ -72,7 +89,13 @@ class _AddDepartmentModalState extends State<AddDepartmentModal> {
             color: colors.surfaceElevated,
             borderRadius: BorderRadius.circular(22),
             border: Border.all(color: colors.border),
-            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.35), blurRadius: 40, offset: const Offset(0, 16))],
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.35),
+                blurRadius: 40,
+                offset: const Offset(0, 16),
+              ),
+            ],
           ),
           child: SingleChildScrollView(
             child: Column(
@@ -93,7 +116,10 @@ class _AddDepartmentModalState extends State<AddDepartmentModal> {
                   onIconChanged: (v) => setState(() => _icon = v),
                   onColorChanged: (v) => setState(() => _color = v),
                 ),
-                if (_error != null) ...[const SizedBox(height: 16), FormErrorText(_error!)],
+                if (_error != null) ...[
+                  const SizedBox(height: 16),
+                  FormErrorText(_error!),
+                ],
                 const SizedBox(height: 22),
                 _buildButtons(),
               ],
@@ -110,7 +136,11 @@ class _AddDepartmentModalState extends State<AddDepartmentModal> {
       children: [
         Text(
           _isEdit ? 'Edit Medical Department' : 'Add Medical Department',
-          style: GoogleFonts.inter(fontSize: 17.5, fontWeight: FontWeight.w800, color: colors.textPrimary),
+          style: GoogleFonts.inter(
+            fontSize: 17.5,
+            fontWeight: FontWeight.w800,
+            color: colors.textPrimary,
+          ),
         ),
         InkWell(
           onTap: () => Navigator.pop(context),
@@ -128,7 +158,10 @@ class _AddDepartmentModalState extends State<AddDepartmentModal> {
     return Row(
       children: [
         Expanded(
-          child: OutlinePillButton(label: 'Cancel', onPressed: () => Navigator.pop(context)),
+          child: OutlinePillButton(
+            label: 'Cancel',
+            onPressed: () => Navigator.pop(context),
+          ),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -146,21 +179,33 @@ class _AddDepartmentModalState extends State<AddDepartmentModal> {
 
   /// Returns an error message when the form would create a duplicate, else null.
   String? _validate(String name, String code, List<String> serviceNames) {
-    if (name.isEmpty || code.isEmpty) return 'Department name and code are required.';
+    if (name.isEmpty || code.isEmpty) {
+      return 'Department name and code are required.';
+    }
     for (final d in widget.existingDepartments) {
       if (d.id == widget.initial?.id) continue;
-      if (catalogKey(d.name) == catalogKey(name)) return 'A department named "${d.name}" already exists.';
-      if (catalogKey(d.code) == catalogKey(code)) return 'Code "${d.code}" is already used by ${d.name}.';
+      if (catalogKey(d.name) == catalogKey(name)) {
+        return 'A department named "${d.name}" already exists.';
+      }
+      if (catalogKey(d.code) == catalogKey(code)) {
+        return 'Code "${d.code}" is already used by ${d.name}.';
+      }
     }
     final dupService = firstDuplicateName(serviceNames);
-    if (dupService != null) return 'Service "$dupService" is listed more than once.';
+    if (dupService != null) {
+      return 'Service "$dupService" is listed more than once.';
+    }
     return null;
   }
 
   void _submit() async {
     final name = _nameCtrl.text.trim().replaceAll(RegExp(r'\s+'), ' ');
     final code = _codeCtrl.text.trim().toUpperCase();
-    final serviceNames = _servicesCtrl.text.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty).toList();
+    final serviceNames = _servicesCtrl.text
+        .split(',')
+        .map((s) => s.trim())
+        .where((s) => s.isNotEmpty)
+        .toList();
     final error = _validate(name, code, serviceNames);
     setState(() => _error = error);
     if (error != null) return;

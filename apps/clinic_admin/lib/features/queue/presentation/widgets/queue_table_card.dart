@@ -42,17 +42,41 @@ class QueueTableCard extends StatelessWidget {
 
     if (hasCalled) {
       return hasWaiting
-          ? (label: 'Call Next', icon: Icons.arrow_forward_rounded, enabled: true)
-          : (label: 'Complete & Close Queue', icon: Icons.done_all_rounded, enabled: true);
+          ? (
+              label: 'Call Next',
+              icon: Icons.arrow_forward_rounded,
+              enabled: true,
+            )
+          : (
+              label: 'Complete & Close Queue',
+              icon: Icons.done_all_rounded,
+              enabled: true,
+            );
     }
     if (hasWaiting) {
       return doneToday
-          ? (label: 'Call Next', icon: Icons.arrow_forward_rounded, enabled: true)
-          : (label: 'Start Consulting', icon: Icons.play_arrow_rounded, enabled: true);
+          ? (
+              label: 'Call Next',
+              icon: Icons.arrow_forward_rounded,
+              enabled: true,
+            )
+          : (
+              label: 'Start Consulting',
+              icon: Icons.play_arrow_rounded,
+              enabled: true,
+            );
     }
     return doneToday
-        ? (label: 'Queue Closed', icon: Icons.lock_outline_rounded, enabled: false)
-        : (label: 'Start Consulting', icon: Icons.play_arrow_rounded, enabled: false);
+        ? (
+            label: 'Queue Closed',
+            icon: Icons.lock_outline_rounded,
+            enabled: false,
+          )
+        : (
+            label: 'Start Consulting',
+            icon: Icons.play_arrow_rounded,
+            enabled: false,
+          );
   }
 
   @override

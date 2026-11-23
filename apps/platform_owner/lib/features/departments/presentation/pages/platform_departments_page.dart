@@ -7,6 +7,7 @@ import '../../../dashboard/presentation/widgets/console_sidebar.dart';
 import '../../../dashboard/presentation/widgets/console_top_bar.dart';
 import '../../../billing/presentation/pages/platform_billing_page.dart';
 import '../../../users/presentation/pages/platform_users_page.dart';
+import '../../../tickets/presentation/pages/platform_support_tickets_page.dart';
 import '../../data/repositories/department_repository_impl.dart';
 import '../../domain/entities/department_entity.dart';
 import '../bloc/departments_bloc.dart';
@@ -19,7 +20,10 @@ class PlatformDepartmentsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(create: (_) => DepartmentsBloc(), child: const _PlatformDepartmentsView());
+    return BlocProvider(
+      create: (_) => DepartmentsBloc(),
+      child: const _PlatformDepartmentsView(),
+    );
   }
 }
 
@@ -27,7 +31,8 @@ class _PlatformDepartmentsView extends StatefulWidget {
   const _PlatformDepartmentsView();
 
   @override
-  State<_PlatformDepartmentsView> createState() => _PlatformDepartmentsViewState();
+  State<_PlatformDepartmentsView> createState() =>
+      _PlatformDepartmentsViewState();
 }
 
 class _PlatformDepartmentsViewState extends State<_PlatformDepartmentsView> {
@@ -35,7 +40,7 @@ class _PlatformDepartmentsViewState extends State<_PlatformDepartmentsView> {
   DepartmentEntity? _selectedDepartment;
 
   @override
-  void initState() {             
+  void initState() {
     super.initState();
     _repo.seedDepartmentsIfEmpty();
     _repo.purgeSampleRequests();
@@ -43,11 +48,37 @@ class _PlatformDepartmentsViewState extends State<_PlatformDepartmentsView> {
 
   void _onSidebarNav(int index) {
     if (index == 0) {
-      Navigator.pushReplacement(context, PageRouteBuilder(pageBuilder: (_, _, _) => const PlatformClinicsPage(), transitionDuration: Duration.zero));
+      Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (_, _, _) => const PlatformClinicsPage(),
+          transitionDuration: Duration.zero,
+        ),
+      );
     } else if (index == 2) {
-      Navigator.pushReplacement(context, PageRouteBuilder(pageBuilder: (_, _, _) => const PlatformUsersPage(), transitionDuration: Duration.zero));
+      Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (_, _, _) => const PlatformUsersPage(),
+          transitionDuration: Duration.zero,
+        ),
+      );
+    } else if (index == 3) {
+      Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (_, _, _) => const PlatformSupportTicketsPage(),
+          transitionDuration: Duration.zero,
+        ),
+      );
     } else if (index == 4) {
-      Navigator.pushReplacement(context, PageRouteBuilder(pageBuilder: (_, _, _) => const PlatformBillingPage(), transitionDuration: Duration.zero));
+      Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (_, _, _) => const PlatformBillingPage(),
+          transitionDuration: Duration.zero,
+        ),
+      );
     }
   }
 
@@ -59,28 +90,48 @@ class _PlatformDepartmentsViewState extends State<_PlatformDepartmentsView> {
 
     return Scaffold(
       backgroundColor: colors.background,
-      drawer: isDesktop ? null : Drawer(child: ConsoleSidebar(activeIndex: 1, onIndexChanged: _onSidebarNav)),
+      drawer: isDesktop
+          ? null
+          : Drawer(
+              child: ConsoleSidebar(
+                activeIndex: 1,
+                onIndexChanged: _onSidebarNav,
+              ),
+            ),
       body: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (isDesktop) ConsoleSidebar(activeIndex: 1, onIndexChanged: _onSidebarNav),
+          if (isDesktop)
+            ConsoleSidebar(activeIndex: 1, onIndexChanged: _onSidebarNav),
           Expanded(
             child: Builder(
               builder: (ctx) {
                 if (_selectedDepartment != null) {
-                  return DepartmentDetailsPage(department: _selectedDepartment!, repository: _repo, onBack: () => setState(() => _selectedDepartment = null));
+                  return DepartmentDetailsPage(
+                    department: _selectedDepartment!,
+                    repository: _repo,
+                    onBack: () => setState(() => _selectedDepartment = null),
+                  );
                 }
 
                 return Column(
                   children: [
                     ConsoleTopBar(
-                      onMenuPressed: isDesktop ? null : () => Scaffold.of(ctx).openDrawer(),
-                      onSearch: (q) => ctx.read<DepartmentsBloc>().add(DepartmentSearchQueryChanged(q)),
+                      onMenuPressed: isDesktop
+                          ? null
+                          : () => Scaffold.of(ctx).openDrawer(),
+                      onSearch: (q) => ctx.read<DepartmentsBloc>().add(
+                        DepartmentSearchQueryChanged(q),
+                      ),
                     ),
                     Expanded(
                       child: _StreamListener(
                         repo: _repo,
-                        child: DeptContentView(repository: _repo, onDetails: (d) => setState(() => _selectedDepartment = d)),
+                        child: DeptContentView(
+                          repository: _repo,
+                          onDetails: (d) =>
+                              setState(() => _selectedDepartment = d),
+                        ),
                       ),
                     ),
                   ],
@@ -106,19 +157,25 @@ class _StreamListener extends StatelessWidget {
       stream: repo.watchDepartments(),
       builder: (context, dSnap) {
         if (dSnap.hasData && dSnap.data != null) {
-          context.read<DepartmentsBloc>().add(DepartmentsListUpdated(dSnap.data!));
+          context.read<DepartmentsBloc>().add(
+            DepartmentsListUpdated(dSnap.data!),
+          );
         }
         return StreamBuilder(
           stream: repo.watchExpansionRequests(),
           builder: (context, eSnap) {
             if (eSnap.hasData && eSnap.data != null) {
-              context.read<DepartmentsBloc>().add(ExpansionRequestsUpdated(eSnap.data!));
+              context.read<DepartmentsBloc>().add(
+                ExpansionRequestsUpdated(eSnap.data!),
+              );
             }
             return StreamBuilder(
               stream: repo.watchServiceRequests(),
               builder: (context, sSnap) {
                 if (sSnap.hasData && sSnap.data != null) {
-                  context.read<DepartmentsBloc>().add(ServiceRequestsUpdated(sSnap.data!));
+                  context.read<DepartmentsBloc>().add(
+                    ServiceRequestsUpdated(sSnap.data!),
+                  );
                 }
                 return child;
               },

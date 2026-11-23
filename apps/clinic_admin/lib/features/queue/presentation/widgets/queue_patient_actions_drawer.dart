@@ -105,7 +105,10 @@ class QueuePatientActionsDrawer extends StatelessWidget {
                   icon: const Icon(Icons.close_rounded, size: 20),
                   color: colors.textMuted,
                   padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                  constraints: const BoxConstraints(
+                    minWidth: 32,
+                    minHeight: 32,
+                  ),
                 ),
               ],
             ),

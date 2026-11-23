@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../domain/entities/tenant_clinic_entity.dart';
 
 class StatMetricBox extends StatelessWidget {
@@ -76,20 +77,60 @@ class FacilityInfoCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _row(colors, Icons.location_on_outlined, 'Facility Address:', clinic.address),
-          _row(colors, Icons.person_outline_rounded, 'Medical Director:', '${clinic.adminName} (${clinic.adminEmail})'),
+          _row(
+            colors,
+            Icons.location_on_outlined,
+            'Facility Address:',
+            clinic.address,
+          ),
+          _row(
+            colors,
+            Icons.person_outline_rounded,
+            'Medical Director:',
+            '${clinic.adminName} (${clinic.adminEmail})',
+          ),
           _row(colors, Icons.phone_outlined, 'Phone Contact:', clinic.phone),
-          _row(colors, Icons.access_time_rounded, 'Operating Hours:', clinic.operatingHours),
-          _row(colors, Icons.medical_services_outlined, 'Doctor Capacity:', '${clinic.practicingDoctors} Doctors active'),
-          _row(colors, Icons.confirmation_number_outlined, 'Live Queue Activity:', '${clinic.queueStatus} • Token ${clinic.servingToken} (Avg: ${clinic.avgWaitTime})'),
-          _row(colors, Icons.star_rounded, 'Patient Reviews:', '★ ${clinic.rating} / 5.0 (Patient Rating)'),
-          _row(colors, Icons.calendar_today_outlined, 'Monthly Appointments:', '${clinic.monthlyVisits} visits this month'),
+          _row(
+            colors,
+            Icons.access_time_rounded,
+            'Operating Hours:',
+            clinic.operatingHours,
+          ),
+          _row(
+            colors,
+            Icons.medical_services_outlined,
+            'Doctor Capacity:',
+            '${clinic.practicingDoctors} Doctors active',
+          ),
+          _row(
+            colors,
+            Icons.confirmation_number_outlined,
+            'Live Queue Activity:',
+            '${clinic.queueStatus} • Token ${clinic.servingToken} (Avg: ${clinic.avgWaitTime})',
+          ),
+          _row(
+            colors,
+            Icons.star_rounded,
+            'Patient Reviews:',
+            '★ ${clinic.rating} / 5.0 (Patient Rating)',
+          ),
+          _row(
+            colors,
+            Icons.calendar_today_outlined,
+            'Monthly Appointments:',
+            '${clinic.monthlyVisits} visits this month',
+          ),
         ],
       ),
     );
   }
 
-  static Widget _row(AppColorsExtension colors, IconData icon, String label, String value) {
+  static Widget _row(
+    AppColorsExtension colors,
+    IconData icon,
+    String label,
+    String value,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -148,7 +189,11 @@ class DoctorRosterTile extends StatelessWidget {
           CircleAvatar(
             radius: 14,
             backgroundColor: colors.primaryTint,
-            child: Icon(Icons.person_rounded, size: 16, color: colors.primaryLight),
+            child: Icon(
+              Icons.person_rounded,
+              size: 16,
+              color: colors.primaryLight,
+            ),
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -176,9 +221,7 @@ class DoctorRosterTile extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
             decoration: BoxDecoration(
-              color: doc.isAvailable
-                  ? colors.badgeOpenBg
-                  : colors.warningTint,
+              color: doc.isAvailable ? colors.badgeOpenBg : colors.warningTint,
               borderRadius: BorderRadius.circular(4),
               border: Border.all(
                 color: doc.isAvailable

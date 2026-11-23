@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 import 'package:patient_app/features/booking/domain/entities/appointment_entity.dart';
+
 import 'booking_history_status_pill.dart';
 
 class BookingHistoryCardHeader extends StatelessWidget {
@@ -47,7 +48,10 @@ class BookingHistoryCardHeader extends StatelessWidget {
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1.5),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 1.5,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(4),
@@ -94,7 +98,9 @@ class BookingHistoryCardHeader extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
-                  color: isPaid ? const Color(0xFF10B981) : const Color(0xFFF59E0B),
+                  color: isPaid
+                      ? const Color(0xFF10B981)
+                      : const Color(0xFFF59E0B),
                 ),
               ),
             ),

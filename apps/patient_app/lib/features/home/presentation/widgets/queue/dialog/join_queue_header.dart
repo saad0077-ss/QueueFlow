@@ -31,11 +31,7 @@ class JoinQueueHeader extends StatelessWidget {
               ),
             ],
           ),
-          child: const Icon(
-            Icons.bolt_rounded,
-            color: Colors.white,
-            size: 28,
-          ),
+          child: const Icon(Icons.bolt_rounded, color: Colors.white, size: 28),
         ),
         const SizedBox(height: 16),
         Text(

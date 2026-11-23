@@ -6,12 +6,16 @@ class PlatformUsersHeaderBar extends StatelessWidget {
   final int totalCount;
   final VoidCallback onRefresh;
   final VoidCallback onExport;
+  final VoidCallback? onBroadcast;
+  final VoidCallback? onRegisterUser;
 
   const PlatformUsersHeaderBar({
     super.key,
     required this.totalCount,
     required this.onRefresh,
     required this.onExport,
+    this.onBroadcast,
+    this.onRegisterUser,
   });
 
   @override
@@ -20,7 +24,7 @@ class PlatformUsersHeaderBar extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final isMobile = constraints.maxWidth < 650;
+        final isMobile = constraints.maxWidth < 980;
 
         final titleCol = Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -28,7 +32,10 @@ class PlatformUsersHeaderBar extends StatelessWidget {
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFF10B981).withAlpha(30),
                     borderRadius: BorderRadius.circular(6),
@@ -45,13 +52,16 @@ class PlatformUsersHeaderBar extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   '$totalCount Registered Users',
-                  style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted),
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    color: colors.textMuted,
+                  ),
                 ),
               ],
             ),
             const SizedBox(height: 6),
             Text(
-              'Platform Users',
+              'Users',
               style: GoogleFonts.inter(
                 fontSize: 22,
                 fontWeight: FontWeight.w800,
@@ -74,36 +84,100 @@ class PlatformUsersHeaderBar extends StatelessWidget {
             OutlinedButton.icon(
               onPressed: onExport,
               icon: const Icon(Icons.download_rounded, size: 16),
-              label: Text('Export CSV', style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600)),
+              label: Text(
+                'Export CSV',
+                style: GoogleFonts.inter(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
               style: OutlinedButton.styleFrom(
                 foregroundColor: colors.textPrimary,
                 side: BorderSide(color: colors.border),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 11,
+                ),
               ),
             ),
             OutlinedButton.icon(
               onPressed: onRefresh,
               icon: const Icon(Icons.refresh_rounded, size: 16),
-              label: Text('Refresh', style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w600)),
+              label: Text(
+                'Refresh',
+                style: GoogleFonts.inter(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
               style: OutlinedButton.styleFrom(
                 foregroundColor: colors.textPrimary,
                 side: BorderSide(color: colors.border),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 11,
+                ),
               ),
             ),
+            if (onBroadcast != null)
+              OutlinedButton.icon(
+                onPressed: onBroadcast,
+                icon: const Icon(Icons.campaign_outlined, size: 16),
+                label: Text(
+                  'Broadcast',
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: colors.textPrimary,
+                  side: BorderSide(color: colors.border),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 11,
+                  ),
+                ),
+              ),
+            if (onRegisterUser != null)
+              ElevatedButton.icon(
+                onPressed: onRegisterUser,
+                icon: const Icon(Icons.person_add_rounded, size: 16),
+                label: Text(
+                  'Add Patient',
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF2563EB),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 11,
+                  ),
+                ),
+              ),
           ],
         );
 
         if (isMobile) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              titleCol,
-              const SizedBox(height: 14),
-              actionsRow,
-            ],
+            children: [titleCol, const SizedBox(height: 14), actionsRow],
           );
         }
 

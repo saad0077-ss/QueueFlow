@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../../domain/entities/active_ticket_entity.dart';
 
 class HomeActiveQueueBannerBody extends StatelessWidget {

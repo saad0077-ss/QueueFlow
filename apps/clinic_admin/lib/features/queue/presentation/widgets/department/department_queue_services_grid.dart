@@ -29,7 +29,10 @@ class DepartmentQueueServicesGrid extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 24),
           child: Text(
             'No services configured in this department.',
-            style: GoogleFonts.inter(fontSize: 13, color: context.colors.textMuted),
+            style: GoogleFonts.inter(
+              fontSize: 13,
+              color: context.colors.textMuted,
+            ),
           ),
         ),
       );
@@ -37,10 +40,12 @@ class DepartmentQueueServicesGrid extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final crossAxisCount =
-            ((constraints.maxWidth + 16) / (340 + 16)).floor().clamp(1, 6);
+        final crossAxisCount = ((constraints.maxWidth + 16) / (340 + 16))
+            .floor()
+            .clamp(1, 6);
         final itemWidth =
-            (constraints.maxWidth - ((crossAxisCount - 1) * 16)) / crossAxisCount;
+            (constraints.maxWidth - ((crossAxisCount - 1) * 16)) /
+            crossAxisCount;
 
         return Wrap(
           spacing: 16,

@@ -1,4 +1,4 @@
-﻿import 'package:equatable/equatable.dart';
+import 'package:equatable/equatable.dart';
 
 import '../../domain/entities/department_entity.dart';
 import '../../domain/entities/dept_expansion_request_entity.dart';
@@ -27,14 +27,19 @@ class DepartmentsState extends Equatable {
 
   int get totalDepartments => allDepartments.length;
   int get activeDepartments => allDepartments.where((d) => d.isActive).length;
-  int get totalDoctors => allDepartments.fold(0, (sum, d) => sum + d.doctorCount);
-  int get totalMonthlyVisits => allDepartments.fold(0, (sum, d) => sum + d.totalVisits);
+  int get totalDoctors =>
+      allDepartments.fold(0, (sum, d) => sum + d.doctorCount);
+  int get totalMonthlyVisits =>
+      allDepartments.fold(0, (sum, d) => sum + d.totalVisits);
 
-  List<DeptExpansionRequestEntity> get pendingExpansionRequests => expansionRequests.where((r) => r.isPending).toList();
+  List<DeptExpansionRequestEntity> get pendingExpansionRequests =>
+      expansionRequests.where((r) => r.isPending).toList();
 
-  List<DeptServiceRequestEntity> get pendingServiceRequests => serviceRequests.where((r) => r.isPending).toList();
+  List<DeptServiceRequestEntity> get pendingServiceRequests =>
+      serviceRequests.where((r) => r.isPending).toList();
 
-  int get totalPendingRequests => pendingExpansionRequests.length + pendingServiceRequests.length;
+  int get totalPendingRequests =>
+      pendingExpansionRequests.length + pendingServiceRequests.length;
 
   DepartmentsState copyWith({
     List<DepartmentEntity>? allDepartments,

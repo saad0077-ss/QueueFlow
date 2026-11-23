@@ -11,11 +11,13 @@ class ClinicQueueFilterHandler {
     if (event.service == null) {
       emit(state.copyWith(clearDrillDown: true));
     } else {
-      emit(state.copyWith(
-        drillDownService: event.service,
-        drillDownDepartment: event.department,
-        serviceTab: 'active',
-      ));
+      emit(
+        state.copyWith(
+          drillDownService: event.service,
+          drillDownDepartment: event.department,
+          serviceTab: 'active',
+        ),
+      );
     }
   }
 
@@ -24,12 +26,14 @@ class ClinicQueueFilterHandler {
     ClinicQueueState state,
     Emitter<ClinicQueueState> emit,
   ) {
-    emit(state.copyWith(
-      departmentFilter: 'all',
-      statusFilter: 'all',
-      sortBy: 'default',
-      searchQuery: '',
-    ));
+    emit(
+      state.copyWith(
+        departmentFilter: 'all',
+        statusFilter: 'all',
+        sortBy: 'default',
+        searchQuery: '',
+      ),
+    );
   }
 
   static void onToggleDeptCollapsed(
@@ -64,9 +68,11 @@ class ClinicQueueFilterHandler {
     ClinicQueueState state,
     Emitter<ClinicQueueState> emit,
   ) {
-    emit(state.copyWith(
-      selectedPatient: event.patient,
-      clearSelectedPatient: event.patient == null,
-    ));
+    emit(
+      state.copyWith(
+        selectedPatient: event.patient,
+        clearSelectedPatient: event.patient == null,
+      ),
+    );
   }
 }

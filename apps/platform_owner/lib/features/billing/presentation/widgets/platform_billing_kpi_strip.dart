@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../domain/entities/platform_billing_kpis.dart';
 import 'platform_billing_kpi_card.dart';
 
@@ -9,9 +10,15 @@ class PlatformBillingKpiStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final clinicPlural = kpis.activeSubscriptions == 1 ? 'partner clinic' : 'partner clinics';
-    final overdueSubtext = kpis.overdueCount > 0 ? '${kpis.overdueCount} awaiting payment' : 'All invoices settled';
-    final activeSubtext = kpis.activeSubscriptions > 0 ? 'All practices active' : 'No active subscriptions';
+    final clinicPlural = kpis.activeSubscriptions == 1
+        ? 'partner clinic'
+        : 'partner clinics';
+    final overdueSubtext = kpis.overdueCount > 0
+        ? '${kpis.overdueCount} awaiting payment'
+        : 'All invoices settled';
+    final activeSubtext = kpis.activeSubscriptions > 0
+        ? 'All practices active'
+        : 'No active subscriptions';
 
     final cards = [
       PlatformBillingKpiCard(
@@ -57,22 +64,32 @@ class PlatformBillingKpiStrip extends StatelessWidget {
         final isDesktop = constraints.maxWidth >= 1000;
         if (isDesktop) {
           return Row(
-            children: cards.map((c) => Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 6),
-                child: c,
-              ),
-            )).toList(),
+            children: cards
+                .map(
+                  (c) => Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 6),
+                      child: c,
+                    ),
+                  ),
+                )
+                .toList(),
           );
         }
 
         return Wrap(
           spacing: 12,
           runSpacing: 12,
-          children: cards.map((c) => SizedBox(
-            width: constraints.maxWidth >= 600 ? (constraints.maxWidth - 12) / 2 : constraints.maxWidth,
-            child: c,
-          )).toList(),
+          children: cards
+              .map(
+                (c) => SizedBox(
+                  width: constraints.maxWidth >= 600
+                      ? (constraints.maxWidth - 12) / 2
+                      : constraints.maxWidth,
+                  child: c,
+                ),
+              )
+              .toList(),
         );
       },
     );

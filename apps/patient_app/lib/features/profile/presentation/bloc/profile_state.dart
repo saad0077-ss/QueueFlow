@@ -36,7 +36,8 @@ class ProfileState extends Equatable {
     this.isLoggedOut = false,
   });
 
-  bool get isLoading => status == ProfileStatus.loading || status == ProfileStatus.updating;
+  bool get isLoading =>
+      status == ProfileStatus.loading || status == ProfileStatus.updating;
 
   String? get error => errorMessage;
 

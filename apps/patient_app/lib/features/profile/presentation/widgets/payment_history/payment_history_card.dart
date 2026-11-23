@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../domain/entities/patient_payment_item_entity.dart';
 
 class PaymentHistoryCard extends StatelessWidget {
@@ -22,7 +23,9 @@ class PaymentHistoryCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: isRefunded ? colors.surface.withValues(alpha: 0.95) : colors.surface,
+        color: isRefunded
+            ? colors.surface.withValues(alpha: 0.95)
+            : colors.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isRefunded
@@ -52,7 +55,10 @@ class PaymentHistoryCard extends StatelessWidget {
                 children: [
                   // Type Tag
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 7,
+                      vertical: 2.5,
+                    ),
                     decoration: BoxDecoration(
                       color: payment.isQueueToken
                           ? const Color(0xFF2563EB).withValues(alpha: 0.12)
@@ -65,7 +71,9 @@ class PaymentHistoryCard extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      payment.isQueueToken ? '🎟️ Walk-in Queue Token' : '📅 Booked Appointment',
+                      payment.isQueueToken
+                          ? '🎟️ Walk-in Queue Token'
+                          : '📅 Booked Appointment',
                       style: GoogleFonts.inter(
                         fontSize: 10,
                         fontWeight: FontWeight.w800,
@@ -79,7 +87,10 @@ class PaymentHistoryCard extends StatelessWidget {
 
                   // Status Pill
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 7,
+                      vertical: 2.5,
+                    ),
                     decoration: BoxDecoration(
                       color: isRefunded
                           ? const Color(0xFF8B5CF6).withValues(alpha: 0.15)
@@ -170,7 +181,10 @@ class PaymentHistoryCard extends StatelessWidget {
                       children: [
                         if (payment.token != null && payment.token!.isNotEmpty)
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
                               color: colors.surfaceSecondary,
                               borderRadius: BorderRadius.circular(5),
@@ -187,7 +201,10 @@ class PaymentHistoryCard extends StatelessWidget {
                           ),
                         if (payment.bookingId.isNotEmpty)
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
                               color: colors.surfaceSecondary,
                               borderRadius: BorderRadius.circular(5),
@@ -223,7 +240,9 @@ class PaymentHistoryCard extends StatelessWidget {
                     style: GoogleFonts.spaceMono(
                       fontSize: 17,
                       fontWeight: FontWeight.w900,
-                      color: isRefunded ? const Color(0xFF8B5CF6) : colors.textPrimary,
+                      color: isRefunded
+                          ? const Color(0xFF8B5CF6)
+                          : colors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 1),
@@ -232,7 +251,9 @@ class PaymentHistoryCard extends StatelessWidget {
                     style: GoogleFonts.inter(
                       fontSize: 10,
                       fontWeight: FontWeight.w700,
-                      color: isRefunded ? const Color(0xFFA78BFA) : const Color(0xFF10B981),
+                      color: isRefunded
+                          ? const Color(0xFFA78BFA)
+                          : const Color(0xFF10B981),
                     ),
                   ),
                 ],
@@ -337,7 +358,10 @@ class PaymentHistoryCard extends StatelessWidget {
                     style: OutlinedButton.styleFrom(
                       foregroundColor: colors.textPrimary,
                       side: BorderSide(color: colors.border),
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
                       visualDensity: VisualDensity.compact,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),

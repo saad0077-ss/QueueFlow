@@ -87,11 +87,16 @@ class PlatformPlanTierCard extends StatelessWidget {
                       ),
                       if (tier.badge.isNotEmpty)
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 3,
+                          ),
                           decoration: BoxDecoration(
                             color: colors.primaryTint,
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: colors.primary.withValues(alpha: 0.3)),
+                            border: Border.all(
+                              color: colors.primary.withValues(alpha: 0.3),
+                            ),
                           ),
                           child: Text(
                             tier.badge.toUpperCase(),
@@ -268,7 +273,13 @@ class PlatformPlanTierCard extends StatelessWidget {
 
   Widget _expandIf(Widget child) => expand ? Expanded(child: child) : child;
 
-  Widget _chip(AppColorsExtension colors, IconData icon, Color iconColor, String bold, String rest) {
+  Widget _chip(
+    AppColorsExtension colors,
+    IconData icon,
+    Color iconColor,
+    String bold,
+    String rest,
+  ) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(

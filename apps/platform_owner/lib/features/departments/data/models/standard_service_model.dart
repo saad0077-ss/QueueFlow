@@ -1,7 +1,13 @@
-﻿import '../../domain/entities/standard_service_entity.dart';
+import '../../domain/entities/standard_service_entity.dart';
 
 class StandardServiceModel extends StandardServiceEntity {
-  const StandardServiceModel({required super.id, required super.name, required super.duration, required super.suggestedPrice, required super.description});
+  const StandardServiceModel({
+    required super.id,
+    required super.name,
+    required super.duration,
+    required super.suggestedPrice,
+    required super.description,
+  });
 
   factory StandardServiceModel.fromMap(Map<String, dynamic> map, [String? id]) {
     return StandardServiceModel(
@@ -14,6 +20,12 @@ class StandardServiceModel extends StandardServiceEntity {
   }
 
   Map<String, dynamic> toMap() {
-    return {'id': id, 'name': name, 'duration': duration, 'suggestedPrice': suggestedPrice, 'description': description};
+    return {
+      'id': id,
+      'name': name,
+      'duration': duration,
+      'suggestedPrice': suggestedPrice,
+      'description': description,
+    };
   }
 }

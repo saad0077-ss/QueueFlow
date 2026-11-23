@@ -43,18 +43,31 @@ class PlatformBillingKpiCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: themeColor.withAlpha(35),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
                       tag,
-                      style: GoogleFonts.inter(fontSize: 9, fontWeight: FontWeight.w800, color: themeColor),
+                      style: GoogleFonts.inter(
+                        fontSize: 9,
+                        fontWeight: FontWeight.w800,
+                        color: themeColor,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 6),
-                  Text(label, style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted)),
+                  Text(
+                    label,
+                    style: GoogleFonts.inter(
+                      fontSize: 12,
+                      color: colors.textMuted,
+                    ),
+                  ),
                 ],
               ),
               Container(
@@ -69,7 +82,14 @@ class PlatformBillingKpiCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 14),
-          Text(value, style: GoogleFonts.inter(fontSize: 26, fontWeight: FontWeight.w800, color: colors.textPrimary)),
+          Text(
+            value,
+            style: GoogleFonts.inter(
+              fontSize: 26,
+              fontWeight: FontWeight.w800,
+              color: colors.textPrimary,
+            ),
+          ),
           const SizedBox(height: 6),
           Row(
             children: [
@@ -79,11 +99,25 @@ class PlatformBillingKpiCard extends StatelessWidget {
                   color: themeColor.withAlpha(30),
                   borderRadius: BorderRadius.circular(6),
                 ),
-                child: Text(trend, style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w700, color: themeColor)),
+                child: Text(
+                  trend,
+                  style: GoogleFonts.inter(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                    color: themeColor,
+                  ),
+                ),
               ),
               const SizedBox(width: 8),
               Expanded(
-                child: Text(subtext, style: GoogleFonts.inter(fontSize: 11, color: colors.textSubtle), overflow: TextOverflow.ellipsis),
+                child: Text(
+                  subtext,
+                  style: GoogleFonts.inter(
+                    fontSize: 11,
+                    color: colors.textSubtle,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ],
           ),

@@ -39,7 +39,10 @@ class WalkInTriageNotesField extends StatelessWidget {
             hintStyle: GoogleFonts.inter(fontSize: 13, color: colors.textMuted),
             filled: true,
             fillColor: colors.background,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: 12,
+            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide(color: colors.border),

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../../../../data/repositories/home_repository_impl.dart'
     show isTicketFromToday;
 import '../../../../domain/entities/clinic_entity.dart';
@@ -23,7 +24,8 @@ class ClinicLiveEvaluator {
     final queues = <String, LiveServiceQueue>{};
     final completedServices = <String>{};
 
-    for (final d in docs ?? const <QueryDocumentSnapshot<Map<String, dynamic>>>[]) {
+    for (final d
+        in docs ?? const <QueryDocumentSnapshot<Map<String, dynamic>>>[]) {
       final data = d.data();
       final status = data['status'];
       final service = (data['serviceName'] ?? '').toString().trim();

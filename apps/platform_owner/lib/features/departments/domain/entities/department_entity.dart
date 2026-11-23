@@ -1,4 +1,4 @@
-﻿import 'package:equatable/equatable.dart';
+import 'package:equatable/equatable.dart';
 
 import 'standard_service_entity.dart';
 
@@ -24,26 +24,26 @@ class DepartmentEntity extends Equatable {
     this.color = '#2563EB',
     required this.description,
     this.avgConsultationTime = '20 mins',
-    this.status = 'active', 
+    this.status = 'active',
     this.doctorCount = 0,
     this.totalVisits = 0,
     this.assignedClinics = const [],
     this.standardServices = const [],
   });
- 
+
   /// Built-in departments (fixed `default-` IDs) cannot be deleted.
   bool get isDefault => id.startsWith('default-');
 
-  bool get isActive => status.toLowerCase() == 'active'; 
+  bool get isActive => status.toLowerCase() == 'active';
 
   DepartmentEntity copyWith({
     String? name,
     String? code,
-    String? icon, 
+    String? icon,
     String? color,
     String? description,
     String? avgConsultationTime,
-    String? status, 
+    String? status,
     int? doctorCount,
     int? totalVisits,
     List<String>? assignedClinics,

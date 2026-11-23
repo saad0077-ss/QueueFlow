@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../domain/entities/patient_review_entity.dart';
 
 class MyReviewCard extends StatelessWidget {
@@ -19,19 +20,29 @@ class MyReviewCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final isDental = review.clinicName.toLowerCase().contains('dent');
-    final docRating = (review.doctorRating > 0 ? review.doctorRating : review.rating).toDouble();
-    final clnRating = (review.clinicRating > 0 ? review.clinicRating : review.rating).toDouble();
+    final docRating =
+        (review.doctorRating > 0 ? review.doctorRating : review.rating)
+            .toDouble();
+    final clnRating =
+        (review.clinicRating > 0 ? review.clinicRating : review.rating)
+            .toDouble();
     final docRatingInt = docRating.clamp(1.0, 5.0).round();
     final clnRatingInt = clnRating.clamp(1.0, 5.0).round();
-    final docName = review.doctorName.isNotEmpty ? review.doctorName : 'Attending Doctor';
+    final docName = review.doctorName.isNotEmpty
+        ? review.doctorName
+        : 'Attending Doctor';
     final docSpecialty = review.doctorSpecialty.isNotEmpty
         ? review.doctorSpecialty
         : (isDental ? 'Senior Dental Surgeon' : 'Chief General Physician');
     final docTags = review.doctorTags.isNotEmpty
         ? review.doctorTags
         : (isDental
-            ? ['Gentle Hand', 'Painless Treatment', 'Polite & Reassuring']
-            : ['Attentive Listener', 'Accurate Diagnosis', 'Clear Explanation']);
+              ? ['Gentle Hand', 'Painless Treatment', 'Polite & Reassuring']
+              : [
+                  'Attentive Listener',
+                  'Accurate Diagnosis',
+                  'Clear Explanation',
+                ]);
 
     return Container(
       decoration: BoxDecoration(
@@ -94,7 +105,10 @@ class MyReviewCard extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2.5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 7,
+                  vertical: 2.5,
+                ),
                 decoration: BoxDecoration(
                   color: const Color(0xFF10B981).withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(6),
@@ -143,7 +157,10 @@ class MyReviewCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       alignment: Alignment.center,
-                      child: const Text('👨‍⚕️', style: TextStyle(fontSize: 18)),
+                      child: const Text(
+                        '👨‍⚕️',
+                        style: TextStyle(fontSize: 18),
+                      ),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
@@ -165,9 +182,13 @@ class MyReviewCard extends StatelessWidget {
                               ),
                               const SizedBox(width: 6),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 5,
+                                  vertical: 1,
+                                ),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFF59E0B).withValues(alpha: 0.18),
+                                  color: const Color(0xFFF59E0B)
+                                      .withValues(alpha: 0.18),
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(
@@ -196,12 +217,17 @@ class MyReviewCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 3,
+                          ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF59E0B).withValues(alpha: 0.16),
+                            color: const Color(0xFFF59E0B)
+                                .withValues(alpha: 0.16),
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(
-                              color: const Color(0xFFF59E0B).withValues(alpha: 0.35),
+                              color: const Color(0xFFF59E0B)
+                                  .withValues(alpha: 0.35),
                             ),
                           ),
                           child: Row(
@@ -240,12 +266,16 @@ class MyReviewCard extends StatelessWidget {
                     runSpacing: 4,
                     children: docTags.map((dt) {
                       return Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 7,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: const Color(0xFF7C3AED).withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(6),
                           border: Border.all(
-                            color: const Color(0xFF7C3AED).withValues(alpha: 0.25),
+                            color: const Color(0xFF7C3AED)
+                                .withValues(alpha: 0.25),
                           ),
                         ),
                         child: Text(
@@ -365,7 +395,10 @@ class MyReviewCard extends StatelessWidget {
               runSpacing: 4,
               children: review.tags.map((t) {
                 return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2.5),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2.5,
+                  ),
                   decoration: BoxDecoration(
                     color: colors.surfaceSecondary,
                     borderRadius: BorderRadius.circular(6),
@@ -433,7 +466,10 @@ class MyReviewCard extends StatelessWidget {
                     onTap: onEdit,
                     borderRadius: BorderRadius.circular(8),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 9,
+                        vertical: 5,
+                      ),
                       decoration: BoxDecoration(
                         color: colors.surfaceSecondary,
                         borderRadius: BorderRadius.circular(8),
@@ -454,7 +490,10 @@ class MyReviewCard extends StatelessWidget {
                     onTap: onDelete,
                     borderRadius: BorderRadius.circular(8),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 9,
+                        vertical: 5,
+                      ),
                       decoration: BoxDecoration(
                         color: const Color(0xFFEF4444).withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(8),

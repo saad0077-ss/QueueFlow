@@ -1,4 +1,4 @@
-﻿import '../../domain/entities/department_entity.dart';
+import '../../domain/entities/department_entity.dart';
 import '../../domain/entities/standard_service_entity.dart';
 
 extension DepartmentEntityMapper on DepartmentEntity {
@@ -14,13 +14,21 @@ extension DepartmentEntityMapper on DepartmentEntity {
       'doctorCount': doctorCount,
       'totalVisits': totalVisits,
       'assignedClinics': assignedClinics,
-      'standardServices': standardServices.map((s) => s.toServiceMap()).toList(),
+      'standardServices': standardServices
+          .map((s) => s.toServiceMap())
+          .toList(),
     };
   }
 }
 
 extension StandardServiceEntityMapper on StandardServiceEntity {
   Map<String, dynamic> toServiceMap() {
-    return {'id': id, 'name': name, 'duration': duration, 'suggestedPrice': suggestedPrice, 'description': description};
+    return {
+      'id': id,
+      'name': name,
+      'duration': duration,
+      'suggestedPrice': suggestedPrice,
+      'description': description,
+    };
   }
 }

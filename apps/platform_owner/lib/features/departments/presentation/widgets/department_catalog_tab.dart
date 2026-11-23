@@ -33,13 +33,17 @@ class _DepartmentCatalogTabState extends State<DepartmentCatalogTab> {
     final filtered = widget.services.where((s) {
       if (_search.isEmpty) return true;
       final q = _search.toLowerCase();
-      return s.name.toLowerCase().contains(q) || s.description.toLowerCase().contains(q);
+      return s.name.toLowerCase().contains(q) ||
+          s.description.toLowerCase().contains(q);
     }).toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AddProcedureFormCard(onAddService: widget.onAddService, existingServices: widget.services),
+        AddProcedureFormCard(
+          onAddService: widget.onAddService,
+          existingServices: widget.services,
+        ),
         const SizedBox(height: 22),
         Container(
           width: double.infinity,
@@ -49,7 +53,13 @@ class _DepartmentCatalogTabState extends State<DepartmentCatalogTab> {
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: colors.border),
           ),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [_buildHeader(context, filtered.length), _buildTable(context, filtered)]),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildHeader(context, filtered.length),
+              _buildTable(context, filtered),
+            ],
+          ),
         ),
       ],
     );
@@ -66,10 +76,18 @@ class _DepartmentCatalogTabState extends State<DepartmentCatalogTab> {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              gradient: const LinearGradient(colors: [Color(0xFF2563EB), Color(0xFF14B8A6)], begin: Alignment.topLeft, end: Alignment.bottomRight),
+              gradient: const LinearGradient(
+                colors: [Color(0xFF2563EB), Color(0xFF14B8A6)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
               borderRadius: BorderRadius.circular(11),
             ),
-            child: const Icon(Icons.inventory_2_outlined, size: 19, color: Colors.white),
+            child: const Icon(
+              Icons.inventory_2_outlined,
+              size: 19,
+              color: Colors.white,
+            ),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -80,15 +98,29 @@ class _DepartmentCatalogTabState extends State<DepartmentCatalogTab> {
                   children: [
                     Text(
                       'Active Catalog Procedures',
-                      style: GoogleFonts.inter(fontSize: 15, fontWeight: FontWeight.w800, color: colors.textPrimary),
+                      style: GoogleFonts.inter(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w800,
+                        color: colors.textPrimary,
+                      ),
                     ),
                     const SizedBox(width: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      decoration: BoxDecoration(color: colors.success.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(20)),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: colors.success.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
                       child: Text(
                         '$count',
-                        style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w800, color: colors.success),
+                        style: GoogleFonts.inter(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w800,
+                          color: colors.success,
+                        ),
                       ),
                     ),
                   ],
@@ -96,7 +128,10 @@ class _DepartmentCatalogTabState extends State<DepartmentCatalogTab> {
                 const SizedBox(height: 3),
                 Text(
                   'Standard clinical procedures available to clinics under this specialty',
-                  style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted),
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    color: colors.textMuted,
+                  ),
                 ),
               ],
             ),
@@ -105,21 +140,37 @@ class _DepartmentCatalogTabState extends State<DepartmentCatalogTab> {
           SizedBox(
             width: 270,
             child: TextField(
-              style: GoogleFonts.inter(fontSize: 12.5, color: colors.textPrimary),
+              style: GoogleFonts.inter(
+                fontSize: 12.5,
+                color: colors.textPrimary,
+              ),
               cursorColor: colors.primary,
               onChanged: (v) => setState(() => _search = v),
               decoration: InputDecoration(
                 hintText: 'Filter procedures...',
-                hintStyle: GoogleFonts.inter(fontSize: 12.5, color: colors.textMuted),
+                hintStyle: GoogleFonts.inter(
+                  fontSize: 12.5,
+                  color: colors.textMuted,
+                ),
                 prefixIcon: Padding(
                   padding: const EdgeInsets.only(left: 12, right: 8),
-                  child: Icon(Icons.search_rounded, size: 17, color: colors.primary),
+                  child: Icon(
+                    Icons.search_rounded,
+                    size: 17,
+                    color: colors.primary,
+                  ),
                 ),
-                prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+                prefixIconConstraints: const BoxConstraints(
+                  minWidth: 0,
+                  minHeight: 0,
+                ),
                 isDense: true,
                 filled: true,
                 fillColor: colors.surfaceSecondary,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 11),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 11,
+                ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
                   borderSide: BorderSide(color: colors.border),
@@ -154,12 +205,21 @@ class _DepartmentCatalogTabState extends State<DepartmentCatalogTab> {
           children: [
             Icon(Icons.search_off_rounded, size: 30, color: colors.textMuted),
             const SizedBox(height: 8),
-            Text('No procedures match your filter.', style: GoogleFonts.inter(fontSize: 13, color: colors.textMuted)),
+            Text(
+              'No procedures match your filter.',
+              style: GoogleFonts.inter(fontSize: 13, color: colors.textMuted),
+            ),
           ],
         ),
       );
     }
-    final headerStyle = GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w700, color: colors.textMuted, letterSpacing: 0.8, height: 1.35);
+    final headerStyle = GoogleFonts.inter(
+      fontSize: 11,
+      fontWeight: FontWeight.w700,
+      color: colors.textMuted,
+      letterSpacing: 0.8,
+      height: 1.35,
+    );
 
     return LayoutBuilder(
       builder: (context, constraints) => SingleChildScrollView(
@@ -179,7 +239,12 @@ class _DepartmentCatalogTabState extends State<DepartmentCatalogTab> {
                 ),
                 child: Row(
                   children: [
-                    Expanded(child: Text('PROCEDURE & CLINICAL SCOPE', style: headerStyle)),
+                    Expanded(
+                      child: Text(
+                        'PROCEDURE & CLINICAL SCOPE',
+                        style: headerStyle,
+                      ),
+                    ),
                     SizedBox(
                       width: kCatalogDurationColWidth,
                       child: Text('DURATION', style: headerStyle),
@@ -190,7 +255,11 @@ class _DepartmentCatalogTabState extends State<DepartmentCatalogTab> {
                     ),
                     SizedBox(
                       width: kCatalogActionsColWidth,
-                      child: Text('ACTIONS', textAlign: TextAlign.right, style: headerStyle),
+                      child: Text(
+                        'ACTIONS',
+                        textAlign: TextAlign.right,
+                        style: headerStyle,
+                      ),
                     ),
                   ],
                 ),

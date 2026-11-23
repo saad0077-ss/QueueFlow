@@ -41,7 +41,10 @@ class QueuePatientActionButtons extends StatelessWidget {
             ),
             child: Text(
               patient.isCalled ? 'Call In Again' : 'Call Next In Line',
-              style: GoogleFonts.inter(fontSize: 13.5, fontWeight: FontWeight.w700),
+              style: GoogleFonts.inter(
+                fontSize: 13.5,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
           const SizedBox(height: 10),
@@ -57,7 +60,10 @@ class QueuePatientActionButtons extends StatelessWidget {
             ),
             child: Text(
               'Mark Consultation Complete',
-              style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w700),
+              style: GoogleFonts.inter(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
           const SizedBox(height: 10),
@@ -75,7 +81,10 @@ class QueuePatientActionButtons extends StatelessWidget {
             ),
             child: Text(
               'Skip to Back of Line',
-              style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w700),
+              style: GoogleFonts.inter(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
           const SizedBox(height: 10),
@@ -87,7 +96,10 @@ class QueuePatientActionButtons extends StatelessWidget {
             ),
             child: Text(
               'Remove from Queue',
-              style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w700),
+              style: GoogleFonts.inter(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ],

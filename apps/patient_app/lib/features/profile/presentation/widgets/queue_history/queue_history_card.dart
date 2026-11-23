@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../domain/entities/patient_queue_history_entity.dart';
 import 'queue_history_active_card.dart';
 import 'queue_history_completed_card.dart';
@@ -18,14 +19,8 @@ class QueueHistoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (item.isActive) {
-      return QueueHistoryActiveCard(
-        item: item,
-        onTrackLive: onTrackLive,
-      );
+      return QueueHistoryActiveCard(item: item, onTrackLive: onTrackLive);
     }
-    return QueueHistoryCompletedCard(
-      item: item,
-      onBookAgain: onBookAgain,
-    );
+    return QueueHistoryCompletedCard(item: item, onBookAgain: onBookAgain);
   }
 }

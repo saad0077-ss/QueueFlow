@@ -25,29 +25,53 @@ class FavoriteClinicModel extends FavoriteClinicEntity {
     String emoji = '🏥';
     if (id.contains('dent') || name.toLowerCase().contains('dent')) {
       emoji = '🦷';
-    } else if (id.contains('sunrise') || name.toLowerCase().contains('sunrise')) {
+    } else if (id.contains('sunrise') ||
+        name.toLowerCase().contains('sunrise')) {
       emoji = '🌅';
-    } else if (name.toLowerCase().contains('pediatric') || name.toLowerCase().contains('child')) {
+    } else if (name.toLowerCase().contains('pediatric') ||
+        name.toLowerCase().contains('child')) {
       emoji = '👶';
-    } else if (name.toLowerCase().contains('skin') || name.toLowerCase().contains('derma')) {
+    } else if (name.toLowerCase().contains('skin') ||
+        name.toLowerCase().contains('derma')) {
       emoji = '🔬';
     }
 
     return FavoriteClinicModel(
       id: id,
       name: name,
-      department: json['department'] as String? ?? json['category'] as String? ?? 'General Medicine',
-      rating: (json['rating'] is num) ? (json['rating'] as num).toDouble() : 4.8,
-      reviewsCount: (json['reviewsCount'] as num?)?.toInt() ?? (json['reviews'] as num?)?.toInt() ?? 48,
+      department:
+          json['department'] as String? ??
+          json['category'] as String? ??
+          'General Medicine',
+      rating: (json['rating'] is num)
+          ? (json['rating'] as num).toDouble()
+          : 4.8,
+      reviewsCount:
+          (json['reviewsCount'] as num?)?.toInt() ??
+          (json['reviews'] as num?)?.toInt() ??
+          48,
       address: json['address'] as String? ?? 'MG Road, Indiranagar',
-      initials: json['initials'] as String? ??
-          (name.isNotEmpty ? name.split(' ').map((w) => w.isNotEmpty ? w[0] : '').take(2).join().toUpperCase() : 'CF'),
+      initials:
+          json['initials'] as String? ??
+          (name.isNotEmpty
+              ? name
+                    .split(' ')
+                    .map((w) => w.isNotEmpty ? w[0] : '')
+                    .take(2)
+                    .join()
+                    .toUpperCase()
+              : 'CF'),
       accentColorHex: json['accentColorHex'] as int? ?? 0xFF2563EB,
       distance: (json['distance'] ?? '1.2 km').toString(),
-      waitingCount: (json['waitingCount'] as num?)?.toInt() ?? (json['activeQueueCount'] as num?)?.toInt() ?? 3,
-      estWaitTime: (json['estWaitTime'] ?? json['currentWait'] ?? '15 min').toString(),
+      waitingCount:
+          (json['waitingCount'] as num?)?.toInt() ??
+          (json['activeQueueCount'] as num?)?.toInt() ??
+          3,
+      estWaitTime: (json['estWaitTime'] ?? json['currentWait'] ?? '15 min')
+          .toString(),
       openHours: (json['openHours'] ?? 'Open 09:00 AM – 08:00 PM').toString(),
-      topDoctor: (json['topDoctor'] ?? json['doctorName'] ?? 'Dr. Priya Sharma').toString(),
+      topDoctor: (json['topDoctor'] ?? json['doctorName'] ?? 'Dr. Priya Sharma')
+          .toString(),
       phone: (json['phone'] ?? '+91 98450 11234').toString(),
       iconEmoji: (json['iconEmoji'] ?? emoji).toString(),
     );

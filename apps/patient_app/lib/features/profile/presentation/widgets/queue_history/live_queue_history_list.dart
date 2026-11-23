@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:patient_app/features/profile/domain/entities/patient_queue_history_entity.dart';
+
 import 'queue_history_card.dart';
 
 class LiveQueueHistoryList extends StatelessWidget {

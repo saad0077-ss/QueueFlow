@@ -1,4 +1,5 @@
-﻿import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../domain/entities/tenant_clinic_entity.dart';
 import 'clinics_directory_event.dart';
 import 'clinics_directory_state.dart';
@@ -21,17 +22,20 @@ class ClinicsDirectoryBloc
   }) {
     return list.where((c) {
       final q = query.trim().toLowerCase();
-      final matchQuery = q.isEmpty ||
+      final matchQuery =
+          q.isEmpty ||
           c.name.toLowerCase().contains(q) ||
           c.adminName.toLowerCase().contains(q) ||
           c.adminEmail.toLowerCase().contains(q) ||
           c.city.toLowerCase().contains(q);
 
-      final matchPlan = plan == 'All Plans' ||
+      final matchPlan =
+          plan == 'All Plans' ||
           c.planName.toLowerCase().contains(plan.toLowerCase()) ||
           c.planId.toLowerCase() == plan.toLowerCase();
 
-      final matchStatus = status == 'All Statuses' ||
+      final matchStatus =
+          status == 'All Statuses' ||
           c.status.toLowerCase() == status.toLowerCase();
 
       return matchQuery && matchPlan && matchStatus;
@@ -74,10 +78,9 @@ class ClinicsDirectoryBloc
       plan: event.plan,
       status: state.selectedStatusFilter,
     );
-    emit(state.copyWith(
-      selectedPlanFilter: event.plan,
-      filteredClinics: filtered,
-    ));
+    emit(
+      state.copyWith(selectedPlanFilter: event.plan, filteredClinics: filtered),
+    );
   }
 
   void _onStatusFilterChanged(
@@ -90,21 +93,25 @@ class ClinicsDirectoryBloc
       plan: state.selectedPlanFilter,
       status: event.status,
     );
-    emit(state.copyWith(
-      selectedStatusFilter: event.status,
-      filteredClinics: filtered,
-    ));
+    emit(
+      state.copyWith(
+        selectedStatusFilter: event.status,
+        filteredClinics: filtered,
+      ),
+    );
   }
 
   void _onResetFilters(
     ClinicsResetFilters event,
     Emitter<ClinicsDirectoryState> emit,
   ) {
-    emit(state.copyWith(
-      searchQuery: '',
-      selectedPlanFilter: 'All Plans',
-      selectedStatusFilter: 'All Statuses',
-      filteredClinics: state.allClinics,
-    ));
+    emit(
+      state.copyWith(
+        searchQuery: '',
+        selectedPlanFilter: 'All Plans',
+        selectedStatusFilter: 'All Statuses',
+        filteredClinics: state.allClinics,
+      ),
+    );
   }
 }

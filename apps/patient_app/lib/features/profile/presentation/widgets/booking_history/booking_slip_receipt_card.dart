@@ -42,7 +42,10 @@ class BookingSlipReceiptCard extends StatelessWidget {
           const SizedBox(height: 2),
           Text(
             'GSTIN: 32AABCU9603R1ZM',
-            style: GoogleFonts.robotoMono(fontSize: 10, color: colors.textSubtle),
+            style: GoogleFonts.robotoMono(
+              fontSize: 10,
+              color: colors.textSubtle,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 12),
@@ -100,20 +103,41 @@ class BookingSlipReceiptCard extends StatelessWidget {
     );
   }
 
-  Widget _item(dynamic colors, String label, String value, {bool isMono = false, Color? valueColor}) {
+  Widget _item(
+    dynamic colors,
+    String label,
+    String value, {
+    bool isMono = false,
+    Color? valueColor,
+  }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 7),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w500, color: colors.textMuted)),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11.5,
+              fontWeight: FontWeight.w500,
+              color: colors.textMuted,
+            ),
+          ),
           const SizedBox(width: 8),
           Flexible(
             child: Text(
               value,
               style: isMono
-                  ? GoogleFonts.robotoMono(fontSize: 11.5, fontWeight: FontWeight.w700, color: valueColor ?? colors.textPrimary)
-                  : TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: valueColor ?? colors.textPrimary),
+                  ? GoogleFonts.robotoMono(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w700,
+                      color: valueColor ?? colors.textPrimary,
+                    )
+                  : TextStyle(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w700,
+                      color: valueColor ?? colors.textPrimary,
+                    ),
               textAlign: TextAlign.right,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,

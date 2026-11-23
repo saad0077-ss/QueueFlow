@@ -8,12 +8,16 @@ class DashboardChrome {
 
   /// Name of the nav tab (e.g. 'Appointments') currently showing a detail
   /// view, or null. The dashboard only honours it while that tab is active.
-  static final ValueNotifier<String?> detailOwner = ValueNotifier<String?>(null);
+  static final ValueNotifier<String?> detailOwner = ValueNotifier<String?>(
+    null,
+  );
 
   /// Safe to call from build: applied after the current frame.
   static void setDetailOpen(String owner, bool open) {
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      final next = open ? owner : (detailOwner.value == owner ? null : detailOwner.value);
+      final next = open
+          ? owner
+          : (detailOwner.value == owner ? null : detailOwner.value);
       if (detailOwner.value != next) detailOwner.value = next;
     });
   }

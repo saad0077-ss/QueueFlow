@@ -119,8 +119,7 @@ extension _ProfileBlocDataHandlers on ProfileBloc {
       if (e.toString().contains('requires-recent-login')) {
         emit(
           state.copyWith(
-            errorMessage:
-                'For security, please sign in again before deleting your account.',
+            errorMessage: 'For security, please sign in again before deleting your account.',
           ),
         );
       } else {

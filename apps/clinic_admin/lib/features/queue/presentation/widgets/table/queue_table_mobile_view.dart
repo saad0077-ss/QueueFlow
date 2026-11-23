@@ -20,7 +20,8 @@ class QueueTableMobileView extends StatelessWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: items.length,
-      separatorBuilder: (_, _) => Divider(height: 1, color: context.colors.border),
+      separatorBuilder: (_, _) =>
+          Divider(height: 1, color: context.colors.border),
       itemBuilder: (context, index) {
         final item = items[index];
         final colors = context.colors;
@@ -37,7 +38,10 @@ class QueueTableMobileView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: colors.primaryTint,
                     borderRadius: BorderRadius.circular(8),
@@ -67,7 +71,10 @@ class QueueTableMobileView extends StatelessWidget {
                       const SizedBox(height: 2),
                       Text(
                         '${item.serviceName} · ${item.joinedTime}',
-                        style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted),
+                        style: GoogleFonts.inter(
+                          fontSize: 12,
+                          color: colors.textMuted,
+                        ),
                       ),
                     ],
                   ),

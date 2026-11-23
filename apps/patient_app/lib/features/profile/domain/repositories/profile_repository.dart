@@ -41,19 +41,29 @@ abstract class ProfileRepository {
 
   Future<List<SupportTicketEntity>> getSupportTickets();
 
+  Stream<List<SupportTicketEntity>> watchSupportTickets();
+
   Future<SupportTicketEntity> createSupportTicket({
     required String clinicId,
     required String clinicName,
     required String category,
     required String subject,
     required String description,
+    String priority = 'medium',
+    String? linkedTokenNumber,
+    bool isClinicRelated = true,
   });
 
   Future<SupportTicketEntity> sendTicketReply({
     required String ticketId,
     required String text,
     required String senderName,
+    String senderRole = 'patient',
   });
+
+  Future<void> updateTicketStatus(String ticketId, String status);
+
+  Future<void> rateTicket(String ticketId, int rating);
 
   Future<List<PatientQueueHistoryEntity>> getQueueHistory();
 

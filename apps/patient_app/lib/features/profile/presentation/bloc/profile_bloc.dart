@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../domain/usecases/profile_usecases.dart';
 import 'profile_event.dart';
 import 'profile_state.dart';
@@ -19,6 +20,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final SendTicketReplyUseCase sendTicketReplyUseCase;
   final LogoutUseCase logoutUseCase;
   final DeleteAccountUseCase deleteAccountUseCase;
+  final UpdateTicketStatusUseCase? updateTicketStatusUseCase;
+  final RateTicketUseCase? rateTicketUseCase;
   final GetQueueHistoryUseCase? getQueueHistoryUseCase;
   final GetPaymentHistoryUseCase? getPaymentHistoryUseCase;
 
@@ -35,6 +38,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     required this.sendTicketReplyUseCase,
     required this.logoutUseCase,
     required this.deleteAccountUseCase,
+    this.updateTicketStatusUseCase,
+    this.rateTicketUseCase,
     this.getQueueHistoryUseCase,
     this.getPaymentHistoryUseCase,
   }) : super(const ProfileState()) {
@@ -45,6 +50,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<ProfileReviewDeleted>(_onReviewDeleted);
     on<ProfileSupportTicketCreated>(_onSupportTicketCreated);
     on<ProfileTicketReplySent>(_onTicketReplySent);
+    on<ProfileTicketStatusUpdated>(_onTicketStatusUpdated);
+    on<ProfileTicketRated>(_onTicketRated);
     on<ProfileActiveTicketChanged>(_onActiveTicketChanged);
     on<ProfileLogoutRequested>(_onLogoutRequested);
     on<ProfileDeleteAccountRequested>(_onDeleteAccountRequested);

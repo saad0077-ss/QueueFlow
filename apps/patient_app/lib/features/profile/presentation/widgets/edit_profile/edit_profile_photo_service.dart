@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'dart:ui' as ui;
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
-import 'edit_profile_cubit.dart';
+
+import '../../../../../core/widgets/app_snack_bar.dart';
+import 'edit_profile_bloc.dart';
 
 class EditProfilePhotoService {
   const EditProfilePhotoService._();
@@ -47,7 +50,7 @@ class EditProfilePhotoService {
 
   static Future<void> pick({
     required BuildContext context,
-    required EditProfileCubit cubit,
+    required EditProfileBloc cubit,
     required Future<Uint8List?> Function() reader,
   }) async {
     if (cubit.state.isPickingPhoto) return;
@@ -65,8 +68,10 @@ class EditProfilePhotoService {
       cubit.updatePhoto(encoded);
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not load that image: $e')),
+        AppSnackBar.showError(
+          context,
+          title: 'Photo Upload Error',
+          message: 'Could not load that image: $e',
         );
       }
     } finally {
@@ -74,7 +79,7 @@ class EditProfilePhotoService {
     }
   }
 
-  static void showOptions(BuildContext context, EditProfileCubit cubit) {
+  static void showOptions(BuildContext context, EditProfileBloc cubit) {
     final colors = context.colors;
     if (!isMobile) {
       pick(
@@ -104,33 +109,64 @@ class EditProfilePhotoService {
             children: [
               const SizedBox(height: 8),
               ListTile(
-                leading: Icon(Icons.photo_library_outlined, color: colors.textPrimary),
-                title: Text('Choose from gallery', style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w600)),
+                leading: Icon(
+                  Icons.photo_library_outlined,
+                  color: colors.textPrimary,
+                ),
+                title: Text(
+                  'Choose from gallery',
+                  style: TextStyle(
+                    color: colors.textPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
                 onTap: () {
                   Navigator.of(sheetContext).pop();
                   pick(
                     context: context,
                     cubit: cubit,
-                    reader: () async => (await ImagePicker().pickImage(source: ImageSource.gallery))?.readAsBytes(),
+                    reader: () async => (await ImagePicker().pickImage(
+                      source: ImageSource.gallery,
+                    ))?.readAsBytes(),
                   );
                 },
               ),
               ListTile(
-                leading: Icon(Icons.photo_camera_outlined, color: colors.textPrimary),
-                title: Text('Take a photo', style: TextStyle(color: colors.textPrimary, fontWeight: FontWeight.w600)),
+                leading: Icon(
+                  Icons.photo_camera_outlined,
+                  color: colors.textPrimary,
+                ),
+                title: Text(
+                  'Take a photo',
+                  style: TextStyle(
+                    color: colors.textPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
                 onTap: () {
                   Navigator.of(sheetContext).pop();
                   pick(
                     context: context,
                     cubit: cubit,
-                    reader: () async => (await ImagePicker().pickImage(source: ImageSource.camera))?.readAsBytes(),
+                    reader: () async => (await ImagePicker().pickImage(
+                      source: ImageSource.camera,
+                    ))?.readAsBytes(),
                   );
                 },
               ),
               if (cubit.state.photoBase64 != null)
                 ListTile(
-                  leading: const Icon(Icons.delete_outline_rounded, color: Colors.red),
-                  title: const Text('Remove photo', style: TextStyle(color: Colors.red, fontWeight: FontWeight.w600)),
+                  leading: const Icon(
+                    Icons.delete_outline_rounded,
+                    color: Colors.red,
+                  ),
+                  title: const Text(
+                    'Remove photo',
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                   onTap: () {
                     Navigator.of(sheetContext).pop();
                     cubit.removePhoto();

@@ -43,7 +43,10 @@ class DepartmentApprovalQueue extends StatelessWidget {
               Container(
                 width: 38,
                 height: 38,
-                decoration: BoxDecoration(color: const Color(0xFFF59E0B).withValues(alpha: 0.15), borderRadius: BorderRadius.circular(10)),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF59E0B).withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 alignment: Alignment.center,
                 child: const Text('📩', style: TextStyle(fontSize: 18)),
               ),
@@ -59,12 +62,23 @@ class DepartmentApprovalQueue extends StatelessWidget {
                       children: [
                         Text(
                           'Clinic Service & Specialty Approval Requests',
-                          style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.bold, color: colors.textPrimary),
+                          style: GoogleFonts.inter(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: colors.textPrimary,
+                          ),
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 7,
+                            vertical: 2,
+                          ),
                           decoration: BoxDecoration(
-                            color: (total > 0 ? const Color(0xFFF59E0B) : colors.success).withValues(alpha: 0.15),
+                            color:
+                                (total > 0
+                                        ? const Color(0xFFF59E0B)
+                                        : colors.success)
+                                    .withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
@@ -72,7 +86,9 @@ class DepartmentApprovalQueue extends StatelessWidget {
                             style: GoogleFonts.inter(
                               fontSize: 10.5,
                               fontWeight: FontWeight.w700,
-                              color: total > 0 ? const Color(0xFFF59E0B) : colors.success,
+                              color: total > 0
+                                  ? const Color(0xFFF59E0B)
+                                  : colors.success,
                             ),
                           ),
                         ),
@@ -81,14 +97,23 @@ class DepartmentApprovalQueue extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       "Clinics requesting new treatments/procedures. Once approved, the service is activated for the clinic and added to the Department's catalog.",
-                      style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted),
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        color: colors.textMuted,
+                      ),
                     ),
                   ],
                 ),
               ),
               if (MediaQuery.sizeOf(context).width >= 1100) ...[
                 const SizedBox(width: 12),
-                Text('Governed Medical Catalog Engine • Active', style: GoogleFonts.inter(fontSize: 11.5, color: colors.textMuted)),
+                Text(
+                  'Governed Medical Catalog Engine • Active',
+                  style: GoogleFonts.inter(
+                    fontSize: 11.5,
+                    color: colors.textMuted,
+                  ),
+                ),
               ],
             ],
           ),
@@ -110,7 +135,10 @@ class DepartmentApprovalQueue extends StatelessWidget {
                   children: [
                     TextSpan(
                       text: '✓ All clinic requests reviewed! ',
-                      style: GoogleFonts.inter(color: colors.success, fontWeight: FontWeight.bold),
+                      style: GoogleFonts.inter(
+                        color: colors.success,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     TextSpan(
                       text: 'No pending multi-department expansion or custom service additions awaiting Super Admin approval.',
@@ -122,10 +150,19 @@ class DepartmentApprovalQueue extends StatelessWidget {
             )
           else ...[
             if (expansionRequests.isNotEmpty) ...[
-              DeptExpansionTable(requests: expansionRequests, onApprove: onApproveExpansion, onReject: onRejectExpansion),
+              DeptExpansionTable(
+                requests: expansionRequests,
+                onApprove: onApproveExpansion,
+                onReject: onRejectExpansion,
+              ),
               if (serviceRequests.isNotEmpty) const SizedBox(height: 16),
             ],
-            if (serviceRequests.isNotEmpty) DeptServiceTable(requests: serviceRequests, onApprove: onApproveService, onReject: onRejectService),
+            if (serviceRequests.isNotEmpty)
+              DeptServiceTable(
+                requests: serviceRequests,
+                onApprove: onApproveService,
+                onReject: onRejectService,
+              ),
           ],
         ],
       ),

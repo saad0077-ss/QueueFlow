@@ -15,7 +15,8 @@ class FavoriteClinicsSearchBar extends StatefulWidget {
   });
 
   @override
-  State<FavoriteClinicsSearchBar> createState() => _FavoriteClinicsSearchBarState();
+  State<FavoriteClinicsSearchBar> createState() =>
+      _FavoriteClinicsSearchBarState();
 }
 
 class _FavoriteClinicsSearchBarState extends State<FavoriteClinicsSearchBar> {
@@ -55,11 +56,22 @@ class _FavoriteClinicsSearchBarState extends State<FavoriteClinicsSearchBar> {
       decoration: InputDecoration(
         hintText: 'Search saved clinics, doctors, services...',
         hintStyle: GoogleFonts.inter(fontSize: 12.5, color: colors.textMuted),
-        prefixIcon: Icon(Icons.search_rounded, size: 20, color: colors.textMuted),
-        prefixIconConstraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+        prefixIcon: Icon(
+          Icons.search_rounded,
+          size: 20,
+          color: colors.textMuted,
+        ),
+        prefixIconConstraints: const BoxConstraints(
+          minWidth: 40,
+          minHeight: 40,
+        ),
         suffixIcon: widget.query.isNotEmpty
             ? IconButton(
-                icon: Icon(Icons.clear_rounded, size: 18, color: colors.textMuted),
+                icon: Icon(
+                  Icons.clear_rounded,
+                  size: 18,
+                  color: colors.textMuted,
+                ),
                 onPressed: () {
                   _controller.clear();
                   widget.onClear();
@@ -69,7 +81,10 @@ class _FavoriteClinicsSearchBarState extends State<FavoriteClinicsSearchBar> {
         filled: true,
         fillColor: colors.surface,
         isDense: true,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 11,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: colors.border),

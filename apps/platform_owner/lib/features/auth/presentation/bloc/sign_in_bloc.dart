@@ -1,4 +1,5 @@
-﻿import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../domain/usecases/sign_in_usecase.dart';
 import 'sign_in_event.dart';
 import 'sign_in_state.dart';
@@ -6,8 +7,9 @@ import 'sign_in_state.dart';
 class SignInBloc extends Bloc<SignInEvent, SignInState> {
   static const String _adminDomain = '@queueflow.com';
   static const String _masterAdminEmail = 'admin@queueflow.com';
-  static final RegExp _emailRegex =
-      RegExp(r'^[\w\.-]+@[\w\.-]+\.[a-zA-Z]{2,}$');
+  static final RegExp _emailRegex = RegExp(
+    r'^[\w\.-]+@[\w\.-]+\.[a-zA-Z]{2,}$',
+  );
 
   final SignInUseCase signInUseCase;
 
@@ -31,24 +33,28 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
       }
     }
 
-    emit(state.copyWith(
-      email: event.email,
-      emailError: inlineEmailError,
-      clearEmailError: inlineEmailError == null,
-      isEmailValid: isEmailValid,
-      clearErrorMessage: true,
-    ));
+    emit(
+      state.copyWith(
+        email: event.email,
+        emailError: inlineEmailError,
+        clearEmailError: inlineEmailError == null,
+        isEmailValid: isEmailValid,
+        clearErrorMessage: true,
+      ),
+    );
   }
 
   void _onPasswordChanged(
     SignInPasswordChanged event,
     Emitter<SignInState> emit,
   ) {
-    emit(state.copyWith(
-      password: event.password,
-      clearPasswordError: true,
-      clearErrorMessage: true,
-    ));
+    emit(
+      state.copyWith(
+        password: event.password,
+        clearPasswordError: true,
+        clearErrorMessage: true,
+      ),
+    );
   }
 
   void _onTogglePasswordVisibility(
@@ -90,33 +96,39 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
     }
 
     if (emailError != null || passwordError != null) {
-      emit(state.copyWith(
-        emailError: emailError,
-        clearEmailError: emailError == null,
-        isEmailValid: emailError == null && email.endsWith(_adminDomain),
-        passwordError: passwordError,
-        clearPasswordError: passwordError == null,
-        errorMessage: snackBarError,
-      ));
+      emit(
+        state.copyWith(
+          emailError: emailError,
+          clearEmailError: emailError == null,
+          isEmailValid: emailError == null && email.endsWith(_adminDomain),
+          passwordError: passwordError,
+          clearPasswordError: passwordError == null,
+          errorMessage: snackBarError,
+        ),
+      );
       return;
     }
 
-    emit(state.copyWith(
-      isLoading: true,
-      clearEmailError: true,
-      isEmailValid: true,
-      clearPasswordError: true,
-      clearErrorMessage: true,
-    ));
+    emit(
+      state.copyWith(
+        isLoading: true,
+        clearEmailError: true,
+        isEmailValid: true,
+        clearPasswordError: true,
+        clearErrorMessage: true,
+      ),
+    );
 
     try {
       final admin = await signInUseCase(email: email, password: password);
       emit(state.copyWith(isLoading: false, admin: admin));
     } catch (e) {
-      emit(state.copyWith(
-        isLoading: false,
-        errorMessage: e.toString().replaceFirst('Exception: ', ''),
-      ));
+      emit(
+        state.copyWith(
+          isLoading: false,
+          errorMessage: e.toString().replaceFirst('Exception: ', ''),
+        ),
+      );
     }
   }
 }

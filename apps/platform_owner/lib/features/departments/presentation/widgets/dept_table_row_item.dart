@@ -36,12 +36,19 @@ class DeptTableRowItem extends StatelessWidget {
         child: Row(
           children: [
             Expanded(flex: 3, child: _colDept(colors)),
-            Expanded(flex: 3, child: _colSpecialty(department.standardServices.length)),
+            Expanded(
+              flex: 3,
+              child: _colSpecialty(department.standardServices.length),
+            ),
             Expanded(
               flex: 2,
               child: Text(
                 '⏱️ ${department.avgConsultationTime}',
-                style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w600, color: colors.textPrimary),
+                style: GoogleFonts.inter(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w600,
+                  color: colors.textPrimary,
+                ),
               ),
             ),
             Expanded(flex: 2, child: _colClinics(colors)),
@@ -69,7 +76,10 @@ class DeptTableRowItem extends StatelessWidget {
         Container(
           width: 36,
           height: 36,
-          decoration: BoxDecoration(color: colors.primaryTint, borderRadius: BorderRadius.circular(10)),
+          decoration: BoxDecoration(
+            color: colors.primaryTint,
+            borderRadius: BorderRadius.circular(10),
+          ),
           alignment: Alignment.center,
           child: Text(department.icon, style: const TextStyle(fontSize: 18)),
         ),
@@ -80,24 +90,41 @@ class DeptTableRowItem extends StatelessWidget {
             children: [
               Text(
                 department.name,
-                style: GoogleFonts.inter(fontSize: 13.5, fontWeight: FontWeight.bold, color: colors.textPrimary),
+                style: GoogleFonts.inter(
+                  fontSize: 13.5,
+                  fontWeight: FontWeight.bold,
+                  color: colors.textPrimary,
+                ),
                 overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 2),
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-                    decoration: BoxDecoration(color: colors.primaryTint, borderRadius: BorderRadius.circular(4)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 5,
+                      vertical: 1,
+                    ),
+                    decoration: BoxDecoration(
+                      color: colors.primaryTint,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
                     child: Text(
                       department.code,
-                      style: GoogleFonts.jetBrainsMono(fontSize: 10.5, fontWeight: FontWeight.w800, color: colors.primaryLight),
+                      style: GoogleFonts.jetBrainsMono(
+                        fontSize: 10.5,
+                        fontWeight: FontWeight.w800,
+                        color: colors.primaryLight,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 6),
                   Text(
                     '${department.doctorCount} Doctor${department.doctorCount == 1 ? '' : 's'}',
-                    style: GoogleFonts.inter(fontSize: 11, color: colors.textMuted),
+                    style: GoogleFonts.inter(
+                      fontSize: 11,
+                      color: colors.textMuted,
+                    ),
                   ),
                 ],
               ),
@@ -109,12 +136,18 @@ class DeptTableRowItem extends StatelessWidget {
   }
 
   Widget _colSpecialty(int count) {
-    return _countBadge('$count Standard Service${count == 1 ? '' : 's'}', const Color(0xFF10B981));
+    return _countBadge(
+      '$count Standard Service${count == 1 ? '' : 's'}',
+      const Color(0xFF10B981),
+    );
   }
 
   Widget _colClinics(AppColorsExtension colors) {
     final count = department.assignedClinics.length;
-    return _countBadge('$count Clinic${count == 1 ? '' : 's'}', colors.primaryLight);
+    return _countBadge(
+      '$count Clinic${count == 1 ? '' : 's'}',
+      colors.primaryLight,
+    );
   }
 
   Widget _countBadge(String label, Color color) {
@@ -122,25 +155,42 @@ class DeptTableRowItem extends StatelessWidget {
       alignment: Alignment.centerLeft,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-        decoration: BoxDecoration(color: color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(4)),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(4),
+        ),
         child: Text(
           label,
-          style: GoogleFonts.inter(fontSize: 10.5, fontWeight: FontWeight.w700, color: color),
+          style: GoogleFonts.inter(
+            fontSize: 10.5,
+            fontWeight: FontWeight.w700,
+            color: color,
+          ),
         ),
       ),
     );
   }
 
   Widget _colVisits(AppColorsExtension colors) {
-    final formatted = department.totalVisits.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},');
+    final formatted = department.totalVisits.toString().replaceAllMapped(
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+      (Match m) => '${m[1]},',
+    );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           formatted,
-          style: GoogleFonts.jetBrainsMono(fontSize: 13, fontWeight: FontWeight.bold, color: colors.textPrimary),
+          style: GoogleFonts.jetBrainsMono(
+            fontSize: 13,
+            fontWeight: FontWeight.bold,
+            color: colors.textPrimary,
+          ),
         ),
-        Text('visits / mo', style: GoogleFonts.inter(fontSize: 10.5, color: colors.textMuted)),
+        Text(
+          'visits / mo',
+          style: GoogleFonts.inter(fontSize: 10.5, color: colors.textMuted),
+        ),
       ],
     );
   }
@@ -151,12 +201,17 @@ class DeptTableRowItem extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
         decoration: BoxDecoration(
-          color: (department.isActive ? colors.success : colors.textMuted).withValues(alpha: 0.15),
+          color: (department.isActive ? colors.success : colors.textMuted)
+              .withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(
           department.isActive ? 'ACTIVE' : 'INACTIVE',
-          style: GoogleFonts.inter(fontSize: 10.5, fontWeight: FontWeight.w800, color: department.isActive ? colors.success : colors.textMuted),
+          style: GoogleFonts.inter(
+            fontSize: 10.5,
+            fontWeight: FontWeight.w800,
+            color: department.isActive ? colors.success : colors.textMuted,
+          ),
         ),
       ),
     );

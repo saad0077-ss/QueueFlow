@@ -1,4 +1,4 @@
-﻿const sampleExpansionRequestsSeed = [
+const sampleExpansionRequestsSeed = [
   {
     'clinicId': 'sunrise-health',
     'clinicName': 'Sunrise Health Clinic',
@@ -7,7 +7,8 @@
     'departmentIcons': ['🦷', '🦴'],
     'expectedDoctorCount': 2,
     'targetDate': 'Next Month',
-    'reason': 'Onboarding visiting dental and orthopedic specialists for rehab.',
+    'reason':
+        'Onboarding visiting dental and orthopedic specialists for rehab.',
     'requestedBy': 'Dr. Priya Sharma',
     'status': 'pending',
     'createdAt': 'Recent',

@@ -75,7 +75,11 @@ class ProfileDialogs {
         ),
         title: Row(
           children: [
-            const Icon(Icons.warning_amber_rounded, color: AppColors.error, size: 22),
+            const Icon(
+              Icons.warning_amber_rounded,
+              color: AppColors.error,
+              size: 22,
+            ),
             const SizedBox(width: 8),
             Text(
               'Delete Account',
@@ -102,8 +106,8 @@ class ProfileDialogs {
             onPressed: () {
               Navigator.of(dialogCtx).pop();
               context.read<ProfileBloc>().add(
-                    const ProfileDeleteAccountRequested(),
-                  );
+                const ProfileDeleteAccountRequested(),
+              );
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.error,

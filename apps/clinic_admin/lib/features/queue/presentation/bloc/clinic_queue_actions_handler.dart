@@ -18,9 +18,20 @@ class ClinicQueueActionsHandler {
       final label = event.serviceName != null
           ? 'Next patient called for ${event.serviceName}.'
           : 'Next patient called to counter.';
-      emit(state.copyWith(toastMessage: label, isErrorToast: false, clearSelectedPatient: true));
+      emit(
+        state.copyWith(
+          toastMessage: label,
+          isErrorToast: false,
+          clearSelectedPatient: true,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(toastMessage: 'Could not call next patient: $e', isErrorToast: true));
+      emit(
+        state.copyWith(
+          toastMessage: 'Could not call next patient: $e',
+          isErrorToast: true,
+        ),
+      );
     }
   }
 
@@ -31,9 +42,20 @@ class ClinicQueueActionsHandler {
   ) async {
     try {
       await repository.callSpecificToken(event.token);
-      emit(state.copyWith(toastMessage: 'Called ${event.token} to counter.', isErrorToast: false, clearSelectedPatient: true));
+      emit(
+        state.copyWith(
+          toastMessage: 'Called ${event.token} to counter.',
+          isErrorToast: false,
+          clearSelectedPatient: true,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(toastMessage: 'Could not call ${event.token}: $e', isErrorToast: true));
+      emit(
+        state.copyWith(
+          toastMessage: 'Could not call ${event.token}: $e',
+          isErrorToast: true,
+        ),
+      );
     }
   }
 
@@ -44,9 +66,20 @@ class ClinicQueueActionsHandler {
   ) async {
     try {
       await repository.completeToken(event.token);
-      emit(state.copyWith(toastMessage: 'Marked ${event.token} as completed.', isErrorToast: false, clearSelectedPatient: true));
+      emit(
+        state.copyWith(
+          toastMessage: 'Marked ${event.token} as completed.',
+          isErrorToast: false,
+          clearSelectedPatient: true,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(toastMessage: 'Could not complete ${event.token}: $e', isErrorToast: true));
+      emit(
+        state.copyWith(
+          toastMessage: 'Could not complete ${event.token}: $e',
+          isErrorToast: true,
+        ),
+      );
     }
   }
 
@@ -57,9 +90,20 @@ class ClinicQueueActionsHandler {
   ) async {
     try {
       await repository.skipToken(event.token);
-      emit(state.copyWith(toastMessage: 'Moved ${event.token} to back of queue.', isErrorToast: false, clearSelectedPatient: true));
+      emit(
+        state.copyWith(
+          toastMessage: 'Moved ${event.token} to back of queue.',
+          isErrorToast: false,
+          clearSelectedPatient: true,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(toastMessage: 'Could not skip ${event.token}: $e', isErrorToast: true));
+      emit(
+        state.copyWith(
+          toastMessage: 'Could not skip ${event.token}: $e',
+          isErrorToast: true,
+        ),
+      );
     }
   }
 
@@ -70,9 +114,20 @@ class ClinicQueueActionsHandler {
   ) async {
     try {
       await repository.removeToken(event.token);
-      emit(state.copyWith(toastMessage: 'Removed ${event.token} from live queue.', isErrorToast: false, clearSelectedPatient: true));
+      emit(
+        state.copyWith(
+          toastMessage: 'Removed ${event.token} from live queue.',
+          isErrorToast: false,
+          clearSelectedPatient: true,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(toastMessage: 'Could not remove ${event.token}: $e', isErrorToast: true));
+      emit(
+        state.copyWith(
+          toastMessage: 'Could not remove ${event.token}: $e',
+          isErrorToast: true,
+        ),
+      );
     }
   }
 
@@ -84,12 +139,21 @@ class ClinicQueueActionsHandler {
     final close = !state.summary.isServiceClosedToday(event.service);
     try {
       await repository.setServiceClosedToday(event.service, close);
-      emit(state.copyWith(
-        toastMessage: close ? '${event.service} queue closed for today.' : '${event.service} queue reopened.',
-        isErrorToast: false,
-      ));
+      emit(
+        state.copyWith(
+          toastMessage: close
+              ? '${event.service} queue closed for today.'
+              : '${event.service} queue reopened.',
+          isErrorToast: false,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(toastMessage: 'Could not update queue: $e', isErrorToast: true));
+      emit(
+        state.copyWith(
+          toastMessage: 'Could not update queue: $e',
+          isErrorToast: true,
+        ),
+      );
     }
   }
 
@@ -101,12 +165,21 @@ class ClinicQueueActionsHandler {
     final nextPaused = !state.summary.isPaused;
     try {
       await repository.togglePauseQueue(nextPaused);
-      emit(state.copyWith(
-        toastMessage: nextPaused ? 'Live queue paused.' : 'Live queue opened for walk-ins.',
-        isErrorToast: false,
-      ));
+      emit(
+        state.copyWith(
+          toastMessage: nextPaused
+              ? 'Live queue paused.'
+              : 'Live queue opened for walk-ins.',
+          isErrorToast: false,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(toastMessage: 'Could not toggle queue: $e', isErrorToast: true));
+      emit(
+        state.copyWith(
+          toastMessage: 'Could not toggle queue: $e',
+          isErrorToast: true,
+        ),
+      );
     }
   }
 
@@ -125,12 +198,20 @@ class ClinicQueueActionsHandler {
         email: event.email,
         department: event.department,
       );
-      emit(state.copyWith(
-        toastMessage: 'Walk-in added: Token ${item.token} issued for ${item.patientName}!',
-        isErrorToast: false,
-      ));
+      emit(
+        state.copyWith(
+          toastMessage:
+              'Walk-in added: Token ${item.token} issued for ${item.patientName}!',
+          isErrorToast: false,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(toastMessage: 'Could not add walk-in: $e', isErrorToast: true));
+      emit(
+        state.copyWith(
+          toastMessage: 'Could not add walk-in: $e',
+          isErrorToast: true,
+        ),
+      );
     }
   }
 }

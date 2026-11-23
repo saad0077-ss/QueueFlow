@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../../domain/entities/active_ticket_entity.dart';
 import '../../../../domain/entities/clinic_entity.dart';
 import '../radar/live_pulsing_dot.dart';
@@ -13,6 +14,7 @@ class ActiveTicketBody extends StatelessWidget {
   final List<ClinicEntity> allClinics;
   final VoidCallback onCancelSpot;
   final ValueChanged<ClinicEntity> onGetDirections;
+  final VoidCallback? onRaiseConcern;
 
   const ActiveTicketBody({
     super.key,
@@ -20,6 +22,7 @@ class ActiveTicketBody extends StatelessWidget {
     required this.allClinics,
     required this.onCancelSpot,
     required this.onGetDirections,
+    this.onRaiseConcern,
   });
 
   ClinicEntity get _associatedClinic {
@@ -85,6 +88,7 @@ class ActiveTicketBody extends StatelessWidget {
         ActiveTicketActions(
           onGetDirections: () => onGetDirections(_associatedClinic),
           onCancelSpot: onCancelSpot,
+          onRaiseConcern: onRaiseConcern,
         ),
       ],
     );

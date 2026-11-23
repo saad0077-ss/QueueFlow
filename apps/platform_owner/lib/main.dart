@@ -1,8 +1,9 @@
-﻿import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import 'features/auth/presentation/pages/platform_admin_login_screen.dart';
 import 'features/dashboard/presentation/pages/platform_clinics_page.dart';
 import 'firebase_options.dart';
@@ -45,9 +46,7 @@ class PlatformOwnerApp extends StatelessWidget {
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Scaffold(
-                    body: Center(
-                      child: CircularProgressIndicator(),
-                    ),
+                    body: Center(child: CircularProgressIndicator()),
                   );
                 }
                 return snapshot.hasData && snapshot.data != null

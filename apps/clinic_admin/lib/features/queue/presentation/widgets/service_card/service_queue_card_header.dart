@@ -20,10 +20,18 @@ class ServiceQueueCardHeader extends StatelessWidget {
   Widget _pill({required String label, required Color bg, required Color fg}) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(20)),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(20),
+      ),
       child: Text(
         label,
-        style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.w800, color: fg, letterSpacing: 0.4),
+        style: GoogleFonts.inter(
+          fontSize: 10,
+          fontWeight: FontWeight.w800,
+          color: fg,
+          letterSpacing: 0.4,
+        ),
       ),
     );
   }

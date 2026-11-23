@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../models/live_clinic_queue_info.dart';
 
 class QueueRadarPhaseHelper {
@@ -33,10 +34,7 @@ class QueueRadarPhaseHelper {
         Icons.hourglass_bottom_rounded,
         'Next patient will be called shortly',
       ),
-      _ => (
-        Icons.schedule_rounded,
-        'Upcoming · consulting not started',
-      ),
+      _ => (Icons.schedule_rounded, 'Upcoming · consulting not started'),
     };
   }
 }

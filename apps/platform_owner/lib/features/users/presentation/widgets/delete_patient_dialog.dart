@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../domain/entities/platform_user_entity.dart';
 
 class DeletePatientDialog extends StatefulWidget {
@@ -58,7 +59,11 @@ class _DeletePatientDialogState extends State<DeletePatientDialog> {
               color: const Color(0xFFEF4444).withAlpha(30),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: const Icon(Icons.delete_forever_rounded, color: Color(0xFFEF4444), size: 22),
+            child: const Icon(
+              Icons.delete_forever_rounded,
+              color: Color(0xFFEF4444),
+              size: 22,
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -105,7 +110,10 @@ class _DeletePatientDialogState extends State<DeletePatientDialog> {
                   const SizedBox(height: 4),
                   Text(
                     '${widget.user.email} • ${widget.user.phone} • ID: ${widget.user.healthId}',
-                    style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted),
+                    style: GoogleFonts.inter(
+                      fontSize: 12,
+                      color: colors.textMuted,
+                    ),
                   ),
                 ],
               ),
@@ -116,17 +124,27 @@ class _DeletePatientDialogState extends State<DeletePatientDialog> {
               decoration: BoxDecoration(
                 color: const Color(0xFFEF4444).withAlpha(20),
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: const Color(0xFFEF4444).withAlpha(50)),
+                border: Border.all(
+                  color: const Color(0xFFEF4444).withAlpha(50),
+                ),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.warning_amber_rounded, color: Color(0xFFEF4444), size: 18),
+                  const Icon(
+                    Icons.warning_amber_rounded,
+                    color: Color(0xFFEF4444),
+                    size: 18,
+                  ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       'This action cascades across Firebase Cloud Firestore and Storage: all appointments, live queue tokens, patient reviews, payments, notifications, and profile documents will be permanently erased.',
-                      style: GoogleFonts.inter(fontSize: 11.5, color: const Color(0xFFEF4444), height: 1.35),
+                      style: GoogleFonts.inter(
+                        fontSize: 11.5,
+                        color: const Color(0xFFEF4444),
+                        height: 1.35,
+                      ),
                     ),
                   ),
                 ],
@@ -134,31 +152,53 @@ class _DeletePatientDialogState extends State<DeletePatientDialog> {
             ),
             if (_error != null) ...[
               const SizedBox(height: 10),
-              Text(_error!, style: GoogleFonts.inter(fontSize: 12, color: const Color(0xFFEF4444))),
+              Text(
+                _error!,
+                style: GoogleFonts.inter(
+                  fontSize: 12,
+                  color: const Color(0xFFEF4444),
+                ),
+              ),
             ],
           ],
         ),
       ),
       actions: [
         TextButton(
-          onPressed: _isDeleting ? null : () => Navigator.of(context).pop(false),
-          child: Text('Cancel', style: GoogleFonts.inter(fontSize: 13, color: colors.textMuted)),
+          onPressed: _isDeleting
+              ? null
+              : () => Navigator.of(context).pop(false),
+          child: Text(
+            'Cancel',
+            style: GoogleFonts.inter(fontSize: 13, color: colors.textMuted),
+          ),
         ),
         ElevatedButton(
           onPressed: _isDeleting ? null : _handleDelete,
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFFEF4444),
             foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
           ),
           child: _isDeleting
               ? const SizedBox(
                   width: 16,
                   height: 16,
-                  child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
                 )
-              : Text('Permanently Purge', style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w700)),
+              : Text(
+                  'Permanently Purge',
+                  style: GoogleFonts.inter(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
         ),
       ],
     );

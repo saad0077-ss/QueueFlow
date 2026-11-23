@@ -48,7 +48,10 @@ class PaymentHistoryHeroBanner extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(20),
@@ -137,7 +140,9 @@ class PaymentHistoryHeroBanner extends StatelessWidget {
               decoration: BoxDecoration(
                 color: const Color(0xFF10B981).withValues(alpha: 0.18),
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.35)),
+                border: Border.all(
+                  color: const Color(0xFF10B981).withValues(alpha: 0.35),
+                ),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -164,7 +169,10 @@ class PaymentHistoryHeroBanner extends StatelessWidget {
                     ],
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFF10B981),
                       borderRadius: BorderRadius.circular(4),

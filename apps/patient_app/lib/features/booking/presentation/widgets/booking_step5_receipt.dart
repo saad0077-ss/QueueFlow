@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:patient_app/core/widgets/app_snack_bar.dart';
 import 'package:patient_app/core/widgets/gradient_button.dart';
 import 'package:patient_app/features/booking/domain/entities/appointment_entity.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
@@ -27,14 +28,11 @@ class BookingStep5Receipt extends StatelessWidget {
   }
 
   void _copyReference(BuildContext context) {
-    final colors = context.colors;
     Clipboard.setData(ClipboardData(text: appointment.bookingRef));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Booking Reference ${appointment.bookingRef} copied!'),
-        backgroundColor: colors.success,
-        duration: const Duration(seconds: 2),
-      ),
+    AppSnackBar.showSuccess(
+      context,
+      title: 'Copied to Clipboard',
+      message: 'Booking Reference ${appointment.bookingRef} copied!',
     );
   }
 

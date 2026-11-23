@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../data/repositories/profile_repository_impl.dart';
 import '../../domain/repositories/profile_repository.dart';
-import '../bloc/live_queue_history_cubit.dart';
+import '../bloc/live_queue_history_bloc.dart';
 import '../widgets/queue_history/live_queue_history_list.dart';
 import '../widgets/queue_history/queue_history_empty_state.dart';
 import '../widgets/queue_history/queue_history_filter_tabs.dart';
@@ -44,10 +45,11 @@ class LiveQueueHistoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => LiveQueueHistoryCubit(repository ?? ProfileRepositoryImpl()),
-      child: BlocBuilder<LiveQueueHistoryCubit, LiveQueueHistoryState>(
+      create: (_) =>
+          LiveQueueHistoryBloc(repository ?? ProfileRepositoryImpl()),
+      child: BlocBuilder<LiveQueueHistoryBloc, LiveQueueHistoryState>(
         builder: (context, state) {
-          final cubit = context.read<LiveQueueHistoryCubit>();
+          final bloc = context.read<LiveQueueHistoryBloc>();
           final colors = context.colors;
           final activeTicket = state.activeTicket;
           final filtered = state.filteredQueues;
@@ -60,9 +62,12 @@ class LiveQueueHistoryScreen extends StatelessWidget {
                   QueueHistoryHeader(
                     onBack: () => Navigator.of(context).pop(),
                     onRefresh: () async {
-                      await cubit.load();
+                      bloc.load();
                       if (context.mounted) {
-                        AppSnackBar.showSuccess(context, message: 'Live queue history refreshed');
+                        AppSnackBar.showSuccess(
+                          context,
+                          message: 'Live queue history refreshed',
+                        );
                       }
                     },
                   ),
@@ -70,17 +75,29 @@ class LiveQueueHistoryScreen extends StatelessWidget {
                     child: RefreshIndicator(
                       color: AppColors.primary,
                       backgroundColor: colors.surface,
-                      onRefresh: cubit.load,
+                      onRefresh: () async => bloc.load(),
                       child: state.isLoading
-                          ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+                          ? const Center(
+                              child: CircularProgressIndicator(
+                                color: AppColors.primary,
+                              ),
+                            )
                           : SingleChildScrollView(
-                              physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                              physics: const AlwaysScrollableScrollPhysics(
+                                parent: BouncingScrollPhysics(),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 14,
+                              ),
                               child: Center(
                                 child: ConstrainedBox(
-                                  constraints: const BoxConstraints(maxWidth: 640),
+                                  constraints: const BoxConstraints(
+                                    maxWidth: 640,
+                                  ),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
                                     children: [
                                       if (activeTicket != null)
                                         QueueHistorySpotlightCard(
@@ -100,10 +117,12 @@ class LiveQueueHistoryScreen extends StatelessWidget {
                                         allCount: state.totalJoined,
                                         activeCount: state.totalActive,
                                         completedCount: state.totalServed,
-                                        onFilterChanged: cubit.setFilter,
+                                        onFilterChanged: bloc.setFilter,
                                       ),
                                       if (filtered.isEmpty)
-                                        QueueHistoryEmptyState(filterIndex: state.filterIndex)
+                                        QueueHistoryEmptyState(
+                                          filterIndex: state.filterIndex,
+                                        )
                                       else
                                         LiveQueueHistoryList(
                                           queues: filtered,

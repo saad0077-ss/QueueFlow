@@ -100,6 +100,9 @@ class ProfileSupportTicketCreated extends ProfileEvent {
   final String category;
   final String subject;
   final String description;
+  final String priority;
+  final String? linkedTokenNumber;
+  final bool isClinicRelated;
 
   const ProfileSupportTicketCreated({
     required this.clinicId,
@@ -107,6 +110,9 @@ class ProfileSupportTicketCreated extends ProfileEvent {
     required this.category,
     required this.subject,
     required this.description,
+    this.priority = 'medium',
+    this.linkedTokenNumber,
+    this.isClinicRelated = true,
   });
 
   @override
@@ -116,6 +122,9 @@ class ProfileSupportTicketCreated extends ProfileEvent {
     category,
     subject,
     description,
+    priority,
+    linkedTokenNumber,
+    isClinicRelated,
   ];
 }
 
@@ -127,6 +136,29 @@ class ProfileTicketReplySent extends ProfileEvent {
 
   @override
   List<Object?> get props => [ticketId, text];
+}
+
+class ProfileTicketStatusUpdated extends ProfileEvent {
+  final String ticketId;
+  final String status;
+
+  const ProfileTicketStatusUpdated({
+    required this.ticketId,
+    required this.status,
+  });
+
+  @override
+  List<Object?> get props => [ticketId, status];
+}
+
+class ProfileTicketRated extends ProfileEvent {
+  final String ticketId;
+  final int rating;
+
+  const ProfileTicketRated({required this.ticketId, required this.rating});
+
+  @override
+  List<Object?> get props => [ticketId, rating];
 }
 
 class ProfileActiveTicketChanged extends ProfileEvent {

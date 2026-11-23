@@ -9,7 +9,12 @@ class DeptServiceTable extends StatelessWidget {
   final ValueChanged<DeptServiceRequestEntity> onApprove;
   final ValueChanged<DeptServiceRequestEntity> onReject;
 
-  const DeptServiceTable({super.key, required this.requests, required this.onApprove, required this.onReject});
+  const DeptServiceTable({
+    super.key,
+    required this.requests,
+    required this.onApprove,
+    required this.onReject,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,14 +31,25 @@ class DeptServiceTable extends StatelessWidget {
             const Text('🔬', style: TextStyle(fontSize: 16)),
             Text(
               'Custom Procedure & Service Requests',
-              style: GoogleFonts.inter(fontSize: 13.5, fontWeight: FontWeight.bold, color: colors.textPrimary),
+              style: GoogleFonts.inter(
+                fontSize: 13.5,
+                fontWeight: FontWeight.bold,
+                color: colors.textPrimary,
+              ),
             ),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              decoration: BoxDecoration(color: const Color(0xFFF59E0B).withValues(alpha: 0.15), borderRadius: BorderRadius.circular(4)),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF59E0B).withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(4),
+              ),
               child: Text(
                 '${requests.length} Pending',
-                style: GoogleFonts.inter(fontSize: 10, fontWeight: FontWeight.bold, color: const Color(0xFFF59E0B)),
+                style: GoogleFonts.inter(
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  color: const Color(0xFFF59E0B),
+                ),
               ),
             ),
           ],
@@ -41,7 +57,9 @@ class DeptServiceTable extends StatelessWidget {
         const SizedBox(height: 10),
         LayoutBuilder(
           builder: (context, constraints) {
-            final tableWidth = constraints.maxWidth < 960 ? 960.0 : constraints.maxWidth;
+            final tableWidth = constraints.maxWidth < 960
+                ? 960.0
+                : constraints.maxWidth;
             return Container(
               width: double.infinity,
               decoration: BoxDecoration(
@@ -53,7 +71,12 @@ class DeptServiceTable extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 child: SizedBox(
                   width: tableWidth,
-                  child: Column(children: [_buildHeader(context), ...requests.map((r) => _buildRow(context, r))]),
+                  child: Column(
+                    children: [
+                      _buildHeader(context),
+                      ...requests.map((r) => _buildRow(context, r)),
+                    ],
+                  ),
                 ),
               ),
             );
@@ -79,35 +102,55 @@ class DeptServiceTable extends StatelessWidget {
             flex: 2,
             child: Text(
               'Clinic & Doctor',
-              style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: colors.textMuted),
+              style: TextStyle(
+                fontSize: 11.5,
+                fontWeight: FontWeight.w700,
+                color: colors.textMuted,
+              ),
             ),
           ),
           Expanded(
             flex: 3,
             child: Text(
               'Proposed Service',
-              style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: colors.textMuted),
+              style: TextStyle(
+                fontSize: 11.5,
+                fontWeight: FontWeight.w700,
+                color: colors.textMuted,
+              ),
             ),
           ),
           Expanded(
             flex: 2,
             child: Text(
               'Department',
-              style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: colors.textMuted),
+              style: TextStyle(
+                fontSize: 11.5,
+                fontWeight: FontWeight.w700,
+                color: colors.textMuted,
+              ),
             ),
           ),
           Expanded(
             flex: 2,
             child: Text(
               'Duration / Fee',
-              style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: colors.textMuted),
+              style: TextStyle(
+                fontSize: 11.5,
+                fontWeight: FontWeight.w700,
+                color: colors.textMuted,
+              ),
             ),
           ),
           Expanded(
             flex: 3,
             child: Text(
               'Clinical Justification',
-              style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: colors.textMuted),
+              style: TextStyle(
+                fontSize: 11.5,
+                fontWeight: FontWeight.w700,
+                color: colors.textMuted,
+              ),
             ),
           ),
           Expanded(
@@ -115,7 +158,11 @@ class DeptServiceTable extends StatelessWidget {
             child: Text(
               'Actions',
               textAlign: TextAlign.right,
-              style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: colors.textMuted),
+              style: TextStyle(
+                fontSize: 11.5,
+                fontWeight: FontWeight.w700,
+                color: colors.textMuted,
+              ),
             ),
           ),
         ],
@@ -140,9 +187,19 @@ class DeptServiceTable extends StatelessWidget {
               children: [
                 Text(
                   r.clinicName,
-                  style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.bold, color: colors.textPrimary),
+                  style: GoogleFonts.inter(
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.bold,
+                    color: colors.textPrimary,
+                  ),
                 ),
-                Text('By: ${r.requestedBy}', style: GoogleFonts.inter(fontSize: 11, color: colors.textMuted)),
+                Text(
+                  'By: ${r.requestedBy}',
+                  style: GoogleFonts.inter(
+                    fontSize: 11,
+                    color: colors.textMuted,
+                  ),
+                ),
               ],
             ),
           ),
@@ -153,13 +210,20 @@ class DeptServiceTable extends StatelessWidget {
               children: [
                 Text(
                   r.serviceName,
-                  style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.bold, color: colors.primary),
+                  style: GoogleFonts.inter(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: colors.primary,
+                  ),
                 ),
                 Text(
                   r.description,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.inter(fontSize: 11, color: colors.textMuted),
+                  style: GoogleFonts.inter(
+                    fontSize: 11,
+                    color: colors.textMuted,
+                  ),
                 ),
               ],
             ),
@@ -170,10 +234,17 @@ class DeptServiceTable extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(color: colors.primary.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(4)),
+                decoration: BoxDecoration(
+                  color: colors.primary.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(4),
+                ),
                 child: Text(
                   r.departmentName,
-                  style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w600, color: colors.primary),
+                  style: GoogleFonts.inter(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: colors.primary,
+                  ),
                 ),
               ),
             ),
@@ -183,10 +254,20 @@ class DeptServiceTable extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('⏱️ ${r.duration} mins', style: GoogleFonts.inter(fontSize: 11.5, color: colors.textPrimary)),
+                Text(
+                  '⏱️ ${r.duration} mins',
+                  style: GoogleFonts.inter(
+                    fontSize: 11.5,
+                    color: colors.textPrimary,
+                  ),
+                ),
                 Text(
                   '₹${r.suggestedPrice}',
-                  style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.bold, color: colors.textPrimary),
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: colors.textPrimary,
+                  ),
                 ),
               ],
             ),
@@ -200,7 +281,10 @@ class DeptServiceTable extends StatelessWidget {
                 borderRadius: BorderRadius.circular(6),
                 border: Border.all(color: colors.border),
               ),
-              child: Text('💬 "${r.notes}"', style: GoogleFonts.inter(fontSize: 11, color: colors.textMuted)),
+              child: Text(
+                '💬 "${r.notes}"',
+                style: GoogleFonts.inter(fontSize: 11, color: colors.textMuted),
+              ),
             ),
           ),
           Expanded(
@@ -212,24 +296,43 @@ class DeptServiceTable extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: colors.success,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 6,
+                    ),
                     minimumSize: Size.zero,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6),
+                    ),
                   ),
                   onPressed: () => onApprove(r),
-                  child: const Text('✓ Approve & Catalog', style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.bold)),
+                  child: const Text(
+                    '✓ Approve & Catalog',
+                    style: TextStyle(
+                      fontSize: 10.5,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
                 const SizedBox(width: 4),
                 OutlinedButton(
                   style: OutlinedButton.styleFrom(
                     foregroundColor: colors.error,
                     side: BorderSide(color: colors.error),
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 6,
+                    ),
                     minimumSize: Size.zero,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6),
+                    ),
                   ),
                   onPressed: () => onReject(r),
-                  child: const Text('✕ Reject', style: TextStyle(fontSize: 10.5)),
+                  child: const Text(
+                    '✕ Reject',
+                    style: TextStyle(fontSize: 10.5),
+                  ),
                 ),
               ],
             ),

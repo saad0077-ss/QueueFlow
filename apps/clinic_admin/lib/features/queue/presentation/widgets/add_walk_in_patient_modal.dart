@@ -2,19 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../services/domain/entities/clinic_service_entity.dart';
 import '../../../services/domain/entities/service_department_entity.dart';
-import '../bloc/walk_in_cubit.dart';
+import '../bloc/walk_in_bloc.dart';
 import 'walk_in/walk_in_actions_footer.dart';
 import 'walk_in/walk_in_form_body.dart';
 import 'walk_in/walk_in_modal_header.dart';
 
-typedef WalkInSubmit = void Function({
-  required String name,
-  required String phone,
-  required String service,
-  required String department,
-  String? email,
-  String? note,
-});
+typedef WalkInSubmit =
+    void Function({
+      required String name,
+      required String phone,
+      required String service,
+      required String department,
+      String? email,
+      String? note,
+    });
 
 class AddWalkInPatientModal extends StatelessWidget {
   final List<ServiceDepartmentEntity> departments;
@@ -60,7 +61,7 @@ class AddWalkInPatientModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => WalkInCubit(
+      create: (_) => WalkInBloc(
         rawDepartments: departments,
         rawServices: services,
         preselectedService: preselectedService,
@@ -75,10 +76,12 @@ class _AddWalkInPatientModalForm extends StatefulWidget {
   const _AddWalkInPatientModalForm({required this.onAdd});
 
   @override
-  State<_AddWalkInPatientModalForm> createState() => _AddWalkInPatientModalFormState();
+  State<_AddWalkInPatientModalForm> createState() =>
+      _AddWalkInPatientModalFormState();
 }
 
-class _AddWalkInPatientModalFormState extends State<_AddWalkInPatientModalForm> {
+class _AddWalkInPatientModalFormState
+    extends State<_AddWalkInPatientModalForm> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
@@ -125,7 +128,7 @@ class _AddWalkInPatientModalFormState extends State<_AddWalkInPatientModalForm> 
           ),
         ],
       ),
-      child: BlocBuilder<WalkInCubit, WalkInState>(
+      child: BlocBuilder<WalkInBloc, WalkInState>(
         builder: (context, state) {
           return Form(
             key: _formKey,

@@ -74,5 +74,13 @@ class TenantClinicEntity extends Equatable {
   bool get isSuspended => status.toUpperCase() == 'SUSPENDED';
 
   @override
-  List<Object?> get props => [id, name, planId, status, adminEmail, departmentIds, departments];
+  List<Object?> get props => [
+    id,
+    name,
+    planId,
+    status,
+    adminEmail,
+    departmentIds,
+    departments,
+  ];
 }

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../../core/widgets/app_snack_bar.dart';
 import '../../../booking/data/repositories/booking_repository_impl.dart';
 import '../../../booking/domain/entities/appointment_entity.dart';
 import '../../../booking/domain/repositories/booking_repository.dart';
 import '../../../clinic_details/presentation/widgets/doctor_rate_dialog.dart';
-import '../bloc/booking_history_cubit.dart';
+import '../bloc/booking_history_bloc.dart';
 import '../widgets/booking_history/booking_history_empty_state.dart';
 import '../widgets/booking_history/booking_history_filter_tabs.dart';
 import '../widgets/booking_history/booking_history_header.dart';
@@ -62,10 +63,10 @@ class BookingHistoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => BookingHistoryCubit(repository ?? BookingRepositoryImpl()),
-      child: BlocBuilder<BookingHistoryCubit, BookingHistoryState>(
+      create: (_) => BookingHistoryBloc(repository ?? BookingRepositoryImpl()),
+      child: BlocBuilder<BookingHistoryBloc, BookingHistoryState>(
         builder: (context, state) {
-          final cubit = context.read<BookingHistoryCubit>();
+          final bloc = context.read<BookingHistoryBloc>();
           final colors = context.colors;
           final filtered = state.filteredAppointments;
 
@@ -77,9 +78,12 @@ class BookingHistoryScreen extends StatelessWidget {
                   BookingHistoryHeader(
                     onBack: () => Navigator.of(context).pop(),
                     onRefresh: () async {
-                      await cubit.load();
+                      bloc.load();
                       if (context.mounted) {
-                        AppSnackBar.showSuccess(context, message: 'Booking history refreshed');
+                        AppSnackBar.showSuccess(
+                          context,
+                          message: 'Booking history refreshed',
+                        );
                       }
                     },
                   ),
@@ -87,17 +91,29 @@ class BookingHistoryScreen extends StatelessWidget {
                     child: RefreshIndicator(
                       color: AppColors.primary,
                       backgroundColor: colors.surface,
-                      onRefresh: cubit.load,
+                      onRefresh: () async => bloc.load(),
                       child: state.isLoading
-                          ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+                          ? const Center(
+                              child: CircularProgressIndicator(
+                                color: AppColors.primary,
+                              ),
+                            )
                           : SingleChildScrollView(
-                              physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                              physics: const AlwaysScrollableScrollPhysics(
+                                parent: BouncingScrollPhysics(),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 14,
+                              ),
                               child: Center(
                                 child: ConstrainedBox(
-                                  constraints: const BoxConstraints(maxWidth: 640),
+                                  constraints: const BoxConstraints(
+                                    maxWidth: 640,
+                                  ),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
                                     children: [
                                       BookingHistoryStatsBar(
                                         totalVisits: state.totalVisits,
@@ -105,15 +121,23 @@ class BookingHistoryScreen extends StatelessWidget {
                                         upcomingCount: state.upcomingCount,
                                       ),
                                       BookingHistorySearchBar(
-                                        controller: TextEditingController(text: state.searchQuery)
-                                          ..selection = TextSelection.collapsed(offset: state.searchQuery.length),
-                                        onChanged: cubit.setSearchQuery,
-                                        onClear: () => cubit.setSearchQuery(''),
+                                        controller:
+                                            TextEditingController(
+                                                text: state.searchQuery,
+                                              )
+                                              ..selection =
+                                                  TextSelection.collapsed(
+                                                    offset: state
+                                                        .searchQuery
+                                                        .length,
+                                                  ),
+                                        onChanged: bloc.setSearchQuery,
+                                        onClear: () => bloc.setSearchQuery(''),
                                       ),
                                       BookingHistoryFilterTabs(
                                         selectedIndex: state.filterIndex,
                                         allCount: state.totalVisits,
-                                        onFilterChanged: cubit.setFilter,
+                                        onFilterChanged: bloc.setFilter,
                                       ),
                                       if (filtered.isEmpty)
                                         const BookingHistoryEmptyState()
@@ -124,7 +148,8 @@ class BookingHistoryScreen extends StatelessWidget {
                                             Navigator.of(context).pop();
                                             onBookClinic?.call(clinicId);
                                           },
-                                          onRateVisit: (apt) => _openDoctorRating(context, apt),
+                                          onRateVisit: (apt) =>
+                                              _openDoctorRating(context, apt),
                                           onTrackQueue: () {
                                             Navigator.of(context).pop();
                                             onTrackLiveQueue?.call();

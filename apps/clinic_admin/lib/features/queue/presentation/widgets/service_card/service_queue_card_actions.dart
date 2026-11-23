@@ -39,7 +39,10 @@ class ServiceQueueCardActions extends StatelessWidget {
               ),
               child: Text(
                 'View Queue →',
-                style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w700),
+                style: GoogleFonts.inter(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
           ),
@@ -60,7 +63,10 @@ class ServiceQueueCardActions extends StatelessWidget {
             ),
             child: Text(
               'Call Next',
-              style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w700),
+              style: GoogleFonts.inter(
+                fontSize: 12.5,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ),

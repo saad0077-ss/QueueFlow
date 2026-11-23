@@ -1,4 +1,4 @@
-﻿import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../domain/entities/department_entity.dart';
 import 'standard_service_model.dart';
@@ -22,7 +22,9 @@ class DepartmentModel extends DepartmentEntity {
   factory DepartmentModel.fromFirestore(DocumentSnapshot doc) {
     final d = (doc.data() as Map<String, dynamic>?) ?? {};
     final rawServices = (d['standardServices'] as List<dynamic>?) ?? [];
-    final services = rawServices.map((s) => StandardServiceModel.fromMap(s as Map<String, dynamic>)).toList();
+    final services = rawServices
+        .map((s) => StandardServiceModel.fromMap(s as Map<String, dynamic>))
+        .toList();
 
     final rawClinics = (d['assignedClinics'] as List<dynamic>?) ?? [];
     final clinics = rawClinics.map((e) => e.toString()).toList();
@@ -55,7 +57,9 @@ class DepartmentModel extends DepartmentEntity {
       'doctorCount': doctorCount,
       'totalVisits': totalVisits,
       'assignedClinics': assignedClinics,
-      'standardServices': standardServices.map((s) => (s as StandardServiceModel).toMap()).toList(),
+      'standardServices': standardServices
+          .map((s) => (s as StandardServiceModel).toMap())
+          .toList(),
     };
   }
 }

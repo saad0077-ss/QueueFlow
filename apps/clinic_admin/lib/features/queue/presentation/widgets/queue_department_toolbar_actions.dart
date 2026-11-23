@@ -37,12 +37,18 @@ class QueueDepartmentToolbarActions extends StatelessWidget {
             children: [
               Text(
                 'Filters',
-                style: GoogleFonts.inter(fontSize: 12.5, fontWeight: FontWeight.w700),
+                style: GoogleFonts.inter(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               if (activeFiltersCount > 0) ...[
                 const SizedBox(width: 6),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 1,
+                  ),
                   decoration: BoxDecoration(
                     color: colors.primary,
                     borderRadius: BorderRadius.circular(10),
@@ -60,11 +66,19 @@ class QueueDepartmentToolbarActions extends StatelessWidget {
             ],
           ),
           style: OutlinedButton.styleFrom(
-            foregroundColor: activeFiltersCount > 0 ? colors.primary : colors.textPrimary,
-            side: BorderSide(color: activeFiltersCount > 0 ? colors.primary : colors.border),
-            backgroundColor: activeFiltersCount > 0 ? colors.primaryTint : Colors.transparent,
+            foregroundColor: activeFiltersCount > 0
+                ? colors.primary
+                : colors.textPrimary,
+            side: BorderSide(
+              color: activeFiltersCount > 0 ? colors.primary : colors.border,
+            ),
+            backgroundColor: activeFiltersCount > 0
+                ? colors.primaryTint
+                : Colors.transparent,
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
         ),
         if (activeFilterLabel != null)
@@ -89,7 +103,11 @@ class QueueDepartmentToolbarActions extends StatelessWidget {
                 const SizedBox(width: 4),
                 InkWell(
                   onTap: onResetFilters,
-                  child: Icon(Icons.close_rounded, size: 14, color: colors.primary),
+                  child: Icon(
+                    Icons.close_rounded,
+                    size: 14,
+                    color: colors.primary,
+                  ),
                 ),
               ],
             ),
@@ -100,7 +118,9 @@ class QueueDepartmentToolbarActions extends StatelessWidget {
             foregroundColor: colors.textMuted,
             side: BorderSide(color: colors.border),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
           child: Text(
             isAllCollapsed ? 'Expand All' : 'Collapse All',

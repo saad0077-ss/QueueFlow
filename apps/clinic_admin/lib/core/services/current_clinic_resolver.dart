@@ -1,4 +1,4 @@
-﻿import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 /// Finds the `clinics` document managed by the signed-in admin.
@@ -31,7 +31,9 @@ class CurrentClinicResolver {
   }) async {
     final doc = await resolve(auth: auth, firestore: firestore);
     if (doc == null) {
-      throw Exception('No clinic is linked to this admin account. Please sign in again.');
+      throw Exception(
+        'No clinic is linked to this admin account. Please sign in again.',
+      );
     }
     return doc;
   }

@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../../services/domain/entities/service_department_entity.dart';
-import '../../bloc/queue_filter_cubit.dart';
+import '../../bloc/queue_filter_bloc.dart';
 import 'queue_filter_dept_grid.dart';
 import 'queue_filter_sort_section.dart';
 import 'queue_filter_status_grid.dart';
@@ -30,9 +30,9 @@ class QueueFilterBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<QueueFilterCubit, QueueFilterState>(
+    return BlocBuilder<QueueFilterBloc, QueueFilterState>(
       builder: (context, state) {
-        final cubit = context.read<QueueFilterCubit>();
+        final bloc = context.read<QueueFilterBloc>();
 
         return SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 6),
@@ -45,21 +45,21 @@ class QueueFilterBody extends StatelessWidget {
                 departments: departments,
                 selectedDept: state.department,
                 deptSubtitles: deptSubtitles,
-                onSelectDept: cubit.setDepartment,
+                onSelectDept: bloc.setDepartment,
               ),
               const SizedBox(height: 20),
               _label(context, 'QUEUE ACTIVITY STATUS'),
               const SizedBox(height: 10),
               QueueFilterStatusGrid(
                 selectedStatus: state.status,
-                onSelectStatus: cubit.setStatus,
+                onSelectStatus: bloc.setStatus,
               ),
               const SizedBox(height: 20),
               _label(context, 'SORT DEPARTMENTS'),
               const SizedBox(height: 10),
               QueueFilterSortSection(
                 currentSort: state.sort,
-                onSortChanged: cubit.setSort,
+                onSortChanged: bloc.setSort,
               ),
               const SizedBox(height: 16),
             ],

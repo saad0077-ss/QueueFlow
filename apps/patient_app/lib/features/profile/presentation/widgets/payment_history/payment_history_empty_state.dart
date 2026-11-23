@@ -55,7 +55,10 @@ class PaymentHistoryEmptyState extends StatelessWidget {
               style: OutlinedButton.styleFrom(
                 foregroundColor: colors.primary,
                 side: BorderSide(color: colors.primary),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),

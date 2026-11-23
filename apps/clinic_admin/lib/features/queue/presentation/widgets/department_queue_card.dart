@@ -35,7 +35,8 @@ class DepartmentQueueCard extends StatelessWidget {
 
     final deptItems = queueItems.where((q) {
       return services.any(
-        (s) => s.name.trim().toLowerCase() == q.serviceName.trim().toLowerCase(),
+        (s) =>
+            s.name.trim().toLowerCase() == q.serviceName.trim().toLowerCase(),
       );
     }).toList();
 

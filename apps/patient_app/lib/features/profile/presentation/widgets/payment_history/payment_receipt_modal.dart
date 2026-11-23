@@ -9,7 +9,10 @@ class PaymentReceiptModal extends StatelessWidget {
 
   const PaymentReceiptModal({super.key, required this.item});
 
-  static Future<void> show(BuildContext context, PatientPaymentItemEntity item) {
+  static Future<void> show(
+    BuildContext context,
+    PatientPaymentItemEntity item,
+  ) {
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -51,10 +54,18 @@ class PaymentReceiptModal extends StatelessWidget {
               children: [
                 Text(
                   'Digital Payment Receipt',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: colors.textPrimary),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                    color: colors.textPrimary,
+                  ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.close_rounded, color: colors.textMuted, size: 20),
+                  icon: Icon(
+                    Icons.close_rounded,
+                    color: colors.textMuted,
+                    size: 20,
+                  ),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ],
@@ -69,11 +80,28 @@ class PaymentReceiptModal extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  Text(item.clinicName, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: colors.textPrimary), textAlign: TextAlign.center),
+                  Text(
+                    item.clinicName,
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w800,
+                      color: colors.textPrimary,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                   const SizedBox(height: 2),
-                  Text('QueueFlow Verified Healthcare Provider', style: TextStyle(fontSize: 11, color: colors.textMuted)),
+                  Text(
+                    'QueueFlow Verified Healthcare Provider',
+                    style: TextStyle(fontSize: 11, color: colors.textMuted),
+                  ),
                   const SizedBox(height: 2),
-                  Text('GSTIN: 32AABCU9603R1ZM', style: GoogleFonts.robotoMono(fontSize: 10, color: colors.textSubtle)),
+                  Text(
+                    'GSTIN: 32AABCU9603R1ZM',
+                    style: GoogleFonts.robotoMono(
+                      fontSize: 10,
+                      color: colors.textSubtle,
+                    ),
+                  ),
                   const SizedBox(height: 12),
                   Divider(color: colors.border, height: 1),
                   const SizedBox(height: 12),
@@ -84,15 +112,34 @@ class PaymentReceiptModal extends StatelessWidget {
                   _line(colors, 'Department:', item.department),
                   _line(colors, 'Doctor:', item.doctor),
                   _line(colors, 'Method:', item.method),
-                  _line(colors, 'Transaction ID:', item.transactionId, isMono: true),
+                  _line(
+                    colors,
+                    'Transaction ID:',
+                    item.transactionId,
+                    isMono: true,
+                  ),
                   const SizedBox(height: 10),
                   Divider(color: colors.border, height: 1),
                   const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('AMOUNT PAID', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: colors.textMuted)),
-                      Text('₹${item.amount.toStringAsFixed(0)}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Color(0xFF10B981))),
+                      Text(
+                        'AMOUNT PAID',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w800,
+                          color: colors.textMuted,
+                        ),
+                      ),
+                      Text(
+                        '₹${item.amount.toStringAsFixed(0)}',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w900,
+                          color: Color(0xFF10B981),
+                        ),
+                      ),
                     ],
                   ),
                 ],
@@ -102,14 +149,19 @@ class PaymentReceiptModal extends StatelessWidget {
             ElevatedButton.icon(
               onPressed: () {
                 Navigator.of(context).pop();
-                AppSnackBar.showSuccess(context, message: 'Receipt PDF saved to device downloads');
+                AppSnackBar.showSuccess(
+                  context,
+                  message: 'Receipt PDF saved to device downloads',
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
                 elevation: 0,
                 padding: const EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               icon: const Icon(Icons.download_rounded, size: 16),
               label: const Text('Save PDF Receipt'),
@@ -120,19 +172,35 @@ class PaymentReceiptModal extends StatelessWidget {
     );
   }
 
-  Widget _line(dynamic colors, String label, String val, {bool isMono = false}) {
+  Widget _line(
+    dynamic colors,
+    String label,
+    String val, {
+    bool isMono = false,
+  }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 7),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: TextStyle(fontSize: 11.5, color: colors.textMuted)),
+          Text(
+            label,
+            style: TextStyle(fontSize: 11.5, color: colors.textMuted),
+          ),
           Flexible(
             child: Text(
               val,
               style: isMono
-                  ? GoogleFonts.robotoMono(fontSize: 11.5, fontWeight: FontWeight.w700, color: colors.textPrimary)
-                  : TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700, color: colors.textPrimary),
+                  ? GoogleFonts.robotoMono(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w700,
+                      color: colors.textPrimary,
+                    )
+                  : TextStyle(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w700,
+                      color: colors.textPrimary,
+                    ),
               textAlign: TextAlign.right,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,

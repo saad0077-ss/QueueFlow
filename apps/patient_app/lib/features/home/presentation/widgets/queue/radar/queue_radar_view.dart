@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../../domain/entities/clinic_entity.dart';
 import '../models/live_clinic_queue_info.dart';
 import 'clinic_live_builder.dart';

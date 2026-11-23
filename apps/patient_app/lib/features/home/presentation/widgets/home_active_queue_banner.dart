@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../domain/entities/active_ticket_entity.dart';
 import 'queue/banner/home_active_queue_banner_body.dart';
 import 'queue/banner/home_active_queue_banner_header.dart';

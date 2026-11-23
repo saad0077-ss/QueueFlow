@@ -41,10 +41,17 @@ class DepartmentsDataTable extends StatelessWidget {
             const SizedBox(height: 10),
             Text(
               'No medical departments match your criteria',
-              style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.bold, color: colors.textPrimary),
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: colors.textPrimary,
+              ),
             ),
             const SizedBox(height: 4),
-            Text('Try clearing search filters or add a new department above.', style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted)),
+            Text(
+              'Try clearing search filters or add a new department above.',
+              style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted),
+            ),
           ],
         ),
       );
@@ -52,7 +59,9 @@ class DepartmentsDataTable extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final tableWidth = constraints.maxWidth < 1060 ? 1060.0 : constraints.maxWidth;
+        final tableWidth = constraints.maxWidth < 1060
+            ? 1060.0
+            : constraints.maxWidth;
 
         return Container(
           width: double.infinity,
@@ -70,7 +79,13 @@ class DepartmentsDataTable extends StatelessWidget {
                 children: [
                   _buildHeader(colors),
                   ...departments.map(
-                    (d) => DeptTableRowItem(department: d, onDetails: onDetails, onEdit: onEdit, onToggleStatus: onToggleStatus, onDelete: onDelete),
+                    (d) => DeptTableRowItem(
+                      department: d,
+                      onDetails: onDetails,
+                      onEdit: onEdit,
+                      onToggleStatus: onToggleStatus,
+                      onDelete: onDelete,
+                    ),
                   ),
                 ],
               ),
@@ -91,13 +106,35 @@ class DepartmentsDataTable extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Expanded(flex: 3, child: _HeaderText('DEPARTMENT & CODE', colors: colors)),
-          Expanded(flex: 3, child: _HeaderText('CLINICAL SPECIALTY', colors: colors)),
-          Expanded(flex: 2, child: _HeaderText('AVERAGE CONSULTATION', colors: colors)),
-          Expanded(flex: 2, child: _HeaderText('LINKED CLINICS', colors: colors)),
-          Expanded(flex: 2, child: _HeaderText('MONTHLY TRIAGE', colors: colors)),
+          Expanded(
+            flex: 3,
+            child: _HeaderText('DEPARTMENT & CODE', colors: colors),
+          ),
+          Expanded(
+            flex: 3,
+            child: _HeaderText('CLINICAL SPECIALTY', colors: colors),
+          ),
+          Expanded(
+            flex: 2,
+            child: _HeaderText('AVERAGE CONSULTATION', colors: colors),
+          ),
+          Expanded(
+            flex: 2,
+            child: _HeaderText('LINKED CLINICS', colors: colors),
+          ),
+          Expanded(
+            flex: 2,
+            child: _HeaderText('MONTHLY TRIAGE', colors: colors),
+          ),
           Expanded(flex: 2, child: _HeaderText('STATUS', colors: colors)),
-          Expanded(flex: 4, child: _HeaderText('ACTIONS', textAlign: TextAlign.right, colors: colors)),
+          Expanded(
+            flex: 4,
+            child: _HeaderText(
+              'ACTIONS',
+              textAlign: TextAlign.right,
+              colors: colors,
+            ),
+          ),
         ],
       ),
     );
@@ -108,14 +145,23 @@ class _HeaderText extends StatelessWidget {
   final String text;
   final TextAlign textAlign;
   final AppColorsExtension colors;
-  const _HeaderText(this.text, {this.textAlign = TextAlign.left, required this.colors});
+  const _HeaderText(
+    this.text, {
+    this.textAlign = TextAlign.left,
+    required this.colors,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Text(
       text,
       textAlign: textAlign,
-      style: GoogleFonts.inter(fontSize: 11, fontWeight: FontWeight.w700, color: colors.textMuted, letterSpacing: 0.5),
+      style: GoogleFonts.inter(
+        fontSize: 11,
+        fontWeight: FontWeight.w700,
+        color: colors.textMuted,
+        letterSpacing: 0.5,
+      ),
     );
   }
 }

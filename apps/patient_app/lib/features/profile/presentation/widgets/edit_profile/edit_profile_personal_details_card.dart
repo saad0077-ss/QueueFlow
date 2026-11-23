@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
-import 'edit_profile_cubit.dart';
+
+import 'edit_profile_bloc.dart';
 
 class EditProfilePersonalDetailsCard extends StatelessWidget {
   final TextEditingController nameController;
@@ -41,9 +42,9 @@ class EditProfilePersonalDetailsCard extends StatelessWidget {
       fontWeight: FontWeight.w500,
     );
 
-    return BlocBuilder<EditProfileCubit, EditProfileState>(
+    return BlocBuilder<EditProfileBloc, EditProfileState>(
       builder: (context, state) {
-        final cubit = context.read<EditProfileCubit>();
+        final bloc = context.read<EditProfileBloc>();
 
         return Container(
           padding: const EdgeInsets.all(16),
@@ -63,7 +64,11 @@ class EditProfilePersonalDetailsCard extends StatelessWidget {
                       color: colors.primaryTint,
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Icon(Icons.person_rounded, size: 16, color: colors.primary),
+                    child: Icon(
+                      Icons.person_rounded,
+                      size: 16,
+                      color: colors.primary,
+                    ),
                   ),
                   const SizedBox(width: 10),
                   Text(
@@ -83,9 +88,16 @@ class EditProfilePersonalDetailsCard extends StatelessWidget {
                 style: textStyle,
                 textCapitalization: TextCapitalization.words,
                 textInputAction: TextInputAction.next,
-                decoration: _inputDeco(context, 'Full name', Icons.person_outline_rounded, 'Your full name'),
-                onChanged: cubit.updateName,
-                validator: (v) => (v == null || v.trim().isEmpty) ? 'Please enter your name' : null,
+                decoration: _inputDeco(
+                  context,
+                  'Full name',
+                  Icons.person_outline_rounded,
+                  'Your full name',
+                ),
+                onChanged: bloc.updateName,
+                validator: (v) => (v == null || v.trim().isEmpty)
+                    ? 'Please enter your name'
+                    : null,
               ),
               const SizedBox(height: 16),
               TextFormField(
@@ -94,29 +106,54 @@ class EditProfilePersonalDetailsCard extends StatelessWidget {
                 keyboardType: TextInputType.number,
                 textInputAction: TextInputAction.next,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                decoration: _inputDeco(context, 'Age', Icons.cake_outlined, 'Your age'),
-                onChanged: cubit.updateAge,
+                decoration: _inputDeco(
+                  context,
+                  'Age',
+                  Icons.cake_outlined,
+                  'Your age',
+                ),
+                onChanged: bloc.updateAge,
                 validator: (v) {
                   final t = v?.trim() ?? '';
                   if (t.isEmpty) return null;
                   final n = int.tryParse(t);
-                  if (n == null || n < 0 || n > 120) return 'Enter an age between 0 and 120';
+                  if (n == null || n < 0 || n > 120) {
+                    return 'Enter an age between 0 and 120';
+                  }
                   return null;
                 },
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
-                initialValue: genderOptions.contains(state.gender) ? state.gender : null,
-                decoration: _inputDeco(context, 'Gender', Icons.wc_rounded, 'Select gender'),
-                items: genderOptions.map((g) => DropdownMenuItem(value: g, child: Text(g))).toList(),
-                onChanged: cubit.updateGender,
+                initialValue: genderOptions.contains(state.gender)
+                    ? state.gender
+                    : null,
+                decoration: _inputDeco(
+                  context,
+                  'Gender',
+                  Icons.wc_rounded,
+                  'Select gender',
+                ),
+                items: genderOptions
+                    .map((g) => DropdownMenuItem(value: g, child: Text(g)))
+                    .toList(),
+                onChanged: bloc.updateGender,
               ),
               const SizedBox(height: 16),
               DropdownButtonFormField<String>(
-                initialValue: bloodGroupOptions.contains(state.bloodGroup) ? state.bloodGroup : null,
-                decoration: _inputDeco(context, 'Blood group', Icons.bloodtype_outlined, 'Select blood group'),
-                items: bloodGroupOptions.map((b) => DropdownMenuItem(value: b, child: Text(b))).toList(),
-                onChanged: cubit.updateBloodGroup,
+                initialValue: bloodGroupOptions.contains(state.bloodGroup)
+                    ? state.bloodGroup
+                    : null,
+                decoration: _inputDeco(
+                  context,
+                  'Blood group',
+                  Icons.bloodtype_outlined,
+                  'Select blood group',
+                ),
+                items: bloodGroupOptions
+                    .map((b) => DropdownMenuItem(value: b, child: Text(b)))
+                    .toList(),
+                onChanged: bloc.updateBloodGroup,
               ),
             ],
           ),
@@ -125,7 +162,12 @@ class EditProfilePersonalDetailsCard extends StatelessWidget {
     );
   }
 
-  static InputDecoration _inputDeco(BuildContext context, String label, IconData icon, String hint) {
+  static InputDecoration _inputDeco(
+    BuildContext context,
+    String label,
+    IconData icon,
+    String hint,
+  ) {
     final colors = context.colors;
     return InputDecoration(
       labelText: label,
@@ -136,9 +178,18 @@ class EditProfilePersonalDetailsCard extends StatelessWidget {
       hintStyle: TextStyle(color: colors.textSubtle),
       filled: true,
       fillColor: colors.surfaceSecondary,
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: colors.border)),
-      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: colors.border)),
-      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: colors.primary, width: 1.5)),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: colors.border),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: colors.border),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: colors.primary, width: 1.5),
+      ),
     );
   }
 }

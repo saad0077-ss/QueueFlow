@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../domain/entities/patient_review_entity.dart';
 
 class WriteReviewDialog extends StatefulWidget {
@@ -16,7 +17,8 @@ class WriteReviewDialog extends StatefulWidget {
     required List<String> tags,
     required String comment,
     required bool isAnonymous,
-  }) onSubmit;
+  })
+  onSubmit;
 
   const WriteReviewDialog({
     super.key,
@@ -40,7 +42,8 @@ class WriteReviewDialog extends StatefulWidget {
       required List<String> tags,
       required String comment,
       required bool isAnonymous,
-    }) onSubmit,
+    })
+    onSubmit,
   }) {
     return showModalBottomSheet(
       context: context,
@@ -201,7 +204,11 @@ class _WriteReviewDialogState extends State<WriteReviewDialog> {
             // Clinic Name Field
             Text(
               'Clinic Name',
-              style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w700, color: colors.textPrimary),
+              style: GoogleFonts.inter(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: colors.textPrimary,
+              ),
             ),
             const SizedBox(height: 6),
             TextField(
@@ -210,7 +217,10 @@ class _WriteReviewDialogState extends State<WriteReviewDialog> {
                 filled: true,
                 fillColor: colors.surfaceSecondary,
                 hintText: 'Enter clinic name',
-                contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 10,
+                ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide(color: colors.border),
@@ -226,7 +236,11 @@ class _WriteReviewDialogState extends State<WriteReviewDialog> {
             // Doctor Name Field
             Text(
               'Doctor Name',
-              style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w700, color: colors.textPrimary),
+              style: GoogleFonts.inter(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: colors.textPrimary,
+              ),
             ),
             const SizedBox(height: 6),
             TextField(
@@ -235,7 +249,10 @@ class _WriteReviewDialogState extends State<WriteReviewDialog> {
                 filled: true,
                 fillColor: colors.surfaceSecondary,
                 hintText: 'e.g. Dr. Rahul Sharma',
-                contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 10,
+                ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                   borderSide: BorderSide(color: colors.border),
@@ -254,7 +271,11 @@ class _WriteReviewDialogState extends State<WriteReviewDialog> {
               children: [
                 Text(
                   'Your Overall Rating',
-                  style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w700, color: colors.textPrimary),
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: colors.textPrimary,
+                  ),
                 ),
                 Text(
                   _sentimentLabel(_rating),
@@ -275,11 +296,18 @@ class _WriteReviewDialogState extends State<WriteReviewDialog> {
                   onTap: () => setState(() => _rating = starVal),
                   borderRadius: BorderRadius.circular(20),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 4,
+                    ),
                     child: Icon(
-                      starVal <= _rating ? Icons.star_rounded : Icons.star_outline_rounded,
+                      starVal <= _rating
+                          ? Icons.star_rounded
+                          : Icons.star_outline_rounded,
                       size: 34,
-                      color: starVal <= _rating ? const Color(0xFFF59E0B) : colors.border,
+                      color: starVal <= _rating
+                          ? const Color(0xFFF59E0B)
+                          : colors.border,
                     ),
                   ),
                 );
@@ -290,7 +318,11 @@ class _WriteReviewDialogState extends State<WriteReviewDialog> {
             // Highlight Tags
             Text(
               'What went well?',
-              style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w700, color: colors.textPrimary),
+              style: GoogleFonts.inter(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: colors.textPrimary,
+              ),
             ),
             const SizedBox(height: 8),
             Wrap(
@@ -332,7 +364,11 @@ class _WriteReviewDialogState extends State<WriteReviewDialog> {
             // Comments
             Text(
               'Detailed Feedback',
-              style: GoogleFonts.inter(fontSize: 12, fontWeight: FontWeight.w700, color: colors.textPrimary),
+              style: GoogleFonts.inter(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: colors.textPrimary,
+              ),
             ),
             const SizedBox(height: 6),
             TextField(
@@ -360,12 +396,16 @@ class _WriteReviewDialogState extends State<WriteReviewDialog> {
               children: [
                 Checkbox(
                   value: _isAnonymous,
-                  onChanged: (val) => setState(() => _isAnonymous = val ?? false),
+                  onChanged: (val) =>
+                      setState(() => _isAnonymous = val ?? false),
                   activeColor: colors.primary,
                 ),
                 Text(
                   'Post anonymously (hides your name)',
-                  style: GoogleFonts.inter(fontSize: 12, color: colors.textPrimary),
+                  style: GoogleFonts.inter(
+                    fontSize: 12,
+                    color: colors.textPrimary,
+                  ),
                 ),
               ],
             ),
@@ -378,17 +418,25 @@ class _WriteReviewDialogState extends State<WriteReviewDialog> {
                 backgroundColor: colors.primary,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               child: _isSubmitting
                   ? const SizedBox(
                       width: 20,
                       height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
                     )
                   : Text(
                       isEditing ? 'Update Review' : 'Submit Review',
-                      style: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w700),
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
             ),
           ],

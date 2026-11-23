@@ -22,7 +22,7 @@ class ClinicDetailsActionButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
 
-    return Row( 
+    return Row(
       children: [
         Expanded(
           child: SizedBox(
@@ -30,10 +30,16 @@ class ClinicDetailsActionButtons extends StatelessWidget {
             child: OutlinedButton(
               onPressed: isInvited ? null : onToggleSuspension,
               style: OutlinedButton.styleFrom(
-                backgroundColor: isInvited ? colors.surface : colors.surfaceSecondary,
-                foregroundColor: isInvited ? colors.textMuted : colors.textPrimary,
+                backgroundColor: isInvited
+                    ? colors.surface
+                    : colors.surfaceSecondary,
+                foregroundColor: isInvited
+                    ? colors.textMuted
+                    : colors.textPrimary,
                 side: BorderSide(color: colors.border),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24),
+                ),
                 padding: EdgeInsets.zero,
               ),
               child: Text(
@@ -41,7 +47,11 @@ class ClinicDetailsActionButtons extends StatelessWidget {
                     ? 'Invite\nPending'
                     : (isActive ? 'Pause\nClinic' : 'Activate\nClinic'),
                 textAlign: TextAlign.center,
-                style: GoogleFonts.inter(fontSize: 11.5, fontWeight: FontWeight.w600, height: 1.15),
+                style: GoogleFonts.inter(
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w600,
+                  height: 1.15,
+                ),
               ),
             ),
           ),
@@ -56,10 +66,20 @@ class ClinicDetailsActionButtons extends StatelessWidget {
                 backgroundColor: colors.surfaceSecondary,
                 foregroundColor: colors.textPrimary,
                 side: BorderSide(color: colors.border),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24),
+                ),
                 padding: EdgeInsets.zero,
               ),
-              child: Text('Change\nSubscription', textAlign: TextAlign.center, style: GoogleFonts.inter(fontSize: 11.5, fontWeight: FontWeight.w600, height: 1.15)),
+              child: Text(
+                'Change\nSubscription',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.inter(
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w600,
+                  height: 1.15,
+                ),
+              ),
             ),
           ),
         ),
@@ -68,10 +88,16 @@ class ClinicDetailsActionButtons extends StatelessWidget {
           child: Container(
             height: 44,
             decoration: BoxDecoration(
-              gradient: const LinearGradient(colors: [Color(0xFF2563EB), Color(0xFF06B6D4)]),
+              gradient: const LinearGradient(
+                colors: [Color(0xFF2563EB), Color(0xFF06B6D4)],
+              ),
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
-                BoxShadow(color: const Color(0xFF06B6D4).withValues(alpha: 0.35), blurRadius: 16, offset: const Offset(0, 4)),
+                BoxShadow(
+                  color: const Color(0xFF06B6D4).withValues(alpha: 0.35),
+                  blurRadius: 16,
+                  offset: const Offset(0, 4),
+                ),
               ],
             ),
             child: ElevatedButton(
@@ -80,9 +106,17 @@ class ClinicDetailsActionButtons extends StatelessWidget {
                 backgroundColor: Colors.transparent,
                 shadowColor: Colors.transparent,
                 foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24),
+                ),
               ),
-              child: Text('Done', style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.w700)),
+              child: Text(
+                'Done',
+                style: GoogleFonts.inter(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
             ),
           ),
         ),

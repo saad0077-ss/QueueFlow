@@ -84,12 +84,26 @@ class _QueueDepartmentToolbarState extends State<QueueDepartmentToolbar> {
               ),
               decoration: InputDecoration(
                 hintText: 'Search departments, services, or tokens...',
-                hintStyle: GoogleFonts.inter(fontSize: 13, color: colors.textMuted),
-                prefixIcon: Icon(Icons.search_rounded, size: 20, color: colors.textMuted),
-                prefixIconConstraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+                hintStyle: GoogleFonts.inter(
+                  fontSize: 13,
+                  color: colors.textMuted,
+                ),
+                prefixIcon: Icon(
+                  Icons.search_rounded,
+                  size: 20,
+                  color: colors.textMuted,
+                ),
+                prefixIconConstraints: const BoxConstraints(
+                  minWidth: 40,
+                  minHeight: 40,
+                ),
                 suffixIcon: widget.searchQuery.isNotEmpty
                     ? IconButton(
-                        icon: Icon(Icons.clear_rounded, size: 18, color: colors.textMuted),
+                        icon: Icon(
+                          Icons.clear_rounded,
+                          size: 18,
+                          color: colors.textMuted,
+                        ),
                         splashRadius: 18,
                         onPressed: () {
                           _controller.clear();
@@ -100,7 +114,10 @@ class _QueueDepartmentToolbarState extends State<QueueDepartmentToolbar> {
                 filled: true,
                 fillColor: colors.surfaceSecondary,
                 isDense: true,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 11,
+                ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                   borderSide: BorderSide(color: colors.border),

@@ -30,9 +30,15 @@ class DepartmentDetailsHeader extends StatelessWidget {
               Container(
                 width: 60,
                 height: 60,
-                decoration: BoxDecoration(color: colors.primary.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(14)),
+                decoration: BoxDecoration(
+                  color: colors.primary.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(14),
+                ),
                 alignment: Alignment.center,
-                child: Text(department.icon, style: const TextStyle(fontSize: 28)),
+                child: Text(
+                  department.icon,
+                  style: const TextStyle(fontSize: 28),
+                ),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -46,14 +52,28 @@ class DepartmentDetailsHeader extends StatelessWidget {
                       children: [
                         Text(
                           department.name,
-                          style: GoogleFonts.inter(fontSize: 24, fontWeight: FontWeight.w800, color: colors.textPrimary),
+                          style: GoogleFonts.inter(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w800,
+                            color: colors.textPrimary,
+                          ),
                         ),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                          decoration: BoxDecoration(color: colors.primary.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(6)),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: colors.primary.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
                           child: Text(
                             department.code,
-                            style: GoogleFonts.jetBrainsMono(fontSize: 11.5, fontWeight: FontWeight.w800, color: colors.primary),
+                            style: GoogleFonts.jetBrainsMono(
+                              fontSize: 11.5,
+                              fontWeight: FontWeight.w800,
+                              color: colors.primary,
+                            ),
                           ),
                         ),
                         _statusPill(context, department.isActive),
@@ -62,7 +82,14 @@ class DepartmentDetailsHeader extends StatelessWidget {
                     const SizedBox(height: 6),
                     ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 620),
-                      child: Text(department.description, style: GoogleFonts.inter(fontSize: 13.5, color: colors.textMuted, height: 1.45)),
+                      child: Text(
+                        department.description,
+                        style: GoogleFonts.inter(
+                          fontSize: 13.5,
+                          color: colors.textMuted,
+                          height: 1.45,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -74,15 +101,30 @@ class DepartmentDetailsHeader extends StatelessWidget {
             spacing: 10,
             runSpacing: 10,
             children: [
-              _metric(context, 'LICENSED CLINICS', department.assignedClinics.length.toString()),
-              _metric(context, 'ACTIVE DOCTORS', department.doctorCount.toString()),
+              _metric(
+                context,
+                'LICENSED CLINICS',
+                department.assignedClinics.length.toString(),
+              ),
+              _metric(
+                context,
+                'ACTIVE DOCTORS',
+                department.doctorCount.toString(),
+              ),
               _metric(context, 'AVG CONSULT', department.avgConsultationTime),
-              _metric(context, 'MONTHLY TRIAGE', _formatNum(department.totalVisits)),
+              _metric(
+                context,
+                'MONTHLY TRIAGE',
+                _formatNum(department.totalVisits),
+              ),
             ],
           );
 
           if (isNarrow) {
-            return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [info, const SizedBox(height: 16), metrics]);
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [info, const SizedBox(height: 16), metrics],
+            );
           }
 
           return Row(
@@ -102,10 +144,17 @@ class DepartmentDetailsHeader extends StatelessWidget {
     final color = active ? colors.success : colors.textMuted;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      decoration: BoxDecoration(color: color.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(6)),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(6),
+      ),
       child: Text(
         active ? 'ACTIVE' : 'INACTIVE',
-        style: GoogleFonts.inter(fontSize: 10.5, fontWeight: FontWeight.w800, color: color),
+        style: GoogleFonts.inter(
+          fontSize: 10.5,
+          fontWeight: FontWeight.w800,
+          color: color,
+        ),
       ),
     );
   }
@@ -126,12 +175,20 @@ class DepartmentDetailsHeader extends StatelessWidget {
           Text(
             label,
             maxLines: 1,
-            style: GoogleFonts.inter(fontSize: 10.5, fontWeight: FontWeight.w700, color: colors.textMuted),
+            style: GoogleFonts.inter(
+              fontSize: 10.5,
+              fontWeight: FontWeight.w700,
+              color: colors.textMuted,
+            ),
           ),
           const SizedBox(height: 2),
           Text(
             value,
-            style: GoogleFonts.inter(fontSize: 17, fontWeight: FontWeight.w800, color: colors.textPrimary),
+            style: GoogleFonts.inter(
+              fontSize: 17,
+              fontWeight: FontWeight.w800,
+              color: colors.textPrimary,
+            ),
           ),
         ],
       ),
@@ -139,6 +196,9 @@ class DepartmentDetailsHeader extends StatelessWidget {
   }
 
   String _formatNum(int n) {
-    return n.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},');
+    return n.toString().replaceAllMapped(
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+      (Match m) => '${m[1]},',
+    );
   }
 }

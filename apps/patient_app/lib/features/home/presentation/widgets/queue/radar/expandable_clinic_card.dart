@@ -1,10 +1,23 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 
-class ClinicCardExpansionCubit extends Cubit<bool> {
-  ClinicCardExpansionCubit() : super(false);
-  void toggle() => emit(!state);
+abstract class ClinicCardExpansionEvent extends Equatable {
+  const ClinicCardExpansionEvent();
+  @override
+  List<Object?> get props => [];
+}
+
+class ToggleClinicCardExpansionEvent extends ClinicCardExpansionEvent {
+  const ToggleClinicCardExpansionEvent();
+}
+
+class ClinicCardExpansionBloc extends Bloc<ClinicCardExpansionEvent, bool> {
+  ClinicCardExpansionBloc() : super(false) {
+    on<ToggleClinicCardExpansionEvent>((event, emit) => emit(!state));
+  }
+  void toggle() => add(const ToggleClinicCardExpansionEvent());
 }
 
 class ExpandableClinicCard extends StatelessWidget {
@@ -22,10 +35,10 @@ class ExpandableClinicCard extends StatelessWidget {
     final colors = context.colors;
 
     return BlocProvider(
-      create: (_) => ClinicCardExpansionCubit(),
-      child: BlocBuilder<ClinicCardExpansionCubit, bool>(
+      create: (_) => ClinicCardExpansionBloc(),
+      child: BlocBuilder<ClinicCardExpansionBloc, bool>(
         builder: (context, expanded) {
-          final cubit = context.read<ClinicCardExpansionCubit>();
+          final bloc = context.read<ClinicCardExpansionBloc>();
 
           return Container(
             margin: const EdgeInsets.only(bottom: 14),
@@ -48,7 +61,7 @@ class ExpandableClinicCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
               child: InkWell(
                 borderRadius: BorderRadius.circular(16),
-                onTap: cubit.toggle,
+                onTap: bloc.toggle,
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: AnimatedSize(
@@ -58,7 +71,12 @@ class ExpandableClinicCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         header(expanded),
-                        if (expanded) details(),
+                        if (expanded) ...[
+                          const SizedBox(height: 14),
+                          Divider(color: colors.border, height: 1),
+                          const SizedBox(height: 14),
+                          details(),
+                        ],
                       ],
                     ),
                   ),
