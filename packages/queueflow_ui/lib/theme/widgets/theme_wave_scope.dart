@@ -85,8 +85,9 @@ class ThemeWaveScopeState extends State<ThemeWaveScope>
 
     ui.Image? image;
     try {
-      final boundary = _boundaryKey.currentContext?.findRenderObject()
-          as RenderRepaintBoundary?;
+      final boundary =
+          _boundaryKey.currentContext?.findRenderObject()
+              as RenderRepaintBoundary?;
       if (boundary != null) {
         image = await boundary.toImage(
           pixelRatio: MediaQuery.devicePixelRatioOf(context),
@@ -189,8 +190,11 @@ class _WaveRevealPainter extends CustomPainter {
     hole.close();
 
     // Old screen minus the growing wavy hole.
-    final remaining =
-        Path.combine(PathOperation.difference, Path()..addRect(rect), hole);
+    final remaining = Path.combine(
+      PathOperation.difference,
+      Path()..addRect(rect),
+      hole,
+    );
 
     canvas.save();
     canvas.clipPath(remaining);
@@ -207,7 +211,9 @@ class _WaveRevealPainter extends CustomPainter {
     final edge = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3
-      ..color = Colors.white.withValues(alpha: 0.25 * math.sin(progress * math.pi));
+      ..color = Colors.white.withValues(
+        alpha: 0.25 * math.sin(progress * math.pi),
+      );
     canvas.save();
     canvas.clipRect(rect);
     canvas.drawPath(hole, edge);

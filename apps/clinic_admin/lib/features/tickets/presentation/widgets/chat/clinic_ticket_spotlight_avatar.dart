@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
+
 import '../../../domain/entities/clinic_support_ticket_entity.dart';
 import 'clinic_ticket_photo_resolver.dart';
 
@@ -33,7 +34,8 @@ class _ClinicTicketSpotlightAvatarState
   void didUpdateWidget(ClinicTicketSpotlightAvatar oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.ticket.patientPhoto != widget.ticket.patientPhoto ||
-        oldWidget.ticket.patientId != widget.ticket.patientId) {
+        oldWidget.ticket.patientId != widget.ticket.patientId ||
+        oldWidget.ticket.patientEmail != widget.ticket.patientEmail) {
       _initPhoto();
     }
   }
@@ -45,10 +47,10 @@ class _ClinicTicketSpotlightAvatarState
         photo: widget.ticket.patientPhoto,
         patientId: widget.ticket.patientId,
         patientEmail: widget.ticket.patientEmail,
+        patientPhone: widget.ticket.patientPhone,
+        patientName: widget.ticket.patientName,
       ).then((p) {
-        if (mounted && p.isNotEmpty) {
-          setState(() => _resolvedPhoto = p);
-        }
+        if (mounted && p.isNotEmpty) setState(() => _resolvedPhoto = p);
       });
     }
   }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 import 'filter/platform_filter_clinic_item.dart';
 import 'filter/platform_tickets_filter_category_section.dart';
@@ -44,9 +44,8 @@ class PlatformTicketsFilterModal extends StatefulWidget {
     })
     onApply,
   }) {
-    return showDialog(
-      context: context,
-      barrierColor: Colors.black.withValues(alpha: 0.65),
+    return AppFilterDialogScaffold.show(
+      context,
       builder: (ctx) => PlatformTicketsFilterModal(
         initialClinic: initialClinic,
         initialSla: initialSla,
@@ -93,86 +92,44 @@ class _PlatformTicketsFilterModalState
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      backgroundColor: Colors.transparent,
-      insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-      child: Container(
-        width: 580,
-        constraints: const BoxConstraints(maxHeight: 700),
-        decoration: BoxDecoration(
-          color: const Color(0xFF0F172A),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: const Color(0xFF1E293B)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.5),
-              blurRadius: 28,
-              offset: const Offset(0, 14),
-            ),
-          ],
-        ),
+    return AppFilterDialogScaffold(
+      header: PlatformTicketsFilterHeader(
+        onClose: () => Navigator.pop(context),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 18),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            PlatformTicketsFilterHeader(onClose: () => Navigator.pop(context)),
-            const Divider(height: 1, color: Color(0xFF1E293B)),
-            Flexible(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 22,
-                  vertical: 18,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildTitle('HEALTHCARE FACILITY / CLINIC'),
-                    const SizedBox(height: 10),
-                    PlatformTicketsFilterClinicsSection(
-                      selectedClinic: _selectedClinic,
-                      availableClinics: widget.availableClinics,
-                      onSelectClinic: (id) =>
-                          setState(() => _selectedClinic = id),
-                    ),
-                    const SizedBox(height: 20),
-                    _buildTitle('SLA URGENCY & PRIORITY'),
-                    const SizedBox(height: 10),
-                    PlatformTicketsFilterSlaSection(
-                      selectedSla: _selectedSla,
-                      onSelectSla: (sla) => setState(() => _selectedSla = sla),
-                    ),
-                    const SizedBox(height: 20),
-                    _buildTitle('ISSUE CATEGORY'),
-                    const SizedBox(height: 10),
-                    PlatformTicketsFilterCategorySection(
-                      selectedCategory: _selectedCategory,
-                      onSelectCategory: (cat) =>
-                          setState(() => _selectedCategory = cat),
-                    ),
-                  ],
-                ),
-              ),
+            const AppFilterSectionTitle('HEALTHCARE FACILITY / CLINIC'),
+            const SizedBox(height: 10),
+            PlatformTicketsFilterClinicsSection(
+              selectedClinic: _selectedClinic,
+              availableClinics: widget.availableClinics,
+              onSelectClinic: (id) => setState(() => _selectedClinic = id),
             ),
-            const Divider(height: 1, color: Color(0xFF1E293B)),
-            PlatformTicketsFilterFooter(
-              onResetAll: _resetAll,
-              onCancel: () => Navigator.pop(context),
-              onApply: _apply,
+            const SizedBox(height: 20),
+            const AppFilterSectionTitle('SLA URGENCY & PRIORITY'),
+            const SizedBox(height: 10),
+            PlatformTicketsFilterSlaSection(
+              selectedSla: _selectedSla,
+              onSelectSla: (sla) => setState(() => _selectedSla = sla),
+            ),
+            const SizedBox(height: 20),
+            const AppFilterSectionTitle('ISSUE CATEGORY'),
+            const SizedBox(height: 10),
+            PlatformTicketsFilterCategorySection(
+              selectedCategory: _selectedCategory,
+              onSelectCategory: (cat) =>
+                  setState(() => _selectedCategory = cat),
             ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildTitle(String title) {
-    return Text(
-      title,
-      style: GoogleFonts.inter(
-        fontSize: 10.5,
-        fontWeight: FontWeight.w800,
-        color: const Color(0xFF94A3B8),
-        letterSpacing: 0.6,
+      footer: PlatformTicketsFilterFooter(
+        onResetAll: _resetAll,
+        onCancel: () => Navigator.pop(context),
+        onApply: _apply,
       ),
     );
   }

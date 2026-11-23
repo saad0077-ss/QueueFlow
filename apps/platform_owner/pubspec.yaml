@@ -56,6 +56,8 @@ dependencies:
   pdf: ^3.13.1
   # Printing: Native document printing and PDF layout previewing support
   printing: ^5.15.1
+  # URL Launcher: Opens email composers, external links, and sharing targets
+  url_launcher: ^6.3.1
 
 dev_dependencies:
   flutter_test:

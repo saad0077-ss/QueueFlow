@@ -3,13 +3,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 
 class PlatformTicketsHeader extends StatelessWidget {
-  final VoidCallback onExportCsv;
+  final VoidCallback onExportPdf;
   final VoidCallback onBroadcastNotice;
   final VoidCallback onSyncAll;
 
   const PlatformTicketsHeader({
     super.key,
-    required this.onExportCsv,
+    required this.onExportPdf,
     required this.onBroadcastNotice,
     required this.onSyncAll,
   });
@@ -49,9 +49,9 @@ class PlatformTicketsHeader extends StatelessWidget {
           children: [
             _actionBtn(
               context,
-              icon: Icons.file_download_outlined,
-              label: 'Export CSV',
-              onTap: onExportCsv,
+              icon: Icons.picture_as_pdf_outlined,
+              label: 'Export PDF',
+              onTap: onExportPdf,
             ),
             _actionBtn(
               context,

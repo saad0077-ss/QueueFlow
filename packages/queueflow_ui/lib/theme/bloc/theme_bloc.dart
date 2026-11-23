@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import 'theme_event.dart';
 import 'theme_state.dart';
 
@@ -35,10 +36,12 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
   final SharedPreferences? _prefs;
 
   ThemeBloc({SharedPreferences? prefs, ThemeMode? initialMode})
-      : _prefs = prefs ?? _cachedPrefs,
-        super(ThemeState(
+    : _prefs = prefs ?? _cachedPrefs,
+      super(
+        ThemeState(
           themeMode: initialMode ?? getSavedThemeMode(prefs ?? _cachedPrefs),
-        )) {
+        ),
+      ) {
     on<ThemeToggleRequested>(_onToggleRequested);
     on<ThemeModeChanged>(_onModeChanged);
   }

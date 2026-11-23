@@ -1,32 +1,19 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
+import 'platform_ticket_mapper_helper.dart';
 import 'platform_ticket_message_entity.dart';
 
 export 'platform_ticket_message_entity.dart';
 
 class PlatformSupportTicketEntity extends Equatable {
-  final String id;
-  final String ticketNumber;
-  final String patientId;
-  final String patientName;
-  final String patientEmail;
-  final String patientPhone;
-  final String patientPhoto;
-  final String clinicId;
-  final String clinicName;
-  final bool isClinicRelated;
-  final String? linkedTokenNumber;
-  final String category;
-  final String subject;
-  final String description;
-  final String status;
-  final String priority;
+  final String id, ticketNumber, patientId, patientName;
+  final String patientEmail, patientPhone, patientPhoto;
+  final String clinicId, clinicName, category, subject, description;
+  final String status, priority, slaNotice, createdAt;
+  final bool isClinicRelated, isEscalated;
+  final String? linkedTokenNumber, assignedTo, resolvedAt;
   final int slaMinutes;
-  final String slaNotice;
-  final String? assignedTo;
-  final String? resolvedAt;
-  final bool isEscalated;
-  final String createdAt;
   final DateTime? createdAtDate;
   final List<PlatformTicketMessage> messages;
 
@@ -56,6 +43,11 @@ class PlatformSupportTicketEntity extends Equatable {
     this.createdAtDate,
     required this.messages,
   });
+
+  factory PlatformSupportTicketEntity.fromFirestore(DocumentSnapshot doc) =>
+      PlatformTicketMapperHelper.fromFirestore(doc);
+
+  Map<String, dynamic> toJson() => PlatformTicketMapperHelper.toJson(this);
 
   PlatformSupportTicketEntity copyWith({
     String? id,

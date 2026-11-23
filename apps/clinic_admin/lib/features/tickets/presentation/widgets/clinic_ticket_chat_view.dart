@@ -4,7 +4,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import '../../data/models/clinic_support_ticket_model.dart';
 import '../../data/repositories/clinic_support_repository.dart';
-import '../../domain/entities/clinic_support_ticket_entity.dart';
 import 'chat/clinic_ticket_chat_console.dart';
 
 class ClinicTicketChatView extends StatefulWidget {

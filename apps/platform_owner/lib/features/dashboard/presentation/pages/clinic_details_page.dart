@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 
+import '../../../../core/navigation/platform_navigation_helper.dart';
 import '../../data/repositories/tenant_repository_impl.dart';
 import '../../domain/entities/tenant_clinic_entity.dart';
 import '../widgets/clinic_details/clinic_details_view.dart';
@@ -29,10 +30,21 @@ class ClinicDetailsPage extends StatelessWidget {
       backgroundColor: colors.background,
       drawer: isDesktop
           ? null
-          : const Drawer(child: ConsoleSidebar(activeIndex: 0)),
+          : Drawer(
+              child: ConsoleSidebar(
+                activeIndex: 0,
+                onIndexChanged: (i) =>
+                    PlatformNavigationHelper.navigateTo(context, i, 0),
+              ),
+            ),
       body: Row(
         children: [
-          if (isDesktop) const ConsoleSidebar(activeIndex: 0),
+          if (isDesktop)
+            ConsoleSidebar(
+              activeIndex: 0,
+              onIndexChanged: (i) =>
+                  PlatformNavigationHelper.navigateTo(context, i, 0),
+            ),
           Expanded(
             child: ClinicDetailsView(
               clinic: clinic,

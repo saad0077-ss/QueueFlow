@@ -6,16 +6,16 @@ class ClinicsHeaderBar extends StatelessWidget {
   final VoidCallback onExportPdf;
   final VoidCallback onRefresh;
   final VoidCallback onOnboard;
-  final int activeCount;
-  final int totalCount;
+  final int? activeCount;
+  final int? totalCount;
 
   const ClinicsHeaderBar({
     super.key,
     required this.onExportPdf,
     required this.onRefresh,
     required this.onOnboard,
-    required this.activeCount,
-    required this.totalCount,
+    this.activeCount,
+    this.totalCount,
   });
 
   @override
@@ -29,25 +29,6 @@ class ClinicsHeaderBar extends StatelessWidget {
         final titleCol = Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-              decoration: BoxDecoration(
-                color: colors.badgeOpenBg,
-                borderRadius: BorderRadius.circular(6),
-                border: Border.all(
-                  color: colors.success.withValues(alpha: 0.5),
-                ),
-              ),
-              child: Text(
-                'NETWORK MANAGEMENT  •  $activeCount of $totalCount Facilities Active',
-                style: TextStyle(
-                  fontSize: 10.5,
-                  fontWeight: FontWeight.w600,
-                  color: colors.badgeOpenText,
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
             Text(
               'Platform Clinics Directory',
               style: GoogleFonts.inter(
@@ -76,13 +57,8 @@ class ClinicsHeaderBar extends StatelessWidget {
                 foregroundColor: colors.textPrimary,
                 backgroundColor: colors.surface,
                 side: BorderSide(color: colors.border),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 12,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
               icon: const Icon(Icons.file_download_outlined, size: 16),
               label: const Text('Export PDF', style: TextStyle(fontSize: 12.5)),
@@ -93,22 +69,15 @@ class ClinicsHeaderBar extends StatelessWidget {
                 foregroundColor: colors.textPrimary,
                 backgroundColor: colors.surface,
                 side: BorderSide(color: colors.border),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 12,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
               icon: const Icon(Icons.refresh_rounded, size: 16),
               label: const Text('Refresh', style: TextStyle(fontSize: 12.5)),
             ),
             Container(
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF2563EB), Color(0xFF06B6D4)],
-                ),
+                gradient: const LinearGradient(colors: [Color(0xFF2563EB), Color(0xFF06B6D4)]),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: ElevatedButton.icon(
@@ -117,13 +86,8 @@ class ClinicsHeaderBar extends StatelessWidget {
                   backgroundColor: Colors.transparent,
                   shadowColor: Colors.transparent,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 18,
-                    vertical: 12,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                 ),
                 icon: const Icon(Icons.add_rounded, size: 18),
                 label: const Text(

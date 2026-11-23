@@ -245,8 +245,9 @@ class TenantRepositoryImpl implements TenantRepository {
           final data = jsonDecode(response.body);
           final errorMsg = data['error']?.toString() ?? '';
           if (response.statusCode == 403 ||
-              errorMsg.contains('own email address')) {
-            emailFeedback = 'Resend test sandbox only delivers to registered email (muhammedsaad007700@gmail.com).';
+              errorMsg.contains('own email address') ||
+              errorMsg.contains('403')) {
+            emailFeedback = 'Resend sandbox limits server dispatch. Use direct mail compose to send to $cleanEmail.';
           } else {
             emailFeedback = errorMsg.isNotEmpty
                 ? errorMsg
@@ -455,8 +456,9 @@ class TenantRepositoryImpl implements TenantRepository {
           final data = jsonDecode(response.body);
           final errorMsg = data['error']?.toString() ?? '';
           if (response.statusCode == 403 ||
-              errorMsg.contains('own email address')) {
-            emailFeedback = 'Resend test sandbox only delivers to registered email (muhammedsaad007700@gmail.com).';
+              errorMsg.contains('own email address') ||
+              errorMsg.contains('403')) {
+            emailFeedback = 'Resend sandbox limits server dispatch. Use direct mail compose to send to $cleanEmail.';
           } else {
             emailFeedback = errorMsg.isNotEmpty
                 ? errorMsg

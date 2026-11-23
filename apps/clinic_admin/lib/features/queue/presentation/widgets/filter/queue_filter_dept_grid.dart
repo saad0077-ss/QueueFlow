@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../../services/domain/entities/service_department_entity.dart';
 
@@ -21,104 +20,37 @@ class QueueFilterDeptGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, c) {
-        final w = (c.maxWidth - 10) / 2;
+        final w = (c.maxWidth - 20) / 3;
+        final actualWidth = w < 160 ? (c.maxWidth - 10) / 2 : w;
+
         return Wrap(
           spacing: 10,
           runSpacing: 10,
           children: [
-            _DeptTile(
-              width: w,
-              icon: '🏥',
-              name: 'All Departments',
-              sub: deptSubtitles['all'] ?? '${departments.length} total',
-              isSelected: selectedDept == 'all',
-              onTap: () => onSelectDept('all'),
+            SizedBox(
+              width: actualWidth,
+              child: AppFilterSelectableCard(
+                isSelected: selectedDept == 'all',
+                onTap: () => onSelectDept('all'),
+                emojiIcon: '🏥',
+                title: 'All Clinics',
+                subtitle: deptSubtitles['all'] ?? '${departments.length} total',
+              ),
             ),
             for (final d in departments)
-              _DeptTile(
-                width: w,
-                icon: d.icon,
-                name: d.name,
-                sub: deptSubtitles[d.id] ?? '',
-                isSelected: selectedDept == d.id,
-                onTap: () => onSelectDept(d.id),
+              SizedBox(
+                width: actualWidth,
+                child: AppFilterSelectableCard(
+                  isSelected: selectedDept == d.id,
+                  onTap: () => onSelectDept(d.id),
+                  emojiIcon: d.icon.isNotEmpty ? d.icon : '🩺',
+                  title: d.name,
+                  subtitle: deptSubtitles[d.id] ?? 'Specialty care',
+                ),
               ),
           ],
         );
       },
-    );
-  }
-}
-
-class _DeptTile extends StatelessWidget {
-  final double width;
-  final String icon;
-  final String name;
-  final String sub;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _DeptTile({
-    required this.width,
-    required this.icon,
-    required this.name,
-    required this.sub,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-    return SizedBox(
-      width: width,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(10),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-          decoration: BoxDecoration(
-            color: isSelected ? colors.primary : colors.background,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              color: isSelected ? colors.primary : colors.border,
-            ),
-          ),
-          child: Row(
-            children: [
-              Text(icon, style: const TextStyle(fontSize: 18)),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      name,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.inter(
-                        fontSize: 12.5,
-                        fontWeight: FontWeight.w700,
-                        color: isSelected ? Colors.white : colors.textPrimary,
-                      ),
-                    ),
-                    if (sub.isNotEmpty)
-                      Text(
-                        sub,
-                        style: GoogleFonts.inter(
-                          fontSize: 10.5,
-                          color: isSelected
-                              ? Colors.white.withValues(alpha: 0.8)
-                              : colors.textMuted,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

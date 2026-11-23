@@ -50,6 +50,7 @@ class _ClinicDashboardContentSwitcherState
   final _appointmentsSource = DashboardAppointmentsSource();
   StreamSubscription<List<ClinicAppointmentEntity>>? _apptSub;
   StreamSubscription<List<ClinicServiceEntity>>? _servicesSub;
+  StreamSubscription<List<ServiceDepartmentEntity>>? _deptsSub;
 
   String _clinicName = '';
   String _clinicId = '';
@@ -63,6 +64,9 @@ class _ClinicDashboardContentSwitcherState
     super.initState();
     _servicesSub = _servicesRepo.watchServices().listen((list) {
       if (mounted) setState(() => _services = list);
+    }, onError: (_) {});
+    _deptsSub = _servicesRepo.watchDepartments().listen((list) {
+      if (mounted) setState(() => _departments = list);
     }, onError: (_) {});
     _loadClinicData();
     _watchAppointments();
@@ -110,6 +114,7 @@ class _ClinicDashboardContentSwitcherState
   void dispose() {
     _apptSub?.cancel();
     _servicesSub?.cancel();
+    _deptsSub?.cancel();
     super.dispose();
   }
 

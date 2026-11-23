@@ -358,7 +358,13 @@ class ClinicQueueRepositoryImpl implements ClinicQueueRepository {
             serviceDeptIds.contains(doc.id) ||
             serviceDeptNames.contains(deptNameLower);
 
-        if (isExplicitlyAssigned || isLinkedToClinic || hasServiceForClinic) {
+        final isGlobalDepartment =
+            assignedClinics.isEmpty || assignedClinics.contains('all');
+
+        if (isExplicitlyAssigned ||
+            isLinkedToClinic ||
+            hasServiceForClinic ||
+            isGlobalDepartment) {
           final deptModel = ServiceDepartmentModel.fromFirestore(doc);
           final alreadyExists = result.any(
             (d) =>

@@ -3,14 +3,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 
 class DepartmentsHeaderBar extends StatelessWidget {
-  final int activeCount;
+  final int? activeCount;
   final VoidCallback onExportPdf;
   final VoidCallback onRefresh;
   final VoidCallback onAddDepartment;
 
   const DepartmentsHeaderBar({
     super.key,
-    required this.activeCount,
+    this.activeCount,
     required this.onExportPdf,
     required this.onRefresh,
     required this.onAddDepartment,
@@ -27,44 +27,6 @@ class DepartmentsHeaderBar extends StatelessWidget {
         final titleCol = Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 3,
-                  ),
-                  decoration: BoxDecoration(
-                    color: colors.badgeOpenBg,
-                    borderRadius: BorderRadius.circular(6),
-                    border: Border.all(
-                      color: colors.success.withValues(alpha: 0.3),
-                    ),
-                  ),
-                  child: Text(
-                    'SPECIALTY MANAGEMENT',
-                    style: GoogleFonts.inter(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w700,
-                      color: colors.badgeOpenText,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Flexible(
-                  child: Text(
-                    '$activeCount Active Specialties',
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.inter(
-                      fontSize: 12,
-                      color: colors.textMuted,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 6),
             Text(
               'Platform Medical Departments',
               style: GoogleFonts.inter(
@@ -92,22 +54,14 @@ class DepartmentsHeaderBar extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: colors.primary,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 11,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 elevation: 0,
               ),
               onPressed: onAddDepartment,
               child: Text(
                 '+ Add Department',
-                style: GoogleFonts.inter(
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: GoogleFonts.inter(fontSize: 13, fontWeight: FontWeight.bold),
               ),
             ),
           ],

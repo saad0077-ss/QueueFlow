@@ -374,6 +374,8 @@ class ClinicDoctorsRepositoryImpl implements ClinicDoctorsRepository {
                 );
 
             final isAssigned =
+                assignedClinics.isEmpty ||
+                assignedClinics.contains('all') ||
                 assignedClinics.any(
                   (k) =>
                       k == clinicId.toLowerCase() ||

@@ -2,12 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 
-import '../../../billing/presentation/pages/platform_billing_page.dart';
-import '../../../dashboard/presentation/pages/platform_clinics_page.dart';
+import '../../../../core/navigation/platform_navigation_helper.dart';
 import '../../../dashboard/presentation/widgets/console_sidebar.dart';
 import '../../../dashboard/presentation/widgets/console_top_bar.dart';
-import '../../../departments/presentation/pages/platform_departments_page.dart';
-import '../../../users/presentation/pages/platform_users_page.dart';
 import '../bloc/platform_tickets_bloc_factory.dart';
 import '../bloc/platform_tickets_event.dart';
 import '../widgets/platform_tickets_workspace.dart';
@@ -26,21 +23,7 @@ class _PlatformSupportTicketsPageState
   String _topBarSearch = '';
 
   void _onSidebarNav(int i) {
-    Widget? target;
-    if (i == 0) target = const PlatformClinicsPage();
-    if (i == 1) target = const PlatformDepartmentsPage();
-    if (i == 2) target = const PlatformUsersPage();
-    if (i == 4) target = const PlatformBillingPage();
-
-    if (target != null && mounted) {
-      Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (_, _, _) => target!,
-          transitionDuration: Duration.zero,
-        ),
-      );
-    }
+    PlatformNavigationHelper.navigateTo(context, i, 6);
   }
 
   @override
@@ -55,14 +38,14 @@ class _PlatformSupportTicketsPageState
           ? null
           : Drawer(
               child: ConsoleSidebar(
-                activeIndex: 3,
+                activeIndex: 6,
                 onIndexChanged: _onSidebarNav,
               ),
             ),
       body: Row(
         children: [
           if (isDesktop)
-            ConsoleSidebar(activeIndex: 3, onIndexChanged: _onSidebarNav),
+            ConsoleSidebar(activeIndex: 6, onIndexChanged: _onSidebarNav),
           Expanded(
             child: Column(
               children: [

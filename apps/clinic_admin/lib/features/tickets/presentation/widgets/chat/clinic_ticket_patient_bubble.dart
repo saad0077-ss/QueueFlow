@@ -46,6 +46,8 @@ class ClinicTicketPatientBubble extends StatelessWidget {
           initials: initials,
           patientId: ticket.patientId,
           patientEmail: ticket.patientEmail,
+          patientPhone: ticket.patientPhone,
+          patientName: ticket.patientName,
         ),
         const SizedBox(width: 8),
         Flexible(

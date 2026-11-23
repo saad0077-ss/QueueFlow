@@ -67,6 +67,8 @@ class ClinicTicketCardPatientRow extends StatelessWidget {
           initials: initials,
           patientId: ticket.patientId,
           patientEmail: ticket.patientEmail,
+          patientPhone: ticket.patientPhone,
+          patientName: ticket.patientName,
           size: 24,
         ),
         const SizedBox(width: 8),

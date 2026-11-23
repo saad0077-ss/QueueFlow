@@ -37,7 +37,8 @@ class _PlatformTicketSpotlightAvatarState
   void didUpdateWidget(PlatformTicketSpotlightAvatar oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.ticket.patientPhoto != widget.ticket.patientPhoto ||
-        oldWidget.ticket.patientId != widget.ticket.patientId) {
+        oldWidget.ticket.patientId != widget.ticket.patientId ||
+        oldWidget.ticket.patientEmail != widget.ticket.patientEmail) {
       _initPhoto();
     }
   }
@@ -49,6 +50,8 @@ class _PlatformTicketSpotlightAvatarState
         photo: widget.ticket.patientPhoto,
         patientId: widget.ticket.patientId,
         patientEmail: widget.ticket.patientEmail,
+        patientPhone: widget.ticket.patientPhone,
+        patientName: widget.ticket.patientName,
       ).then((p) {
         if (mounted && p.isNotEmpty) setState(() => _resolvedPhoto = p);
       });

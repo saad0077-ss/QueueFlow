@@ -4,15 +4,14 @@ import 'package:flutter/foundation.dart';
 import '../models/platform_support_ticket_model.dart';
 import '../models/platform_ticket_message_model.dart';
 import 'platform_tickets_remote_datasource.dart';
+import 'platform_tickets_seed_helper.dart';
 
 class PlatformTicketsRemoteDataSourceImpl
     implements PlatformTicketsRemoteDataSource {
   final FirebaseFirestore _firestore;
 
   PlatformTicketsRemoteDataSourceImpl({FirebaseFirestore? firestore})
-    : _firestore = firestore ?? _safeFirestore();
-
-  static FirebaseFirestore _safeFirestore() => FirebaseFirestore.instance;
+    : _firestore = firestore ?? FirebaseFirestore.instance;
 
   @override
   Stream<List<PlatformSupportTicketModel>> watchAllTickets() {
@@ -24,6 +23,11 @@ class PlatformTicketsRemoteDataSourceImpl
         } catch (e) {
           debugPrint('Error parsing platform support ticket ${doc.id}: $e');
         }
+      }
+
+      if (list.isEmpty) {
+        list.addAll(PlatformTicketsSeedHelper.defaultTickets);
+        PlatformTicketsSeedHelper.seedIfEmpty(_firestore);
       }
 
       list.sort(
@@ -51,7 +55,6 @@ class PlatformTicketsRemoteDataSourceImpl
       isInternalNote: isInternalNote,
       createdAt: DateTime.now(),
     );
-
     final docRef = _firestore.collection('support_tickets').doc(ticketId);
     final snap = await docRef.get();
     final currentStatus = (snap.data()?['status'] ?? 'open').toString();
@@ -84,7 +87,6 @@ class PlatformTicketsRemoteDataSourceImpl
       isInternalNote: false,
       createdAt: DateTime.now(),
     );
-
     final Map<String, dynamic> updateData = {
       'status': status.toLowerCase(),
       'messages': FieldValue.arrayUnion([sysMsg.toJson()]),
@@ -93,10 +95,7 @@ class PlatformTicketsRemoteDataSourceImpl
     if (status.toLowerCase() == 'resolved') {
       updateData['resolvedAt'] = 'Just now';
     }
-    await _firestore
-        .collection('support_tickets')
-        .doc(ticketId)
-        .update(updateData);
+    await _firestore.collection('support_tickets').doc(ticketId).update(updateData);
   }
 
   @override
@@ -124,8 +123,7 @@ class PlatformTicketsRemoteDataSourceImpl
     final sysMsg = PlatformTicketMessageModel(
       sender: 'Platform Operations',
       senderRole: 'system',
-      text:
-          '🔄 Ticket reassigned to $newClinicName by Platform Admin $adminName',
+      text: '🔄 Reassigned to $newClinicName by Platform Admin $adminName',
       time: 'Just now',
       isUser: false,
       isInternalNote: false,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/utils/clinic_pdf_exporter.dart';
 import '../../data/repositories/clinic_support_repository_impl.dart';
 import '../bloc/clinic_tickets_bloc.dart';
 import '../bloc/clinic_tickets_event.dart';
@@ -88,6 +89,11 @@ class ClinicTicketsWorkspace extends StatelessWidget {
               ClinicTicketsHeader(
                 clinicName: clinicName,
                 onLogTicket: () => _openLogTicket(context),
+                onExportPdf: () => ClinicPdfExporter.exportTickets(
+                  context,
+                  state.filteredTickets,
+                  clinicName: clinicName,
+                ),
                 onSync: () => bloc.add(
                   WatchClinicTicketsStarted(
                     clinicId: clinicId,
@@ -97,7 +103,7 @@ class ClinicTicketsWorkspace extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               ClinicTicketsKpiCards(
-                totalCount: state.allTickets.length,
+                totalCount: state.countAll,
                 openCount: state.countOpen,
                 inProgressCount: state.countInProgress,
                 resolvedCount: state.countResolved,
@@ -111,7 +117,7 @@ class ClinicTicketsWorkspace extends StatelessWidget {
                 selectedStatus: state.statusFilter,
                 onStatusChanged: (s) =>
                     bloc.add(ClinicTicketsStatusFilterChanged(s)),
-                countAll: state.allTickets.length,
+                countAll: state.countAll,
                 countOpen: state.countOpen,
                 countInProgress: state.countInProgress,
                 countResolved: state.countResolved,
