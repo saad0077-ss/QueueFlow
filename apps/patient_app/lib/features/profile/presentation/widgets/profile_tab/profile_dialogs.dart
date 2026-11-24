@@ -28,9 +28,12 @@ class ProfileDialogs {
             fontWeight: FontWeight.w800,
           ),
         ),
-        content: Text(
-          'Are you sure you want to log out of your QueueFlow account?',
-          style: TextStyle(color: context.colors.textMuted, fontSize: 13),
+        content: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 400),
+          child: Text(
+            'Are you sure you want to log out of your QueueFlow account?',
+            style: TextStyle(color: context.colors.textMuted, fontSize: 13),
+          ),
         ),
         actions: [
           TextButton(
@@ -90,9 +93,12 @@ class ProfileDialogs {
             ),
           ],
         ),
-        content: Text(
-          'Are you sure you want to permanently delete your account? All your profile information, appointment histories, live queue tokens, medical documents, ratings, and payment receipts will be permanently erased from the servers and cannot be recovered.',
-          style: TextStyle(color: context.colors.textMuted, fontSize: 13),
+        content: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 420),
+          child: Text(
+            'Are you sure you want to permanently delete your account? All your profile information, appointment histories, live queue tokens, medical documents, ratings, and payment receipts will be permanently erased from the servers and cannot be recovered.',
+            style: TextStyle(color: context.colors.textMuted, fontSize: 13),
+          ),
         ),
         actions: [
           TextButton(

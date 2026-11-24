@@ -2,16 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 
+import '../../../../core/layout/patient_breakpoints.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
-import '../../../../core/widgets/auth_back_header.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/usecases/sign_up_usecase.dart';
 import '../bloc/sign_up/sign_up_bloc.dart';
 import '../bloc/sign_up/sign_up_state.dart';
-import '../widgets/sign_up_footer.dart';
-import '../widgets/sign_up_form.dart';
-import '../widgets/sign_up_header.dart';
+import '../widgets/auth_showcase_panel.dart';
+import '../widgets/sign_up_card_body.dart';
 import 'email_verification_screen.dart';
 
 class SignUpScreen extends StatelessWidget {
@@ -21,10 +20,9 @@ class SignUpScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final repo = authRepository ?? AuthRepositoryImpl();
     return BlocProvider(
-      create: (_) => SignUpBloc(
-        signUpUseCase: SignUpUseCase(authRepository ?? AuthRepositoryImpl()),
-      ),
+      create: (_) => SignUpBloc(signUpUseCase: SignUpUseCase(repo)),
       child: const _SignUpView(),
     );
   }
@@ -43,11 +41,6 @@ class _SignUpView extends StatelessWidget {
         child: BlocConsumer<SignUpBloc, SignUpState>(
           listener: (context, state) {
             if (state.user != null) {
-              AppSnackBar.showSuccess(
-                context,
-                title: 'Account Created',
-                message: 'Your QueueFlow account is created! Please verify your email.',
-              );
               Navigator.of(context).pushAndRemoveUntil(
                 MaterialPageRoute(
                   builder: (_) =>
@@ -63,51 +56,36 @@ class _SignUpView extends StatelessWidget {
           builder: (context, state) {
             return LayoutBuilder(
               builder: (context, constraints) {
-                final double screenWidth = constraints.maxWidth;
-                final double scale = (screenWidth / 390.0).clamp(0.85, 1.15);
-                final double titleSize = (27.0 * scale).clamp(22.0, 30.0);
-                final double subtitleSize = (13.5 * scale).clamp(12.0, 15.0);
-                final double labelSize = (13.5 * scale).clamp(12.0, 15.0);
+                final isLaptop =
+                    constraints.maxWidth >= PatientBreakpoints.laptopMin;
 
-                return Center(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      maxWidth: 440,
-                      minHeight: constraints.maxHeight,
-                    ),
-                    child: SingleChildScrollView(
-                      physics: const ClampingScrollPhysics(),
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          minHeight: constraints.maxHeight,
+                if (isLaptop) {
+                  return Row(
+                    children: [
+                      const Expanded(
+                        flex: 48,
+                        child: AuthShowcasePanel(
+                          title: 'Join QueueFlow.\nSkip Waiting Rooms.',
+                          subtitle:
+                              'Join thousands of patients who book doctors, track queues in real time, and get instant consultation passes.',
+                          highlightTag: 'PATIENT REGISTRATION',
                         ),
-                        child: IntrinsicHeight(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 24),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(height: 12),
-                                const AuthBackHeader(),
-                                const SizedBox(height: 20),
-                                SignUpHeader(
-                                  titleSize: titleSize,
-                                  subtitleSize: subtitleSize,
-                                ),
-                                const SizedBox(height: 12),
-                                const Spacer(),
-                                SignUpForm(state: state, labelSize: labelSize),
-                                const SizedBox(height: 16),
-                                const Spacer(),
-                                const SignUpFooter(),
-                                const SizedBox(height: 20),
-                              ],
-                            ),
+                      ),
+                      Expanded(
+                        flex: 52,
+                        child: Center(
+                          child: SignUpCardBody(
+                            state: state,
+                            showTopBar: false,
                           ),
                         ),
                       ),
-                    ),
-                  ),
+                    ],
+                  );
+                }
+
+                return Center(
+                  child: SignUpCardBody(state: state),
                 );
               },
             );

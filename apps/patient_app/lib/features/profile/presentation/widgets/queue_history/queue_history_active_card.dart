@@ -103,15 +103,20 @@ class QueueHistoryActiveCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Position: ${item.position} ahead · Wait: ~${item.estWaitMin}m',
-                style: TextStyle(
-                  fontSize: 11.5,
-                  fontWeight: FontWeight.w600,
-                  color: colors.textMuted,
+              Expanded(
+                child: Text(
+                  'Position: ${item.position} ahead · Wait: ~${item.estWaitMin}m',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.w600,
+                    color: colors.textMuted,
+                  ),
                 ),
               ),
-              if (onTrackLive != null)
+              if (onTrackLive != null) ...[
+                const SizedBox(width: 8),
                 ElevatedButton(
                   onPressed: onTrackLive,
                   style: ElevatedButton.styleFrom(
@@ -136,6 +141,7 @@ class QueueHistoryActiveCard extends StatelessWidget {
                     ),
                   ),
                 ),
+              ],
             ],
           ),
         ],

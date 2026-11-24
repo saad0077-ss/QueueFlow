@@ -280,14 +280,19 @@ class PaymentHistoryCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        '↺ Refund Credited to Original Source',
-                        style: GoogleFonts.inter(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w800,
-                          color: const Color(0xFF7C3AED),
+                      Expanded(
+                        child: Text(
+                          '↺ Refund Credited to Original Source',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.inter(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w800,
+                            color: const Color(0xFF7C3AED),
+                          ),
                         ),
                       ),
+                      const SizedBox(width: 8),
                       Text(
                         payment.refundId ?? 'REF-2026',
                         style: GoogleFonts.spaceMono(

@@ -33,16 +33,14 @@ class FavoriteClinicsScreen extends StatelessWidget {
     ValueChanged<String>? onBookClinic,
     ValueChanged<String>? onQueueClinic,
   }) {
-    return Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => FavoriteClinicsScreen(
-          repository: repository,
-          initialClinics: initialClinics,
-          onBookClinic: onBookClinic,
-          onQueueClinic: onQueueClinic,
-        ),
+    return Navigator.of(context).push(MaterialPageRoute(
+      builder: (_) => FavoriteClinicsScreen(
+        repository: repository,
+        initialClinics: initialClinics,
+        onBookClinic: onBookClinic,
+        onQueueClinic: onQueueClinic,
       ),
-    );
+    ));
   }
 
   @override
@@ -70,59 +68,67 @@ class FavoriteClinicsScreen extends StatelessWidget {
                     onBack: () => Navigator.of(context).pop(),
                   ),
                   Expanded(
-                    child: RefreshIndicator(
-                      onRefresh: () async => bloc.load(),
-                      color: colors.primary,
-                      backgroundColor: colors.surfaceElevated,
-                      child: SingleChildScrollView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 14,
-                        ),
-                        child: Center(
-                          child: ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 640),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                FavoriteClinicsHeroBanner(
-                                  count: state.allFavorites.length,
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final isLaptop = constraints.maxWidth >= 800;
+                        return RefreshIndicator(
+                          onRefresh: () async => bloc.load(),
+                          color: colors.primary,
+                          backgroundColor: colors.surfaceElevated,
+                          child: SingleChildScrollView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isLaptop ? 32 : 16,
+                              vertical: 14,
+                            ),
+                            child: Center(
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  maxWidth: isLaptop ? 1280 : 640,
                                 ),
-                                const SizedBox(height: 14),
-                                FavoriteClinicsSearchBar(
-                                  query: state.searchQuery,
-                                  onChanged: bloc.setSearchQuery,
-                                  onClear: () => bloc.setSearchQuery(''),
-                                ),
-                                const SizedBox(height: 14),
-                                if (state.isLoading) ...[
-                                  const SizedBox(height: 60),
-                                  Center(
-                                    child: CircularProgressIndicator(
-                                      color: colors.primary,
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    FavoriteClinicsHeroBanner(
+                                      count: state.allFavorites.length,
                                     ),
-                                  ),
-                                ] else if (filtered.isEmpty) ...[
-                                  FavoriteClinicsEmptyState(
-                                    hasQuery: state.searchQuery.isNotEmpty,
-                                    onExplore: () =>
-                                        Navigator.of(context).pop(),
-                                  ),
-                                ] else ...[
-                                  FavoriteClinicsList(
-                                    clinics: filtered,
-                                    onUnfavorite: bloc.removeFavorite,
-                                    onBookClinic: onBookClinic,
-                                    onQueueClinic: onQueueClinic,
-                                  ),
-                                  const SizedBox(height: 24),
-                                ],
-                              ],
+                                    const SizedBox(height: 14),
+                                    FavoriteClinicsSearchBar(
+                                      query: state.searchQuery,
+                                      onChanged: bloc.setSearchQuery,
+                                      onClear: () => bloc.setSearchQuery(''),
+                                    ),
+                                    const SizedBox(height: 14),
+                                    if (state.isLoading) ...[
+                                      const SizedBox(height: 60),
+                                      Center(
+                                        child: CircularProgressIndicator(
+                                          color: colors.primary,
+                                        ),
+                                      ),
+                                    ] else if (filtered.isEmpty)
+                                      FavoriteClinicsEmptyState(
+                                        hasQuery: state.searchQuery.isNotEmpty,
+                                        onExplore: () =>
+                                            Navigator.of(context).pop(),
+                                      )
+                                    else ...[
+                                      FavoriteClinicsList(
+                                        clinics: filtered,
+                                        onUnfavorite: bloc.removeFavorite,
+                                        onBookClinic: onBookClinic,
+                                        onQueueClinic: onQueueClinic,
+                                      ),
+                                      const SizedBox(height: 24),
+                                    ],
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ),
+                        );
+                      },
                     ),
                   ),
                 ],

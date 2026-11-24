@@ -31,15 +31,13 @@ class LiveQueueHistoryScreen extends StatelessWidget {
     VoidCallback? onTrackLiveQueue,
     ValueChanged<String>? onBookClinic,
   }) {
-    return Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => LiveQueueHistoryScreen(
-          repository: repository,
-          onTrackLiveQueue: onTrackLiveQueue,
-          onBookClinic: onBookClinic,
-        ),
+    return Navigator.of(context).push(MaterialPageRoute(
+      builder: (_) => LiveQueueHistoryScreen(
+        repository: repository,
+        onTrackLiveQueue: onTrackLiveQueue,
+        onBookClinic: onBookClinic,
       ),
-    );
+    ));
   }
 
   @override
@@ -64,76 +62,79 @@ class LiveQueueHistoryScreen extends StatelessWidget {
                     onRefresh: () async {
                       bloc.load();
                       if (context.mounted) {
-                        AppSnackBar.showSuccess(
-                          context,
-                          message: 'Live queue history refreshed',
-                        );
+                        AppSnackBar.showSuccess(context,
+                            message: 'Live queue history refreshed');
                       }
                     },
                   ),
                   Expanded(
-                    child: RefreshIndicator(
-                      color: AppColors.primary,
-                      backgroundColor: colors.surface,
-                      onRefresh: () async => bloc.load(),
-                      child: state.isLoading
-                          ? const Center(
-                              child: CircularProgressIndicator(
-                                color: AppColors.primary,
-                              ),
-                            )
-                          : SingleChildScrollView(
-                              physics: const AlwaysScrollableScrollPhysics(
-                                parent: BouncingScrollPhysics(),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 14,
-                              ),
-                              child: Center(
-                                child: ConstrainedBox(
-                                  constraints: const BoxConstraints(
-                                    maxWidth: 640,
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final isLaptop = constraints.maxWidth >= 800;
+                        return RefreshIndicator(
+                          color: AppColors.primary,
+                          backgroundColor: colors.surface,
+                          onRefresh: () async => bloc.load(),
+                          child: state.isLoading
+                              ? const Center(
+                                  child: CircularProgressIndicator(
+                                    color: AppColors.primary,
                                   ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: [
-                                      if (activeTicket != null)
-                                        QueueHistorySpotlightCard(
-                                          ticket: activeTicket,
-                                          onTrackInTracker: () {
-                                            Navigator.of(context).pop();
-                                            onTrackLiveQueue?.call();
-                                          },
-                                        ),
-                                      QueueHistoryStatsBar(
-                                        totalJoined: state.totalJoined,
-                                        totalServed: state.totalServed,
-                                        avgWait: state.avgWait,
+                                )
+                              : SingleChildScrollView(
+                                  physics:
+                                      const AlwaysScrollableScrollPhysics(),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: isLaptop ? 32 : 16,
+                                    vertical: 14,
+                                  ),
+                                  child: Center(
+                                    child: ConstrainedBox(
+                                      constraints: BoxConstraints(
+                                        maxWidth: isLaptop ? 1280 : 640,
                                       ),
-                                      QueueHistoryFilterTabs(
-                                        selectedIndex: state.filterIndex,
-                                        allCount: state.totalJoined,
-                                        activeCount: state.totalActive,
-                                        completedCount: state.totalServed,
-                                        onFilterChanged: bloc.setFilter,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.stretch,
+                                        children: [
+                                          if (activeTicket != null)
+                                            QueueHistorySpotlightCard(
+                                              ticket: activeTicket,
+                                              onTrackInTracker: () {
+                                                Navigator.of(context).pop();
+                                                onTrackLiveQueue?.call();
+                                              },
+                                            ),
+                                          QueueHistoryStatsBar(
+                                            totalJoined: state.totalJoined,
+                                            totalServed: state.totalServed,
+                                            avgWait: state.avgWait,
+                                          ),
+                                          QueueHistoryFilterTabs(
+                                            selectedIndex: state.filterIndex,
+                                            allCount: state.totalJoined,
+                                            activeCount: state.totalActive,
+                                            completedCount: state.totalServed,
+                                            onFilterChanged: bloc.setFilter,
+                                          ),
+                                          if (filtered.isEmpty)
+                                            QueueHistoryEmptyState(
+                                              filterIndex: state.filterIndex,
+                                            )
+                                          else
+                                            LiveQueueHistoryList(
+                                              queues: filtered,
+                                              onTrackLiveQueue:
+                                                  onTrackLiveQueue,
+                                              onBookClinic: onBookClinic,
+                                            ),
+                                        ],
                                       ),
-                                      if (filtered.isEmpty)
-                                        QueueHistoryEmptyState(
-                                          filterIndex: state.filterIndex,
-                                        )
-                                      else
-                                        LiveQueueHistoryList(
-                                          queues: filtered,
-                                          onTrackLiveQueue: onTrackLiveQueue,
-                                          onBookClinic: onBookClinic,
-                                        ),
-                                    ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
+                        );
+                      },
                     ),
                   ),
                 ],

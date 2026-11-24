@@ -11,7 +11,7 @@ import '../bloc/platform_revenue_event.dart';
 import '../bloc/platform_revenue_state.dart';
 import '../widgets/platform_revenue_charts_grid.dart';
 import '../widgets/platform_revenue_header.dart';
-import '../widgets/platform_revenue_kpi_cards.dart';
+import '../widgets/platform_revenue_metric_cards.dart';
 
 class PlatformRevenuePage extends StatelessWidget {
   const PlatformRevenuePage({super.key});
@@ -75,7 +75,7 @@ class _PlatformRevenueView extends StatelessWidget {
                               },
                             ),
                             const SizedBox(height: 16),
-                            PlatformRevenueKpiCards(state: state),
+                            PlatformRevenueMetricCards(state: state),
                             const SizedBox(height: 20),
                             PlatformRevenueChartsGrid(
                               clinicRevenueItems: state.clinicRevenueItems,

@@ -16,9 +16,11 @@ class CancelAppointmentDialog extends StatelessWidget {
           borderRadius: BorderRadius.circular(24),
           side: BorderSide(color: colors.border),
         ),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
-          child: Column(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 440),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
+            child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
@@ -103,8 +105,9 @@ class CancelAppointmentDialog extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   @override
   Widget build(BuildContext context) => const SizedBox.shrink();

@@ -14,41 +14,57 @@ class MyBookingsFilterBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      physics: const BouncingScrollPhysics(),
-      child: Row(
-        children: [
-          _buildFilterTab(context, 0, 'Upcoming'),
-          const SizedBox(width: 8),
-          _buildFilterTab(context, 1, 'Completed'),
-          const SizedBox(width: 8),
-          _buildFilterTab(context, 2, 'Cancelled'),
-        ],
+    final colors = context.colors;
+    final isDark = context.isDarkMode;
+
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF0F172A) : colors.surfaceSecondary,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isDark ? const Color(0xFF1E293B) : colors.border,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildTab(context, 0, 'Upcoming'),
+            _buildTab(context, 1, 'Completed'),
+            _buildTab(context, 2, 'Cancelled'),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildFilterTab(BuildContext context, int index, String label) {
+  Widget _buildTab(BuildContext context, int index, String label) {
     final colors = context.colors;
     final isSelected = selectedFilterIndex == index;
+
     return GestureDetector(
       onTap: () => onFilterChanged(index),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        curve: Curves.easeInOut,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? colors.primary : colors.surfaceSecondary,
-          borderRadius: BorderRadius.circular(9999),
-          border: Border.all(
-            color: isSelected ? colors.primary : colors.border,
-          ),
+          borderRadius: BorderRadius.circular(8),
+          gradient: isSelected
+              ? const LinearGradient(
+                  colors: [Color(0xFF2563EB), Color(0xFF06B6D4)],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                )
+              : null,
+          color: isSelected ? null : Colors.transparent,
         ),
         child: Text(
           label,
           style: GoogleFonts.inter(
-            fontSize: 12.5,
-            fontWeight: FontWeight.w700,
+            fontSize: 13,
+            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
             color: isSelected ? Colors.white : colors.textMuted,
           ),
         ),

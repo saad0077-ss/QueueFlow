@@ -25,6 +25,7 @@ class ClinicSettingsMapper {
   ) {
     final profile = ClinicProfileEntity(
       name: _str(data, 'name'),
+      adminName: _str(data, 'adminName'),
       address: _str(data, 'address'),
       phone: _str(data, 'phone'),
       email: _str(data, 'email', _str(data, 'adminEmail')),

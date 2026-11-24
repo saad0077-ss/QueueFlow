@@ -21,9 +21,12 @@ class BookingReceiptDialog extends StatelessWidget {
           borderRadius: BorderRadius.circular(24),
           side: BorderSide(color: colors.border),
         ),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(18),
-          child: BookingReceiptDialog(apt: apt),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 500),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(18),
+            child: BookingReceiptDialog(apt: apt),
+          ),
         ),
       ),
     );

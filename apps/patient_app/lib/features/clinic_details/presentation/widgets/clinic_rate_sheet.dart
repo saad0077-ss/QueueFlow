@@ -49,8 +49,11 @@ class _ClinicRateSheetState extends State<ClinicRateSheet> {
   Widget build(BuildContext context) {
     final colors = context.colors;
 
-    return Container(
-      padding: EdgeInsets.only(
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 520),
+        child: Container(
+          padding: EdgeInsets.only(
         left: 20,
         right: 20,
         top: 20,
@@ -164,6 +167,8 @@ class _ClinicRateSheetState extends State<ClinicRateSheet> {
           ],
         ),
       ),
-    );
-  }
+    ),
+  ),
+);
+}
 }

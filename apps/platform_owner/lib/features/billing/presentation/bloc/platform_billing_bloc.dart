@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../domain/entities/platform_billing_kpis.dart';
+import '../../domain/entities/platform_billing_metrics.dart';
 import '../../domain/entities/platform_invoice_entity.dart';
 import '../../domain/repositories/platform_billing_repository.dart';
 import 'platform_billing_event.dart';
@@ -41,11 +41,11 @@ class PlatformBillingBloc
     PlatformBillingSubscriptionsStreamUpdated event,
     Emitter<PlatformBillingState> emit,
   ) {
-    final kpis = PlatformBillingKpis.compute(
+    final metrics = PlatformBillingMetrics.compute(
       subscriptions: event.subscriptions,
       invoices: state.invoices,
     );
-    emit(state.copyWith(subscriptions: event.subscriptions, kpis: kpis));
+    emit(state.copyWith(subscriptions: event.subscriptions, metrics: metrics));
   }
 
   Future<void> _onStarted(
@@ -56,7 +56,7 @@ class PlatformBillingBloc
     try {
       final tiers = await repository.getPlanTiers();
       final invoices = await repository.getInvoices();
-      final kpis = await repository.getKpis();
+      final metrics = await repository.getMetrics();
 
       await _subscriptionsSub?.cancel();
       _subscriptionsSub = repository.watchTenantSubscriptions().listen((subs) {
@@ -66,7 +66,7 @@ class PlatformBillingBloc
       emit(
         state.copyWith(
           status: PlatformBillingStatus.success,
-          kpis: kpis,
+          metrics: metrics,
           tiers: tiers,
           invoices: invoices,
         ),
@@ -96,7 +96,7 @@ class PlatformBillingBloc
         dueDate: event.dueDate,
       );
       final updatedInvoices = await repository.getInvoices();
-      final kpis = PlatformBillingKpis.compute(
+      final metrics = PlatformBillingMetrics.compute(
         subscriptions: state.subscriptions,
         invoices: updatedInvoices,
       );
@@ -104,7 +104,7 @@ class PlatformBillingBloc
         state.copyWith(
           isSubmitting: false,
           invoices: updatedInvoices,
-          kpis: kpis,
+          metrics: metrics,
           feedbackMessage:
               'Invoice issued successfully to ${event.clinicName}.',
           isError: false,
@@ -202,14 +202,14 @@ class PlatformBillingBloc
               : i,
         )
         .toList();
-    final kpis = PlatformBillingKpis.compute(
+    final metrics = PlatformBillingMetrics.compute(
       subscriptions: state.subscriptions,
       invoices: invoices,
     );
     emit(
       state.copyWith(
         invoices: invoices,
-        kpis: kpis,
+        metrics: metrics,
         feedbackMessage: 'Invoice ${event.invoice.number} marked as paid.',
         isError: false,
       ),

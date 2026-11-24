@@ -11,7 +11,7 @@ import 'clinic_tickets_filter_bar.dart';
 import 'clinic_tickets_filter_modal.dart';
 import 'clinic_tickets_grid.dart';
 import 'clinic_tickets_header.dart';
-import 'clinic_tickets_kpi_cards.dart';
+import 'clinic_tickets_metric_cards.dart';
 
 class ClinicTicketsWorkspace extends StatelessWidget {
   final String clinicId;
@@ -102,7 +102,7 @@ class ClinicTicketsWorkspace extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              ClinicTicketsKpiCards(
+              ClinicTicketsMetricCards(
                 totalCount: state.countAll,
                 openCount: state.countOpen,
                 inProgressCount: state.countInProgress,

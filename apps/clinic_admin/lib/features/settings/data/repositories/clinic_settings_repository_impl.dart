@@ -73,6 +73,7 @@ class ClinicSettingsRepositoryImpl implements ClinicSettingsRepository {
     final id = await _resolveClinicId();
     await _firestore.collection('clinics').doc(id).set({
       'name': profile.name,
+      'adminName': profile.adminName,
       'address': profile.address,
       'phone': profile.phone,
       'email': profile.email,

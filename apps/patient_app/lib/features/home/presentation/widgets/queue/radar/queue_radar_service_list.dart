@@ -96,6 +96,7 @@ class QueueRadarServiceList extends StatelessWidget {
                 QueueRadarJoinButton(
                   clinic: clinic,
                   target: q,
+                  info: info,
                   onJoin: () => onJoinClinic(clinic, q),
                 ),
               ],

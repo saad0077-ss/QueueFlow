@@ -7,7 +7,7 @@ import 'issue_invoice_dialog.dart';
 import '../../../../core/utils/pdf_exporter.dart';
 import 'platform_billing_content_view.dart';
 import 'platform_billing_header.dart';
-import 'platform_billing_kpi_strip.dart';
+import 'platform_billing_metric_strip.dart';
 import 'platform_billing_tab_bar.dart';
 
 class PlatformBillingScrollContent extends StatelessWidget {
@@ -62,7 +62,7 @@ class PlatformBillingScrollContent extends StatelessWidget {
             },
           ),
           const SizedBox(height: 24),
-          PlatformBillingKpiStrip(kpis: state.kpis),
+          PlatformBillingMetricStrip(metrics: state.metrics),
           const SizedBox(height: 24),
           PlatformBillingTabBar(
             activeIndex: state.activeTab,

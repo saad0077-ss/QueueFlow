@@ -12,7 +12,7 @@ import 'platform_tickets_filter_bar.dart';
 import 'platform_tickets_filter_modal_helper.dart';
 import 'platform_tickets_grid.dart';
 import 'platform_tickets_header.dart';
-import 'platform_tickets_kpi_cards.dart';
+import 'platform_tickets_metric_cards.dart';
 
 class PlatformTicketsWorkspaceContent extends StatelessWidget {
   final PlatformTicketsState state;
@@ -48,7 +48,7 @@ class PlatformTicketsWorkspaceContent extends StatelessWidget {
             },
           ),
           const SizedBox(height: 16),
-          PlatformTicketsKpiCards(
+          PlatformTicketsMetricCards(
             totalCount: all.length,
             atRiskCount: all
                 .where((t) => t.priority == 'high' || t.slaMinutes < 15)

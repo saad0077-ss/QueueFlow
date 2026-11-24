@@ -38,10 +38,14 @@ class ClinicLocationPreviewCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 8,
+            runSpacing: 8,
             children: [
               Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(Icons.location_on_rounded, size: 16, color: colors.info),
                   const SizedBox(width: 8),
@@ -55,10 +59,7 @@ class ClinicLocationPreviewCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 2,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
                       color: colors.infoTint,
                       borderRadius: BorderRadius.circular(6),
@@ -80,36 +81,18 @@ class ClinicLocationPreviewCard extends StatelessWidget {
                   foregroundColor: colors.textPrimary,
                   side: BorderSide(color: colors.border),
                   backgroundColor: colors.surface,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 6,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 ),
                 icon: const Icon(Icons.copy_rounded, size: 12),
-                label: Text(
-                  'Copy Formatted Address',
-                  style: GoogleFonts.inter(fontSize: 11),
-                ),
+                label: Text('Copy Formatted Address', style: GoogleFonts.inter(fontSize: 11)),
               ),
             ],
           ),
           const SizedBox(height: 14),
-          _detailRow(
-            context,
-            'Address:',
-            fullAddress.trim().isNotEmpty
-                ? fullAddress
-                : 'No address specified yet',
-          ),
+          _detailRow(context, 'Address:', fullAddress.trim().isNotEmpty ? fullAddress : 'No address set'),
           const SizedBox(height: 6),
-          _detailRow(
-            context,
-            'Landmark:',
-            landmark.trim().isNotEmpty ? landmark : 'None specified',
-          ),
+          _detailRow(context, 'Landmark:', landmark.trim().isNotEmpty ? landmark : 'None specified'),
           const SizedBox(height: 6),
           _detailRow(context, 'GPS:', coordText),
           const SizedBox(height: 6),
@@ -120,18 +103,12 @@ class ClinicLocationPreviewCard extends StatelessWidget {
                 width: 80,
                 child: Text(
                   'Navigation:',
-                  style: GoogleFonts.inter(
-                    fontSize: 12,
-                    color: colors.textMuted,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted, fontWeight: FontWeight.w600),
                 ),
               ),
               Expanded(
                 child: InkWell(
-                  onTap: hasCoords || mapsUrl.trim().isNotEmpty
-                      ? onOpenMaps
-                      : null,
+                  onTap: hasCoords || mapsUrl.trim().isNotEmpty ? onOpenMaps : null,
                   child: Text(
                     'Open in Google Maps ↗',
                     style: GoogleFonts.inter(
@@ -157,24 +134,10 @@ class ClinicLocationPreviewCard extends StatelessWidget {
       children: [
         SizedBox(
           width: 80,
-          child: Text(
-            label,
-            style: GoogleFonts.inter(
-              fontSize: 12,
-              color: colors.textMuted,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+          child: Text(label, style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted, fontWeight: FontWeight.w600)),
         ),
         Expanded(
-          child: Text(
-            value,
-            style: GoogleFonts.inter(
-              fontSize: 12,
-              color: colors.textPrimary,
-              height: 1.3,
-            ),
-          ),
+          child: Text(value, style: GoogleFonts.inter(fontSize: 12, color: colors.textPrimary, height: 1.3)),
         ),
       ],
     );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 
+import '../../../../core/layout/patient_breakpoints.dart';
 import '../bloc/home_bloc.dart';
 import '../bloc/home_event.dart';
 import '../bloc/home_state.dart';
@@ -32,14 +33,8 @@ class LiveQueueTabView extends StatelessWidget {
           body: LayoutBuilder(
             builder: (context, constraints) {
               final double width = constraints.maxWidth;
-              final bool isTablet = width >= 640 && width < 960;
-              final bool isDesktop = width >= 960;
-              final double horizontalPadding = isDesktop
-                  ? 32
-                  : (isTablet ? 24 : 18);
-              final double maxContentWidth = isDesktop
-                  ? 960
-                  : (isTablet ? 720 : double.infinity);
+              final bool isDesktop = width >= PatientBreakpoints.laptopMin;
+              final double horizontalPadding = isDesktop ? 24 : 16;
 
               return RefreshIndicator(
                 color: colors.primary,
@@ -52,62 +47,55 @@ class LiveQueueTabView extends StatelessWidget {
                   physics: const AlwaysScrollableScrollPhysics(
                     parent: BouncingScrollPhysics(),
                   ),
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(maxWidth: maxContentWidth),
-                      child: Padding(
-                        padding: EdgeInsets.fromLTRB(
-                          horizontalPadding,
-                          14,
-                          horizontalPadding,
-                          24,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            if (hasActiveTicket)
-                              ActiveTicketView(
-                                ticket: ticket,
-                                allClinics: state.allClinics,
-                                onCancelSpot: () async {
-                                  final confirmed =
-                                      await CancelQueueDialog.show(context);
-                                  if (confirmed == true && context.mounted) {
-                                    bloc.add(
-                                      HomeCancelTicketRequested(ticket.id),
-                                    );
-                                  }
-                                },
-                                onGetDirections: (clinic) =>
-                                    openGoogleMaps(context, clinic),
-                              )
-                            else
-                              QueueRadarView(
-                                allClinics: state.allClinics,
-                                userName: state.userName,
-                                onJoinClinic: (clinic, live) {
-                                  JoinQueueDialog.show(
-                                    context,
+                  padding: EdgeInsets.fromLTRB(
+                    horizontalPadding,
+                    14,
+                    horizontalPadding,
+                    24,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      if (hasActiveTicket)
+                        ActiveTicketView(
+                          ticket: ticket,
+                          allClinics: state.allClinics,
+                          onCancelSpot: () async {
+                            final confirmed =
+                                await CancelQueueDialog.show(context);
+                            if (confirmed == true && context.mounted) {
+                              bloc.add(
+                                HomeCancelTicketRequested(ticket.id),
+                              );
+                            }
+                          },
+                          onGetDirections: (clinic) =>
+                              openGoogleMaps(context, clinic),
+                        )
+                      else
+                        QueueRadarView(
+                          allClinics: state.allClinics,
+                          userName: state.userName,
+                          onJoinClinic: (clinic, live) {
+                            JoinQueueDialog.show(
+                              context,
+                              clinic: clinic,
+                              service: live?.service,
+                              department: live?.department,
+                              onJoinSuccess: (service, department) {
+                                bloc.add(
+                                  HomeJoinQueueRequested(
                                     clinic: clinic,
-                                    service: live?.service,
-                                    department: live?.department,
-                                    onJoinSuccess: (service, department) {
-                                      bloc.add(
-                                        HomeJoinQueueRequested(
-                                          clinic: clinic,
-                                          patientName: state.userName,
-                                          serviceName: service,
-                                          departmentName: department,
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                              ),
-                          ],
+                                    patientName: state.userName,
+                                    serviceName: service,
+                                    departmentName: department,
+                                  ),
+                                );
+                              },
+                            );
+                          },
                         ),
-                      ),
-                    ),
+                    ],
                   ),
                 ),
               );

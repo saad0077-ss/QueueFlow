@@ -31,19 +31,25 @@ class ClinicDepartmentsHubCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Card Header
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 8,
+            runSpacing: 8,
             children: [
               Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   const Text('🩺', style: TextStyle(fontSize: 18)),
                   const SizedBox(width: 8),
-                  Text(
-                    'Clinic Departments & Clinical Triage',
-                    style: GoogleFonts.inter(
-                      fontSize: 15.5,
-                      fontWeight: FontWeight.w700,
-                      color: colors.textPrimary,
+                  Flexible(
+                    child: Text(
+                      'Clinic Departments & Clinical Triage',
+                      style: GoogleFonts.inter(
+                        fontSize: 15.5,
+                        fontWeight: FontWeight.w700,
+                        color: colors.textPrimary,
+                      ),
                     ),
                   ),
                 ],

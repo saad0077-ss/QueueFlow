@@ -300,34 +300,44 @@ class BookingStep5Receipt extends StatelessWidget {
           ),
           const SizedBox(height: 10),
         ],
-        GradientButton(
-          text: 'View in My Bookings',
-          onPressed: onViewMyBookings,
-        ),
-        const SizedBox(height: 10),
-        Container(
-          width: double.infinity,
-          height: 48,
-          decoration: BoxDecoration(
-            color: colors.surface,
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: colors.border, width: 1.2),
-          ),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(24),
-              onTap: onBackToHome,
-              child: Center(
-                child: Text(
-                  'Back to Home',
-                  style: GoogleFonts.inter(
-                    fontSize: 14.5,
-                    fontWeight: FontWeight.w700,
-                    color: colors.textPrimary,
+        Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 380),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                GradientButton(
+                  text: 'View in My Bookings',
+                  onPressed: onViewMyBookings,
+                ),
+                const SizedBox(height: 10),
+                Container(
+                  width: double.infinity,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: colors.surface,
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(color: colors.border, width: 1.2),
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(24),
+                      onTap: onBackToHome,
+                      child: Center(
+                        child: Text(
+                          'Back to Home',
+                          style: GoogleFonts.inter(
+                            fontSize: 14.5,
+                            fontWeight: FontWeight.w700,
+                            color: colors.textPrimary,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
           ),
         ),

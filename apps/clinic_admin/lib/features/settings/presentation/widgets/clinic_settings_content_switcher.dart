@@ -5,7 +5,6 @@ import '../bloc/clinic_settings_event.dart';
 import 'clinic_location_panel.dart';
 import 'clinic_operating_hours_panel.dart';
 import 'clinic_profile_panel.dart';
-import 'clinic_queue_rules_panel.dart';
 import 'clinic_security_panel.dart';
 
 class ClinicSettingsContentSwitcher extends StatelessWidget {
@@ -42,11 +41,6 @@ class ClinicSettingsContentSwitcher extends StatelessWidget {
           onRevert: () => bloc.add(const ClinicSettingsStarted()),
         );
       case 3:
-        return ClinicQueueRulesPanel(
-          queueRules: settings.queueRules,
-          onSave: (r) => bloc.add(ClinicSettingsQueueRulesSaved(r)),
-        );
-      case 4:
         return ClinicSecurityPanel(
           security: settings.security,
           onSave:

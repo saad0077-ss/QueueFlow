@@ -12,8 +12,14 @@ import '../../domain/entities/clinic_entity.dart';
 class HomeClinicCard extends StatelessWidget {
   final ClinicEntity clinic;
   final VoidCallback? onTap;
+  final EdgeInsetsGeometry? margin;
 
-  const HomeClinicCard({super.key, required this.clinic, this.onTap});
+  const HomeClinicCard({
+    super.key,
+    required this.clinic,
+    this.onTap,
+    this.margin,
+  });
 
   Color get _categoryColor {
     final cat = clinic.category.toLowerCase();
@@ -151,7 +157,7 @@ class HomeClinicCard extends StatelessWidget {
     final colors = context.colors;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 14),
+      margin: margin ?? const EdgeInsets.only(bottom: 14),
       decoration: BoxDecoration(
         color: colors.surface,
         borderRadius: BorderRadius.circular(20),

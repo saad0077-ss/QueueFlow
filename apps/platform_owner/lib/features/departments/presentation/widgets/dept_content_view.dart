@@ -13,7 +13,7 @@ import 'department_approval_queue.dart';
 import 'departments_data_table.dart';
 import 'departments_filter_row.dart';
 import 'departments_header_bar.dart';
-import 'departments_kpi_cards.dart';
+import 'departments_metric_cards.dart';
 import 'dept_delete_dialog.dart';
 
 class DeptContentView extends StatelessWidget {
@@ -52,7 +52,7 @@ class DeptContentView extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 18),
-              DepartmentsKpiCards(
+              DepartmentsMetricCards(
                 totalDepartments: state.totalDepartments,
                 activeSpecialties: state.activeDepartments,
                 doctorsAssigned: state.totalDoctors,

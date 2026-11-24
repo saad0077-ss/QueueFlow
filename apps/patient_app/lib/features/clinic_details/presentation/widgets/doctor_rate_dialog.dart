@@ -50,8 +50,10 @@ class _DoctorRateDialogState extends State<DoctorRateDialog> {
           color: colors.textPrimary,
         ),
       ),
-      content: SingleChildScrollView(
-        child: Column(
+      content: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 420),
+        child: SingleChildScrollView(
+          child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Row(
@@ -103,7 +105,8 @@ class _DoctorRateDialogState extends State<DoctorRateDialog> {
           ],
         ),
       ),
-      actions: [
+    ),
+    actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
           child: Text('Cancel', style: TextStyle(color: colors.textMuted)),

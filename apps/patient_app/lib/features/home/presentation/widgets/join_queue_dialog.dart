@@ -70,40 +70,43 @@ class JoinQueueDialog extends StatelessWidget {
               horizontal: 24,
               vertical: 24,
             ),
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(22, 24, 22, 20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  JoinQueueHeader(clinicName: clinic.name),
-                  const SizedBox(height: 18),
-                  if (state.isLoading)
-                    const Padding(
-                      padding: EdgeInsets.only(bottom: 14),
-                      child: SizedBox(
-                        height: 22,
-                        width: 22,
-                        child: CircularProgressIndicator(strokeWidth: 2.2),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 480),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(22, 24, 22, 20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    JoinQueueHeader(clinicName: clinic.name),
+                    const SizedBox(height: 18),
+                    if (state.isLoading)
+                      const Padding(
+                        padding: EdgeInsets.only(bottom: 14),
+                        child: SizedBox(
+                          height: 22,
+                          width: 22,
+                          child: CircularProgressIndicator(strokeWidth: 2.2),
+                        ),
+                      )
+                    else ...[
+                      JoinQueueInfoBox(
+                        department: state.department,
+                        service: state.service,
                       ),
-                    )
-                  else ...[
-                    JoinQueueInfoBox(
-                      department: state.department,
-                      service: state.service,
+                      const SizedBox(height: 14),
+                    ],
+                    const JoinQueueFeeBox(),
+                    const SizedBox(height: 20),
+                    JoinQueueActions(
+                      canJoin: state.canJoin,
+                      onCancel: () => Navigator.of(context).pop(),
+                      onProceed: () => bloc.checkout(
+                        context: context,
+                        onSuccess: onJoinSuccess,
+                      ),
                     ),
-                    const SizedBox(height: 14),
                   ],
-                  const JoinQueueFeeBox(),
-                  const SizedBox(height: 20),
-                  JoinQueueActions(
-                    canJoin: state.canJoin,
-                    onCancel: () => Navigator.of(context).pop(),
-                    onProceed: () => bloc.checkout(
-                      context: context,
-                      onSuccess: onJoinSuccess,
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           );

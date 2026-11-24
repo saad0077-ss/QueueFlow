@@ -24,7 +24,7 @@ class LiveQueueTabAppBar extends StatelessWidget
       automaticallyImplyLeading: false,
       centerTitle: false,
       toolbarHeight: 64,
-      titleSpacing: 20,
+      titleSpacing: 24,
       title: Text(
         'Live Queue',
         style: GoogleFonts.inter(
@@ -37,7 +37,7 @@ class LiveQueueTabAppBar extends StatelessWidget
       actions: [
         if (hasActiveTicket)
           Container(
-            margin: const EdgeInsets.only(right: 20),
+            margin: const EdgeInsets.only(right: 24),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
               color: context.isDarkMode

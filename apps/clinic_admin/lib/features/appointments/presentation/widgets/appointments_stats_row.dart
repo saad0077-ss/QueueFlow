@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../domain/entities/clinic_appointment_entity.dart';
 
-/// Summary KPI cards shown above the appointments list.
+/// Summary metric cards shown above the appointments list.
 class AppointmentsStatsRow extends StatelessWidget {
   final List<ClinicAppointmentEntity> appointments;
 
@@ -20,48 +20,98 @@ class AppointmentsStatsRow extends StatelessWidget {
     final completed = appointments.where((a) => a.isCompleted).length;
     final cancelled = appointments.where((a) => a.isCancelled).length;
 
-    final stats = [
-      _Stat(
-        'Total',
-        total,
-        Icons.event_note_rounded,
-        colors.primary,
-        colors.primaryTint,
+    final cards = [
+      AppMetricCard(
+        tag: 'TOTAL',
+        tagColor: const Color(0xFF38BDF8),
+        label: 'Total Bookings',
+        value: '$total',
+        icon: Icons.event_note_rounded,
+        iconColor: const Color(0xFF38BDF8),
+        iconBgColor: const Color(0xFF0369A1).withValues(alpha: 0.35),
+        borderColor: const Color(0xFF0284C7).withValues(alpha: 0.4),
+        bottomWidget: Text(
+          'All registered appointments',
+          style: GoogleFonts.inter(fontSize: 9.5, color: colors.textMuted),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
       ),
-      _Stat(
-        'Upcoming',
-        upcoming,
-        Icons.schedule_rounded,
-        colors.info,
-        colors.infoTint,
+      AppMetricCard(
+        tag: 'SCHEDULED',
+        tagColor: const Color(0xFF60A5FA),
+        label: 'Upcoming Visits',
+        value: '$upcoming',
+        icon: Icons.schedule_rounded,
+        iconColor: const Color(0xFF60A5FA),
+        iconBgColor: const Color(0xFF1E3A8A).withValues(alpha: 0.35),
+        borderColor: const Color(0xFF2563EB).withValues(alpha: 0.4),
+        bottomWidget: Text(
+          'Confirmed & pending',
+          style: GoogleFonts.inter(fontSize: 9.5, color: colors.textMuted),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
       ),
-      _Stat(
-        'Checked In',
-        checkedIn,
-        Icons.how_to_reg_rounded,
-        colors.success,
-        colors.successTint,
+      AppMetricCard(
+        tag: 'ARRIVED',
+        tagColor: const Color(0xFF10B981),
+        hasDot: checkedIn > 0,
+        dotColor: const Color(0xFF10B981),
+        label: 'Checked In',
+        value: '$checkedIn',
+        icon: Icons.how_to_reg_rounded,
+        iconColor: const Color(0xFF34D399),
+        iconBgColor: const Color(0xFF065F46).withValues(alpha: 0.35),
+        borderColor: const Color(0xFF059669).withValues(alpha: 0.4),
+        bottomWidget: Text(
+          checkedIn > 0 ? 'Patients in waiting area' : 'None waiting',
+          style: GoogleFonts.inter(
+            fontSize: 9.5,
+            color: checkedIn > 0 ? const Color(0xFF34D399) : colors.textMuted,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
       ),
-      _Stat(
-        'Completed',
-        completed,
-        Icons.check_circle_outline_rounded,
-        colors.textMuted,
-        colors.surfaceSecondary,
+      AppMetricCard(
+        tag: 'CONSULTED',
+        tagColor: const Color(0xFF14B8A6),
+        label: 'Completed',
+        value: '$completed',
+        icon: Icons.check_circle_outline_rounded,
+        iconColor: const Color(0xFF2DD4BF),
+        iconBgColor: const Color(0xFF134E4A).withValues(alpha: 0.35),
+        borderColor: const Color(0xFF0D9488).withValues(alpha: 0.4),
+        bottomWidget: Text(
+          'Finished consultation',
+          style: GoogleFonts.inter(fontSize: 9.5, color: colors.textMuted),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
       ),
-      _Stat(
-        'Cancelled',
-        cancelled,
-        Icons.cancel_outlined,
-        colors.error,
-        colors.errorTint,
+      AppMetricCard(
+        tag: 'CANCELLED',
+        tagColor: const Color(0xFFEF4444),
+        label: 'Cancelled / Missed',
+        value: '$cancelled',
+        icon: Icons.cancel_outlined,
+        iconColor: const Color(0xFFF87171),
+        iconBgColor: const Color(0xFF7F1D1D).withValues(alpha: 0.35),
+        borderColor: const Color(0xFFDC2626).withValues(alpha: 0.4),
+        bottomWidget: Text(
+          'Cancelled or dropped',
+          style: GoogleFonts.inter(fontSize: 9.5, color: colors.textMuted),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
       ),
     ];
 
     return LayoutBuilder(
       builder: (context, constraints) {
         final w = constraints.maxWidth;
-        final columns = w >= 900 ? 5 : (w >= 560 ? 3 : 2);
+        final columns = w >= 1100 ? 5 : (w >= 700 ? 3 : (w >= 440 ? 2 : 1));
         const gap = 12.0;
         final itemWidth = (w - gap * (columns - 1)) / columns;
 
@@ -69,85 +119,14 @@ class AppointmentsStatsRow extends StatelessWidget {
           spacing: gap,
           runSpacing: gap,
           children: [
-            for (final s in stats)
+            for (final c in cards)
               SizedBox(
                 width: itemWidth,
-                child: _StatCard(stat: s),
+                child: c,
               ),
           ],
         );
       },
-    );
-  }
-}
-
-class _Stat {
-  final String label;
-  final int value;
-  final IconData icon;
-  final Color color;
-  final Color tint;
-
-  const _Stat(this.label, this.value, this.icon, this.color, this.tint);
-}
-
-class _StatCard extends StatelessWidget {
-  final _Stat stat;
-
-  const _StatCard({required this.stat});
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: colors.surface,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: colors.border),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 38,
-            height: 38,
-            decoration: BoxDecoration(
-              color: stat.tint,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(stat.icon, size: 19, color: stat.color),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '${stat.value}',
-                  style: GoogleFonts.inter(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w800,
-                    color: colors.textPrimary,
-                    height: 1.1,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  stat.label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.inter(
-                    fontSize: 11.5,
-                    fontWeight: FontWeight.w600,
-                    color: colors.textMuted,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

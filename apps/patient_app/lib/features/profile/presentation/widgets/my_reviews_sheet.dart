@@ -57,6 +57,7 @@ class MyReviewsSheet extends StatelessWidget {
             ),
             child: ConstrainedBox(
               constraints: BoxConstraints(
+                maxWidth: 520,
                 maxHeight: MediaQuery.of(context).size.height * 0.85,
               ),
               child: Padding(

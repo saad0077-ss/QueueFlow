@@ -32,9 +32,11 @@ class CancelQueueDialog extends StatelessWidget {
       ),
       elevation: 16,
       insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(22, 24, 22, 20),
-        child: Column(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 440),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(22, 24, 22, 20),
+          child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             // Warning/Error Icon
@@ -139,6 +141,7 @@ class CancelQueueDialog extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }
