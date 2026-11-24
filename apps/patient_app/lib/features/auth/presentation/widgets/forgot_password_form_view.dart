@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 
-import '../../../../core/widgets/auth_back_header.dart';
 import '../../../../core/widgets/custom_text_field.dart';
 import '../../../../core/widgets/gradient_button.dart';
 
@@ -51,8 +50,7 @@ class ForgotPasswordFormView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const AuthBackHeader(),
-          const SizedBox(height: 32),
+          const SizedBox(height: 8),
 
           // Title
           Text(

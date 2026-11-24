@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 
+import '../../../../notifications/presentation/pages/notifications_screen.dart';
 import '../../../../profile/presentation/bloc/profile_bloc.dart';
 import '../../../../profile/presentation/pages/help_support/help_support_screen.dart';
 import '../queue/radar/live_pulsing_dot.dart';
@@ -191,36 +192,46 @@ class PatientLaptopHeader extends StatelessWidget {
           const SizedBox(width: 10),
 
           // Notifications Bell
-          Container(
-            width: 38,
-            height: 38,
-            decoration: BoxDecoration(
-              color: colors.surfaceSecondary.withValues(alpha: 0.6),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: colors.border.withValues(alpha: 0.6)),
-            ),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Icon(
-                  Icons.notifications_none_rounded,
-                  size: 20,
-                  color: colors.textPrimary,
+          InkWell(
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const NotificationsScreen(),
                 ),
-                if (unreadNotifications > 0)
-                  Positioned(
-                    top: 8,
-                    right: 8,
-                    child: Container(
-                      width: 7,
-                      height: 7,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFEF4444),
-                        shape: BoxShape.circle,
+              );
+            },
+            borderRadius: BorderRadius.circular(10),
+            child: Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(
+                color: colors.surfaceSecondary.withValues(alpha: 0.6),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: colors.border.withValues(alpha: 0.6)),
+              ),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Icon(
+                    Icons.notifications_none_rounded,
+                    size: 20,
+                    color: colors.textPrimary,
+                  ),
+                  if (unreadNotifications > 0)
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: Container(
+                        width: 7,
+                        height: 7,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFEF4444),
+                          shape: BoxShape.circle,
+                        ),
                       ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
           ),
         ],

@@ -1,23 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/widgets/app_snack_bar.dart';
+import '../../../../core/services/user_location_service.dart';
 import '../../../booking/presentation/widgets/my_bookings_tab_view.dart';
-import '../../../profile/data/repositories/profile_repository_impl.dart';
-import '../../../profile/domain/usecases/profile_usecases.dart';
 import '../../../profile/presentation/bloc/profile_bloc.dart';
-import '../../../profile/presentation/bloc/profile_event.dart';
+import '../../../profile/presentation/bloc/profile_bloc_factory.dart';
 import '../../../profile/presentation/widgets/profile_tab_view.dart';
 import '../../data/repositories/home_repository_impl.dart';
 import '../../domain/repositories/home_repository.dart';
-import '../../domain/usecases/cancel_ticket_usecase.dart';
-import '../../domain/usecases/get_active_ticket_usecase.dart';
-import '../../domain/usecases/get_featured_clinics_usecase.dart';
-import '../../domain/usecases/join_queue_usecase.dart';
 import '../bloc/home_bloc.dart';
+import '../bloc/home_bloc_factory.dart';
 import '../bloc/home_event.dart';
 import '../bloc/home_state.dart';
-import '../../../../core/services/user_location_service.dart';
 import '../widgets/home_tab_view.dart';
 import '../widgets/live_queue_tab_view.dart';
 import '../widgets/patient_responsive_home_shell.dart';
@@ -25,44 +19,49 @@ import '../widgets/patient_responsive_home_shell.dart';
 /// Patient Home Portal driven cleanly by BLoC state management (< 150 lines).
 class PatientHomeScreen extends StatelessWidget {
   final HomeRepository? homeRepository;
+  final int initialTab;
 
-  const PatientHomeScreen({super.key, this.homeRepository});
+  const PatientHomeScreen({
+    super.key,
+    this.homeRepository,
+    this.initialTab = 0,
+  });
+
+  ProfileBloc _getOrCreateProfileBloc(BuildContext context) {
+    try {
+      return context.read<ProfileBloc>();
+    } catch (_) {
+      return ProfileBlocFactory.create();
+    }
+  }
+
+  HomeBloc _getOrCreateHomeBloc(BuildContext context, HomeRepository repo) {
+    UserLocationService.refresh();
+    try {
+      final existing = context.read<HomeBloc>();
+      if (initialTab != 0) {
+        existing.add(HomeNavTabChanged(initialTab));
+      }
+      return existing;
+    } catch (_) {
+      final b = HomeBlocFactory.create(repository: repo);
+      if (initialTab != 0) {
+        b.add(HomeNavTabChanged(initialTab));
+      }
+      return b;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final repo = homeRepository ?? HomeRepositoryImpl();
-    final profileRepo = ProfileRepositoryImpl();
+    final profileBloc = _getOrCreateProfileBloc(context);
+    final homeBloc = _getOrCreateHomeBloc(context, repo);
+
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create: (_) {
-            UserLocationService.refresh();
-            return HomeBloc(
-              getFeaturedClinicsUseCase: GetFeaturedClinicsUseCase(repo),
-              getActiveTicketUseCase: GetActiveTicketUseCase(repo),
-              joinQueueUseCase: JoinQueueUseCase(repo),
-              cancelTicketUseCase: CancelTicketUseCase(repo),
-            )..add(const HomeInitialDataRequested());
-          },
-        ),
-        // Provided here so the greeting header and the Profile tab share the
-        // same profile (and therefore the same photo).
-        BlocProvider(
-          create: (_) => ProfileBloc(
-            getProfileUseCase: GetProfileUseCase(profileRepo),
-            updateProfileUseCase: UpdateProfileUseCase(profileRepo),
-            toggleDarkModeUseCase: ToggleDarkModeUseCase(profileRepo),
-            getFavoriteClinicsUseCase: GetFavoriteClinicsUseCase(profileRepo),
-            getUserReviewsUseCase: GetUserReviewsUseCase(profileRepo),
-            addReviewUseCase: AddReviewUseCase(profileRepo),
-            deleteReviewUseCase: DeleteReviewUseCase(profileRepo),
-            getSupportTicketsUseCase: GetSupportTicketsUseCase(profileRepo),
-            createSupportTicketUseCase: CreateSupportTicketUseCase(profileRepo),
-            sendTicketReplyUseCase: SendTicketReplyUseCase(profileRepo),
-            logoutUseCase: LogoutUseCase(profileRepo),
-            deleteAccountUseCase: DeleteAccountUseCase(profileRepo),
-          )..add(const ProfileLoadRequested()),
-        ),
+        BlocProvider.value(value: homeBloc),
+        BlocProvider.value(value: profileBloc),
       ],
       child: const _PatientHomeView(),
     );
@@ -74,40 +73,18 @@ class _PatientHomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<HomeBloc, HomeState>(
-      listener: (context, state) {
-        if (state.successMessage != null) {
-          AppSnackBar.showSuccess(context, message: state.successMessage!);
-        }
-        if (state.errorMessage != null) {
-          AppSnackBar.showError(context, message: state.errorMessage!);
-        }
-      },
+    return BlocBuilder<HomeBloc, HomeState>(
       builder: (context, state) {
         final bloc = context.read<HomeBloc>();
-        final tabs = [
-          const HomeTabView(),
-          const LiveQueueTabView(),
-          MyBookingsTabView(
-            onExploreClinics: () => bloc.add(const HomeNavTabChanged(0)),
-            onTrackLiveQueue: () {
-              bloc.add(const HomeRefreshRequested());
-              bloc.add(const HomeNavTabChanged(1));
-            },
-          ),
-          ProfileTabView(
-            onVisitsTap: () => bloc.add(const HomeNavTabChanged(2)),
-            onTrackLiveQueue: () {
-              bloc.add(const HomeRefreshRequested());
-              bloc.add(const HomeNavTabChanged(1));
-            },
-          ),
-        ];
-
         return PatientResponsiveHomeShell(
           state: state,
           bloc: bloc,
-          tabs: tabs,
+          tabs: const [
+            HomeTabView(),
+            LiveQueueTabView(),
+            MyBookingsTabView(),
+            ProfileTabView(),
+          ],
         );
       },
     );

@@ -25,7 +25,7 @@ class HomeState extends Equatable {
     this.activeTicket,
     this.userName = '',
     this.userInitials = '',
-    this.unreadNotificationsCount = 1,
+    this.unreadNotificationsCount = 0,
     this.successMessage,
     this.errorMessage,
   });

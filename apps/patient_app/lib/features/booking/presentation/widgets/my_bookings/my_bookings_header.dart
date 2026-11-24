@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 
+import '../../../../notifications/presentation/pages/notifications_screen.dart';
 import 'my_bookings_filter_bar.dart';
 
 class MyBookingsHeader extends StatelessWidget {
@@ -34,17 +35,26 @@ class MyBookingsHeader extends StatelessWidget {
                   color: colors.textPrimary,
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.all(11),
-                decoration: BoxDecoration(
-                  color: colors.surface,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: colors.border),
-                ),
-                child: Icon(
-                  Icons.notifications_none_rounded,
-                  color: colors.textPrimary,
-                  size: 22,
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const NotificationsScreen(),
+                    ),
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(11),
+                  decoration: BoxDecoration(
+                    color: colors.surface,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: colors.border),
+                  ),
+                  child: Icon(
+                    Icons.notifications_none_rounded,
+                    color: colors.textPrimary,
+                    size: 22,
+                  ),
                 ),
               ),
             ],

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 
 import '../../../../core/widgets/app_snack_bar.dart';
+import '../../../../core/widgets/auth_app_bar.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../widgets/forgot_password_form_view.dart';
@@ -14,11 +15,7 @@ class ForgotPasswordScreen extends StatefulWidget {
   final String? initialEmail;
   final AuthRepository? authRepository;
 
-  const ForgotPasswordScreen({
-    super.key,
-    this.initialEmail,
-    this.authRepository,
-  });
+  const ForgotPasswordScreen({super.key, this.initialEmail, this.authRepository});
 
   @override
   State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
@@ -62,31 +59,20 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     });
   }
 
-  String _firebaseErrorMessage(FirebaseAuthException e) {
-    return switch (e.code) {
-      'user-not-found' => 'No account found with this email address.',
-      'invalid-email' => 'The email address format is invalid.',
-      'too-many-requests' =>
-        'Too many attempts. Please try again in a few minutes.',
-      _ =>
-        e.message?.isNotEmpty == true
-            ? e.message!
-            : 'Failed to send password reset email.',
-    };
-  }
+  String _firebaseErrorMessage(FirebaseAuthException e) => switch (e.code) {
+    'user-not-found' => 'No account found with this email address.',
+    'invalid-email' => 'The email address format is invalid.',
+    'too-many-requests' => 'Too many attempts. Please try again later.',
+    _ => e.message?.isNotEmpty == true ? e.message! : 'Failed to reset password.',
+  };
 
   Future<void> _handleSendResetLink() async {
     final email = _emailController.text.trim();
     if (email.isEmpty || !email.contains('@') || !email.contains('.')) {
       setState(() => _emailError = 'Please enter a valid email address.');
-      AppSnackBar.showWarning(
-        context,
-        title: 'Invalid Email',
-        message: 'Please enter a valid email address.',
-      );
+      AppSnackBar.showWarning(context, title: 'Invalid Email', message: 'Please enter a valid email address.');
       return;
     }
-
     setState(() {
       _emailError = null;
       _isLoading = true;
@@ -99,23 +85,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         _sentEmail = email;
       });
       _startCooldown(60);
-      AppSnackBar.showSuccess(
-        context,
-        title: 'Reset Link Sent',
-        message: 'A password reset link has been sent to $email.',
-      );
+      AppSnackBar.showSuccess(context, title: 'Reset Link Sent', message: 'A reset link has been sent to $email.');
     } on FirebaseAuthException catch (e) {
-      if (mounted) {
-        AppSnackBar.showError(context, message: _firebaseErrorMessage(e));
-      }
+      if (mounted) AppSnackBar.showError(context, message: _firebaseErrorMessage(e));
     } catch (_) {
-      if (mounted) {
-        AppSnackBar.showError(
-          context,
-          message:
-              'Something went wrong. Please check your internet connection.',
-        );
-      }
+      if (mounted) AppSnackBar.showError(context, message: 'Something went wrong. Please check your connection.');
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -127,41 +101,31 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
     return Scaffold(
       backgroundColor: colors.background,
+      appBar: const AuthAppBar(),
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
             final scale = (constraints.maxWidth / 390.0).clamp(0.85, 1.15);
             return Center(
               child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxWidth: 440,
-                  minHeight: constraints.maxHeight,
-                ),
+                constraints: const BoxConstraints(maxWidth: 440),
                 child: SingleChildScrollView(
                   physics: const ClampingScrollPhysics(),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 16,
-                  ),
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight - 32,
-                    ),
-                    child: _isEmailSent
-                        ? ForgotPasswordSuccessView(
-                            sentEmail: _sentEmail,
-                            scale: scale,
-                            resendCooldown: _resendCooldown,
-                            onResend: _handleSendResetLink,
-                          )
-                        : ForgotPasswordFormView(
-                            controller: _emailController,
-                            errorText: _emailError,
-                            isLoading: _isLoading,
-                            scale: scale,
-                            onSubmit: _handleSendResetLink,
-                          ),
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  child: _isEmailSent
+                      ? ForgotPasswordSuccessView(
+                          sentEmail: _sentEmail,
+                          scale: scale,
+                          resendCooldown: _resendCooldown,
+                          onResend: _handleSendResetLink,
+                        )
+                      : ForgotPasswordFormView(
+                          controller: _emailController,
+                          errorText: _emailError,
+                          isLoading: _isLoading,
+                          scale: scale,
+                          onSubmit: _handleSendResetLink,
+                        ),
                 ),
               ),
             );
