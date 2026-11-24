@@ -33,10 +33,13 @@ class PaymentHistorySheet extends StatelessWidget {
       create: (_) => PaymentHistoryBloc(repository ?? ProfileRepositoryImpl()),
       child: BlocBuilder<PaymentHistoryBloc, PaymentHistoryState>(
         builder: (context, state) {
-          return Container(
-            margin: const EdgeInsets.only(top: 48),
-            padding: const EdgeInsets.fromLTRB(18, 16, 18, 24),
-            decoration: BoxDecoration(
+          return Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 540),
+              child: Container(
+                margin: const EdgeInsets.only(top: 48),
+                padding: const EdgeInsets.fromLTRB(18, 16, 18, 24),
+                decoration: BoxDecoration(
               color: colors.surfaceElevated,
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(24),
@@ -62,31 +65,37 @@ class PaymentHistorySheet extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        children: [
-                          const Text('💳', style: TextStyle(fontSize: 22)),
-                          const SizedBox(width: 8),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Payment History',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w800,
-                                  color: colors.textPrimary,
-                                ),
+                      Expanded(
+                        child: Row(
+                          children: [
+                            const Text('💳', style: TextStyle(fontSize: 22)),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Payment History',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w800,
+                                      color: colors.textPrimary,
+                                    ),
+                                  ),
+                                  Text(
+                                    'Consultation fees, receipts & refunds',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontSize: 11.5,
+                                      color: colors.textMuted,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              Text(
-                                'Consultation fees, receipts & refunds',
-                                style: TextStyle(
-                                  fontSize: 11.5,
-                                  color: colors.textMuted,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+                            ),
+                          ],
+                        ),
                       ),
                       IconButton(
                         icon: Icon(
@@ -141,8 +150,10 @@ class PaymentHistorySheet extends StatelessWidget {
                 ],
               ),
             ),
-          );
-        },
+          ),
+        ),
+      );
+    },
       ),
     );
   }

@@ -14,7 +14,7 @@ import '../bloc/platform_reports_event.dart';
 import '../bloc/platform_reports_state.dart';
 import '../widgets/platform_reports_analytics_grid.dart';
 import '../widgets/platform_reports_header.dart';
-import '../widgets/platform_reports_kpi_ribbon.dart';
+import '../widgets/platform_reports_summary_ribbon.dart';
 import '../widgets/platform_reports_toolbar.dart';
 
 class PlatformReportsPage extends StatelessWidget {
@@ -113,7 +113,7 @@ class _PlatformReportsView extends StatelessWidget {
                             ),
                             const SizedBox(height: 16),
                             if (state.report != null) ...[
-                              PlatformReportsKpiRibbon(report: state.report!),
+                              PlatformReportsSummaryRibbon(report: state.report!),
                               const SizedBox(height: 20),
                               PlatformReportsAnalyticsGrid(
                                 report: state.report!,

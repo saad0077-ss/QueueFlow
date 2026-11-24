@@ -17,11 +17,10 @@ import '../../domain/usecases/join_queue_usecase.dart';
 import '../bloc/home_bloc.dart';
 import '../bloc/home_event.dart';
 import '../bloc/home_state.dart';
-import '../widgets/home_greet_header.dart';
 import '../../../../core/services/user_location_service.dart';
 import '../widgets/home_tab_view.dart';
 import '../widgets/live_queue_tab_view.dart';
-import '../widgets/patient_bottom_nav_bar.dart';
+import '../widgets/patient_responsive_home_shell.dart';
 
 /// Patient Home Portal driven cleanly by BLoC state management (< 150 lines).
 class PatientHomeScreen extends StatelessWidget {
@@ -86,51 +85,29 @@ class _PatientHomeView extends StatelessWidget {
       },
       builder: (context, state) {
         final bloc = context.read<HomeBloc>();
+        final tabs = [
+          const HomeTabView(),
+          const LiveQueueTabView(),
+          MyBookingsTabView(
+            onExploreClinics: () => bloc.add(const HomeNavTabChanged(0)),
+            onTrackLiveQueue: () {
+              bloc.add(const HomeRefreshRequested());
+              bloc.add(const HomeNavTabChanged(1));
+            },
+          ),
+          ProfileTabView(
+            onVisitsTap: () => bloc.add(const HomeNavTabChanged(2)),
+            onTrackLiveQueue: () {
+              bloc.add(const HomeRefreshRequested());
+              bloc.add(const HomeNavTabChanged(1));
+            },
+          ),
+        ];
 
-        return Scaffold(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          appBar: state.currentTabIndex == 0
-              ? HomeGreetHeader(
-                  userName: state.userName,
-                  userInitials: state.userInitials,
-                  photoBase64: context
-                      .watch<ProfileBloc>()
-                      .state
-                      .profile
-                      ?.photoBase64,
-                  unreadNotifications: state.unreadNotificationsCount,
-                  onAvatarTap: () => bloc.add(const HomeNavTabChanged(3)),
-                )
-              : null,
-          body: SafeArea(
-            top: state.currentTabIndex > 1,
-            child: IndexedStack(
-              index: state.currentTabIndex,
-              children: [
-                const HomeTabView(),
-                const LiveQueueTabView(),
-                MyBookingsTabView(
-                  onExploreClinics: () => bloc.add(const HomeNavTabChanged(0)),
-                  onTrackLiveQueue: () {
-                    bloc.add(const HomeRefreshRequested());
-                    bloc.add(const HomeNavTabChanged(1));
-                  },
-                ),
-                ProfileTabView(
-                  onVisitsTap: () => bloc.add(const HomeNavTabChanged(2)),
-                  onTrackLiveQueue: () {
-                    bloc.add(const HomeRefreshRequested());
-                    bloc.add(const HomeNavTabChanged(1));
-                  },
-                ),
-              ],
-            ),
-          ),
-          bottomNavigationBar: PatientBottomNavBar(
-            currentIndex: state.currentTabIndex,
-            hasActiveQueueTicket: state.activeTicket?.isActive ?? false,
-            onTap: (idx) => bloc.add(HomeNavTabChanged(idx)),
-          ),
+        return PatientResponsiveHomeShell(
+          state: state,
+          bloc: bloc,
+          tabs: tabs,
         );
       },
     );

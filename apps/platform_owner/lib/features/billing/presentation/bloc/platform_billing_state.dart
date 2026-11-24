@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import '../../domain/entities/platform_billing_kpis.dart';
+import '../../domain/entities/platform_billing_metrics.dart';
 import '../../domain/entities/platform_invoice_entity.dart';
 import '../../domain/entities/platform_plan_tier_entity.dart';
 import '../../domain/entities/platform_tenant_subscription_entity.dart';
@@ -9,7 +9,7 @@ enum PlatformBillingStatus { initial, loading, success, failure }
 
 class PlatformBillingState extends Equatable {
   final PlatformBillingStatus status;
-  final PlatformBillingKpis kpis;
+  final PlatformBillingMetrics metrics;
   final List<PlatformTenantSubscriptionEntity> subscriptions;
   final List<PlatformPlanTierEntity> tiers;
   final List<PlatformInvoiceEntity> invoices;
@@ -22,7 +22,7 @@ class PlatformBillingState extends Equatable {
 
   const PlatformBillingState({
     this.status = PlatformBillingStatus.initial,
-    this.kpis = const PlatformBillingKpis(),
+    this.metrics = const PlatformBillingMetrics(),
     this.subscriptions = const [],
     this.tiers = const [],
     this.invoices = const [],
@@ -56,7 +56,7 @@ class PlatformBillingState extends Equatable {
 
   PlatformBillingState copyWith({
     PlatformBillingStatus? status,
-    PlatformBillingKpis? kpis,
+    PlatformBillingMetrics? metrics,
     List<PlatformTenantSubscriptionEntity>? subscriptions,
     List<PlatformPlanTierEntity>? tiers,
     List<PlatformInvoiceEntity>? invoices,
@@ -69,7 +69,7 @@ class PlatformBillingState extends Equatable {
   }) {
     return PlatformBillingState(
       status: status ?? this.status,
-      kpis: kpis ?? this.kpis,
+      metrics: metrics ?? this.metrics,
       subscriptions: subscriptions ?? this.subscriptions,
       tiers: tiers ?? this.tiers,
       invoices: invoices ?? this.invoices,
@@ -85,7 +85,7 @@ class PlatformBillingState extends Equatable {
   @override
   List<Object?> get props => [
     status,
-    kpis,
+    metrics,
     subscriptions,
     tiers,
     invoices,

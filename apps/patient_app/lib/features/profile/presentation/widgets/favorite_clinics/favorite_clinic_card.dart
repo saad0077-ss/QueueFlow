@@ -130,6 +130,7 @@ class FavoriteClinicCard extends StatelessWidget {
               border: Border.all(color: colors.border),
             ),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(
                   mainAxisSize: MainAxisSize.min,
@@ -152,21 +153,16 @@ class FavoriteClinicCard extends StatelessWidget {
                         color: colors.textMuted,
                       ),
                     ),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 6),
-                  child: Text(
-                    '·',
-                    style: TextStyle(
-                      color: colors.textSubtle,
-                      fontWeight: FontWeight.bold,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 6),
+                      child: Text(
+                        '·',
+                        style: TextStyle(
+                          color: colors.textSubtle,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
                     const Text('📍', style: TextStyle(fontSize: 11)),
                     const SizedBox(width: 3),
                     Text(
@@ -179,43 +175,49 @@ class FavoriteClinicCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                const Spacer(),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 3,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isFast
-                        ? const Color(0xFF10B981).withValues(alpha: 0.12)
-                        : const Color(0xFFF59E0B).withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 5,
-                        height: 5,
-                        decoration: BoxDecoration(
-                          color: isFast
-                              ? const Color(0xFF10B981)
-                              : const Color(0xFFF59E0B),
-                          shape: BoxShape.circle,
+                const SizedBox(width: 6),
+                Flexible(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isFast
+                          ? const Color(0xFF10B981).withValues(alpha: 0.12)
+                          : const Color(0xFFF59E0B).withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 5,
+                          height: 5,
+                          decoration: BoxDecoration(
+                            color: isFast
+                                ? const Color(0xFF10B981)
+                                : const Color(0xFFF59E0B),
+                            shape: BoxShape.circle,
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 5),
-                      Text(
-                        '${clinic.waitingCount} in queue (~${clinic.estWaitTime})',
-                        style: GoogleFonts.inter(
-                          fontSize: 10.5,
-                          fontWeight: FontWeight.w700,
-                          color: isFast
-                              ? const Color(0xFF10B981)
-                              : const Color(0xFFF59E0B),
+                        const SizedBox(width: 5),
+                        Flexible(
+                          child: Text(
+                            '${clinic.waitingCount} in queue (~${clinic.estWaitTime})',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.inter(
+                              fontSize: 10.5,
+                              fontWeight: FontWeight.w700,
+                              color: isFast
+                                  ? const Color(0xFF10B981)
+                                  : const Color(0xFFF59E0B),
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ],

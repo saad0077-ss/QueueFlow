@@ -166,13 +166,13 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      // Verify Sub-View 1: Department Overview Header & KPIs
+      // Verify Sub-View 1: Department Overview Header & Metrics
       expect(find.text('LIVE QUEUE CONSOLE'), findsOneWidget);
       expect(find.text('Live Queue Management'), findsOneWidget);
       expect(find.text('Add Walk-In Patient'), findsOneWidget);
       expect(find.text('Queue Open'), findsOneWidget);
 
-      // Verify KPI Summary Cards
+      // Verify Summary Cards
       expect(find.text('Departments Active'), findsOneWidget);
       expect(find.text('Services Configured'), findsOneWidget);
       expect(find.text('Patients Waiting'), findsOneWidget);

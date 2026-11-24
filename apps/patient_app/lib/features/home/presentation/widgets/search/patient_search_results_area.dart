@@ -92,14 +92,15 @@ class PatientSearchResultsArea extends StatelessWidget {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: clinics.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: isDesktop ? 2 : 2,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
               crossAxisSpacing: 14,
               mainAxisSpacing: 14,
-              mainAxisExtent: 110,
+              mainAxisExtent: 224,
             ),
             itemBuilder: (ctx, i) => HomeClinicCard(
               clinic: clinics[i],
+              margin: EdgeInsets.zero,
               onTap: () => onSelectClinic(clinics[i]),
             ),
           )

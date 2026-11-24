@@ -3,66 +3,46 @@ import 'package:flutter/material.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:patient_app/core/constants/payment_constants.dart';
 import 'package:patient_app/features/booking/domain/entities/payment_info_entity.dart';
+import 'razorpay_native_checkout.dart';
+import 'razorpay_web_checkout_stub.dart'
+    if (dart.library.js_interop) 'razorpay_web_checkout.dart';
+import 'razorpay_web_dialog.dart';
 
-/// Callback type when payment succeeds
 typedef PaymentSuccessCallback = void Function(PaymentInfoEntity paymentInfo);
-
-/// Callback type when payment fails or is dismissed
-typedef PaymentFailureCallback = void Function(
-  String errorMessage,
-  int? errorCode,
-);
-
-/// Callback type when an external wallet is chosen
+typedef PaymentFailureCallback = void Function(String errorMessage, int? errorCode);
 typedef ExternalWalletCallback = void Function(String walletName);
 
-/// Production-ready service managing Razorpay checkout in Test Mode
 class RazorpayPaymentService {
   Razorpay? _razorpay;
-
-  RazorpayPaymentService({Razorpay? razorpayClient})
-    : _razorpay = razorpayClient;
+  RazorpayPaymentService({Razorpay? razorpayClient}) : _razorpay = razorpayClient;
 
   PaymentSuccessCallback? _activeSuccessCallback;
   PaymentFailureCallback? _activeFailureCallback;
   ExternalWalletCallback? _activeWalletCallback;
   double _activeAmount = 0.0;
 
-  /// razorpay_flutter supports Android, iOS and Web (via checkout.js).
-  bool get isSupportedNativePlatform =>
-      kIsWeb ||
-      defaultTargetPlatform == TargetPlatform.android ||
-      defaultTargetPlatform == TargetPlatform.iOS;
+  bool get isSupportedPlatform =>
+      kIsWeb || defaultTargetPlatform == TargetPlatform.android || defaultTargetPlatform == TargetPlatform.iOS;
 
-  /// Initializes event listeners for Razorpay Native Checkout
   void initialize() {
-    if (isSupportedNativePlatform && _razorpay == null) {
-      _razorpay = Razorpay();
-      _razorpay!.on(
-        Razorpay.EVENT_PAYMENT_SUCCESS,
-        _handleNativePaymentSuccess,
-      );
-      _razorpay!.on(Razorpay.EVENT_PAYMENT_ERROR, _handleNativePaymentError);
-      _razorpay!.on(
-        Razorpay.EVENT_EXTERNAL_WALLET,
-        _handleNativeExternalWallet,
+    if (!kIsWeb && isSupportedPlatform && _razorpay == null) {
+      _razorpay = RazorpayNativeCheckout.create(
+        onSuccess: (id) => _completePayment(id, 'Razorpay Test Checkout'),
+        onError: (msg, code) => _activeFailureCallback?.call(msg, code),
+        onWallet: (w) => _activeWalletCallback != null
+            ? _activeWalletCallback!(w)
+            : _completePayment('wallet_${DateTime.now().millisecondsSinceEpoch}', 'Razorpay Wallet ($w)'),
       );
     }
   }
 
-  /// Cleans up listeners and resources
   void dispose() {
     try {
       _razorpay?.clear();
     } catch (_) {}
     _razorpay = null;
-    _activeSuccessCallback = null;
-    _activeFailureCallback = null;
-    _activeWalletCallback = null;
   }
 
-  /// Initiates payment checkout using Razorpay Test Mode with API Key:
-  /// `rzp_test_TvpkxpdWERWihB`
   Future<void> openPayment({
     required BuildContext context,
     required double amount,
@@ -81,98 +61,87 @@ class RazorpayPaymentService {
     _activeFailureCallback = onFailure;
     _activeWalletCallback = onExternalWallet;
 
-    if (isSupportedNativePlatform) {
+    final phone = patientPhone.replaceAll(RegExp(r'[^0-9+]'), '');
+    final cleanPhone = phone.isNotEmpty ? phone : '9876543210';
+    final email = patientEmail.trim().isNotEmpty ? patientEmail.trim() : 'test.patient@queueflow.in';
+    final name = patientName.trim().isNotEmpty ? patientName.trim() : 'QueueFlow Patient';
+
+    if (kIsWeb) {
+      await _handleWebPay(context, amount, bookingTitle, bookingRef, clinicName, name, email, cleanPhone, onFailure);
+      return;
+    }
+    if (isSupportedPlatform) {
       initialize();
-
-      // Normalize phone number (digits only or default test phone)
-      final cleanPhone = patientPhone.replaceAll(RegExp(r'[^0-9+]'), '');
-      final prefillPhone = cleanPhone.isNotEmpty ? cleanPhone : '9876543210';
-      final prefillEmail = patientEmail.trim().isNotEmpty
-          ? patientEmail.trim()
-          : 'test.patient@queueflow.in';
-      final prefillName = patientName.trim().isNotEmpty
-          ? patientName.trim()
-          : 'QueueFlow Patient';
-
-      // Amount in paise (1 INR = 100 paise)
-      final amountInPaise = (amount * 100).round();
-
-      final options = <String, dynamic>{
-        'key': RazorpayConstants.keyId,
-        'amount': amountInPaise,
-        'name': RazorpayConstants.merchantName,
-        'description': '$bookingTitle • $bookingRef',
-        'currency': RazorpayConstants.currency,
-        'timeout': 300,
-        'prefill': {
-          'contact': prefillPhone,
-          'email': prefillEmail,
-          'name': prefillName,
-        },
-        'notes': {
-          'bookingRef': bookingRef,
-          'clinicName': clinicName,
-          'env': 'test_mode',
-          'gateway': 'razorpay',
-        },
-        'theme': {'color': RazorpayConstants.themeColor},
-      };
-
       try {
-        _razorpay!.open(options);
+        RazorpayNativeCheckout.open(
+          rzp: _razorpay!,
+          amount: amount,
+          bookingTitle: bookingTitle,
+          bookingRef: bookingRef,
+          clinicName: clinicName,
+          name: name,
+          email: email,
+          phone: cleanPhone,
+        );
       } catch (e) {
-        debugPrint('[RazorpayPaymentService] open failed: $e');
         onFailure('Could not open Razorpay checkout. Please try again.', null);
       }
       return;
     }
-
     onFailure('Razorpay checkout is not supported on this platform.', null);
   }
 
-  void _handleNativePaymentSuccess(PaymentSuccessResponse response) {
-    final now = DateTime.now();
-    final timeStr =
-        '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+  Future<void> _handleWebPay(
+    BuildContext context,
+    double amount,
+    String title,
+    String ref,
+    String clinic,
+    String name,
+    String email,
+    String phone,
+    PaymentFailureCallback onFailure,
+  ) async {
+    if (RazorpayWebCheckout.isAvailable) {
+      final pId = await RazorpayWebCheckout.pay(
+        keyId: RazorpayConstants.keyId,
+        amount: amount,
+        merchantName: RazorpayConstants.merchantName,
+        description: '$title • $ref',
+        currency: RazorpayConstants.currency,
+        themeColor: RazorpayConstants.themeColor,
+        prefillName: name,
+        prefillEmail: email,
+        prefillContact: phone,
+        bookingRef: ref,
+        clinicName: clinic,
+      );
+      pId != null ? _completePayment(pId, 'Razorpay Web Checkout') : onFailure('Payment cancelled by user.', null);
+      return;
+    }
+    if (context.mounted) {
+      final ok = await RazorpayWebDialog.showFallback(
+        context: context,
+        amount: amount,
+        clinicName: clinic,
+        bookingTitle: title,
+      );
+      ok
+          ? _completePayment('pay_web_${DateTime.now().millisecondsSinceEpoch}', 'Razorpay Test Sandbox')
+          : onFailure('Payment cancelled.', null);
+    }
+  }
 
-    final payment = PaymentInfoEntity(
-      paymentId:
-          response.paymentId ?? 'pay_${DateTime.now().millisecondsSinceEpoch}',
+  void _completePayment(String paymentId, String method) {
+    final now = DateTime.now();
+    final timeStr = '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+    _activeSuccessCallback?.call(PaymentInfoEntity(
+      paymentId: paymentId,
       status: 'paid',
       gateway: 'Razorpay (Test Mode)',
       amount: _activeAmount,
-      method: 'Razorpay Test Checkout',
+      method: method,
       paidAt: timeStr,
-    );
-
-    _activeSuccessCallback?.call(payment);
-  }
-
-  void _handleNativePaymentError(PaymentFailureResponse response) {
-    final msg = response.message ?? 'Payment failed or cancelled.';
-    final code = response.code;
-    _activeFailureCallback?.call(msg, code);
-  }
-
-  void _handleNativeExternalWallet(ExternalWalletResponse response) {
-    final wallet = response.walletName ?? 'External Wallet';
-    if (_activeWalletCallback != null) {
-      _activeWalletCallback!(wallet);
-    } else {
-      // Default handling: treat as selected wallet
-      final now = DateTime.now();
-      final timeStr =
-          '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
-
-      final payment = PaymentInfoEntity(
-        paymentId: 'wallet_${DateTime.now().millisecondsSinceEpoch}',
-        status: 'paid',
-        gateway: 'Razorpay Wallet ($wallet)',
-        amount: _activeAmount,
-        method: wallet,
-        paidAt: timeStr,
-      );
-      _activeSuccessCallback?.call(payment);
-    }
+    ));
   }
 }

@@ -28,14 +28,12 @@ class PaymentHistoryScreen extends StatelessWidget {
     ProfileRepository? repository,
     List<PatientPaymentItemEntity>? initialPayments,
   }) {
-    return Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => PaymentHistoryScreen(
-          repository: repository,
-          initialPayments: initialPayments,
-        ),
+    return Navigator.of(context).push(MaterialPageRoute(
+      builder: (_) => PaymentHistoryScreen(
+        repository: repository,
+        initialPayments: initialPayments,
       ),
-    );
+    ));
   }
 
   @override
@@ -63,71 +61,81 @@ class PaymentHistoryScreen extends StatelessWidget {
                     onBack: () => Navigator.of(context).pop(),
                   ),
                   Expanded(
-                    child: RefreshIndicator(
-                      onRefresh: () async => bloc.load(),
-                      color: colors.primary,
-                      backgroundColor: colors.surfaceElevated,
-                      child: SingleChildScrollView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 14,
-                        ),
-                        child: Center(
-                          child: ConstrainedBox(
-                            constraints: const BoxConstraints(maxWidth: 640),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                PaymentHistoryHeroBanner(
-                                  totalPaid: state.totalPaid,
-                                  paidCount: state.paidPayments.length,
-                                  totalRefunded: state.totalRefunded,
-                                  refundCount: state.refundedPayments.length,
-                                  queueTokensCount: state.queueTokensCount,
-                                  activeQueueToken: state.activeQueueToken,
-                                  activeQueueClinicName:
-                                      state.activeQueueClinicName,
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final isLaptop = constraints.maxWidth >= 800;
+                        return RefreshIndicator(
+                          onRefresh: () async => bloc.load(),
+                          color: colors.primary,
+                          backgroundColor: colors.surfaceElevated,
+                          child: SingleChildScrollView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isLaptop ? 32 : 16,
+                              vertical: 14,
+                            ),
+                            child: Center(
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  maxWidth: isLaptop ? 1280 : 640,
                                 ),
-                                const SizedBox(height: 14),
-                                PaymentHistorySearchBar(
-                                  query: state.searchQuery,
-                                  onChanged: bloc.setSearchQuery,
-                                  onClear: () => bloc.setSearchQuery(''),
-                                ),
-                                const SizedBox(height: 12),
-                                PaymentHistoryFilterTabs(
-                                  activeFilter: state.activeFilter,
-                                  countAll: state.allPayments.length,
-                                  countQueue: state.queuePayments.length,
-                                  countAppt: state.apptPayments.length,
-                                  countRefunded: state.refundedPayments.length,
-                                  onFilterSelected: bloc.setFilter,
-                                ),
-                                const SizedBox(height: 14),
-                                if (state.isLoading) ...[
-                                  const SizedBox(height: 60),
-                                  Center(
-                                    child: CircularProgressIndicator(
-                                      color: colors.primary,
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    PaymentHistoryHeroBanner(
+                                      totalPaid: state.totalPaid,
+                                      paidCount: state.paidPayments.length,
+                                      totalRefunded: state.totalRefunded,
+                                      refundCount:
+                                          state.refundedPayments.length,
+                                      queueTokensCount: state.queueTokensCount,
+                                      activeQueueToken: state.activeQueueToken,
+                                      activeQueueClinicName:
+                                          state.activeQueueClinicName,
                                     ),
-                                  ),
-                                ] else if (filtered.isEmpty) ...[
-                                  PaymentHistoryEmptyState(
-                                    hasFilters:
-                                        state.activeFilter != 'all' ||
-                                        state.searchQuery.isNotEmpty,
-                                    onReset: bloc.resetFilters,
-                                  ),
-                                ] else ...[
-                                  PaymentHistoryList(payments: filtered),
-                                  const SizedBox(height: 24),
-                                ],
-                              ],
+                                    const SizedBox(height: 14),
+                                    PaymentHistorySearchBar(
+                                      query: state.searchQuery,
+                                      onChanged: bloc.setSearchQuery,
+                                      onClear: () => bloc.setSearchQuery(''),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    PaymentHistoryFilterTabs(
+                                      activeFilter: state.activeFilter,
+                                      countAll: state.allPayments.length,
+                                      countQueue: state.queuePayments.length,
+                                      countAppt: state.apptPayments.length,
+                                      countRefunded:
+                                          state.refundedPayments.length,
+                                      onFilterSelected: bloc.setFilter,
+                                    ),
+                                    const SizedBox(height: 14),
+                                    if (state.isLoading) ...[
+                                      const SizedBox(height: 60),
+                                      Center(
+                                        child: CircularProgressIndicator(
+                                          color: colors.primary,
+                                        ),
+                                      ),
+                                    ] else if (filtered.isEmpty)
+                                      PaymentHistoryEmptyState(
+                                        hasFilters:
+                                            state.activeFilter != 'all' ||
+                                            state.searchQuery.isNotEmpty,
+                                        onReset: bloc.resetFilters,
+                                      )
+                                    else ...[
+                                      PaymentHistoryList(payments: filtered),
+                                      const SizedBox(height: 24),
+                                    ],
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ),
+                        );
+                      },
                     ),
                   ),
                 ],

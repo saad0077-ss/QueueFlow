@@ -11,7 +11,7 @@ import 'clinic_details_doctors_card.dart';
 import 'clinic_details_facility_card.dart';
 import 'clinic_details_governance_card.dart';
 import 'clinic_details_hero_banner.dart';
-import 'clinic_details_kpi_grid.dart';
+import 'clinic_details_metrics_grid.dart';
 import 'clinic_details_top_bar.dart';
 
 class ClinicDetailsView extends StatefulWidget {
@@ -107,7 +107,7 @@ class _ClinicDetailsViewState extends State<ClinicDetailsView> {
                                 ),
                           ),
                           const SizedBox(height: 20),
-                          ClinicDetailsKpiGrid(
+                          ClinicDetailsMetricsGrid(
                             clinic: clinic,
                             appointmentsThisMonth: _appointmentsThisMonth,
                             queueSummary: _queueSummary,

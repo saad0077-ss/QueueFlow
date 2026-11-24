@@ -12,7 +12,7 @@ import '../../../departments/domain/entities/department_entity.dart';
 import 'clinics_data_table.dart';
 import 'clinics_filter_row.dart';
 import 'clinics_header_bar.dart';
-import 'clinics_kpi_cards.dart';
+import 'clinics_metric_cards.dart';
 import 'delete_clinic_dialog.dart';
 import 'edit_clinic_modal.dart';
 import 'manage_subscription_modal.dart';
@@ -64,7 +64,7 @@ class ClinicsDirectoryContent extends StatelessWidget {
             totalCount: state.totalClinics,
           ),
           const SizedBox(height: 18),
-          ClinicsKpiCards(
+          ClinicsMetricCards(
             totalClinics: state.totalClinics,
             activePractices: state.activePractices,
             invitedClinics: state.invitedClinics,

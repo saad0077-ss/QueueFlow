@@ -68,39 +68,45 @@ class BookingStep2Doctor extends StatelessWidget {
             },
           ),
         const SizedBox(height: 24),
-        Row(
-          children: [
-            Container(
-              width: 52,
-              height: 52,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: colors.surface,
-                border: Border.all(color: colors.border, width: 1.5),
-              ),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  customBorder: const CircleBorder(),
-                  onTap: onBack,
-                  child: Center(
-                    child: Icon(
-                      Icons.chevron_left_rounded,
-                      color: colors.textPrimary,
-                      size: 26,
+        Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 420),
+            child: Row(
+              children: [
+                Container(
+                  width: 52,
+                  height: 52,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: colors.surface,
+                    border: Border.all(color: colors.border, width: 1.5),
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      customBorder: const CircleBorder(),
+                      onTap: onBack,
+                      child: Center(
+                        child: Icon(
+                          Icons.chevron_left_rounded,
+                          color: colors.textPrimary,
+                          size: 26,
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: GradientButton(
+                    text: 'Continue to Schedule',
+                    maxWidth: null,
+                    onPressed: selectedDoctor != null ? onContinue : null,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: GradientButton(
-                text: 'Continue to Schedule',
-                onPressed: selectedDoctor != null ? onContinue : null,
-              ),
-            ),
-          ],
+          ),
         ),
         const SizedBox(height: 16),
       ],

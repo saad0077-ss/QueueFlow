@@ -6,7 +6,7 @@ import '../../domain/entities/clinic_queue_item_entity.dart';
 import 'detail/service_queue_detail_breadcrumb.dart';
 import 'detail/service_queue_detail_card_header.dart';
 import 'detail/service_queue_detail_hero.dart';
-import 'detail/service_queue_detail_kpi_row.dart';
+import 'detail/service_queue_detail_stats_row.dart';
 import 'detail/service_queue_detail_table.dart';
 import 'detail/service_queue_display_list_resolver.dart';
 import 'detail/service_queue_empty_state.dart';
@@ -91,7 +91,7 @@ class ServiceQueueDetailView extends StatelessWidget {
           onToggleClosed: onToggleClosed,
         ),
         const SizedBox(height: 18),
-        ServiceQueueDetailKpiRow(
+        ServiceQueueDetailStatsRow(
           servingItem: sServing,
           waitingCount: sWaiting.length,
           estWaitMinutes: estWaitMin,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 
+import '../../../../core/layout/patient_breakpoints.dart';
 import '../../../clinic_details/presentation/pages/clinic_details_screen.dart';
 import '../../domain/entities/clinic_entity.dart';
 import '../bloc/home_bloc.dart';
@@ -11,6 +12,7 @@ import '../pages/patient_search_screen.dart';
 import 'home_active_queue_banner.dart';
 import 'home_clinic_card.dart';
 import 'home_search_bar.dart';
+import 'laptop/home_laptop_content.dart';
 
 class HomeTabView extends StatefulWidget {
   const HomeTabView({super.key});
@@ -59,15 +61,23 @@ class _HomeTabViewState extends State<HomeTabView> {
         return LayoutBuilder(
           builder: (context, constraints) {
             final double width = constraints.maxWidth;
-            final bool isTablet = width >= 640 && width < 960;
-            final bool isDesktop = width >= 960;
-            final bool useGrid = width >= 720;
-            final double horizontalPadding = isDesktop
-                ? 32
-                : (isTablet ? 24 : 18);
-            final double maxContentWidth = isDesktop
-                ? 960
-                : (isTablet ? 720 : double.infinity);
+            if (width >= PatientBreakpoints.laptopMin) {
+              return HomeLaptopContent(
+                state: state,
+                onClinicTap: (clinic) => _showClinicDetailsModal(context, clinic),
+                onSearchTap: () => _openSearchScreen(context, state),
+                onTrackLiveQueue: () {
+                  bloc.add(const HomeRefreshRequested());
+                  bloc.add(const HomeNavTabChanged(1));
+                },
+                onViewBookings: () => bloc.add(const HomeNavTabChanged(2)),
+              );
+            }
+
+            final bool isTablet = width >= PatientBreakpoints.mobileMax;
+            final bool useGrid = isTablet;
+            final double horizontalPadding = isTablet ? 24 : 18;
+            final double maxContentWidth = isTablet ? 860 : double.infinity;
 
             return Column(
               children: [
@@ -163,16 +173,17 @@ class _HomeTabViewState extends State<HomeTabView> {
                                         const NeverScrollableScrollPhysics(),
                                     itemCount: state.allClinics.length,
                                     gridDelegate:
-                                        SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: isDesktop ? 2 : 2,
+                                        const SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 2,
                                           crossAxisSpacing: 14,
                                           mainAxisSpacing: 14,
-                                          mainAxisExtent: 110,
+                                          mainAxisExtent: 224,
                                         ),
                                     itemBuilder: (ctx, i) {
                                       final clinic = state.allClinics[i];
                                       return HomeClinicCard(
                                         clinic: clinic,
+                                        margin: EdgeInsets.zero,
                                         onTap: () {
                                           _showClinicDetailsModal(
                                             context,

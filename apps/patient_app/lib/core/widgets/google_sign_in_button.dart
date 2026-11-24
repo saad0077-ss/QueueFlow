@@ -3,25 +3,36 @@ import 'package:queueflow_ui/queueflow_ui.dart';
 
 class GoogleSignInButton extends StatelessWidget {
   final VoidCallback onPressed;
+  final double? width;
+  final double? maxWidth;
+  final double height;
+  final AlignmentGeometry alignment;
 
-  const GoogleSignInButton({super.key, required this.onPressed});
+  const GoogleSignInButton({
+    super.key,
+    required this.onPressed,
+    this.width,
+    this.maxWidth = 380,
+    this.height = 52,
+    this.alignment = Alignment.center,
+  });
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
 
-    return Container(
-      width: double.infinity,
-      height: 52,
+    final buttonWidget = Container(
+      width: width ?? double.infinity,
+      height: height,
       decoration: BoxDecoration(
         color: colors.surfaceSecondary,
-        borderRadius: BorderRadius.circular(26),
+        borderRadius: BorderRadius.circular(height / 2),
         border: Border.all(color: colors.border, width: 1.2),
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(26),
+          borderRadius: BorderRadius.circular(height / 2),
           onTap: onPressed,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -55,6 +66,21 @@ class GoogleSignInButton extends StatelessWidget {
         ),
       ),
     );
+
+    if (maxWidth != null) {
+      return Align(
+        alignment: alignment,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: maxWidth!,
+            minHeight: height,
+          ),
+          child: buttonWidget,
+        ),
+      );
+    }
+
+    return buttonWidget;
   }
 }
 

@@ -25,7 +25,7 @@ class AuthRepositoryImpl implements AuthRepository {
            googleSignIn ??
            GoogleSignIn(
              clientId: kIsWeb ? _webClientId : null,
-             serverClientId: _webClientId,
+             serverClientId: kIsWeb ? null : _webClientId,
            );
 
   @override
@@ -114,30 +114,40 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<UserEntity> signInWithGoogle() async {
     try {
-      // Ensure any cached stale account session is cleared so picker always shows
-      try {
-        await _googleSignIn.signOut();
-      } catch (_) {}
+      final User user;
+      if (kIsWeb) {
+        final GoogleAuthProvider googleProvider = GoogleAuthProvider();
+        googleProvider.addScope('email');
+        googleProvider.setCustomParameters({'prompt': 'select_account'});
+        final userCredential =
+            await _firebaseAuth.signInWithPopup(googleProvider);
+        user = userCredential.user!;
+      } else {
+        // Ensure any cached stale account session is cleared so picker always shows
+        try {
+          await _googleSignIn.signOut();
+        } catch (_) {}
 
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) {
-        throw FirebaseAuthException(
-          code: 'ERROR_ABORTED_BY_USER',
-          message: 'Google Sign-In was cancelled by user.',
+        final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+        if (googleUser == null) {
+          throw FirebaseAuthException(
+            code: 'ERROR_ABORTED_BY_USER',
+            message: 'Google Sign-In was cancelled by user.',
+          );
+        }
+
+        final GoogleSignInAuthentication googleAuth =
+            await googleUser.authentication;
+        final AuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
         );
+
+        final userCredential = await _firebaseAuth.signInWithCredential(
+          credential,
+        );
+        user = userCredential.user!;
       }
-
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      final userCredential = await _firebaseAuth.signInWithCredential(
-        credential,
-      );
-      final user = userCredential.user!;
 
       // Ensure patient document exists in Firestore for Google accounts
       try {
@@ -147,11 +157,11 @@ class AuthRepositoryImpl implements AuthRepository {
           final healthId =
               'QF-${user.uid.substring(0, user.uid.length >= 6 ? 6 : user.uid.length).toUpperCase()}';
           final name =
-              user.displayName ?? googleUser.displayName ?? 'Google User';
+              user.displayName ?? (user.email?.split('@').first ?? 'Google User');
           await docRef.set({
             'name': name.trim(),
             'fullName': name.trim(),
-            'email': (user.email ?? googleUser.email).trim().toLowerCase(),
+            'email': (user.email ?? '').trim().toLowerCase(),
             'phone': (user.phoneNumber ?? '').trim(),
             'phoneNumber': (user.phoneNumber ?? '').trim(),
             'role': 'patient',
@@ -171,8 +181,9 @@ class AuthRepositoryImpl implements AuthRepository {
 
       return UserModel(
         id: user.uid,
-        fullName: user.displayName ?? googleUser.displayName ?? 'Google User',
-        email: user.email ?? googleUser.email,
+        fullName:
+            user.displayName ?? (user.email?.split('@').first ?? 'Google User'),
+        email: user.email ?? '',
         phoneNumber: user.phoneNumber ?? '',
       );
     } catch (e) {
@@ -189,9 +200,11 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<void> signOut() async {
     await _firebaseAuth.signOut();
-    try {
-      await _googleSignIn.signOut();
-    } catch (_) {}
+    if (!kIsWeb) {
+      try {
+        await _googleSignIn.signOut();
+      } catch (_) {}
+    }
   }
 
   @override

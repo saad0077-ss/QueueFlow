@@ -19,7 +19,6 @@ class ClinicSettingsTabBar extends StatelessWidget {
       'Clinic Profile',
       'Location & Map',
       'Operating Hours',
-      'Queue Rules',
       'Security',
     ];
 

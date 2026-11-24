@@ -1,10 +1,10 @@
-﻿import '../entities/platform_billing_kpis.dart';
+﻿import '../entities/platform_billing_metrics.dart';
 import '../entities/platform_invoice_entity.dart';
 import '../entities/platform_plan_tier_entity.dart';
 import '../entities/platform_tenant_subscription_entity.dart';
 
 abstract class PlatformBillingRepository {
-  Future<PlatformBillingKpis> getKpis();
+  Future<PlatformBillingMetrics> getMetrics();
 
   Stream<List<PlatformTenantSubscriptionEntity>> watchTenantSubscriptions();
 

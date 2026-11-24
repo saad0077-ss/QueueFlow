@@ -20,7 +20,7 @@ void main() async {
     if (Firebase.apps.isEmpty) {
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
-      );
+      ); 
     }
   } catch (e) {
     debugPrint('Firebase already initialized: $e');

@@ -5,30 +5,38 @@ class GradientButton extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
   final bool isLoading;
+  final double? width;
+  final double? maxWidth;
+  final double height;
+  final AlignmentGeometry alignment;
 
   const GradientButton({
     super.key,
     required this.text,
     required this.onPressed,
     this.isLoading = false,
+    this.width,
+    this.maxWidth = 380,
+    this.height = 52,
+    this.alignment = Alignment.center,
   });
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
 
-    return Container(
-      width: double.infinity,
-      height: 52,
+    final buttonWidget = Container(
+      width: width ?? double.infinity,
+      height: height,
       decoration: BoxDecoration(
         gradient: onPressed == null ? null : AppColors.primaryGradient,
         color: onPressed == null ? colors.border : null,
-        borderRadius: BorderRadius.circular(26),
+        borderRadius: BorderRadius.circular(height / 2),
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(26),
+          borderRadius: BorderRadius.circular(height / 2),
           onTap: isLoading ? null : onPressed,
           child: Center(
             child: isLoading
@@ -53,5 +61,20 @@ class GradientButton extends StatelessWidget {
         ),
       ),
     );
+
+    if (maxWidth != null) {
+      return Align(
+        alignment: alignment,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: maxWidth!,
+            minHeight: height,
+          ),
+          child: buttonWidget,
+        ),
+      );
+    }
+
+    return buttonWidget;
   }
 }

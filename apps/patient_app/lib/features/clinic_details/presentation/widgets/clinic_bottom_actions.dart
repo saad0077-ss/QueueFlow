@@ -13,9 +13,10 @@ class ClinicBottomActions extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16),
-      child: Column(
-        children: [
-          Container(
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 380),
+          child: Container(
             width: double.infinity,
             height: 48,
             decoration: BoxDecoration(
@@ -47,7 +48,7 @@ class ClinicBottomActions extends StatelessWidget {
               ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }

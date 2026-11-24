@@ -3,17 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 
+import '../../../../core/layout/patient_breakpoints.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
-import '../../../../core/widgets/auth_back_header.dart';
 import '../../../../main.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/usecases/sign_in_usecase.dart';
 import '../bloc/sign_in/sign_in_bloc.dart';
 import '../bloc/sign_in/sign_in_state.dart';
-import '../widgets/sign_in_footer.dart';
-import '../widgets/sign_in_form.dart';
-import '../widgets/sign_in_header.dart';
+import '../widgets/auth_showcase_panel.dart';
+import '../widgets/sign_in_card_body.dart';
 import 'email_verification_screen.dart';
 
 class SignInScreen extends StatelessWidget {
@@ -76,67 +75,36 @@ class _SignInView extends StatelessWidget {
           builder: (context, state) {
             return LayoutBuilder(
               builder: (context, constraints) {
-                final double screenWidth = constraints.maxWidth;
-                final double scale = (screenWidth / 390.0).clamp(0.85, 1.15);
+                final isLaptop =
+                    constraints.maxWidth >= PatientBreakpoints.laptopMin;
 
-                return Center(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      maxWidth: 440,
-                      minHeight: constraints.maxHeight,
-                    ),
-                    child: SingleChildScrollView(
-                      physics: const ClampingScrollPhysics(),
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          minHeight: constraints.maxHeight,
+                if (isLaptop) {
+                  return Row(
+                    children: [
+                      const Expanded(
+                        flex: 48,
+                        child: AuthShowcasePanel(
+                          title: 'Healthcare That Values Your Time.',
+                          subtitle:
+                              'Access real-time clinic queues, confirmed doctor appointments, and digital consultation passes in one secure portal.',
+                          highlightTag: 'PATIENT LOGIN',
                         ),
-                        child: IntrinsicHeight(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 24),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(height: 12),
-                                const AuthBackHeader(),
-                                const SizedBox(height: 34),
-                                SignInHeader(
-                                  titleSize: (28.0 * scale).clamp(23.0, 32.0),
-                                  subtitleSize: (14.0 * scale).clamp(
-                                    12.5,
-                                    16.0,
-                                  ),
-                                ),
-                                const Spacer(flex: 5),
-                                const SizedBox(height: 16),
-                                SignInForm(
-                                  state: state,
-                                  labelSize: (13.5 * scale).clamp(12.0, 15.0),
-                                  forgotPasswordSize: (13.0 * scale).clamp(
-                                    11.5,
-                                    14.5,
-                                  ),
-                                ),
-                                const Spacer(flex: 4),
-                                const SizedBox(height: 16),
-                                SignInFooter(
-                                  dividerTextSize: (12.5 * scale).clamp(
-                                    11.0,
-                                    14.0,
-                                  ),
-                                  bottomLinkSize: (13.5 * scale).clamp(
-                                    12.0,
-                                    15.0,
-                                  ),
-                                ),
-                                const SizedBox(height: 20),
-                              ],
-                            ),
+                      ),
+                      Expanded(
+                        flex: 52,
+                        child: Center(
+                          child: SignInCardBody(
+                            state: state,
+                            showTopBar: false,
                           ),
                         ),
                       ),
-                    ),
-                  ),
+                    ],
+                  );
+                }
+
+                return Center(
+                  child: SignInCardBody(state: state),
                 );
               },
             );

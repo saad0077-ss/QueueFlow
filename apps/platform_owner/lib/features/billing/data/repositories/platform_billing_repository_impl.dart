@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../../domain/entities/platform_billing_kpis.dart';
+import '../../domain/entities/platform_billing_metrics.dart';
 import '../../domain/entities/platform_invoice_entity.dart';
 import '../../domain/entities/platform_plan_tier_entity.dart';
 import '../../domain/entities/platform_tenant_subscription_entity.dart';
@@ -17,7 +17,7 @@ class PlatformBillingRepositoryImpl implements PlatformBillingRepository {
     : _firestore = firestore ?? FirebaseFirestore.instance;
 
   @override
-  Future<PlatformBillingKpis> getKpis() async {
+  Future<PlatformBillingMetrics> getMetrics() async {
     try {
       final snap = await _firestore.collection('clinics').get();
       final subs = snap.docs
@@ -31,12 +31,12 @@ class PlatformBillingRepositoryImpl implements PlatformBillingRepository {
           .toList();
 
       final invoices = await getInvoices();
-      return PlatformBillingKpis.compute(
+      return PlatformBillingMetrics.compute(
         subscriptions: subs,
         invoices: invoices,
       );
     } catch (_) {
-      return const PlatformBillingKpis();
+      return const PlatformBillingMetrics();
     }
   }
 

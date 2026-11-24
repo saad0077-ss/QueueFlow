@@ -5,7 +5,7 @@ import 'platform_users_data_table.dart';
 import 'platform_users_filter_modal.dart';
 import 'platform_users_filter_toolbar.dart';
 import 'platform_users_header_bar.dart';
-import 'platform_users_kpi_cards.dart';
+import 'platform_users_metric_cards.dart';
 
 class PlatformUsersContentView extends StatelessWidget {
   final List<PlatformUserEntity> allUsers;
@@ -58,7 +58,7 @@ class PlatformUsersContentView extends StatelessWidget {
             onRegisterUser: onRegisterUser,
           ),
           const SizedBox(height: 20),
-          PlatformUsersKpiCards(users: allUsers),
+          PlatformUsersMetricCards(users: allUsers),
           const SizedBox(height: 20),
           PlatformUsersFilterToolbar(
             searchController: searchController,

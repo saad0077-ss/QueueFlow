@@ -152,11 +152,16 @@ class _BookingWizardViewState extends State<_BookingWizardView> {
                   child: Column(
                     children: [
                       if (state.step <= 4)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: BookingStepperHeader(
-                            currentStep: state.step,
-                            onStepTapped: (step) => bloc.add(GoToStep(step)),
+                        Center(
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 600),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              child: BookingStepperHeader(
+                                currentStep: state.step,
+                                onStepTapped: (step) => bloc.add(GoToStep(step)),
+                              ),
+                            ),
                           ),
                         ),
                       Expanded(
@@ -165,9 +170,14 @@ class _BookingWizardViewState extends State<_BookingWizardView> {
                             horizontal: 16,
                             vertical: 8,
                           ),
-                          child: SizedBox(
-                            width: double.infinity,
-                            child: _buildStepBody(context, state, bloc),
+                          child: Center(
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 600),
+                              child: SizedBox(
+                                width: double.infinity,
+                                child: _buildStepBody(context, state, bloc),
+                              ),
+                            ),
                           ),
                         ),
                       ),

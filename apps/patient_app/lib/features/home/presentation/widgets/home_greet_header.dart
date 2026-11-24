@@ -41,7 +41,10 @@ class HomeGreetHeader extends StatelessWidget implements PreferredSizeWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (ctx) => Padding(
+      builder: (ctx) => Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 500),
+          child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -132,7 +135,9 @@ class HomeGreetHeader extends StatelessWidget implements PreferredSizeWidget {
           ],
         ),
       ),
-    );
+    ),
+  ),
+);
   }
 
   @override

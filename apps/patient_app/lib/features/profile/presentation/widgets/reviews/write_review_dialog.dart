@@ -149,8 +149,11 @@ class _WriteReviewDialogState extends State<WriteReviewDialog> {
     final colors = context.colors;
     final isEditing = widget.initialReview != null;
 
-    return Container(
-      decoration: BoxDecoration(
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 540),
+        child: Container(
+          decoration: BoxDecoration(
         color: colors.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -442,6 +445,8 @@ class _WriteReviewDialogState extends State<WriteReviewDialog> {
           ],
         ),
       ),
-    );
-  }
+    ),
+  ),
+);
+}
 }

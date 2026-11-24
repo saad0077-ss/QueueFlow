@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../domain/repositories/auth_repository.dart';
@@ -60,6 +61,17 @@ class SignInBloc extends Bloc<SignInEvent, SignInState> {
     try {
       final user = await authRepository.signInWithGoogle();
       emit(state.copyWith(isLoading: false, user: user));
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'ERROR_ABORTED_BY_USER' ||
+          e.code == 'popup-closed-by-user' ||
+          e.code == 'canceled') {
+        emit(state.copyWith(isLoading: false));
+      } else {
+        emit(state.copyWith(
+          isLoading: false,
+          errorMessage: e.message ?? e.toString(),
+        ));
+      }
     } catch (e) {
       emit(state.copyWith(isLoading: false, errorMessage: e.toString()));
     }

@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:patient_app/core/layout/patient_breakpoints.dart';
 import 'package:patient_app/core/widgets/app_snack_bar.dart';
 import 'package:patient_app/features/booking/data/repositories/booking_repository_impl.dart';
 import 'package:patient_app/features/booking/domain/entities/appointment_entity.dart';
@@ -9,9 +9,8 @@ import 'package:patient_app/features/booking/domain/repositories/booking_reposit
 import 'package:queueflow_ui/queueflow_ui.dart';
 
 import 'my_bookings/cancel_appointment_dialog.dart';
-import 'my_bookings/my_booking_card.dart';
-import 'my_bookings/my_bookings_empty_state.dart';
-import 'my_bookings/my_bookings_filter_bar.dart';
+import 'my_bookings/my_bookings_content.dart';
+import 'my_bookings/my_bookings_header.dart';
 
 class MyBookingsTabView extends StatefulWidget {
   final BookingRepository? repository;
@@ -96,83 +95,55 @@ class _MyBookingsTabViewState extends State<MyBookingsTabView> {
   Widget build(BuildContext context) {
     final colors = context.colors;
 
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'My Bookings',
-                    style: GoogleFonts.inter(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w800,
-                      color: colors.textPrimary,
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(11),
-                    decoration: BoxDecoration(
-                      color: colors.surface,
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: colors.border),
-                    ),
-                    child: Icon(
-                      Icons.notifications_none_rounded,
-                      color: colors.textPrimary,
-                      size: 22,
-                    ),
-                  ),
-                ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final double width = constraints.maxWidth;
+        final bool isLaptop = width >= PatientBreakpoints.laptopMin;
+        final double horizontalPadding = isLaptop ? 24 : 16;
+
+        return Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.fromLTRB(
+                horizontalPadding,
+                isLaptop ? 18 : 12,
+                horizontalPadding,
+                14,
               ),
-              const SizedBox(height: 16),
-              MyBookingsFilterBar(
+              child: MyBookingsHeader(
+                isLaptop: isLaptop,
                 selectedFilterIndex: _selectedFilterIndex,
                 onFilterChanged: (idx) =>
                     setState(() => _selectedFilterIndex = idx),
               ),
-            ],
-          ),
-        ),
-        Expanded(
-          child: RefreshIndicator(
-            onRefresh: _loadAppointments,
-            color: colors.primary,
-            backgroundColor: colors.surface,
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
-              child: _isLoading
-                  ? Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 40),
-                      child: Center(
-                        child: CircularProgressIndicator(color: colors.primary),
-                      ),
-                    )
-                  : _filteredAppointments.isEmpty
-                  ? MyBookingsEmptyState(
-                      selectedFilterIndex: _selectedFilterIndex,
-                      onExploreClinics: widget.onExploreClinics,
-                    )
-                  : ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: _filteredAppointments.length,
-                      itemBuilder: (context, index) => MyBookingCard(
-                        apt: _filteredAppointments[index],
-                        onCancel: () =>
-                            _handleCancel(_filteredAppointments[index]),
-                        onTrackLiveQueue: widget.onTrackLiveQueue,
-                      ),
-                    ),
             ),
-          ),
-        ),
-      ],
+            Expanded(
+              child: RefreshIndicator(
+                onRefresh: _loadAppointments,
+                color: colors.primary,
+                backgroundColor: colors.surface,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: EdgeInsets.fromLTRB(
+                    horizontalPadding,
+                    4,
+                    horizontalPadding,
+                    24,
+                  ),
+                  child: MyBookingsContent(
+                    isLoading: _isLoading,
+                    appointments: _filteredAppointments,
+                    selectedFilterIndex: _selectedFilterIndex,
+                    onExploreClinics: widget.onExploreClinics,
+                    onCancel: _handleCancel,
+                    onTrackLiveQueue: widget.onTrackLiveQueue,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

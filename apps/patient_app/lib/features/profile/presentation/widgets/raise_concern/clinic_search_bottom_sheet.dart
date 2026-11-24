@@ -69,11 +69,14 @@ class _ClinicSearchBottomSheetState extends State<ClinicSearchBottomSheet> {
           c.address.toLowerCase().contains(query);
     }).toList();
 
-    return Container(
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.78,
-      ),
-      decoration: BoxDecoration(
+    return Center(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: 540,
+          maxHeight: MediaQuery.of(context).size.height * 0.78,
+        ),
+        child: Container(
+          decoration: BoxDecoration(
         color: widget.colors.surface,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         boxShadow: [
@@ -144,6 +147,8 @@ class _ClinicSearchBottomSheetState extends State<ClinicSearchBottomSheet> {
           ),
         ),
       ),
-    );
-  }
+    ),
+  ),
+);
+}
 }
