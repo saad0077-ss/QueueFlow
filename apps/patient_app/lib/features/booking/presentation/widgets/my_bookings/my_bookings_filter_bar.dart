@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 
+import 'package:patient_app/core/layout/patient_breakpoints.dart';
+
 class MyBookingsFilterBar extends StatelessWidget {
   final int selectedFilterIndex;
   final ValueChanged<int> onFilterChanged;
@@ -16,24 +18,30 @@ class MyBookingsFilterBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final isDark = context.isDarkMode;
+    final isLaptop = PatientBreakpoints.isLaptop(context);
 
     return Center(
-      child: Container(
-        padding: const EdgeInsets.all(4),
-        decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF0F172A) : colors.surfaceSecondary,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isDark ? const Color(0xFF1E293B) : colors.border,
-          ),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: isLaptop ? 640 : 480,
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildTab(context, 0, 'Upcoming'),
-            _buildTab(context, 1, 'Completed'),
-            _buildTab(context, 2, 'Cancelled'),
-          ],
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(4),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF0F172A) : colors.surfaceSecondary,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isDark ? const Color(0xFF1E293B) : colors.border,
+            ),
+          ),
+          child: Row(
+            children: [
+              Expanded(child: _buildTab(context, 0, 'Upcoming')),
+              Expanded(child: _buildTab(context, 1, 'Completed')),
+              Expanded(child: _buildTab(context, 2, 'Cancelled')),
+            ],
+          ),
         ),
       ),
     );
@@ -45,10 +53,12 @@ class MyBookingsFilterBar extends StatelessWidget {
 
     return GestureDetector(
       onTap: () => onFilterChanged(index),
+      behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
         curve: Curves.easeInOut,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
           gradient: isSelected
@@ -62,8 +72,11 @@ class MyBookingsFilterBar extends StatelessWidget {
         ),
         child: Text(
           label,
+          textAlign: TextAlign.center,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: GoogleFonts.inter(
-            fontSize: 13,
+            fontSize: 13.5,
             fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
             color: isSelected ? Colors.white : colors.textMuted,
           ),

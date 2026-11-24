@@ -4,6 +4,7 @@ import 'package:queueflow_ui/queueflow_ui.dart';
 
 import '../../../../core/layout/patient_breakpoints.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
+import '../../../../core/widgets/auth_app_bar.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/usecases/sign_up_usecase.dart';
@@ -34,9 +35,11 @@ class _SignUpView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final isLaptop = PatientBreakpoints.isLaptop(context);
 
     return Scaffold(
       backgroundColor: colors.background,
+      appBar: isLaptop ? null : const AuthAppBar(),
       body: SafeArea(
         child: BlocConsumer<SignUpBloc, SignUpState>(
           listener: (context, state) {
@@ -54,40 +57,30 @@ class _SignUpView extends StatelessWidget {
             }
           },
           builder: (context, state) {
-            return LayoutBuilder(
-              builder: (context, constraints) {
-                final isLaptop =
-                    constraints.maxWidth >= PatientBreakpoints.laptopMin;
+            if (isLaptop) {
+              return Row(
+                children: [
+                  const Expanded(
+                    flex: 48,
+                    child: AuthShowcasePanel(
+                      title: 'Join QueueFlow.\nSkip Waiting Rooms.',
+                      subtitle:
+                          'Join thousands of patients who book doctors, track queues in real time, and get instant consultation passes.',
+                      highlightTag: 'PATIENT REGISTRATION',
+                    ),
+                  ),
+                  Expanded(
+                    flex: 52,
+                    child: Center(
+                      child: SignUpCardBody(state: state),
+                    ),
+                  ),
+                ],
+              );
+            }
 
-                if (isLaptop) {
-                  return Row(
-                    children: [
-                      const Expanded(
-                        flex: 48,
-                        child: AuthShowcasePanel(
-                          title: 'Join QueueFlow.\nSkip Waiting Rooms.',
-                          subtitle:
-                              'Join thousands of patients who book doctors, track queues in real time, and get instant consultation passes.',
-                          highlightTag: 'PATIENT REGISTRATION',
-                        ),
-                      ),
-                      Expanded(
-                        flex: 52,
-                        child: Center(
-                          child: SignUpCardBody(
-                            state: state,
-                            showTopBar: false,
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                }
-
-                return Center(
-                  child: SignUpCardBody(state: state),
-                );
-              },
+            return Center(
+              child: SignUpCardBody(state: state),
             );
           },
         ),

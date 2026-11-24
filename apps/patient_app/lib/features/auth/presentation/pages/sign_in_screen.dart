@@ -5,6 +5,7 @@ import 'package:queueflow_ui/queueflow_ui.dart';
 
 import '../../../../core/layout/patient_breakpoints.dart';
 import '../../../../core/widgets/app_snack_bar.dart';
+import '../../../../core/widgets/auth_app_bar.dart';
 import '../../../../main.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/repositories/auth_repository.dart';
@@ -37,9 +38,11 @@ class _SignInView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final isLaptop = PatientBreakpoints.isLaptop(context);
 
     return Scaffold(
       backgroundColor: colors.background,
+      appBar: isLaptop ? null : const AuthAppBar(),
       body: SafeArea(
         child: BlocConsumer<SignInBloc, SignInState>(
           listener: (context, state) {
@@ -73,40 +76,30 @@ class _SignInView extends StatelessWidget {
             }
           },
           builder: (context, state) {
-            return LayoutBuilder(
-              builder: (context, constraints) {
-                final isLaptop =
-                    constraints.maxWidth >= PatientBreakpoints.laptopMin;
+            if (isLaptop) {
+              return Row(
+                children: [
+                  const Expanded(
+                    flex: 48,
+                    child: AuthShowcasePanel(
+                      title: 'Healthcare That Values Your Time.',
+                      subtitle:
+                          'Access real-time clinic queues, confirmed doctor appointments, and digital consultation passes in one secure portal.',
+                      highlightTag: 'PATIENT LOGIN',
+                    ),
+                  ),
+                  Expanded(
+                    flex: 52,
+                    child: Center(
+                      child: SignInCardBody(state: state),
+                    ),
+                  ),
+                ],
+              );
+            }
 
-                if (isLaptop) {
-                  return Row(
-                    children: [
-                      const Expanded(
-                        flex: 48,
-                        child: AuthShowcasePanel(
-                          title: 'Healthcare That Values Your Time.',
-                          subtitle:
-                              'Access real-time clinic queues, confirmed doctor appointments, and digital consultation passes in one secure portal.',
-                          highlightTag: 'PATIENT LOGIN',
-                        ),
-                      ),
-                      Expanded(
-                        flex: 52,
-                        child: Center(
-                          child: SignInCardBody(
-                            state: state,
-                            showTopBar: false,
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                }
-
-                return Center(
-                  child: SignInCardBody(state: state),
-                );
-              },
+            return Center(
+              child: SignInCardBody(state: state),
             );
           },
         ),

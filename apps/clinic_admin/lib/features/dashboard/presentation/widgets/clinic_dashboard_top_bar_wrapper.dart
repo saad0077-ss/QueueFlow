@@ -45,6 +45,7 @@ class ClinicDashboardTopBarWrapper extends StatelessWidget {
                   ? () => Scaffold.of(scaffoldContext).openDrawer()
                   : null,
               onSearchChanged: (q) => bloc.add(DashboardSearchQueryChanged(q)),
+              onNavigate: (nav) => bloc.add(DashboardNavTabChanged(nav)),
             ),
           ),
         );

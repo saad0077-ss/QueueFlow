@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:queueflow_ui/queueflow_ui.dart';
 
-import '../../../../core/widgets/auth_back_header.dart';
 import '../bloc/sign_in/sign_in_state.dart';
 import 'sign_in_footer.dart';
 import 'sign_in_form.dart';
@@ -17,18 +14,15 @@ class SignInCardBody extends StatelessWidget {
   const SignInCardBody({
     super.key,
     required this.state,
-    this.showThemeToggle = true,
-    this.showTopBar = true,
+    this.showThemeToggle = false,
+    this.showTopBar = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
-    final isDark = context.isDarkMode;
-
     return SingleChildScrollView(
       physics: const ClampingScrollPhysics(),
-      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
+      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 440),
@@ -36,31 +30,6 @@ class SignInCardBody extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (showTopBar) ...[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const AuthBackHeader(),
-                    if (showThemeToggle)
-                      IconButton(
-                        tooltip: isDark ? 'Light mode' : 'Dark mode',
-                        icon: Icon(
-                          isDark
-                              ? Icons.light_mode_rounded
-                              : Icons.dark_mode_rounded,
-                          color: colors.textSubtle,
-                          size: 20,
-                        ),
-                        onPressed: () {
-                          context
-                              .read<ThemeBloc>()
-                              .add(const ThemeToggleRequested());
-                        },
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-              ],
               const SignInHeader(
                 titleSize: 26,
                 subtitleSize: 13.5,
