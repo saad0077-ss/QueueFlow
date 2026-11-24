@@ -39,3 +39,11 @@ exports.deleteClinicAdminAccount = onCall(async (request) => {
 });
 
 exports.activateSubscription = require('./subscriptions').activateSubscription;
+
+// FCM Notification Triggers
+const notifications = require('./notifications');
+exports.onQueueTokenCalled = notifications.onQueueTokenCalled;
+exports.onSupportTicketReply = notifications.onSupportTicketReply;
+exports.onAppointmentStatusChanged = notifications.onAppointmentStatusChanged;
+exports.onPlatformBroadcastCreated = notifications.onPlatformBroadcastCreated;
+
