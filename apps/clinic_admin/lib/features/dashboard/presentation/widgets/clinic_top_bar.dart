@@ -15,12 +15,17 @@ class ClinicTopBar extends StatelessWidget {
   /// Tightens spacing and collapses the profile chip for phone widths.
   final bool compact;
 
+  final String? clinicId;
+  final ValueChanged<String>? onNavigate;
+
   const ClinicTopBar({
     super.key,
     this.searchController,
     this.onSearchChanged,
     this.onMenuTap,
     this.compact = false,
+    this.clinicId,
+    this.onNavigate,
   });
 
   @override
@@ -70,7 +75,10 @@ class ClinicTopBar extends StatelessWidget {
         SizedBox(width: compact ? 4 : 8),
 
         // Notifications Button
-        const ClinicNotificationButton(),
+        ClinicNotificationButton(
+          clinicId: clinicId,
+          onNavigate: onNavigate,
+        ),
 
         SizedBox(width: compact ? 4 : 8),
 
