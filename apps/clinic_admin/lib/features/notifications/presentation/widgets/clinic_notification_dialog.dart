@@ -8,17 +8,20 @@ import 'clinic_notification_tile.dart';
 
 class ClinicNotificationDialog extends StatefulWidget {
   final List<ClinicNotificationItem> notifications;
+  final String? clinicId;
   final ValueChanged<String>? onNavigate;
 
   const ClinicNotificationDialog({
     super.key,
     required this.notifications,
+    this.clinicId,
     this.onNavigate,
   });
 
   static Future<void> show(
     BuildContext context, {
     required List<ClinicNotificationItem> notifications,
+    String? clinicId,
     ValueChanged<String>? onNavigate,
   }) {
     return showDialog<void>(
@@ -26,6 +29,7 @@ class ClinicNotificationDialog extends StatefulWidget {
       barrierDismissible: true,
       builder: (_) => ClinicNotificationDialog(
         notifications: notifications,
+        clinicId: clinicId,
         onNavigate: onNavigate,
       ),
     );
@@ -73,6 +77,7 @@ class _ClinicNotificationDialogState extends State<ClinicNotificationDialog> {
                 onMarkAllRead: () {
                   ClinicNotificationsService.instance.markAllAsRead(
                     widget.notifications.map((n) => n.id).toList(),
+                    clinicId: widget.clinicId,
                   );
                   Navigator.of(context).pop();
                 },
@@ -100,6 +105,7 @@ class _ClinicNotificationDialogState extends State<ClinicNotificationDialog> {
                             onTap: () {
                               ClinicNotificationsService.instance.markAsRead(
                                 item.id,
+                                clinicId: widget.clinicId,
                               );
                               Navigator.of(context).pop();
                               widget.onNavigate?.call(item.routeNav);

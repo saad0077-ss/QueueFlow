@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../features/notifications/data/services/clinic_notifications_service.dart';
+
 /// Manages persistent session state for Clinic Admin using SharedPreferences.
 ///
 /// Ensures the clinic admin remains logged in during hot reloads, hot restarts,
@@ -90,6 +92,11 @@ class ClinicSessionManager {
     } catch (e) {
       debugPrint('ClinicSessionManager error clearing session: $e');
     }
+
+    try {
+      await ClinicNotificationsService.instance.flushPendingSync();
+      ClinicNotificationsService.instance.resetSessionCache();
+    } catch (_) {}
 
     try {
       await FirebaseAuth.instance.signOut();

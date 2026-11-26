@@ -38,84 +38,92 @@ class ClinicTicketCardHeader extends StatelessWidget {
         : (isDark ? const Color(0xFFA5B4FC) : const Color(0xFF4338CA));
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Text(
-              ticket.ticketNumber,
-              style: GoogleFonts.inter(
-                fontSize: 12,
-                fontWeight: FontWeight.w800,
-                color: const Color(0xFF3B82F6),
+        Expanded(
+          child: Wrap(
+            spacing: 6,
+            runSpacing: 4,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              Text(
+                ticket.ticketNumber,
+                style: GoogleFonts.inter(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w800,
+                  color: const Color(0xFF3B82F6),
+                ),
               ),
-            ),
-            const SizedBox(width: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-              decoration: BoxDecoration(
-                color: badgeBg,
-                borderRadius: BorderRadius.circular(6),
-                border: Border.all(color: badgeBorder),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(badgeIcon, style: const TextStyle(fontSize: 9.5)),
-                  const SizedBox(width: 4),
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 130),
-                    child: Text(
-                      badgeText,
-                      style: GoogleFonts.inter(
-                        fontSize: 9.5,
-                        fontWeight: FontWeight.w700,
-                        color: badgeTextColor,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            if (ticket.linkedTokenNumber != null &&
-                ticket.linkedTokenNumber!.isNotEmpty) ...[
-              const SizedBox(width: 6),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                 decoration: BoxDecoration(
-                  color: isDark
-                      ? const Color(0xFF1E1B4B).withValues(alpha: 0.6)
-                      : const Color(0xFFF1F5F9),
+                  color: badgeBg,
                   borderRadius: BorderRadius.circular(6),
-                  border: Border.all(
-                    color: isDark
-                        ? const Color(0xFF4338CA).withValues(alpha: 0.4)
-                        : const Color(0xFFCBD5E1),
-                  ),
+                  border: Border.all(color: badgeBorder),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text('🎟', style: TextStyle(fontSize: 9.5)),
+                    Text(badgeIcon, style: const TextStyle(fontSize: 9.5)),
                     const SizedBox(width: 4),
-                    Text(
-                      'Token #${ticket.linkedTokenNumber}',
-                      style: GoogleFonts.inter(
-                        fontSize: 9.5,
-                        fontWeight: FontWeight.w700,
-                        color: isDark
-                            ? const Color(0xFFA5B4FC)
-                            : const Color(0xFF475569),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 118),
+                      child: Text(
+                        badgeText,
+                        style: GoogleFonts.inter(
+                          fontSize: 9.5,
+                          fontWeight: FontWeight.w700,
+                          color: badgeTextColor,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
                 ),
               ),
+              if (ticket.linkedTokenNumber != null &&
+                  ticket.linkedTokenNumber!.isNotEmpty)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? const Color(0xFF1E1B4B).withValues(alpha: 0.6)
+                        : const Color(0xFFF1F5F9),
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(
+                      color: isDark
+                          ? const Color(0xFF4338CA).withValues(alpha: 0.4)
+                          : const Color(0xFFCBD5E1),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text('🎟', style: TextStyle(fontSize: 9.5)),
+                      const SizedBox(width: 4),
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 120),
+                        child: Text(
+                          'Token #${ticket.linkedTokenNumber}',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.inter(
+                            fontSize: 9.5,
+                            fontWeight: FontWeight.w700,
+                            color: isDark
+                                ? const Color(0xFFA5B4FC)
+                                : const Color(0xFF475569),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
             ],
-          ],
+          ),
         ),
+        const SizedBox(width: 8),
         Text(
           ClinicTicketCardStyleHelper.formatTimeAgo(ticket),
           style: GoogleFonts.inter(fontSize: 10, color: colors.textMuted),

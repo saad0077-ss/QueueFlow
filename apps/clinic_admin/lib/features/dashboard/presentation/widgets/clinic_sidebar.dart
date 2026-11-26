@@ -29,6 +29,7 @@ class ClinicSidebar extends StatelessWidget {
     {'title': 'Services', 'icon': Icons.medical_services_outlined},
     {'title': 'Doctors', 'icon': Icons.people_outline_rounded},
     {'title': 'Reports', 'icon': Icons.bar_chart_rounded},
+    {'title': 'Revenue', 'icon': Icons.account_balance_wallet_outlined},
     {'title': 'Clinic Settings', 'icon': Icons.settings_outlined},
     {'title': 'Plan & Billing', 'icon': Icons.credit_card_outlined},
     {'title': 'Patient Tickets', 'icon': Icons.help_outline_rounded},

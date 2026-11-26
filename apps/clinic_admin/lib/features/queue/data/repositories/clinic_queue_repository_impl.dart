@@ -9,8 +9,11 @@ import '../../../services/domain/entities/service_department_entity.dart';
 import '../../domain/entities/clinic_queue_item_entity.dart';
 import '../../domain/entities/clinic_queue_summary_entity.dart';
 import '../../domain/repositories/clinic_queue_repository.dart';
-import '../../domain/utils/clinic_token_generator.dart';
 import '../models/clinic_queue_item_model.dart';
+import '../services/appointment_queue_status_sync.dart';
+import '../services/checked_in_appointment_queue_sync.dart';
+import '../services/checked_in_queue_mapper.dart';
+import '../services/queue_token_allocator.dart';
 
 class ClinicQueueRepositoryImpl implements ClinicQueueRepository {
   final FirebaseFirestore _firestore;
@@ -18,6 +21,7 @@ class ClinicQueueRepositoryImpl implements ClinicQueueRepository {
 
   String? _resolvedClinicId;
   String _resolvedClinicName = 'Sunrise Health Clinic';
+  final Set<String> _backfilledApptIds = {};
 
   final List<ClinicQueueItemEntity> _fallbackItems = [
     ClinicQueueItemEntity(
@@ -243,42 +247,91 @@ class ClinicQueueRepositoryImpl implements ClinicQueueRepository {
   @override
   Stream<List<ClinicQueueItemEntity>> watchQueueItems() async* {
     final clinicId = await _clinicId();
-    yield* _firestore
+    final controller = StreamController<List<ClinicQueueItemEntity>>();
+    QuerySnapshot<Map<String, dynamic>>? ticketSnap;
+    QuerySnapshot<Map<String, dynamic>>? apptSnap;
+    var hasTickets = false;
+    var hasAppts = false;
+
+    void emitMerged() {
+      if (controller.isClosed || (!hasTickets && !hasAppts)) return;
+      final ticketEntries = (ticketSnap?.docs ?? const []).map((d) {
+        final apptId = (d.data()['appointmentId'] ?? '').toString().trim();
+        return (
+          id: d.id,
+          appointmentId: apptId,
+          item: ClinicQueueItemModel.fromFirestore(d),
+        );
+      });
+      final checkedInAppts = (apptSnap?.docs ?? const [])
+          .where((d) => CheckedInQueueMapper.isCheckedInStatus(d.data()['status']))
+          .map((d) => (id: d.id, data: d.data()));
+
+      final items = CheckedInQueueMapper.mergeEntries(
+        ticketEntries: ticketEntries,
+        checkedInAppts: checkedInAppts,
+        onMissingTicket: (apptId, data) {
+          if (_backfilledApptIds.add(apptId)) {
+            unawaited(
+              CheckedInAppointmentQueueSync.ensureTicketForAppointment(
+                _firestore,
+                appointmentId: apptId,
+                apptData: data,
+                clinicNameHint: _resolvedClinicName,
+              ).catchError((_) => _backfilledApptIds.remove(apptId)),
+            );
+          }
+        },
+      );
+
+      if (items.isEmpty) {
+        if (clinicId == 'sunrise-health' && !(hasTickets && hasAppts)) return;
+        controller.add(
+          clinicId == 'sunrise-health'
+              ? List<ClinicQueueItemEntity>.from(_fallbackItems)
+              : <ClinicQueueItemEntity>[],
+        );
+        return;
+      }
+      controller.add(items);
+    }
+
+    final ticketSub = _firestore
         .collection('tickets')
         .where('clinicId', isEqualTo: clinicId)
         .snapshots()
-        .map((snap) {
-          if (snap.docs.isEmpty) {
-            return clinicId == 'sunrise-health'
-                ? List<ClinicQueueItemEntity>.from(_fallbackItems)
-                : <ClinicQueueItemEntity>[];
-          }
-          final items = snap.docs
-              .map((d) => ClinicQueueItemModel.fromFirestore(d))
-              .where((item) => item.status != 'cancelled')
-              .toList();
+        .listen(
+          (snap) {
+            ticketSnap = snap;
+            hasTickets = true;
+            emitMerged();
+          },
+          onError: (_) {
+            hasTickets = true;
+            emitMerged();
+          },
+        );
+    final apptSub = _firestore
+        .collection('appointments')
+        .where('clinicId', isEqualTo: clinicId)
+        .snapshots()
+        .listen(
+          (snap) {
+            apptSnap = snap;
+            hasAppts = true;
+            emitMerged();
+          },
+          onError: (_) {
+            hasAppts = true;
+            emitMerged();
+          },
+        );
 
-          if (items.isEmpty) {
-            return clinicId == 'sunrise-health'
-                ? List<ClinicQueueItemEntity>.from(_fallbackItems)
-                : <ClinicQueueItemEntity>[];
-          }
-
-          items.sort((a, b) {
-            final statusWeight = {
-              'called': 0,
-              'waiting': 1,
-              'skipped': 2,
-              'completed': 3,
-            };
-            final weightA = statusWeight[a.status] ?? 4;
-            final weightB = statusWeight[b.status] ?? 4;
-            if (weightA != weightB) return weightA.compareTo(weightB);
-            return a.joinedAt.compareTo(b.joinedAt);
-          });
-
-          return items;
-        });
+    controller.onCancel = () async {
+      await ticketSub.cancel();
+      await apptSub.cancel();
+    };
+    yield* controller.stream;
   }
 
   @override
@@ -469,10 +522,16 @@ class ClinicQueueRepositoryImpl implements ClinicQueueRepository {
 
       final calledSnap = await calledQuery.limit(1).get();
       if (calledSnap.docs.isNotEmpty) {
-        await calledSnap.docs.first.reference.update({
+        final calledDoc = calledSnap.docs.first;
+        await calledDoc.reference.update({
           'status': 'completed',
           'completedAt': FieldValue.serverTimestamp(),
         });
+        await AppointmentQueueStatusSync.syncAppointmentFromTicket(
+          _firestore,
+          calledDoc,
+          status: 'completed',
+        );
       }
 
       // Find first waiting item
@@ -575,6 +634,11 @@ class ClinicQueueRepositoryImpl implements ClinicQueueRepository {
           'status': 'completed',
           'completedAt': FieldValue.serverTimestamp(),
         });
+        await AppointmentQueueStatusSync.syncAppointmentFromTicket(
+          _firestore,
+          doc,
+          status: 'completed',
+        );
       }
 
       final targetSnap = await _firestore
@@ -619,10 +683,16 @@ class ClinicQueueRepositoryImpl implements ClinicQueueRepository {
           .get();
 
       if (snap.docs.isNotEmpty) {
-        await snap.docs.first.reference.update({
+        final doc = snap.docs.first;
+        await doc.reference.update({
           'status': 'completed',
           'completedAt': FieldValue.serverTimestamp(),
         });
+        await AppointmentQueueStatusSync.syncAppointmentFromTicket(
+          _firestore,
+          doc,
+          status: 'completed',
+        );
       }
     } catch (_) {
       final idx = _fallbackItems.indexWhere((i) => i.token == token);
@@ -670,10 +740,16 @@ class ClinicQueueRepositoryImpl implements ClinicQueueRepository {
           .get();
 
       if (snap.docs.isNotEmpty) {
-        await snap.docs.first.reference.update({
+        final doc = snap.docs.first;
+        await doc.reference.update({
           'status': 'cancelled',
           'cancelledAt': FieldValue.serverTimestamp(),
         });
+        await AppointmentQueueStatusSync.syncAppointmentFromTicket(
+          _firestore,
+          doc,
+          status: 'cancelled',
+        );
       }
     } catch (_) {
       _fallbackItems.removeWhere((i) => i.token == token);
@@ -726,60 +802,16 @@ class ClinicQueueRepositoryImpl implements ClinicQueueRepository {
     final effectiveService = service.isNotEmpty
         ? service
         : 'General Consultation';
-    final serviceCode = ClinicTokenGenerator.extractServiceCode(
-      effectiveService,
-    );
-
-    int nextSeq = 1;
-    try {
-      final queueSnap = await _queueDocRef(clinicId).get();
-      if (queueSnap.exists) {
-        final data = queueSnap.data()!;
-        final serviceCounters =
-            (data['serviceCounters'] as Map<String, dynamic>?) ?? {};
-        final currentForService =
-            serviceCounters[serviceCode] as int? ??
-            serviceCounters[effectiveService] as int?;
-        if (currentForService != null) {
-          nextSeq = currentForService + 1;
-        } else {
-          // If not in counters map yet, check existing tickets for this service today
-          final ticketsSnap = await _firestore
-              .collection('tickets')
-              .where('clinicId', isEqualTo: clinicId)
-              .where('serviceName', isEqualTo: effectiveService)
-              .get();
-          int maxNum = 0;
-          for (final doc in ticketsSnap.docs) {
-            final tok = (doc.data()['token'] ?? '').toString();
-            final num = ClinicTokenGenerator.parseSequenceNumber(tok);
-            if (num != null && num > maxNum) {
-              maxNum = num;
-            }
-          }
-          nextSeq = maxNum + 1;
-        }
-      }
-    } catch (_) {
-      // In fallback / offline mode, find max sequence for this service
-      int maxNum = 0;
-      for (final item in _fallbackItems) {
-        if (item.serviceName.toLowerCase() == effectiveService.toLowerCase() ||
-            item.token.contains('-$serviceCode-')) {
-          final num = ClinicTokenGenerator.parseSequenceNumber(item.token);
-          if (num != null && num > maxNum) {
-            maxNum = num;
-          }
-        }
-      }
-      nextSeq = maxNum + 1;
-    }
-
-    final token = ClinicTokenGenerator.generateToken(
+    final allocated = await QueueTokenAllocator.allocate(
+      _firestore,
+      clinicId: clinicId,
       clinicName: clinicName,
       serviceName: effectiveService,
-      sequenceNumber: nextSeq,
+      fallbackItems: _fallbackItems,
     );
+    final serviceCode = allocated.serviceCode;
+    final nextSeq = allocated.seq;
+    final token = allocated.token;
 
     final newItem = ClinicQueueItemModel(
       id: 'walkin-$serviceCode-$nextSeq-${now.millisecondsSinceEpoch}',
