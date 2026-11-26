@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Two-column responsive layout used on laptop screens (>= 960px) for About App.
+/// Full-width showcase + highlights + balanced split layout on web/laptop (>= 960px).
 class AboutAppLaptopLayout extends StatelessWidget {
   final Widget heroCard;
   final Widget highlightsGrid;
@@ -17,31 +17,20 @@ class AboutAppLaptopLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Expanded(
-          flex: 40,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              heroCard,
-              const SizedBox(height: 18),
-              infoCard,
-            ],
-          ),
-        ),
-        const SizedBox(width: 24),
-        Expanded(
-          flex: 60,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              highlightsGrid,
-              const SizedBox(height: 18),
-              howItWorksCard,
-            ],
-          ),
+        heroCard,
+        const SizedBox(height: 20),
+        highlightsGrid,
+        const SizedBox(height: 20),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(flex: 55, child: howItWorksCard),
+            const SizedBox(width: 20),
+            Expanded(flex: 45, child: infoCard),
+          ],
         ),
       ],
     );

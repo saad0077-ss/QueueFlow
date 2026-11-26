@@ -42,6 +42,19 @@ class AboutAppHighlightsGrid extends StatelessWidget {
         ),
         LayoutBuilder(
           builder: (context, constraints) {
+            if (constraints.maxWidth >= 780) {
+              return IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    for (var i = 0; i < _features.length; i++) ...[
+                      if (i > 0) const SizedBox(width: 14),
+                      Expanded(child: _card(colors, _features[i])),
+                    ],
+                  ],
+                ),
+              );
+            }
             final twoCol = constraints.maxWidth >= 340;
             if (!twoCol) {
               return Column(

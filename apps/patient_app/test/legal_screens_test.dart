@@ -71,7 +71,7 @@ void main() {
     expect(find.byType(TermsConditionsScreen), findsOneWidget);
   });
 
-  testWidgets('Legal screens render 2-column laptop layout cleanly at 1280px',
+  testWidgets('Legal screens render Bento desktop layout cleanly at 1280px',
       (tester) async {
     tester.view.physicalSize = const Size(1280, 800);
     tester.view.devicePixelRatio = 1.0;
@@ -86,10 +86,28 @@ void main() {
     expect(tester.takeException(), isNull);
     expect(find.byType(LegalLaptopLayout), findsOneWidget);
     expect(find.text('SECTIONS OVERVIEW'), findsOneWidget);
+    expect(find.text('Collapse all'), findsOneWidget);
 
     final heroRect = tester.getRect(find.byType(LegalDocumentHero));
-    final firstClauseRect = tester.getRect(find.byType(LegalSectionCard).first);
-    expect(firstClauseRect.left, greaterThan(heroRect.right));
+    final firstClauseRect = tester.getRect(find.byType(LegalSectionCard).at(0));
+    final secondClauseRect = tester.getRect(find.byType(LegalSectionCard).at(1));
+    expect(heroRect.width, greaterThan(900));
+    expect(firstClauseRect.top, greaterThan(heroRect.bottom));
+    expect(secondClauseRect.left, greaterThan(firstClauseRect.right));
+    expect((firstClauseRect.top - secondClauseRect.top).abs(), lessThan(1.0));
+
+    await tester.tap(find.byTooltip('Collapse all'));
+    await tester.pump();
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    await tester.tap(find.byTooltip('Expand all'));
+    await tester.pump();
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    await tester.tap(find.byType(LegalSectionCard).first);
+    await tester.pump();
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
 
     await tester.pumpWidget(
       MaterialApp(

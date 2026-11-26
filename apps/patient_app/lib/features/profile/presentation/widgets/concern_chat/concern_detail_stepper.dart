@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
-
 import '../../../domain/entities/support_ticket_entity.dart';
+import 'concern_detail_progress_track.dart';
+import 'concern_detail_step_node.dart';
 
+/// Displays an animated progress bar and connected 4-stage resolution timeline.
 class ConcernDetailStepper extends StatelessWidget {
   final SupportTicketEntity ticket;
   final bool isResolved;
@@ -19,116 +20,80 @@ class ConcernDetailStepper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final step2Done = isResolved || isInProg;
-    final step2Active = !isResolved && !isInProg;
-    final step3Done = isResolved;
-    final step3Active = isInProg;
-    final step4Done = isResolved;
+    final activeStep = isResolved ? 4 : (isInProg ? 3 : 2);
+    final stageLabel = isResolved
+        ? 'Concern Resolved'
+        : (isInProg ? 'Action In Progress' : 'Desk Triage');
 
-    return Row(
-      children: [
-        _stepNode(
-          label: 'Submitted',
-          sub: ticket.createdAt,
-          isDone: true,
-          isActive: false,
-          colors: colors,
-        ),
-        _stepConnector(isDone: step2Done, colors: colors),
-        _stepNode(
-          label: 'Care Desk',
-          sub: ticket.assignedTo ?? 'Desk Triage',
-          isDone: step2Done,
-          isActive: step2Active,
-          colors: colors,
-        ),
-        _stepConnector(isDone: step3Done, colors: colors),
-        _stepNode(
-          label: 'In Progress',
-          sub: isResolved ? 'Complete' : 'Action taken',
-          isDone: step3Done,
-          isActive: step3Active,
-          colors: colors,
-        ),
-        _stepConnector(isDone: step4Done, colors: colors),
-        _stepNode(
-          label: 'Resolved',
-          sub: isResolved ? (ticket.resolvedAt ?? 'Closed') : 'Final',
-          isDone: step4Done,
-          isActive: false,
-          colors: colors,
-        ),
-      ],
-    );
-  }
+    final steps = [
+      (
+        label: 'Submitted',
+        sub: ticket.createdAt,
+        done: true,
+        active: false,
+        icon: Icons.send_rounded,
+      ),
+      (
+        label: 'Care Desk',
+        sub: ticket.assignedTo ?? 'Desk Triage',
+        done: isResolved || isInProg,
+        active: !isResolved && !isInProg,
+        icon: Icons.support_agent_rounded,
+      ),
+      (
+        label: 'In Progress',
+        sub: isResolved ? 'Complete' : 'Action taken',
+        done: isResolved,
+        active: isInProg && !isResolved,
+        icon: Icons.sync_rounded,
+      ),
+      (
+        label: 'Resolved',
+        sub: isResolved ? (ticket.resolvedAt ?? 'Closed') : 'Final',
+        done: isResolved,
+        active: false,
+        icon: Icons.verified_rounded,
+      ),
+    ];
 
-  Widget _stepNode({
-    required String label,
-    required String sub,
-    required bool isDone,
-    required bool isActive,
-    required AppColorsExtension colors,
-  }) {
-    return Expanded(
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: colors.border),
+      ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 22,
-            height: 22,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: isDone
-                  ? const Color(0xFF10B981)
-                  : (isActive ? const Color(0xFF2563EB) : colors.border),
-            ),
-            child: Center(
-              child: isDone
-                  ? const Icon(Icons.check, size: 13, color: Colors.white)
-                  : (isActive
-                        ? Container(
-                            width: 6,
-                            height: 6,
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
-                          )
-                        : const SizedBox.shrink()),
-            ),
+          ConcernDetailProgressTrack(
+            activeStep: activeStep,
+            stageLabel: stageLabel,
+            isResolved: isResolved,
           ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: GoogleFonts.inter(
-              fontSize: 9.5,
-              fontWeight: FontWeight.w700,
-              color: isDone || isActive ? colors.textPrimary : colors.textMuted,
-            ),
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          Text(
-            sub,
-            style: GoogleFonts.inter(fontSize: 8.5, color: colors.textMuted),
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+          const SizedBox(height: 16),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (int i = 0; i < steps.length; i++)
+                Expanded(
+                  child: ConcernDetailStepNode(
+                    label: steps[i].label,
+                    sub: steps[i].sub,
+                    done: steps[i].done,
+                    active: steps[i].active,
+                    icon: steps[i].icon,
+                    showLeftLine: i > 0,
+                    showRightLine: i < steps.length - 1,
+                    leftDone: i > 0 && (steps[i].done || steps[i].active),
+                    rightDone: i < steps.length - 1 &&
+                        (steps[i + 1].done || steps[i + 1].active),
+                  ),
+                ),
+            ],
           ),
         ],
       ),
-    );
-  }
-
-  Widget _stepConnector({
-    required bool isDone,
-    required AppColorsExtension colors,
-  }) {
-    return Container(
-      width: 14,
-      height: 2,
-      margin: const EdgeInsets.only(bottom: 24),
-      color: isDone ? const Color(0xFF10B981) : colors.border,
     );
   }
 }

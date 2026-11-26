@@ -42,14 +42,14 @@ class AboutAppScreen extends StatelessWidget {
                     child: Center(
                       child: ConstrainedBox(
                         constraints: BoxConstraints(
-                          maxWidth: isLaptop ? 1240 : 720,
+                          maxWidth: isLaptop ? 1160 : 720,
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             if (isLaptop)
                               const AboutAppLaptopLayout(
-                                heroCard: AboutAppHeroCard(),
+                                heroCard: AboutAppHeroCard(isWide: true),
                                 highlightsGrid: AboutAppHighlightsGrid(),
                                 howItWorksCard: AboutAppHowItWorksCard(),
                                 infoCard: AboutAppInfoCard(),

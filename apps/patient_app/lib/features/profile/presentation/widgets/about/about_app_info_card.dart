@@ -43,7 +43,7 @@ class AboutAppInfoCard extends StatelessWidget {
                 accent: colors.primary,
                 title: 'App Version',
                 subtitle: 'Latest installed release',
-                trailingValue: '0.1.0 (Build 1)',
+                trailingValue: '1.0.0 (Build 1)',
               ),
               divider,
               const AboutAppInfoRow(

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
-
 import '../../../domain/entities/support_ticket_entity.dart';
+import 'concern_detail_closed_banner.dart';
 
+/// Reply composer or resolved-ticket reopen banner for a support concern.
 class ConcernDetailReplyBar extends StatelessWidget {
   final TextEditingController controller;
   final bool isSending;
@@ -11,6 +12,7 @@ class ConcernDetailReplyBar extends StatelessWidget {
   final SupportTicketEntity ticket;
   final VoidCallback onSend;
   final VoidCallback onReopen;
+  final bool embedded;
 
   const ConcernDetailReplyBar({
     super.key,
@@ -20,126 +22,46 @@ class ConcernDetailReplyBar extends StatelessWidget {
     required this.ticket,
     required this.onSend,
     required this.onReopen,
+    this.embedded = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
-
     if (isResolved) {
-      return Container(
-        padding: EdgeInsets.only(
-          left: 16,
-          right: 16,
-          top: 14,
-          bottom: MediaQuery.of(context).viewInsets.bottom > 0
-              ? MediaQuery.of(context).viewInsets.bottom + 10
-              : 24,
-        ),
-        decoration: BoxDecoration(
-          color: colors.surface,
-          border: Border(top: BorderSide(color: colors.border)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, -3),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(7),
-              decoration: BoxDecoration(
-                color: const Color(0xFF10B981).withValues(alpha: 0.12),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.lock_rounded,
-                size: 16,
-                color: Color(0xFF10B981),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Ticket Closed & Resolved',
-                    style: GoogleFonts.inter(
-                      fontSize: 12.5,
-                      fontWeight: FontWeight.w700,
-                      color: colors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    'Reopen this concern to resume live messaging with care desk.',
-                    style: GoogleFonts.inter(
-                      fontSize: 11,
-                      color: colors.textMuted,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 10),
-            ElevatedButton.icon(
-              onPressed: onReopen,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF2563EB),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 8,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              icon: const Icon(Icons.refresh_rounded, size: 14),
-              label: Text(
-                'Reopen',
-                style: GoogleFonts.inter(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
+      return ConcernDetailClosedBanner(embedded: embedded, onReopen: onReopen);
     }
 
+    final colors = context.colors;
+    final bottomPad = embedded
+        ? 12.0
+        : (MediaQuery.of(context).viewInsets.bottom > 0
+              ? MediaQuery.of(context).viewInsets.bottom + 10
+              : 24.0);
+
     return Container(
-      padding: EdgeInsets.only(
-        left: 12,
-        right: 12,
-        top: 10,
-        bottom: MediaQuery.of(context).viewInsets.bottom > 0
-            ? MediaQuery.of(context).viewInsets.bottom + 10
-            : 24,
-      ),
+      padding: EdgeInsets.only(left: 12, right: 12, top: 10, bottom: bottomPad),
       decoration: BoxDecoration(
-        color: colors.surface,
+        color: embedded ? colors.surfaceSecondary : colors.surface,
+        borderRadius: embedded
+            ? const BorderRadius.vertical(bottom: Radius.circular(16))
+            : null,
         border: Border(top: BorderSide(color: colors.border)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, -3),
-          ),
-        ],
+        boxShadow: embedded
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, -3),
+                ),
+              ],
       ),
       child: Row(
         children: [
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: colors.surfaceSecondary,
+                color: embedded ? colors.surface : colors.surfaceSecondary,
                 borderRadius: BorderRadius.circular(24),
                 border: Border.all(color: colors.border),
               ),

@@ -27,7 +27,7 @@ class AboutAppHeader extends StatelessWidget {
       ),
       child: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1240),
+          constraints: const BoxConstraints(maxWidth: 1160),
           child: Row(
             children: [
               InkWell(
@@ -49,7 +49,7 @@ class AboutAppHeader extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 14),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,7 +59,7 @@ class AboutAppHeader extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.inter(
-                        fontSize: 17,
+                        fontSize: isWide ? 18 : 17,
                         fontWeight: FontWeight.w800,
                         color: colors.textPrimary,
                         letterSpacing: -0.3,

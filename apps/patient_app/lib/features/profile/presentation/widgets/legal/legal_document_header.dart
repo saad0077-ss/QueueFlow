@@ -31,7 +31,7 @@ class LegalDocumentHeader extends StatelessWidget {
       ),
       child: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1240),
+          constraints: const BoxConstraints(maxWidth: 1160),
           child: Row(
             children: [
               _iconBox(
@@ -40,7 +40,7 @@ class LegalDocumentHeader extends StatelessWidget {
                 iconSize: 16,
                 onTap: onBack,
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 14),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,7 +50,7 @@ class LegalDocumentHeader extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.inter(
-                        fontSize: 17,
+                        fontSize: isWide ? 18 : 17,
                         fontWeight: FontWeight.w800,
                         color: colors.textPrimary,
                         letterSpacing: -0.3,
@@ -71,13 +71,36 @@ class LegalDocumentHeader extends StatelessWidget {
               const SizedBox(width: 8),
               Tooltip(
                 message: allExpanded ? 'Collapse all' : 'Expand all',
-                child: _iconBox(
+                child: _actionBox(
                   colors: colors,
-                  icon: allExpanded
-                      ? Icons.unfold_less_rounded
-                      : Icons.unfold_more_rounded,
-                  iconSize: 18,
                   onTap: onToggleAll,
+                  width: isWide ? null : 36,
+                  padding: isWide
+                      ? const EdgeInsets.symmetric(horizontal: 12, vertical: 8)
+                      : null,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        allExpanded
+                            ? Icons.unfold_less_rounded
+                            : Icons.unfold_more_rounded,
+                        size: isWide ? 16 : 18,
+                        color: colors.textPrimary,
+                      ),
+                      if (isWide) ...[
+                        const SizedBox(width: 6),
+                        Text(
+                          allExpanded ? 'Collapse all' : 'Expand all',
+                          style: GoogleFonts.inter(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: colors.textPrimary,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -92,20 +115,34 @@ class LegalDocumentHeader extends StatelessWidget {
     required IconData icon,
     required double iconSize,
     required VoidCallback onTap,
+  }) => _actionBox(
+    colors: colors,
+    onTap: onTap,
+    width: 36,
+    child: Icon(icon, size: iconSize, color: colors.textPrimary),
+  );
+
+  Widget _actionBox({
+    required AppColorsExtension colors,
+    required VoidCallback onTap,
+    required Widget child,
+    double? width,
+    EdgeInsetsGeometry? padding,
   }) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(10),
       child: Container(
-        width: 36,
-        height: 36,
+        width: width,
+        height: width != null ? 36 : null,
+        padding: padding,
         decoration: BoxDecoration(
           color: colors.surfaceSecondary,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(color: colors.border),
         ),
         alignment: Alignment.center,
-        child: Icon(icon, size: iconSize, color: colors.textPrimary),
+        child: child,
       ),
     );
   }

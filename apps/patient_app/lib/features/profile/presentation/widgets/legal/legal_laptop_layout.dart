@@ -5,7 +5,7 @@ import 'legal_document_section.dart';
 import 'legal_section_card.dart';
 import 'legal_sections_index_card.dart';
 
-/// Two-column responsive layout used on laptop screens (>= 960px) for legal pages.
+/// Full-width banner + 2-column Bento grid layout used on web/laptop (>= 960px).
 class LegalLaptopLayout extends StatelessWidget {
   final LegalDocumentConfig config;
   final Set<int> expanded;
@@ -20,39 +20,46 @@ class LegalLaptopLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    final sections = config.sections;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Expanded(
-          flex: 38,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+        LegalDocumentHero(config: config, isWide: true),
+        const SizedBox(height: 16),
+        LegalSectionsIndexCard(
+          sections: sections,
+          expanded: expanded,
+          onSectionTap: onToggleSection,
+          isHorizontal: true,
+        ),
+        const SizedBox(height: 18),
+        for (var i = 0; i < sections.length; i += 2) ...[
+          if (i > 0) const SizedBox(height: 16),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              LegalDocumentHero(config: config),
-              const SizedBox(height: 16),
-              LegalSectionsIndexCard(
-                sections: config.sections,
-                expanded: expanded,
-                onSectionTap: onToggleSection,
+              Expanded(
+                child: LegalSectionCard(
+                  section: sections[i],
+                  isExpanded: expanded.contains(i),
+                  onToggle: () => onToggleSection(i),
+                  inGrid: true,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: i + 1 < sections.length
+                    ? LegalSectionCard(
+                        section: sections[i + 1],
+                        isExpanded: expanded.contains(i + 1),
+                        onToggle: () => onToggleSection(i + 1),
+                        inGrid: true,
+                      )
+                    : const SizedBox.shrink(),
               ),
             ],
           ),
-        ),
-        const SizedBox(width: 24),
-        Expanded(
-          flex: 62,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              for (var i = 0; i < config.sections.length; i++)
-                LegalSectionCard(
-                  section: config.sections[i],
-                  isExpanded: expanded.contains(i),
-                  onToggle: () => onToggleSection(i),
-                ),
-            ],
-          ),
-        ),
+        ],
       ],
     );
   }

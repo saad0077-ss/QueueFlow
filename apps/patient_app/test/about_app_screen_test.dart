@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:patient_app/features/profile/presentation/pages/about_app_screen.dart';
 import 'package:patient_app/features/profile/presentation/widgets/about/about_app_hero_card.dart';
 import 'package:patient_app/features/profile/presentation/widgets/about/about_app_highlights_grid.dart';
+import 'package:patient_app/features/profile/presentation/widgets/about/about_app_how_it_works_card.dart';
 import 'package:patient_app/features/profile/presentation/widgets/about/about_app_info_card.dart';
 import 'package:patient_app/features/profile/presentation/widgets/about/about_app_laptop_layout.dart';
 import 'package:patient_app/features/profile/presentation/widgets/profile_tab/profile_support_legal_menu_section.dart';
@@ -30,12 +31,12 @@ void main() {
       expect(find.text('Smart Slips'), findsOneWidget);
       expect(find.text('Live Queue Radar'), findsOneWidget);
       expect(find.text('Find & Reserve'), findsOneWidget);
-      expect(find.text('0.1.0 (Build 1)'), findsOneWidget);
+      expect(find.text('1.0.0 (Build 1)'), findsOneWidget);
       expect(find.text('QueueFlow health suite'), findsOneWidget);
       expect(find.text('Open-Source Licenses'), findsNothing);
       expect(find.text('support@queueflow.health'), findsNothing);
 
-      final versionRight = tester.getTopRight(find.text('0.1.0 (Build 1)')).dx;
+      final versionRight = tester.getTopRight(find.text('1.0.0 (Build 1)')).dx;
       final editionRight = tester.getTopRight(find.text('Patient App')).dx;
       expect((versionRight - editionRight).abs(), lessThan(1.0));
 
@@ -73,7 +74,7 @@ void main() {
     expect(find.byType(AboutAppScreen), findsOneWidget);
   });
 
-  testWidgets('AboutAppScreen renders 2-column laptop layout cleanly at 1280px',
+  testWidgets('AboutAppScreen renders desktop showcase layout cleanly at 1280px',
       (tester) async {
     tester.view.physicalSize = const Size(1280, 800);
     tester.view.devicePixelRatio = 1.0;
@@ -89,9 +90,12 @@ void main() {
     expect(find.byType(AboutAppLaptopLayout), findsOneWidget);
 
     final heroRect = tester.getRect(find.byType(AboutAppHeroCard));
-    final infoRect = tester.getRect(find.byType(AboutAppInfoCard));
     final highlightsRect = tester.getRect(find.byType(AboutAppHighlightsGrid));
-    expect((heroRect.left - infoRect.left).abs(), lessThan(1.0));
-    expect(highlightsRect.left, greaterThan(heroRect.right));
+    final howItWorksRect = tester.getRect(find.byType(AboutAppHowItWorksCard));
+    final infoRect = tester.getRect(find.byType(AboutAppInfoCard));
+    expect(heroRect.width, greaterThan(900));
+    expect(highlightsRect.top, greaterThan(heroRect.bottom));
+    expect(infoRect.left, greaterThan(howItWorksRect.right));
+    expect((howItWorksRect.top - infoRect.top).abs(), lessThan(1.0));
   });
 }

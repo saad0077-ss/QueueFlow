@@ -80,7 +80,7 @@ class _LegalDocumentScreenState extends State<LegalDocumentScreen> {
                     child: Center(
                       child: ConstrainedBox(
                         constraints: BoxConstraints(
-                          maxWidth: isLaptop ? 1240 : 720,
+                          maxWidth: isLaptop ? 1160 : 720,
                         ),
                         child: isLaptop
                             ? LegalLaptopLayout(

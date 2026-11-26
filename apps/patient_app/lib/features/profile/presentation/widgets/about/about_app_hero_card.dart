@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:patient_app/core/widgets/app_icon_badge.dart';
 
+import 'about_app_hero_parts.dart';
 import 'about_app_pillars_strip.dart';
 
 /// Branded gradient hero card showcasing QueueFlow identity and core pillars.
 class AboutAppHeroCard extends StatelessWidget {
-  const AboutAppHeroCard({super.key});
+  final bool isWide;
+
+  const AboutAppHeroCard({super.key, this.isWide = false});
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +20,10 @@ class AboutAppHeroCard extends StatelessWidget {
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.14)),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF1E3A8A).withValues(alpha: 0.34),
+            color: const Color(0xFF1E3A8A).withValues(alpha: 0.3),
             blurRadius: 22,
             offset: const Offset(0, 8),
           ),
@@ -31,11 +34,11 @@ class AboutAppHeroCard extends StatelessWidget {
         child: Stack(
           children: [
             Positioned(
-              top: -28,
+              top: -32,
               right: -24,
               child: Container(
-                width: 110,
-                height: 110,
+                width: isWide ? 180 : 110,
+                height: isWide ? 180 : 110,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: Colors.white.withValues(alpha: 0.06),
@@ -43,92 +46,88 @@ class AboutAppHeroCard extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.14),
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.24),
-                      ),
-                    ),
-                    child: const AppIconBadge(size: 66),
-                  ),
-                  const SizedBox(height: 14),
-                  RichText(
-                    text: TextSpan(
-                      style: GoogleFonts.inter(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: -0.6,
-                      ),
-                      children: const [
-                        TextSpan(
-                          text: 'Queue',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        TextSpan(
-                          text: 'Flow',
-                          style: TextStyle(color: Color(0xFF5EEAD4)),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Book smarter. Wait less.',
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.inter(
-                      fontSize: 13.5,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white.withValues(alpha: 0.92),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 4.5,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.24),
-                      borderRadius: BorderRadius.circular(999),
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.16),
-                      ),
-                    ),
-                    child: Text(
-                      'v0.1.0 · Build 1 · Patient App',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.spaceMono(
-                        fontSize: 10.5,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Built to make clinic visits predictable with live queue tracking, verified doctor schedules, and instant digital receipts.',
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.inter(
-                      fontSize: 12,
-                      height: 1.45,
-                      color: Colors.white.withValues(alpha: 0.85),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  const AboutAppPillarsStrip(),
-                ],
-              ),
+              padding: EdgeInsets.all(isWide ? 24 : 20),
+              child: isWide ? _wideContent() : _compactContent(),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _wideContent() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(
+          flex: 6,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const AboutHeroIconFrame(size: 70),
+              const SizedBox(width: 18),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Wrap(
+                      spacing: 10,
+                      runSpacing: 6,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        AboutHeroBrandTitle(fontSize: 26),
+                        AboutHeroVersionBadge(),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'Book smarter. Wait less.',
+                      style: GoogleFonts.inter(
+                        fontSize: 14.5,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white.withValues(alpha: 0.94),
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    const AboutHeroMissionCopy(
+                      textAlign: TextAlign.left,
+                      fontSize: 12.5,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 24),
+        const Expanded(flex: 4, child: AboutAppPillarsStrip()),
+      ],
+    );
+  }
+
+  Widget _compactContent() {
+    return Column(
+      children: [
+        const AboutHeroIconFrame(size: 66),
+        const SizedBox(height: 14),
+        const AboutHeroBrandTitle(fontSize: 24),
+        const SizedBox(height: 4),
+        Text(
+          'Book smarter. Wait less.',
+          textAlign: TextAlign.center,
+          style: GoogleFonts.inter(
+            fontSize: 13.5,
+            fontWeight: FontWeight.w700,
+            color: Colors.white.withValues(alpha: 0.92),
+          ),
+        ),
+        const SizedBox(height: 10),
+        const AboutHeroVersionBadge(),
+        const SizedBox(height: 12),
+        const AboutHeroMissionCopy(textAlign: TextAlign.center, fontSize: 12),
+        const SizedBox(height: 16),
+        const AboutAppPillarsStrip(),
+      ],
     );
   }
 }

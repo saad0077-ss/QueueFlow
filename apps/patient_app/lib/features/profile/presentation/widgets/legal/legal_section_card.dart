@@ -10,12 +10,14 @@ class LegalSectionCard extends StatelessWidget {
   final LegalSectionItem section;
   final bool isExpanded;
   final VoidCallback onToggle;
+  final bool inGrid;
 
   const LegalSectionCard({
     super.key,
     required this.section,
     required this.isExpanded,
     required this.onToggle,
+    this.inGrid = false,
   });
 
   @override
@@ -23,7 +25,7 @@ class LegalSectionCard extends StatelessWidget {
     final colors = context.colors;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: EdgeInsets.only(bottom: inGrid ? 0 : 12),
       decoration: BoxDecoration(
         color: colors.surface,
         borderRadius: BorderRadius.circular(18),
@@ -46,8 +48,9 @@ class LegalSectionCard extends StatelessWidget {
         child: InkWell(
           onTap: onToggle,
           child: Padding(
-            padding: const EdgeInsets.all(15),
+            padding: EdgeInsets.all(inGrid ? 18 : 15),
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
