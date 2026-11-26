@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:patient_app/core/widgets/app_snack_bar.dart';
+import 'package:patient_app/features/home/domain/entities/clinic_entity.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 
 import '../../../domain/entities/appointment_entity.dart';
@@ -13,12 +14,18 @@ class MyBookingCard extends StatelessWidget {
   final AppointmentEntity apt;
   final VoidCallback onCancel;
   final VoidCallback? onTrackLiveQueue;
+  final ClinicEntity? clinicOverride;
+  final Map<String, dynamic>? queueDocOverride;
+  final DateTime? currentTimeOverride;
 
   const MyBookingCard({
     super.key,
     required this.apt,
     required this.onCancel,
     this.onTrackLiveQueue,
+    this.clinicOverride,
+    this.queueDocOverride,
+    this.currentTimeOverride,
   });
 
   @override
@@ -114,6 +121,9 @@ class MyBookingCard extends StatelessWidget {
             onCancel: onCancel,
             onTrackLiveQueue: onTrackLiveQueue,
             colors: colors,
+            clinicOverride: clinicOverride,
+            queueDocOverride: queueDocOverride,
+            currentTimeOverride: currentTimeOverride,
           ),
         ],
       ),

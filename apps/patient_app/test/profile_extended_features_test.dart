@@ -156,7 +156,7 @@ void main() {
   ];
 
   group('PaymentHistoryScreen Widget Tests', () {
-    testWidgets('renders header, hero KPI banner, tabs, and payment cards', (tester) async {
+    testWidgets('renders header, hero KPI banner, filter button, and cards', (tester) async {
       tester.view.physicalSize = const Size(1080, 2400);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -184,11 +184,9 @@ void main() {
       expect(find.text('TOTAL PAID'), findsOneWidget);
       expect(find.text('REFUNDED'), findsOneWidget);
 
-      // Verify Filter Tabs
-      expect(find.text('All (2)'), findsOneWidget);
-      expect(find.text('🎟️ Queue Tokens (1)'), findsOneWidget);
-      expect(find.text('📅 Bookings (1)'), findsOneWidget);
-      expect(find.text('↺ Refunded (1)'), findsOneWidget);
+      // Verify search bar filter button replaces horizontal tabs
+      expect(find.byKey(const Key('payment_history_filter_button')), findsOneWidget);
+      expect(find.text('🎟️ Queue Tokens (1)'), findsNothing);
 
       // Verify Payment Cards
       expect(find.text('Smile Dental Clinic'), findsOneWidget);
@@ -200,7 +198,7 @@ void main() {
       expect(find.textContaining('Slot rescheduled by clinic'), findsOneWidget);
     });
 
-    testWidgets('filter tabs filter payments accurately', (tester) async {
+    testWidgets('filter dialog filters payments accurately', (tester) async {
       tester.view.physicalSize = const Size(1080, 2400);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -218,11 +216,14 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Ensure visible and tap Refunded filter tab
-      final refundedTab = find.text('↺ Refunded (1)');
-      await tester.ensureVisible(refundedTab);
+      // Open filter dialog from button inside search bar
+      await tester.tap(find.byKey(const Key('payment_history_filter_button')));
       await tester.pumpAndSettle();
-      await tester.tap(refundedTab);
+
+      expect(find.text('Filter Transactions'), findsOneWidget);
+      await tester.tap(find.byKey(const Key('payment_filter_option_refunded')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Apply Filter'));
       await tester.pumpAndSettle();
 
       expect(find.text('Sunrise Health Clinic'), findsOneWidget);

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:queueflow_ui/queueflow_ui.dart';
 import 'package:patient_app/features/booking/domain/entities/appointment_entity.dart';
+import 'package:patient_app/features/home/domain/entities/clinic_entity.dart';
+import 'package:queueflow_ui/queueflow_ui.dart';
 
 import 'booking_history_card_actions.dart';
 import 'booking_history_card_header.dart';
+import 'booking_queue_availability_builder.dart';
 import 'booking_slip_sheet.dart';
 
 class BookingHistoryCard extends StatelessWidget {
@@ -12,6 +14,9 @@ class BookingHistoryCard extends StatelessWidget {
   final VoidCallback? onBookAgain;
   final VoidCallback? onRateVisit;
   final VoidCallback? onTrackQueue;
+  final ClinicEntity? clinicOverride;
+  final Map<String, dynamic>? queueDocOverride;
+  final DateTime? currentTimeOverride;
 
   const BookingHistoryCard({
     super.key,
@@ -19,6 +24,9 @@ class BookingHistoryCard extends StatelessWidget {
     this.onBookAgain,
     this.onRateVisit,
     this.onTrackQueue,
+    this.clinicOverride,
+    this.queueDocOverride,
+    this.currentTimeOverride,
   });
 
   @override
@@ -45,62 +53,49 @@ class BookingHistoryCard extends StatelessWidget {
         children: [
           BookingHistoryCardHeader(appointment: appointment),
           const SizedBox(height: 10),
-          _buildDoctorAndDate(colors),
+          _metaRow(Icons.person_rounded, appointment.doctorName, colors),
+          const SizedBox(height: 4),
+          _metaRow(Icons.schedule_rounded, appointment.dateTime, colors),
           const SizedBox(height: 10),
           _buildBookingRef(context, colors),
           const SizedBox(height: 10),
           Divider(color: colors.border, height: 1),
           const SizedBox(height: 8),
-          BookingHistoryCardActions(
-            isUpcoming: appointment.isUpcoming,
-            onTrackQueue: onTrackQueue,
-            onRateVisit: onRateVisit,
-            onBookAgain: onBookAgain,
+          BookingQueueAvailabilityBuilder(
+            appointment: appointment,
+            overrideClinic: clinicOverride,
+            overrideQueueDoc: queueDocOverride,
+            currentTime: currentTimeOverride,
+            builder: (_, access) => BookingHistoryCardActions(
+              isUpcoming: appointment.isUpcoming,
+              canJoinQueue: access.isEnabled,
+              queueStatusHint: access.reason,
+              onTrackQueue: onTrackQueue,
+              onRateVisit: onRateVisit,
+              onBookAgain: onBookAgain,
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildDoctorAndDate(dynamic colors) {
-    return Column(
+  Widget _metaRow(IconData icon, String text, AppColorsExtension colors) {
+    return Row(
       children: [
-        Row(
-          children: [
-            Icon(Icons.person_rounded, size: 14, color: colors.textMuted),
-            const SizedBox(width: 5),
-            Expanded(
-              child: Text(
-                appointment.doctorName,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: colors.textMuted,
-                  fontWeight: FontWeight.w500,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
+        Icon(icon, size: 14, color: colors.textMuted),
+        const SizedBox(width: 5),
+        Expanded(
+          child: Text(
+            text,
+            style: TextStyle(
+              fontSize: 12,
+              color: colors.textMuted,
+              fontWeight: FontWeight.w500,
             ),
-          ],
-        ),
-        const SizedBox(height: 4),
-        Row(
-          children: [
-            Icon(Icons.schedule_rounded, size: 14, color: colors.textMuted),
-            const SizedBox(width: 5),
-            Expanded(
-              child: Text(
-                appointment.dateTime,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: colors.textMuted,
-                  fontWeight: FontWeight.w500,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
-          ],
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
       ],
     );
@@ -116,14 +111,19 @@ class BookingHistoryCard extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            'ID: ${appointment.bookingRef}',
-            style: GoogleFonts.robotoMono(
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              color: const Color(0xFF0284C7),
+          Expanded(
+            child: Text(
+              'ID: ${appointment.bookingRef}',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.robotoMono(
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF0284C7),
+              ),
             ),
           ),
+          const SizedBox(width: 8),
           InkWell(
             onTap: () =>
                 BookingSlipSheet.show(context, appointment: appointment),

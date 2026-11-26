@@ -3,6 +3,8 @@ import 'package:queueflow_ui/queueflow_ui.dart';
 
 class BookingHistoryCardActions extends StatelessWidget {
   final bool isUpcoming;
+  final bool canJoinQueue;
+  final String? queueStatusHint;
   final VoidCallback? onTrackQueue;
   final VoidCallback? onRateVisit;
   final VoidCallback? onBookAgain;
@@ -10,6 +12,8 @@ class BookingHistoryCardActions extends StatelessWidget {
   const BookingHistoryCardActions({
     super.key,
     required this.isUpcoming,
+    this.canJoinQueue = false,
+    this.queueStatusHint,
     this.onTrackQueue,
     this.onRateVisit,
     this.onBookAgain,
@@ -18,29 +22,67 @@ class BookingHistoryCardActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final showHint =
+        !canJoinQueue && (queueStatusHint?.trim().isNotEmpty ?? false);
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        if (isUpcoming && onTrackQueue != null)
-          ElevatedButton(
-            onPressed: onTrackQueue,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              foregroundColor: Colors.white,
-              elevation: 0,
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-              minimumSize: Size.zero,
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
+        if (isUpcoming && onTrackQueue != null) ...[
+          if (showHint) ...[
+            Expanded(
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.schedule_rounded,
+                    size: 13,
+                    color: colors.textMuted,
+                  ),
+                  const SizedBox(width: 5),
+                  Expanded(
+                    child: Text(
+                      queueStatusHint!,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: colors.textMuted,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            child: const Text(
-              'Join / Track Queue',
-              style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700),
+            const SizedBox(width: 8),
+          ],
+          Tooltip(
+            message: showHint ? queueStatusHint! : 'Open live queue',
+            child: ElevatedButton(
+              onPressed: canJoinQueue ? onTrackQueue : null,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
+                disabledBackgroundColor: colors.textMuted.withValues(alpha: 0.16),
+                disabledForegroundColor: colors.textMuted.withValues(alpha: 0.75),
+                elevation: 0,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 6,
+                ),
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: const Text(
+                'Join / Track Queue',
+                style: TextStyle(fontSize: 11.5, fontWeight: FontWeight.w700),
+              ),
             ),
           ),
+        ],
         if (!isUpcoming) ...[
           if (onRateVisit != null) ...[
             OutlinedButton(

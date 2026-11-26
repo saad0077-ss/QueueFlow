@@ -5,38 +5,47 @@ extension _ProfileBlocDataHandlers on ProfileBloc {
     ProfileLoadRequested event,
     Emitter<ProfileState> emit,
   ) async {
-    emit(state.copyWith(status: ProfileStatus.loading, clearMessages: true));
+    if (state.profile == null) {
+      emit(state.copyWith(status: ProfileStatus.loading, clearMessages: true));
+    }
     try {
-      final profile = await getProfileUseCase();
-      final favorites = await getFavoriteClinicsUseCase();
-      final reviews = await getUserReviewsUseCase();
-      final tickets = await getSupportTicketsUseCase();
-      final queueHist = getQueueHistoryUseCase != null
-          ? await getQueueHistoryUseCase!()
-          : await GetQueueHistoryUseCase(getProfileUseCase.repository)();
-      final payHist = getPaymentHistoryUseCase != null
-          ? await getPaymentHistoryUseCase!()
-          : await GetPaymentHistoryUseCase(getProfileUseCase.repository)();
+      final fProfile = getProfileUseCase();
+      final fFavs = getFavoriteClinicsUseCase();
+      final fReviews = getUserReviewsUseCase();
+      final fTickets = getSupportTicketsUseCase();
+      final fQueue = getQueueHistoryUseCase != null
+          ? getQueueHistoryUseCase!()
+          : GetQueueHistoryUseCase(getProfileUseCase.repository)();
+      final fPay = getPaymentHistoryUseCase != null
+          ? getPaymentHistoryUseCase!()
+          : GetPaymentHistoryUseCase(getProfileUseCase.repository)();
+
+      await Future.wait([fProfile, fFavs, fReviews, fTickets, fQueue, fPay]);
+      final tickets = await fTickets;
 
       emit(
         state.copyWith(
           status: ProfileStatus.loaded,
-          profile: profile,
-          favoriteClinics: favorites,
-          userReviews: reviews,
+          isLoggedOut: false,
+          profile: await fProfile,
+          favoriteClinics: await fFavs,
+          userReviews: await fReviews,
           supportTickets: tickets,
-          queueHistory: queueHist,
-          paymentHistory: payHist,
-          activeTicketId: tickets.isNotEmpty ? tickets.first.id : null,
+          queueHistory: await fQueue,
+          paymentHistory: await fPay,
+          activeTicketId: state.activeTicketId ??
+              (tickets.isNotEmpty ? tickets.first.id : null),
         ),
       );
     } catch (e) {
-      emit(
-        state.copyWith(
-          status: ProfileStatus.error,
-          errorMessage: 'Failed to load profile data: $e',
-        ),
-      );
+      if (state.profile == null) {
+        emit(
+          state.copyWith(
+            status: ProfileStatus.error,
+            errorMessage: 'Failed to load profile data: $e',
+          ),
+        );
+      }
     }
   }
 

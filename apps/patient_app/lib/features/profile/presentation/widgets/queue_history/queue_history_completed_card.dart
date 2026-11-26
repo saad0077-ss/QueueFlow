@@ -3,6 +3,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 
 import '../../../domain/entities/patient_queue_history_entity.dart';
+import 'queue_history_card_parts.dart';
+import 'queue_history_doctor_row.dart';
+import 'queue_history_meta_strip.dart';
 
 class QueueHistoryCompletedCard extends StatelessWidget {
   final PatientQueueHistoryEntity item;
@@ -17,137 +20,82 @@ class QueueHistoryCompletedCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final isCancelled = item.isCancelled;
+    final statusColor =
+        isCancelled ? const Color(0xFFEF4444) : const Color(0xFF10B981);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: colors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: colors.border),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: isCancelled ? statusColor.withValues(alpha: 0.28) : colors.border,
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: colors.surfaceSecondary,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: colors.border),
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  item.token,
-                  style: GoogleFonts.robotoMono(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w800,
-                    color: colors.textPrimary,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.clinicName,
-                      style: TextStyle(
-                        fontSize: 13.5,
-                        fontWeight: FontWeight.w800,
-                        color: colors.textPrimary,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      '${item.departmentName} · ${item.serviceName}',
-                      style: TextStyle(
-                        fontSize: 11.5,
-                        fontWeight: FontWeight.w500,
-                        color: colors.textMuted,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 3),
-                    Text(
-                      [
-                        item.date,
-                        'Joined ${item.joinedTime}',
-                        if (item.waitTime != null && item.waitTime!.isNotEmpty)
-                          'Waited ${item.waitTime}',
-                      ].join(' · '),
-                      style: TextStyle(
-                        fontSize: 10.5,
-                        fontWeight: FontWeight.w500,
-                        color: colors.textSubtle,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
+              Flexible(child: QueueHistoryTokenBadge(token: item.token)),
               const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF10B981).withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(999),
-                ),
-                child: const Text(
-                  '✓ Served',
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w800,
-                    color: Color(0xFF10B981),
-                  ),
-                ),
+              QueueHistoryStatusPill(
+                color: statusColor,
+                label: isCancelled ? '✕ Cancelled' : '✓ Served',
               ),
             ],
           ),
-          if (onBookAgain != null) ...[
-            const SizedBox(height: 10),
-            Divider(color: colors.border, height: 1),
-            const SizedBox(height: 8),
-            Align(
-              alignment: Alignment.centerRight,
-              child: OutlinedButton(
-                onPressed: onBookAgain,
-                style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: colors.border),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 5,
-                  ),
-                  minimumSize: Size.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+          const SizedBox(height: 12),
+          QueueHistoryClinicRow(item: item),
+          const SizedBox(height: 12),
+          QueueHistoryMetaStrip(item: item),
+          if (onBookAgain != null || item.doctorName.trim().isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: QueueHistoryDoctorRow(
+                    doctorName: item.doctorName,
+                    photoUrl: item.doctorPhotoUrl,
                   ),
                 ),
-                child: Text(
-                  'Book Clinic Again',
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    color: colors.textPrimary,
+                if (onBookAgain != null) ...[
+                  const SizedBox(width: 8),
+                  InkWell(
+                    onTap: onBookAgain,
+                    borderRadius: BorderRadius.circular(10),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                      decoration: BoxDecoration(
+                        color: colors.primary.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: colors.primary.withValues(alpha: 0.35)),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.event_repeat_rounded, size: 14, color: colors.primary),
+                          const SizedBox(width: 5),
+                          Text(
+                            'Book Clinic Again',
+                            style: GoogleFonts.inter(fontSize: 11.5, fontWeight: FontWeight.w700, color: colors.primary),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-              ),
+                ],
+              ],
             ),
           ],
         ],

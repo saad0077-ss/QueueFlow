@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 
-import '../../../../notifications/presentation/pages/notifications_screen.dart';
+import '../../../../home/presentation/bloc/home_bloc.dart';
+import '../../../../home/presentation/widgets/home_notification_bell.dart';
 import 'my_bookings_filter_bar.dart';
 
 class MyBookingsHeader extends StatelessWidget {
@@ -20,6 +22,12 @@ class MyBookingsHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    var unreadCount = 0;
+    try {
+      unreadCount = context.select<HomeBloc, int>(
+        (b) => b.state.unreadNotificationsCount,
+      );
+    } catch (_) {}
 
     return Column(
       children: [
@@ -35,28 +43,7 @@ class MyBookingsHeader extends StatelessWidget {
                   color: colors.textPrimary,
                 ),
               ),
-              GestureDetector(
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const NotificationsScreen(),
-                    ),
-                  );
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(11),
-                  decoration: BoxDecoration(
-                    color: colors.surface,
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: colors.border),
-                  ),
-                  child: Icon(
-                    Icons.notifications_none_rounded,
-                    color: colors.textPrimary,
-                    size: 22,
-                  ),
-                ),
-              ),
+              HomeNotificationBell(unreadCount: unreadCount),
             ],
           ),
           const SizedBox(height: 16),

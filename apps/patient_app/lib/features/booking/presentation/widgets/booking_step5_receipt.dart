@@ -6,26 +6,19 @@ import 'package:patient_app/core/widgets/gradient_button.dart';
 import 'package:patient_app/features/booking/domain/entities/appointment_entity.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 
+import 'booking_step5_receipt_card.dart';
+
 class BookingStep5Receipt extends StatelessWidget {
   final AppointmentEntity appointment;
   final VoidCallback onViewMyBookings;
   final VoidCallback onBackToHome;
-  final VoidCallback? onTrackLiveQueue;
 
   const BookingStep5Receipt({
     super.key,
     required this.appointment,
     required this.onViewMyBookings,
     required this.onBackToHome,
-    this.onTrackLiveQueue,
   });
-
-  bool get _isToday {
-    final now = DateTime.now();
-    final todayIso =
-        '${now.year.toString().padLeft(4, '0')}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
-    return appointment.dateRaw == todayIso;
-  }
 
   void _copyReference(BuildContext context) {
     Clipboard.setData(ClipboardData(text: appointment.bookingRef));
@@ -43,8 +36,6 @@ class BookingStep5Receipt extends StatelessWidget {
     return Column(
       children: [
         const SizedBox(height: 12),
-
-        // Glowing Success Badge
         Container(
           width: 72,
           height: 72,
@@ -67,9 +58,7 @@ class BookingStep5Receipt extends StatelessWidget {
             child: Icon(Icons.check_rounded, color: Colors.white, size: 40),
           ),
         ),
-
         const SizedBox(height: 18),
-
         Text(
           'Appointment Confirmed!',
           style: GoogleFonts.inter(
@@ -84,222 +73,12 @@ class BookingStep5Receipt extends StatelessWidget {
           textAlign: TextAlign.center,
           style: GoogleFonts.inter(fontSize: 12.5, color: colors.textMuted),
         ),
-
         const SizedBox(height: 20),
-
-        // Receipt Card
-        Container(
-          padding: const EdgeInsets.all(18),
-          decoration: BoxDecoration(
-            color: colors.surface,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: colors.border, width: 1.2),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.15),
-                blurRadius: 18,
-                offset: const Offset(0, 6),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Booking Reference Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'BOOKING REFERENCE',
-                        style: GoogleFonts.inter(
-                          fontSize: 10.5,
-                          fontWeight: FontWeight.w800,
-                          color: colors.textMuted,
-                          letterSpacing: 0.8,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        appointment.bookingRef,
-                        style: GoogleFonts.robotoMono(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w800,
-                          color: colors.primary,
-                          letterSpacing: 1.0,
-                        ),
-                      ),
-                    ],
-                  ),
-                  IconButton(
-                    onPressed: () => _copyReference(context),
-                    icon: Icon(Icons.copy_rounded, color: colors.primary),
-                    tooltip: 'Copy Reference',
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 14),
-              Divider(color: colors.border, height: 1),
-              const SizedBox(height: 14),
-
-              // Detail Rows
-              _buildDetailRow(
-                context,
-                'Clinic',
-                appointment.clinicName,
-                subtitle: appointment.clinicAddress,
-              ),
-              const SizedBox(height: 12),
-              _buildDetailRow(
-                context,
-                'Doctor',
-                appointment.doctorName,
-                subtitle: appointment.doctorSpecialty,
-              ),
-              const SizedBox(height: 12),
-              _buildDetailRow(
-                context,
-                'Service',
-                appointment.serviceName,
-                subtitle: '${appointment.serviceDuration} min consultation',
-              ),
-              const SizedBox(height: 12),
-              _buildDetailRow(
-                context,
-                'Scheduled For',
-                appointment.dateTime,
-                isHighlight: true,
-              ),
-
-              const SizedBox(height: 14),
-              Divider(color: colors.border, height: 1),
-              const SizedBox(height: 14),
-
-              // Payment Status
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Payment Status',
-                        style: GoogleFonts.inter(
-                          fontSize: 11,
-                          color: colors.textMuted,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 3,
-                        ),
-                        decoration: BoxDecoration(
-                          color: colors.success.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(6),
-                          border: Border.all(
-                            color: colors.success.withValues(alpha: 0.35),
-                          ),
-                        ),
-                        child: Text(
-                          'PAID (RAZORPAY TEST)',
-                          style: GoogleFonts.inter(
-                            fontSize: 10.5,
-                            fontWeight: FontWeight.w800,
-                            color: colors.success,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        'Amount Paid',
-                        style: GoogleFonts.inter(
-                          fontSize: 11,
-                          color: colors.textMuted,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        '₹${appointment.servicePrice.toStringAsFixed(2)}',
-                        style: GoogleFonts.robotoMono(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w800,
-                          color: colors.textPrimary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-
-              if (appointment.payment?.paymentId != null) ...[
-                const SizedBox(height: 8),
-                Text(
-                  'Transaction ID: ${appointment.payment!.paymentId}',
-                  style: GoogleFonts.robotoMono(
-                    fontSize: 10.5,
-                    color: colors.textSubtle,
-                  ),
-                ),
-              ],
-            ],
-          ),
+        BookingStep5ReceiptCard(
+          appointment: appointment,
+          onCopyReference: () => _copyReference(context),
         ),
-
-        const SizedBox(height: 14),
-
         const SizedBox(height: 24),
-
-        // Action Buttons
-        if (_isToday || onTrackLiveQueue != null) ...[
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              gradient: AppColors.primaryGradient,
-              borderRadius: BorderRadius.circular(24),
-              boxShadow: [
-                BoxShadow(
-                  color: colors.primary.withValues(alpha: 0.35),
-                  blurRadius: 14,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: ElevatedButton.icon(
-              onPressed: onTrackLiveQueue ?? onBackToHome,
-              icon: const Icon(
-                Icons.bolt_rounded,
-                color: Colors.white,
-                size: 20,
-              ),
-              label: Text(
-                'Track Live Queue Spot Now',
-                style: GoogleFonts.inter(
-                  fontSize: 14.5,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
-                ),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.transparent,
-                shadowColor: Colors.transparent,
-                padding: const EdgeInsets.symmetric(vertical: 13),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-        ],
         Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 380),
@@ -342,54 +121,6 @@ class BookingStep5Receipt extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 20),
-      ],
-    );
-  }
-
-  Widget _buildDetailRow(
-    BuildContext context,
-    String label,
-    String value, {
-    String? subtitle,
-    bool isHighlight = false,
-  }) {
-    final colors = context.colors;
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          label,
-          style: GoogleFonts.inter(fontSize: 12, color: colors.textMuted),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                value,
-                style: GoogleFonts.inter(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
-                  color: isHighlight ? colors.primary : colors.textPrimary,
-                ),
-                textAlign: TextAlign.end,
-              ),
-              if (subtitle != null && subtitle.isNotEmpty) ...[
-                const SizedBox(height: 1),
-                Text(
-                  subtitle,
-                  style: GoogleFonts.inter(
-                    fontSize: 11,
-                    color: colors.textMuted,
-                  ),
-                  textAlign: TextAlign.end,
-                ),
-              ],
-            ],
-          ),
-        ),
       ],
     );
   }

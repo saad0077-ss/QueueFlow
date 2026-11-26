@@ -20,17 +20,21 @@ class MyReviewsState extends Equatable {
 
   List<PatientReviewEntity> get doctorReviews =>
       allReviews.where((r) => r.doctorName.isNotEmpty).toList();
+
+  List<PatientReviewEntity> get clinicReviews =>
+      allReviews.where((r) => r.clinicName.isNotEmpty).toList();
+
   List<PatientReviewEntity> get fiveStarReviews =>
       allReviews.where((r) => r.doctorRating == 5 || r.rating == 5).toList();
 
   double get avgDoctorRating {
     final docs = doctorReviews;
-    if (docs.isEmpty) return 5.0;
+    if (docs.isEmpty) return 0.0;
     return docs.fold(0.0, (sum, r) => sum + r.doctorRating) / docs.length;
   }
 
   double get avgClinicRating {
-    if (allReviews.isEmpty) return 5.0;
+    if (allReviews.isEmpty) return 0.0;
     return allReviews.fold(0.0, (sum, r) => sum + r.clinicRating) /
         allReviews.length;
   }
@@ -42,9 +46,12 @@ class MyReviewsState extends Equatable {
       case 'doctors':
         return doctorReviews;
       case 'clinics':
+        return clinicReviews;
+      case '5star':
+        return fiveStarReviews;
       case 'all':
       default:
-        return activeFilter == '5star' ? fiveStarReviews : allReviews;
+        return allReviews;
     }
   }
 
@@ -85,19 +92,19 @@ class MyReviewsBloc extends Bloc<MyReviewsEvent, MyReviewsState> {
     on<DeleteMyReviewEvent>(_onDelete);
     on<AddMyReviewEvent>(_onAddReview);
 
-    if (initialReviews == null) add(const LoadMyReviewsEvent());
+    add(LoadMyReviewsEvent(silent: initialReviews != null));
   }
 
   Future<void> _onLoad(
     LoadMyReviewsEvent event,
     Emitter<MyReviewsState> emit,
   ) async {
-    emit(state.copyWith(isLoading: true));
+    if (!event.silent) emit(state.copyWith(isLoading: true));
     try {
       final items = await repository.getUserReviews();
       if (!isClosed) emit(state.copyWith(isLoading: false, allReviews: items));
     } catch (_) {
-      if (!isClosed) emit(state.copyWith(isLoading: false));
+      if (!isClosed && !event.silent) emit(state.copyWith(isLoading: false));
     }
   }
 

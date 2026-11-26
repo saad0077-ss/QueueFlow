@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:patient_app/core/services/clinic_rating_aggregator.dart';
+import 'package:patient_app/features/profile/data/repositories/profile_review_resolvers.dart';
 
 import '../../../home/domain/entities/clinic_entity.dart';
 import '../../domain/entities/clinic_details_entity.dart';
@@ -67,13 +69,19 @@ class ClinicDetailsRepositoryImpl implements ClinicDetailsRepository {
 
     final services = await _fetchServices(clinicId, clinic.category);
     final doctors = await _fetchDoctors(clinicId, clinic.category);
-    final reviews = await _fetchReviews(clinicId);
-    final summary = _summarize(reviews.map((r) => r.rating));
+    final reviews = await _fetchReviews(
+      clinicId,
+      clinicName: clinic.name,
+      doctors: doctors,
+    );
+    final summary = ClinicRatingAggregator.summarize(
+      reviews.map((r) => r.rating),
+    );
 
     return ClinicDetailsEntity(
       clinic: clinic.withRating(
         rating: summary.average,
-        reviewCount: reviews.length,
+        reviewCount: summary.count,
       ),
       starPercents: summary.starPercents,
       description: description,
@@ -172,43 +180,85 @@ class ClinicDetailsRepositoryImpl implements ClinicDetailsRepository {
     return out;
   }
 
-  Future<List<ClinicReviewModel>> _fetchReviews(String clinicId) async {
+  Future<List<ClinicReviewModel>> _fetchReviews(
+    String clinicId, {
+    String clinicName = '',
+    List<ClinicDoctorModel> doctors = const [],
+  }) async {
     try {
-      final snap = await _firestore
+      final fRev = _firestore
           .collection('reviews')
           .where('clinicId', isEqualTo: clinicId)
           .get();
-      // Newest first; sorted here to avoid needing a composite index.
-      final docs = snap.docs.toList()
-        ..sort((a, b) {
-          final ta = a.data()['createdAt'], tb = b.data()['createdAt'];
-          if (ta is! Timestamp || tb is! Timestamp) return 0;
-          return tb.compareTo(ta);
-        });
-      return docs.map(ClinicReviewModel.fromFirestore).toList();
+      final fDoc = _firestore
+          .collection('doctor_reviews')
+          .where('clinicId', isEqualTo: clinicId)
+          .get();
+      final fNamed = clinicName.trim().isNotEmpty
+          ? _firestore
+                .collection('reviews')
+                .where('clinicName', isEqualTo: clinicName.trim())
+                .get()
+          : null;
+
+      final revSnap = await fRev;
+      final docSnap = await fDoc;
+      final namedSnap = fNamed != null ? await fNamed : null;
+
+      final doctorById = {for (final d in doctors) d.id: d.name};
+      final combined = <({String id, ClinicReviewModel model, Object? ts})>[];
+      final seen = <String>{};
+
+      void addDoc(
+        QueryDocumentSnapshot<Map<String, dynamic>> d, {
+        bool isDoctor = false,
+      }) {
+        if (!seen.add(d.id)) return;
+        final map = Map<String, dynamic>.from(d.data());
+        if (isDoctor) {
+          final did = (map['doctorId'] ?? '').toString();
+          final dName = (map['doctorName'] ?? doctorById[did] ?? '').toString();
+          if (dName.isNotEmpty) {
+            map['doctor'] = dName;
+            final rawTags = (map['tags'] as List<dynamic>?) ?? const [];
+            if (rawTags.isEmpty) map['tags'] = ['👨‍⚕️ $dName'];
+          }
+          if ((map['comment'] ?? '').toString().trim().isEmpty) {
+            final star = (map['rating'] as num?)?.toInt() ?? 5;
+            map['comment'] = dName.isNotEmpty
+                ? 'Rated $dName ($star★)'
+                : 'Doctor Consultation ($star★)';
+          }
+        }
+        combined.add((
+          id: d.id,
+          model: ClinicReviewModel.fromMap(map, id: d.id),
+          ts: map['createdAt'],
+        ));
+      }
+
+      for (final d in revSnap.docs) {
+        addDoc(d);
+      }
+      if (namedSnap != null) {
+        for (final d in namedSnap.docs) {
+          addDoc(d);
+        }
+      }
+      for (final d in docSnap.docs) {
+        addDoc(d, isDoctor: true);
+      }
+
+      combined.sort((a, b) {
+        final ta = a.ts, tb = b.ts;
+        if (ta is! Timestamp || tb is! Timestamp) return 0;
+        return tb.compareTo(ta);
+      });
+      return combined.map((e) => e.model).toList();
     } catch (e) {
       debugPrint('Error fetching reviews: $e');
       return const [];
     }
-  }
-
-  /// Average rating and the share of each star (5★ → 1★) for [ratings].
-  static ({double average, List<int> starPercents}) _summarize(
-    Iterable<int> ratings,
-  ) {
-    final counts = List<int>.filled(5, 0);
-    var total = 0, sum = 0;
-    for (final r in ratings) {
-      final star = r.clamp(1, 5);
-      counts[5 - star]++;
-      sum += star;
-      total++;
-    }
-    if (total == 0) return (average: 0, starPercents: const [0, 0, 0, 0, 0]);
-    return (
-      average: sum / total,
-      starPercents: counts.map((c) => (c * 100 / total).round()).toList(),
-    );
   }
 
   @override
@@ -221,11 +271,20 @@ class ClinicDetailsRepositoryImpl implements ClinicDetailsRepository {
     final user = _auth.currentUser;
     if (user == null) throw Exception('Please sign in to rate this clinic.');
     final name = user.displayName?.trim() ?? '';
+    final emailLower = (user.email ?? '').trim().toLowerCase();
+    final clinicName = await ProfileReviewResolvers.resolveClinicName(
+      _firestore,
+      clinicId,
+      {},
+    );
     await _firestore.collection('reviews').add({
       'clinicId': clinicId,
+      'clinicName': clinicName,
       'patientId': user.uid,
+      'userId': user.uid,
       'patientName': name.isNotEmpty ? name : 'Verified Patient',
-      'patientEmail': user.email ?? '',
+      'patientEmail': emailLower,
+      'userEmail': emailLower,
       'rating': rating.clamp(1, 5),
       'comment': comment,
       'tags': tags,
@@ -233,28 +292,11 @@ class ClinicDetailsRepositoryImpl implements ClinicDetailsRepository {
       'helpfulCount': 0,
       'createdAt': FieldValue.serverTimestamp(),
     });
-    await _syncClinicRating(clinicId);
-  }
-
-  /// Stores the average rating on the clinic doc so lists and the platform console can show it.
-  Future<void> _syncClinicRating(String clinicId) async {
-    try {
-      final snap = await _firestore
-          .collection('reviews')
-          .where('clinicId', isEqualTo: clinicId)
-          .get();
-      final ratings = snap.docs
-          .map((d) => (d.data()['rating'] as num?)?.toInt() ?? 0)
-          .where((r) => r > 0)
-          .toList();
-      final summary = _summarize(ratings);
-      await _firestore.collection('clinics').doc(clinicId).set({
-        'rating': double.parse(summary.average.toStringAsFixed(2)),
-        'reviewCount': ratings.length,
-      }, SetOptions(merge: true));
-    } catch (e) {
-      debugPrint('Error syncing clinic rating: $e');
-    }
+    await ClinicRatingAggregator.syncClinicRating(
+      _firestore,
+      clinicId,
+      clinicName: clinicName,
+    );
   }
 
   @override
@@ -267,18 +309,41 @@ class ClinicDetailsRepositoryImpl implements ClinicDetailsRepository {
     final user = _auth.currentUser;
     if (user == null) throw Exception('Please sign in to rate this doctor.');
     final name = user.displayName?.trim() ?? '';
+    final emailLower = (user.email ?? '').trim().toLowerCase();
+    final clinicName = await ProfileReviewResolvers.resolveClinicName(
+      _firestore,
+      clinicId,
+      {},
+    );
+    final docInfo = await ProfileReviewResolvers.resolveDoctorInfo(
+      _firestore,
+      clinicId,
+      doctorId,
+      {},
+    );
     await _firestore
         .collection('doctor_reviews')
         .doc('${doctorId}_${user.uid}')
         .set({
           'clinicId': clinicId,
+          'clinicName': clinicName,
           'doctorId': doctorId,
+          'doctorName': docInfo.name,
+          'doctorSpecialty': docInfo.specialty,
           'patientId': user.uid,
+          'userId': user.uid,
           'patientName': name.isNotEmpty ? name : 'Verified Patient',
+          'patientEmail': emailLower,
+          'userEmail': emailLower,
           'rating': rating.clamp(1, 5),
           'comment': comment,
           'createdAt': FieldValue.serverTimestamp(),
         });
+    await ClinicRatingAggregator.syncClinicRating(
+      _firestore,
+      clinicId,
+      clinicName: clinicName,
+    );
   }
 
   @override
@@ -321,6 +386,9 @@ class ClinicDetailsRepositoryImpl implements ClinicDetailsRepository {
             'reviewsCount': clinic.reviewCount,
             'address': clinic.address,
             'initials': clinic.initials,
+            if (clinic.imageUrl != null && clinic.imageUrl!.isNotEmpty)
+              'imageUrl': clinic.imageUrl,
+            if (clinic.imageVersion > 0) 'imageVersion': clinic.imageVersion,
             'savedAt': FieldValue.serverTimestamp(),
           },
         },

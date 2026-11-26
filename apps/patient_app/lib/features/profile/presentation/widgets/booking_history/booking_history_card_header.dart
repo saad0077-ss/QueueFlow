@@ -45,7 +45,10 @@ class BookingHistoryCardHeader extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 4),
-              Row(
+              Wrap(
+                spacing: 6,
+                runSpacing: 4,
+                crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(
@@ -58,6 +61,8 @@ class BookingHistoryCardHeader extends StatelessWidget {
                     ),
                     child: Text(
                       '🩺 ${appointment.doctorSpecialty.isNotEmpty ? appointment.doctorSpecialty : 'General Care'}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         fontSize: 9.5,
                         fontWeight: FontWeight.w700,
@@ -65,7 +70,6 @@ class BookingHistoryCardHeader extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 6),
                   Text(
                     '⏱️ ${appointment.serviceDuration} min',
                     style: TextStyle(fontSize: 11, color: colors.textMuted),

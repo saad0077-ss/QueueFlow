@@ -16,6 +16,9 @@ class PatientReviewEntity extends Equatable {
   final int clinicRating;
   final List<String> doctorTags;
   final int helpfulCount;
+  final String? clinicImageUrl;
+  final int clinicImageVersion;
+  final String doctorPhotoUrl;
 
   const PatientReviewEntity({
     required this.id,
@@ -33,6 +36,9 @@ class PatientReviewEntity extends Equatable {
     this.clinicRating = 5,
     this.doctorTags = const [],
     this.helpfulCount = 2,
+    this.clinicImageUrl,
+    this.clinicImageVersion = 0,
+    this.doctorPhotoUrl = '',
   });
 
   @override
@@ -52,5 +58,8 @@ class PatientReviewEntity extends Equatable {
     clinicRating,
     doctorTags,
     helpfulCount,
+    clinicImageUrl,
+    clinicImageVersion,
+    doctorPhotoUrl,
   ];
 }

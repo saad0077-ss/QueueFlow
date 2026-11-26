@@ -1,13 +1,18 @@
+import 'dart:async' show unawaited;
+
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 
+import '../../../../core/services/notification_controller.dart';
 import '../../../../core/utils/clinic_token_generator.dart';
 import '../../domain/entities/active_ticket_entity.dart';
 import '../../domain/entities/clinic_entity.dart';
 import '../../domain/repositories/home_repository.dart';
 import '../models/active_ticket_model.dart';
 import '../models/clinic_model.dart';
+import 'home_clinics_rating_overlay.dart';
 
 /// Issues the next token using the same method as the clinic admin walk-in
 /// flow: `<ClinicPrefix>-<ServiceCode>-<NNN>` (e.g. `SH-GC-001`), with a
@@ -166,14 +171,18 @@ class HomeRepositoryImpl implements HomeRepository {
     return name.isNotEmpty;
   }
 
+  List<ClinicEntity> _mapClinics(
+    List<QueryDocumentSnapshot<Map<String, dynamic>>> docs,
+  ) => docs.where(_isRealClinic).map(ClinicModel.fromFirestore).toList();
+
   @override
   Future<List<ClinicEntity>> getFeaturedClinics() async {
     try {
       final snap = await _firestore.collection('clinics').get();
-      return snap.docs
-          .where(_isRealClinic)
-          .map((doc) => ClinicModel.fromFirestore(doc))
-          .toList();
+      return await HomeClinicsRatingOverlay.loadAndApply(
+        _firestore,
+        _mapClinics(snap.docs),
+      );
     } catch (e) {
       debugPrint('Error getting featured clinics from Firestore: $e');
       return [];
@@ -182,12 +191,10 @@ class HomeRepositoryImpl implements HomeRepository {
 
   @override
   Stream<List<ClinicEntity>> watchFeaturedClinics() {
-    return _firestore.collection('clinics').snapshots().map((snap) {
-      return snap.docs
-          .where(_isRealClinic)
-          .map((doc) => ClinicModel.fromFirestore(doc))
-          .toList();
-    });
+    return HomeClinicsRatingOverlay.watchClinicsWithLiveRatings(
+      _firestore,
+      _mapClinics,
+    );
   }
 
   @override
@@ -375,6 +382,19 @@ class HomeRepositoryImpl implements HomeRepository {
 
       final docRef = await _firestore.collection('tickets').add(ticketData);
       _cachedTicket = ActiveTicketModel.fromMap(ticketData, id: docRef.id);
+      final created = _cachedTicket!;
+      unawaited(
+        NotificationController.showStatusBarNotification(
+          id: ('join_${created.id}').hashCode,
+          title: '⏳ Token #${created.token} Confirmed',
+          body: 'Joined queue for ${created.serviceName} at $clinicName',
+          route: '/live_queue',
+          summary: clinicName,
+          notifId: 'queue_${created.id}',
+          category: NotificationCategory.Reminder,
+          wakeUpScreen: true,
+        ),
+      );
     } catch (e) {
       debugPrint('Error recording ticket to Firestore: $e');
     }

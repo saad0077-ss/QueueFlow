@@ -150,7 +150,7 @@ class ClinicEntity extends Equatable {
   double? get distanceKm => UserLocationService.distanceKm(latitude, longitude);
 
   /// True when at least one patient has rated this clinic.
-  bool get hasRatings => reviewCount > 0;
+  bool get hasRatings => reviewCount > 0 && rating > 0;
 
   /// Copy with a recomputed rating summary.
   ClinicEntity withRating({required double rating, required int reviewCount}) {
