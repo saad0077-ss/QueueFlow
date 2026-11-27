@@ -257,7 +257,7 @@ class HomeClinicCard extends StatelessWidget {
                                   child: Text(
                                     clinic.hasRatings
                                         ? '(${clinic.reviewCount}) · ${clinic.primaryCategory}'
-                                        : clinic.primaryCategory,
+                                        : '· ${clinic.primaryCategory}',
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(

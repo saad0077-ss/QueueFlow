@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '../../../notifications/data/services/patient_notifications_service.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../models/user_model.dart';
@@ -199,6 +200,10 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<void> signOut() async {
+    try {
+      await PatientNotificationsService.instance.flushPendingSync();
+      PatientNotificationsService.instance.resetSessionCache();
+    } catch (_) {}
     await _firebaseAuth.signOut();
     if (!kIsWeb) {
       try {

@@ -246,9 +246,6 @@ class _BookingWizardViewState extends State<_BookingWizardView> {
       case 5:
         return BookingStep5Receipt(
           appointment: state.confirmedAppointment!,
-          onTrackLiveQueue: () {
-            Navigator.of(context).pop('open_queue');
-          },
           onViewMyBookings: () {
             Navigator.of(context).pop(true);
           },

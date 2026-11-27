@@ -1,5 +1,10 @@
+import 'dart:async';
+
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../data/repositories/profile_realtime_sync.dart';
+import '../../data/repositories/profile_repository_impl.dart';
 import '../../domain/usecases/profile_usecases.dart';
 import 'profile_event.dart';
 import 'profile_state.dart';
@@ -24,6 +29,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final RateTicketUseCase? rateTicketUseCase;
   final GetQueueHistoryUseCase? getQueueHistoryUseCase;
   final GetPaymentHistoryUseCase? getPaymentHistoryUseCase;
+  StreamSubscription<void>? _syncSub;
 
   ProfileBloc({
     required this.getProfileUseCase,
@@ -55,5 +61,18 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<ProfileActiveTicketChanged>(_onActiveTicketChanged);
     on<ProfileLogoutRequested>(_onLogoutRequested);
     on<ProfileDeleteAccountRequested>(_onDeleteAccountRequested);
+
+    if (getProfileUseCase.repository is ProfileRepositoryImpl &&
+        Firebase.apps.isNotEmpty) {
+      _syncSub = ProfileRealtimeSync.watchChanges().listen((_) {
+        if (!isClosed) add(const ProfileLoadRequested());
+      }, onError: (_) {});
+    }
+  }
+
+  @override
+  Future<void> close() {
+    _syncSub?.cancel();
+    return super.close();
   }
 }

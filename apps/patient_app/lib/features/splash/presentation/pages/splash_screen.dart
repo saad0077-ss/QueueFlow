@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 
+import '../../../../core/services/notification_navigator.dart';
+import '../../../../core/services/notification_service.dart';
 import '../../../../core/widgets/app_icon_badge.dart';
 import '../../../../core/widgets/app_logo.dart';
 import '../../../../main.dart';
@@ -87,11 +89,17 @@ class _SplashScreenViewState extends State<_SplashScreenView>
         if (state is SplashAuthenticated) {
           final currentUser = FirebaseAuth.instance.currentUser;
           if (currentUser != null && !currentUser.emailVerified) {
-            _navigateTo(
-              EmailVerificationScreen(email: currentUser.email ?? ''),
-            );
+            _navigateTo(EmailVerificationScreen(email: currentUser.email ?? ''));
           } else {
-            _navigateTo(const PatientHomeScreen());
+            final pending = NotificationNavigator.consumePendingRoute();
+            final tab = NotificationNavigator.parseTargetTab(pending) ?? 0;
+            _navigateTo(PatientHomeScreen(initialTab: tab));
+            final ticketId = NotificationNavigator.parseSupportTicketId(pending);
+            if (ticketId != null && ticketId.isNotEmpty) {
+              WidgetsBinding.instance.addPostFrameCallback(
+                (_) => NotificationNavigator.navigate(NotificationService.navigatorKey, pending),
+              );
+            }
           }
         } else if (state is SplashUnauthenticated) {
           _navigateTo(const OnboardingScreen());

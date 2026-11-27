@@ -16,6 +16,9 @@ class FavoriteClinicEntity extends Equatable {
   final String topDoctor;
   final String phone;
   final String iconEmoji;
+  final String? imageUrl;
+  final int imageVersion;
+  final String topDoctorPhotoUrl;
 
   const FavoriteClinicEntity({
     required this.id,
@@ -26,13 +29,16 @@ class FavoriteClinicEntity extends Equatable {
     required this.address,
     required this.initials,
     this.accentColorHex = 0xFF2563EB,
-    this.distance = '1.2 km',
-    this.waitingCount = 3,
-    this.estWaitTime = '15 min',
-    this.openHours = 'Open 09:00 AM – 08:00 PM',
-    this.topDoctor = 'Dr. Priya Sharma',
-    this.phone = '+91 98450 11234',
+    this.distance = '',
+    this.waitingCount = 0,
+    this.estWaitTime = '',
+    this.openHours = '',
+    this.topDoctor = '',
+    this.phone = '',
     this.iconEmoji = '🏥',
+    this.imageUrl,
+    this.imageVersion = 0,
+    this.topDoctorPhotoUrl = '',
   });
 
   @override
@@ -52,5 +58,8 @@ class FavoriteClinicEntity extends Equatable {
     topDoctor,
     phone,
     iconEmoji,
+    imageUrl,
+    imageVersion,
+    topDoctorPhotoUrl,
   ];
 }

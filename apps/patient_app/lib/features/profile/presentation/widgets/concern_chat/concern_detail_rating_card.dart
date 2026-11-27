@@ -29,14 +29,19 @@ class ConcernDetailRatingCard extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            'Rate Resolution Quality:',
-            style: GoogleFonts.inter(
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              color: colors.textPrimary,
+          Expanded(
+            child: Text(
+              'Rate Resolution Quality:',
+              style: GoogleFonts.inter(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: colors.textPrimary,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
+          const SizedBox(width: 8),
           Row(
             children: List.generate(5, (idx) {
               final star = idx + 1;

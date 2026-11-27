@@ -14,12 +14,13 @@ class ConcernChatBubble extends StatelessWidget {
     final colors = context.colors;
     final isPatient = msg.isUser || msg.senderRole == 'patient';
 
-    return Align(
-      alignment: isPatient ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.74,
-        ),
+    return LayoutBuilder(
+      builder: (context, constraints) => Align(
+        alignment: isPatient ? Alignment.centerRight : Alignment.centerLeft,
+        child: Container(
+          constraints: BoxConstraints(
+            maxWidth: (constraints.maxWidth * 0.78).clamp(220.0, 520.0),
+          ),
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           color: isPatient ? const Color(0xFF2563EB) : colors.surfaceSecondary,
@@ -69,6 +70,7 @@ class ConcernChatBubble extends StatelessWidget {
           ],
         ),
       ),
+    ),
     );
   }
 }

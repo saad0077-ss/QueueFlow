@@ -5,6 +5,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../../core/services/clinic_rating_aggregator.dart';
+import '../../../notifications/data/services/patient_notifications_service.dart';
 import '../../domain/entities/favorite_clinic_entity.dart';
 import '../../domain/entities/patient_payment_item_entity.dart';
 import '../../domain/entities/patient_profile_entity.dart';
@@ -12,10 +14,13 @@ import '../../domain/entities/patient_queue_history_entity.dart';
 import '../../domain/entities/patient_review_entity.dart';
 import '../../domain/entities/support_ticket_entity.dart';
 import '../../domain/repositories/profile_repository.dart';
-import '../models/favorite_clinic_model.dart';
 import '../models/patient_profile_model.dart';
 import '../models/patient_review_model.dart';
 import '../models/support_ticket_model.dart';
+import 'profile_favorites_query_helper.dart';
+import 'profile_queue_query_helper.dart';
+import 'profile_review_resolvers.dart';
+import 'profile_reviews_query_helper.dart';
 
 class ProfileRepositoryImpl implements ProfileRepository {
   final FirebaseFirestore? _firestore;
@@ -58,11 +63,11 @@ class ProfileRepositoryImpl implements ProfileRepository {
 
   @override
   Future<PatientProfileEntity> getProfile() async {
-    if (_cachedProfile != null) {
+    final user = _auth?.currentUser;
+    if (_firestore == null && _cachedProfile != null) {
       return _cachedProfile!;
     }
 
-    final user = _auth?.currentUser;
     String name = '';
     String email = '';
     String phone = '';
@@ -81,14 +86,39 @@ class ProfileRepositoryImpl implements ProfileRepository {
 
       if (_firestore != null) {
         try {
-          final doc = await _firestore.collection('users').doc(user.uid).get();
+          final results = await Future.wait([
+            _firestore.collection('users').doc(user.uid).get(),
+            ProfileReviewsQueryHelper.countUserAppointments(
+              _firestore,
+              uid: user.uid,
+              email: user.email,
+            ),
+          ]);
+          final doc = results[0] as DocumentSnapshot<Map<String, dynamic>>;
+          final visitsCount = results[1] as int;
           if (doc.exists) {
-            final profile = PatientProfileModel.fromFirestore(doc);
+            final raw = Map<String, dynamic>.from(doc.data() ?? const {});
+            raw['visitsCount'] = visitsCount;
+            final profile = PatientProfileModel.fromJson(raw, docId: doc.id);
             _cachedProfile = profile;
             return profile;
           }
+          final freshDefault = PatientProfileModel.fromJson({
+            ...PatientProfileModel.defaultProfile(
+              id: id,
+              name: name,
+              email: email,
+              phone: phone,
+            ).toJson(),
+            'visitsCount': visitsCount,
+          }, docId: id);
+          _cachedProfile = freshDefault;
+          return freshDefault;
         } catch (e) {
           debugPrint('Error fetching user profile from Firestore: $e');
+          if (_cachedProfile != null && _cachedProfile!.id == user.uid) {
+            return _cachedProfile!;
+          }
         }
       }
     }
@@ -115,7 +145,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
     String? photoBase64,
   }) async {
     final current = await getProfile();
-    final updated = (current as PatientProfileModel).copyWith(
+    final updated = current.copyWith(
       name: name,
       email: email,
       phone: phone,
@@ -218,23 +248,10 @@ class ProfileRepositoryImpl implements ProfileRepository {
     final user = _auth?.currentUser;
     if (user != null && _firestore != null) {
       try {
-        final data = (await _firestore.collection('users').doc(user.uid).get())
-            .data();
-        final favs = data?['favoriteClinics'];
-        if (favs is Map && favs.isNotEmpty) {
-          final list = <FavoriteClinicModel>[];
-          for (final v in favs.values) {
-            if (v is Map) {
-              list.add(
-                FavoriteClinicModel.fromJson(Map<String, dynamic>.from(v)),
-              );
-            }
-          }
-          if (list.isNotEmpty) {
-            list.sort((a, b) => a.name.compareTo(b.name));
-            return list;
-          }
-        }
+        return await ProfileFavoritesQueryHelper.fetchFavorites(
+          _firestore,
+          user.uid,
+        );
       } catch (e) {
         debugPrint('Error loading favorite clinics: $e');
       }
@@ -253,11 +270,13 @@ class ProfileRepositoryImpl implements ProfileRepository {
       if (isFavorite) {
         // Fetch clinic details from Firestore if available
         String clinicName = 'Clinic';
-        String department = 'General Medicine';
-        double rating = 4.8;
+        String department = '';
+        double rating = 0.0;
         int reviewCount = 0;
         String address = '';
-        String initials = 'CF';
+        String initials = '';
+        String? imageUrl;
+        int imageVersion = 0;
         try {
           final clinicDoc = await _firestore
               .collection('clinics')
@@ -272,6 +291,8 @@ class ProfileRepositoryImpl implements ProfileRepository {
                 (cData['reviewCount'] as num?)?.toInt() ?? reviewCount;
             address = cData['address'] ?? address;
             initials = cData['initials'] ?? initials;
+            imageUrl = (cData['imageUrl'] ?? cData['image'])?.toString();
+            imageVersion = (cData['imageVersion'] as num?)?.toInt() ?? 0;
           }
         } catch (_) {}
 
@@ -285,6 +306,8 @@ class ProfileRepositoryImpl implements ProfileRepository {
               'reviewsCount': reviewCount,
               'address': address,
               'initials': initials,
+              if (imageUrl != null && imageUrl.isNotEmpty) 'imageUrl': imageUrl,
+              if (imageVersion > 0) 'imageVersion': imageVersion,
               'savedAt': FieldValue.serverTimestamp(),
             },
           },
@@ -301,37 +324,22 @@ class ProfileRepositoryImpl implements ProfileRepository {
 
   @override
   Future<List<PatientReviewEntity>> getUserReviews() async {
-    if (_cachedReviews != null) {
-      return _cachedReviews!;
-    }
     final user = _auth?.currentUser;
-    if (user != null && _firestore != null) {
+    if (_firestore == null) {
+      return _cachedReviews ?? const [];
+    }
+    if (user != null) {
       try {
-        final snap = await _firestore
-            .collection('reviews')
-            .where('userId', isEqualTo: user.uid)
-            .get();
-        if (snap.docs.isNotEmpty) {
-          _cachedReviews = snap.docs
-              .map(PatientReviewModel.fromFirestore)
-              .toList();
-          return _cachedReviews!;
-        }
-
-        if (user.email != null && user.email!.isNotEmpty) {
-          final snapEmail = await _firestore
-              .collection('reviews')
-              .where('userEmail', isEqualTo: user.email!.trim().toLowerCase())
-              .get();
-          if (snapEmail.docs.isNotEmpty) {
-            _cachedReviews = snapEmail.docs
-                .map(PatientReviewModel.fromFirestore)
-                .toList();
-            return _cachedReviews!;
-          }
-        }
+        final reviews = await ProfileReviewsQueryHelper.fetchUserReviews(
+          _firestore,
+          uid: user.uid,
+          email: user.email,
+        );
+        _cachedReviews = reviews.whereType<PatientReviewModel>().toList();
+        return reviews;
       } catch (e) {
         debugPrint('Error loading user reviews: $e');
+        if (_cachedReviews != null) return _cachedReviews!;
       }
     }
     _cachedReviews = [];
@@ -349,22 +357,36 @@ class ProfileRepositoryImpl implements ProfileRepository {
     required bool isAnonymous,
   }) async {
     final user = _auth?.currentUser;
-    final newReview = PatientReviewModel(
-      id: 'rev-${DateTime.now().millisecondsSinceEpoch}',
-      clinicId: clinicId,
-      clinicName: clinicName,
-      doctorName: doctorName.isEmpty ? 'Attending Specialist' : doctorName,
-      rating: rating,
-      tags: tags,
-      comment: comment,
-      isAnonymous: isAnonymous,
-      date: 'Just now',
-    );
+    final reviewId = 'rev-${DateTime.now().millisecondsSinceEpoch}';
+    final newReview = _firestore != null
+        ? await ProfileReviewsQueryHelper.enrichNewReview(
+            _firestore,
+            id: reviewId,
+            clinicId: clinicId,
+            clinicName: clinicName,
+            doctorName: doctorName,
+            rating: rating,
+            tags: tags,
+            comment: comment,
+            isAnonymous: isAnonymous,
+          )
+        : PatientReviewModel(
+            id: reviewId,
+            clinicId: clinicId,
+            clinicName: clinicName,
+            doctorName: doctorName,
+            rating: rating,
+            tags: tags,
+            comment: comment,
+            isAnonymous: isAnonymous,
+            date: 'Just now',
+          );
+    final resolvedClinicId = newReview.clinicId;
 
     final currentReviews = await getUserReviews();
     _cachedReviews = [
       newReview,
-      ...currentReviews.map((r) => r as PatientReviewModel),
+      ...currentReviews.whereType<PatientReviewModel>(),
     ];
 
     // Update reviews count on cached profile
@@ -408,14 +430,23 @@ class ProfileRepositoryImpl implements ProfileRepository {
         final json = newReview.toJson();
         if (user != null) {
           json['userId'] = user.uid;
+          json['patientId'] = user.uid;
           if (user.email != null) {
-            json['userEmail'] = user.email!.trim().toLowerCase();
+            final emailLower = user.email!.trim().toLowerCase();
+            json['userEmail'] = emailLower;
+            json['patientEmail'] = emailLower;
           }
-          json['userName'] =
-              _cachedProfile?.name ?? user.displayName ?? 'Patient';
+          final pName = _cachedProfile?.name ?? user.displayName ?? 'Patient';
+          json['userName'] = pName;
+          json['patientName'] = pName;
         }
         json['createdAt'] = FieldValue.serverTimestamp();
         await _firestore.collection('reviews').doc(newReview.id).set(json);
+        await ClinicRatingAggregator.syncClinicRating(
+          _firestore,
+          resolvedClinicId,
+          clinicName: clinicName,
+        );
       } catch (e) {
         debugPrint('Firestore review write skipped/failed: $e');
       }
@@ -426,19 +457,21 @@ class ProfileRepositoryImpl implements ProfileRepository {
 
   @override
   Future<void> deleteReview(String reviewId) async {
-    final list = await getUserReviews();
-    _cachedReviews = list
-        .where((r) => r.id != reviewId)
-        .map((r) => r as PatientReviewModel)
-        .toList();
-
+    final targetClinicId = _cachedReviews
+        ?.where((r) => r.id == reviewId)
+        .map((r) => r.clinicId)
+        .firstOrNull;
     if (_firestore != null) {
-      try {
-        await _firestore.collection('reviews').doc(reviewId).delete();
-      } catch (e) {
-        debugPrint('Firestore review delete skipped/failed: $e');
+      await ProfileReviewResolvers.deleteReview(_firestore, reviewId);
+      if (targetClinicId != null && targetClinicId.isNotEmpty) {
+        await ClinicRatingAggregator.syncClinicRating(_firestore, targetClinicId);
       }
     }
+    final list = _cachedReviews ?? await getUserReviews();
+    _cachedReviews = list
+        .where((r) => r.id != reviewId)
+        .whereType<PatientReviewModel>()
+        .toList();
 
     if (_cachedProfile != null) {
       _cachedProfile = PatientProfileModel(
@@ -776,144 +809,33 @@ class ProfileRepositoryImpl implements ProfileRepository {
   @override
   Future<List<PatientQueueHistoryEntity>> getQueueHistory() async {
     final user = _auth?.currentUser;
-    final email = user?.email;
-    final uid = user?.uid;
-
-    if (_firestore != null) {
-      try {
-        Query<Map<String, dynamic>> query = _firestore.collection('tickets');
-        if (email != null && email.isNotEmpty) {
-          query = query.where(
-            'userEmail',
-            isEqualTo: email.trim().toLowerCase(),
-          );
-        } else if (uid != null && uid.isNotEmpty) {
-          query = query.where('userId', isEqualTo: uid);
-        }
-        final snap = await query.get();
-        if (snap.docs.isNotEmpty) {
-          final list = snap.docs.map((d) {
-            final data = d.data();
-            final status = (data['status'] ?? 'waiting').toString();
-            final isActive = status != 'completed' && status != 'cancelled';
-            DateTime? joinedAt;
-            final ts = data['joinedAt'];
-            if (ts is Timestamp) {
-              joinedAt = ts.toDate();
-            } else if (ts is String) {
-              joinedAt = DateTime.tryParse(ts);
-            }
-            return PatientQueueHistoryEntity(
-              id: d.id,
-              token: (data['token'] ?? 'T-001').toString(),
-              clinicId: (data['clinicId'] ?? 'sunrise-health').toString(),
-              clinicName: (data['clinicName'] ?? 'Sunrise Health Clinic')
-                  .toString(),
-              departmentName: (data['departmentName'] ?? 'General Medicine')
-                  .toString(),
-              serviceName: (data['serviceName'] ?? 'General Consultation')
-                  .toString(),
-              doctorName: (data['doctorName'] ?? 'Dr. Priya Sharma').toString(),
-              joinedTime: (data['joinedTime'] ?? '10:00 AM').toString(),
-              date: (data['date'] ?? 'Today').toString(),
-              waitTime: data['waitTime']?.toString(),
-              position: (data['position'] is num)
-                  ? (data['position'] as num).toInt()
-                  : 0,
-              estWaitMin: (data['estWaitMin'] is num)
-                  ? (data['estWaitMin'] as num).toInt()
-                  : 15,
-              status: status,
-              isActive: isActive,
-              joinedAt: joinedAt,
-            );
-          }).toList();
-          list.sort((a, b) {
-            if (a.isActive && !b.isActive) return -1;
-            if (!a.isActive && b.isActive) return 1;
-            if (a.joinedAt != null && b.joinedAt != null) {
-              return b.joinedAt!.compareTo(a.joinedAt!);
-            }
-            return 0;
-          });
-          return list;
-        }
-      } catch (e) {
-        debugPrint('Error fetching queue history from Firestore: $e');
-      }
+    if (_firestore == null || user == null) return const [];
+    try {
+      return await ProfileQueueQueryHelper.fetchQueueHistory(
+        _firestore,
+        uid: user.uid,
+        email: user.email,
+      );
+    } catch (e) {
+      debugPrint('Error fetching queue history from Firestore: $e');
+      return const [];
     }
-
-    return const [];
   }
 
   @override
   Stream<List<PatientQueueHistoryEntity>> watchQueueHistory() {
     final user = _auth?.currentUser;
-    final email = user?.email;
-    final uid = user?.uid;
-
-    if (_firestore != null) {
-      try {
-        Query<Map<String, dynamic>> query = _firestore.collection('tickets');
-        if (email != null && email.isNotEmpty) {
-          query = query.where(
-            'userEmail',
-            isEqualTo: email.trim().toLowerCase(),
-          );
-        } else if (uid != null && uid.isNotEmpty) {
-          query = query.where('userId', isEqualTo: uid);
-        }
-        return query.snapshots().map((snap) {
-          final list = snap.docs.map((d) {
-            final data = d.data();
-            final status = (data['status'] ?? 'waiting').toString();
-            final isActive = status != 'completed' && status != 'cancelled';
-            DateTime? joinedAt;
-            final ts = data['joinedAt'];
-            if (ts is Timestamp) {
-              joinedAt = ts.toDate();
-            }
-            return PatientQueueHistoryEntity(
-              id: d.id,
-              token: (data['token'] ?? 'T-001').toString(),
-              clinicId: (data['clinicId'] ?? 'sunrise-health').toString(),
-              clinicName: (data['clinicName'] ?? 'Sunrise Health Clinic')
-                  .toString(),
-              departmentName: (data['departmentName'] ?? 'General Medicine')
-                  .toString(),
-              serviceName: (data['serviceName'] ?? 'General Consultation')
-                  .toString(),
-              doctorName: (data['doctorName'] ?? 'Dr. Priya Sharma').toString(),
-              joinedTime: (data['joinedTime'] ?? '10:00 AM').toString(),
-              date: (data['date'] ?? 'Today').toString(),
-              waitTime: data['waitTime']?.toString(),
-              position: (data['position'] is num)
-                  ? (data['position'] as num).toInt()
-                  : 0,
-              estWaitMin: (data['estWaitMin'] is num)
-                  ? (data['estWaitMin'] as num).toInt()
-                  : 15,
-              status: status,
-              isActive: isActive,
-              joinedAt: joinedAt,
-            );
-          }).toList();
-          list.sort((a, b) {
-            if (a.isActive && !b.isActive) return -1;
-            if (!a.isActive && b.isActive) return 1;
-            if (a.joinedAt != null && b.joinedAt != null) {
-              return b.joinedAt!.compareTo(a.joinedAt!);
-            }
-            return 0;
-          });
-          return list;
-        });
-      } catch (e) {
-        debugPrint('Error watching queue history: $e');
-      }
+    if (_firestore == null || user == null) return Stream.value(const []);
+    try {
+      return ProfileQueueQueryHelper.watchQueueHistory(
+        _firestore,
+        uid: user.uid,
+        email: user.email,
+      );
+    } catch (e) {
+      debugPrint('Error watching queue history: $e');
+      return Stream.value(const []);
     }
-
-    return Stream.value(const []);
   }
 
   static String _monthName(int month) {
@@ -1168,6 +1090,10 @@ class ProfileRepositoryImpl implements ProfileRepository {
     _cachedProfile = null;
     _cachedReviews = null;
     _cachedTickets = null;
+    try {
+      await PatientNotificationsService.instance.flushPendingSync();
+      PatientNotificationsService.instance.resetSessionCache();
+    } catch (_) {}
     try {
       await _auth?.signOut();
     } catch (e) {

@@ -6,6 +6,20 @@ import '../../features/profile/presentation/pages/help_support/concern_detail_ch
 class NotificationNavigator {
   const NotificationNavigator._();
 
+  static String? _pendingRoute;
+
+  static void setPendingRoute(String? route) {
+    if (route != null && route.trim().isNotEmpty) {
+      _pendingRoute = route.trim();
+    }
+  }
+
+  static String? consumePendingRoute() {
+    final r = _pendingRoute;
+    _pendingRoute = null;
+    return r;
+  }
+
   static int? parseTargetTab(String? route) {
     if (route == null) return null;
     if (route.startsWith('/live_queue')) return 1;
@@ -23,7 +37,10 @@ class NotificationNavigator {
   static void navigate(GlobalKey<NavigatorState> navKey, String? route) {
     if (route == null || route.isEmpty) return;
     final nav = navKey.currentState;
-    if (nav == null) return;
+    if (nav == null) {
+      setPendingRoute(route);
+      return;
+    }
 
     final ticketId = parseSupportTicketId(route);
     if (ticketId != null && ticketId.isNotEmpty) {
@@ -37,14 +54,10 @@ class NotificationNavigator {
 
     final tab = parseTargetTab(route);
     if (tab != null) {
-      _goToTab(nav, tab);
+      nav.pushAndRemoveUntil(
+        MaterialPageRoute(builder: (_) => PatientHomeScreen(initialTab: tab)),
+        (r) => false,
+      );
     }
-  }
-
-  static void _goToTab(NavigatorState nav, int tab) {
-    nav.pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => PatientHomeScreen(initialTab: tab)),
-      (r) => false,
-    );
   }
 }

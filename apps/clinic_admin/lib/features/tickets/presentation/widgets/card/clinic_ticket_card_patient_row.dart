@@ -32,33 +32,8 @@ class ClinicTicketCardPatientRow extends StatelessWidget {
     final countdownStr = ClinicTicketCardStyleHelper.formatSlaCountdown(ticket);
     final isOverdue = countdownStr.contains('Overdue');
 
-    final displaySlaColor = isResolved
-        ? (isDark ? const Color(0xFF10B981) : const Color(0xFF059669))
-        : (isOverdue
-              ? (isDark ? const Color(0xFFEF4444) : const Color(0xFFDC2626))
-              : (isUrgentOrHigh
-                    ? (isDark
-                          ? const Color(0xFFF59E0B)
-                          : const Color(0xFFD97706))
-                    : (isDark
-                          ? const Color(0xFF10B981)
-                          : const Color(0xFF059669))));
-
-    final displaySlaBg = isResolved
-        ? (isDark
-              ? const Color(0xFF064E3B).withValues(alpha: 0.35)
-              : const Color(0xFFD1FAE5))
-        : (isOverdue
-              ? (isDark
-                    ? const Color(0xFF7F1D1D).withValues(alpha: 0.45)
-                    : const Color(0xFFFEE2E2))
-              : (isUrgentOrHigh
-                    ? (isDark
-                          ? const Color(0xFF78350F).withValues(alpha: 0.4)
-                          : const Color(0xFFFEF3C7))
-                    : (isDark
-                          ? const Color(0xFF064E3B).withValues(alpha: 0.35)
-                          : const Color(0xFFD1FAE5))));
+    final (displaySlaColor, displaySlaBg, slaBorder) =
+        _slaBadgeStyle(isResolved, isOverdue, isUrgentOrHigh, isDark);
 
     return Row(
       children: [
@@ -99,44 +74,73 @@ class ClinicTicketCardPatientRow extends StatelessWidget {
             ],
           ),
         ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-          decoration: BoxDecoration(
-            color: displaySlaBg,
-            borderRadius: BorderRadius.circular(4),
-            border: isOverdue
-                ? Border.all(
-                    color:
-                        (isDark
-                                ? const Color(0xFFEF4444)
-                                : const Color(0xFFDC2626))
-                            .withValues(alpha: 0.4),
-                  )
-                : null,
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                isOverdue
-                    ? Icons.warning_amber_rounded
-                    : Icons.schedule_rounded,
-                size: 10,
-                color: displaySlaColor,
-              ),
-              const SizedBox(width: 3),
-              Text(
-                countdownStr,
-                style: GoogleFonts.inter(
-                  fontSize: 9.5,
-                  fontWeight: FontWeight.w700,
+        const SizedBox(width: 8),
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 124),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            decoration: BoxDecoration(
+              color: displaySlaBg,
+              borderRadius: BorderRadius.circular(4),
+              border: slaBorder,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  isOverdue
+                      ? Icons.warning_amber_rounded
+                      : Icons.schedule_rounded,
+                  size: 10,
                   color: displaySlaColor,
                 ),
-              ),
-            ],
+                const SizedBox(width: 3),
+                Flexible(
+                  child: Text(
+                    countdownStr,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.inter(
+                      fontSize: 9.5,
+                      fontWeight: FontWeight.w700,
+                      color: displaySlaColor,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],
+    );
+  }
+
+  (Color, Color, Border?) _slaBadgeStyle(
+    bool isResolved,
+    bool isOverdue,
+    bool isUrgentOrHigh,
+    bool isDark,
+  ) {
+    final overdueFg = isDark ? const Color(0xFFEF4444) : const Color(0xFFDC2626);
+    final border = isOverdue ? Border.all(color: overdueFg.withValues(alpha: 0.4)) : null;
+    if (!isResolved && isOverdue) {
+      return (
+        overdueFg,
+        isDark ? const Color(0xFF7F1D1D).withValues(alpha: 0.45) : const Color(0xFFFEE2E2),
+        border,
+      );
+    }
+    if (!isResolved && isUrgentOrHigh) {
+      return (
+        isDark ? const Color(0xFFF59E0B) : const Color(0xFFD97706),
+        isDark ? const Color(0xFF78350F).withValues(alpha: 0.4) : const Color(0xFFFEF3C7),
+        border,
+      );
+    }
+    return (
+      isDark ? const Color(0xFF10B981) : const Color(0xFF059669),
+      isDark ? const Color(0xFF064E3B).withValues(alpha: 0.35) : const Color(0xFFD1FAE5),
+      border,
     );
   }
 }

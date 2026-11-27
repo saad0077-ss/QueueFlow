@@ -1,0 +1,24 @@
+{
+  "projects": {
+    "default": "queueflow-db2e1"
+  },
+  "targets": {
+    "queueflow-db2e1": {
+      "hosting": {
+        "legal": [
+          "queueflow-db2e1"
+        ],
+        "patient": [
+          "queueflow-patient"
+        ],
+        "clinic": [
+          "queueflow-clinic-9019e"
+        ],
+        "admin": [
+          "queueflow-admin"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

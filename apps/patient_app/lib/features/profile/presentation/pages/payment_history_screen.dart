@@ -7,7 +7,7 @@ import '../../domain/entities/patient_payment_item_entity.dart';
 import '../../domain/repositories/profile_repository.dart';
 import '../widgets/payment_history/payment_history_bloc.dart';
 import '../widgets/payment_history/payment_history_empty_state.dart';
-import '../widgets/payment_history/payment_history_filter_tabs.dart';
+import '../widgets/payment_history/payment_history_filter_dialog.dart';
 import '../widgets/payment_history/payment_history_header.dart';
 import '../widgets/payment_history/payment_history_hero_banner.dart';
 import '../widgets/payment_history/payment_history_list.dart';
@@ -97,18 +97,16 @@ class PaymentHistoryScreen extends StatelessWidget {
                                     const SizedBox(height: 14),
                                     PaymentHistorySearchBar(
                                       query: state.searchQuery,
+                                      hasActiveFilter:
+                                          state.activeFilter != 'all',
                                       onChanged: bloc.setSearchQuery,
                                       onClear: () => bloc.setSearchQuery(''),
-                                    ),
-                                    const SizedBox(height: 12),
-                                    PaymentHistoryFilterTabs(
-                                      activeFilter: state.activeFilter,
-                                      countAll: state.allPayments.length,
-                                      countQueue: state.queuePayments.length,
-                                      countAppt: state.apptPayments.length,
-                                      countRefunded:
-                                          state.refundedPayments.length,
-                                      onFilterSelected: bloc.setFilter,
+                                      onFilterTap: () =>
+                                          PaymentHistoryFilterDialog.showForBloc(
+                                        context,
+                                        bloc,
+                                        state,
+                                      ),
                                     ),
                                     const SizedBox(height: 14),
                                     if (state.isLoading) ...[

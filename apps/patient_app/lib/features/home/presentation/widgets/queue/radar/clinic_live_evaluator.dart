@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../../../../profile/domain/utils/booking_queue_access_evaluator.dart';
 import '../../../../data/repositories/home_repository_impl.dart'
     show isTicketFromToday;
 import '../../../../domain/entities/clinic_entity.dart';
@@ -68,7 +69,7 @@ class ClinicLiveEvaluator {
           if (e.value.toString() == today) e.key.toString().toLowerCase(),
     };
     final clinicPaused =
-        queueDoc?['status'] == 'paused' || queueDoc?['isPaused'] == true;
+        BookingQueueAccessEvaluator.queueUnavailableReason(queueDoc) != null;
     final hadQueues = queues.isNotEmpty;
     queues.removeWhere((key, _) => closedKeys.contains(key));
     final allServicesClosed =

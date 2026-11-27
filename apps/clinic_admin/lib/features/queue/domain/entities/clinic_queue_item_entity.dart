@@ -17,6 +17,7 @@ class ClinicQueueItemEntity extends Equatable {
   status; // 'waiting', 'called', 'completed', 'skipped', 'cancelled'
   final String note;
   final String paymentStatus; // 'paid', 'pending', 'unpaid'
+  final double fee;
 
   const ClinicQueueItemEntity({
     required this.id,
@@ -33,6 +34,7 @@ class ClinicQueueItemEntity extends Equatable {
     this.status = 'waiting',
     this.note = '',
     this.paymentStatus = 'paid',
+    this.fee = 0.0,
   });
 
   bool get isWaiting => status == 'waiting';
@@ -56,6 +58,7 @@ class ClinicQueueItemEntity extends Equatable {
     String? status,
     String? note,
     String? paymentStatus,
+    double? fee,
   }) {
     return ClinicQueueItemEntity(
       id: id ?? this.id,
@@ -72,6 +75,7 @@ class ClinicQueueItemEntity extends Equatable {
       status: status ?? this.status,
       note: note ?? this.note,
       paymentStatus: paymentStatus ?? this.paymentStatus,
+      fee: fee ?? this.fee,
     );
   }
 
@@ -91,5 +95,6 @@ class ClinicQueueItemEntity extends Equatable {
     status,
     note,
     paymentStatus,
+    fee,
   ];
 }

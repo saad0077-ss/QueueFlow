@@ -17,6 +17,7 @@ class ClinicQueueItemModel extends ClinicQueueItemEntity {
     super.status,
     super.note,
     super.paymentStatus,
+    super.fee,
   });
 
   factory ClinicQueueItemModel.fromFirestore(
@@ -65,6 +66,14 @@ class ClinicQueueItemModel extends ClinicQueueItemEntity {
       paymentStatus: (data['paymentStatus'] ?? data['payment'] ?? 'paid')
           .toString()
           .toLowerCase(),
+      fee:
+          ((data['servicePrice'] ??
+                      data['fee'] ??
+                      data['price'] ??
+                      data['amount'])
+                  as num?)
+              ?.toDouble() ??
+          0.0,
     );
   }
 

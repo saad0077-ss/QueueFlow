@@ -1,133 +1,117 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_core/firebase_core.dart';
+
 import '../../domain/entities/clinic_notification_item.dart';
+import 'clinic_notification_mapper.dart';
+import 'clinic_notifications_read_store.dart';
 
 class ClinicNotificationsService {
-  static final ClinicNotificationsService instance =
-      ClinicNotificationsService._();
-  ClinicNotificationsService._();
+  static final ClinicNotificationsService instance = ClinicNotificationsService._();
 
-  static const String _kReadIdsKey = 'clinic_admin_read_notifications';
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  ClinicNotificationsService._({FirebaseFirestore? firestore})
+    : _firestoreOverride = firestore,
+      _readStore = ClinicNotificationsReadStore(firestore: firestore);
 
-  Future<Set<String>> _getReadIds() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      return (prefs.getStringList(_kReadIdsKey) ?? []).toSet();
-    } catch (_) {
-      return {};
+  ClinicNotificationsService.forTesting({FirebaseFirestore? firestore})
+    : _firestoreOverride = firestore,
+      _readStore = ClinicNotificationsReadStore(firestore: firestore);
+
+  final FirebaseFirestore? _firestoreOverride;
+  final ClinicNotificationsReadStore _readStore;
+  final StreamController<void> _localRefresh = StreamController<void>.broadcast();
+  String _lastClinicId = '';
+
+  FirebaseFirestore? get _fs {
+    if (_firestoreOverride != null) return _firestoreOverride;
+    return Firebase.apps.isEmpty ? null : FirebaseFirestore.instance;
+  }
+
+  void _notifyRefresh() {
+    if (!_localRefresh.isClosed) _localRefresh.add(null);
+  }
+
+  Future<void> markAsRead(String id, {String? clinicId}) async {
+    final cid = (clinicId != null && clinicId.isNotEmpty) ? clinicId : _lastClinicId;
+    _readStore.addToMemory(cid, [id]);
+    _notifyRefresh();
+    await _readStore.markRead(cid, [id]);
+    _notifyRefresh();
+  }
+
+  Future<void> markAllAsRead(List<String> ids, {String? clinicId}) async {
+    final cid = (clinicId != null && clinicId.isNotEmpty) ? clinicId : _lastClinicId;
+    _readStore.addToMemory(cid, ids);
+    _notifyRefresh();
+    await _readStore.markRead(cid, ids);
+    _notifyRefresh();
+  }
+
+  Future<Set<String>> loadReadIds(String clinicId, {Map<String, dynamic>? clinicData}) =>
+      _readStore.loadReadIds(clinicId, clinicData: clinicData);
+
+  Future<void> flushPendingSync() => _readStore.flushPending();
+
+  void resetSessionCache() {
+    _readStore.resetSessionCache();
+    _lastClinicId = '';
+  }
+
+  Stream<List<ClinicNotificationItem>> watchNotifications(String clinicId) {
+    final fs = _fs;
+    if (clinicId.isEmpty || fs == null) return Stream.value(const []);
+    _lastClinicId = clinicId;
+
+    late StreamController<List<ClinicNotificationItem>> ctrl;
+    final subs = <StreamSubscription>[];
+    var tkts = <QueryDocumentSnapshot<Map<String, dynamic>>>[];
+    var apts = <QueryDocumentSnapshot<Map<String, dynamic>>>[];
+    var supps = <QueryDocumentSnapshot<Map<String, dynamic>>>[];
+    Map<String, dynamic>? clinicData;
+    var generation = 0;
+
+    Future<void> emit() async {
+      final seq = ++generation;
+      final readIds = await _readStore.loadReadIds(clinicId, clinicData: clinicData);
+      final items = ClinicNotificationMapper.buildList(
+        readIds: readIds, tkts: tkts, apts: apts, supps: supps,
+      );
+      if (!ctrl.isClosed && seq == generation) ctrl.add(items);
     }
-  }
 
-  Future<void> markAsRead(String id) async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final list = (prefs.getStringList(_kReadIdsKey) ?? []).toSet()..add(id);
-      await prefs.setStringList(_kReadIdsKey, list.toList());
-    } catch (_) {}
-  }
-
-  Future<void> markAllAsRead(List<String> ids) async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final list = (prefs.getStringList(_kReadIdsKey) ?? []).toSet()..addAll(ids);
-      await prefs.setStringList(_kReadIdsKey, list.toList());
-    } catch (_) {}
-  }
-
-  Stream<List<ClinicNotificationItem>> watchNotifications(String clinicId) async* {
-    if (clinicId.isEmpty) {
-      yield [];
-      return;
-    }
-
-    final readIds = await _getReadIds();
-
-    final ticketsStream = _firestore
-        .collection('tickets')
-        .where('clinicId', isEqualTo: clinicId)
-        .limit(15)
-        .snapshots();
-
-    await for (final tSnap in ticketsStream) {
-      final appts = await _firestore
-          .collection('appointments')
-          .where('clinicId', isEqualTo: clinicId)
-          .limit(15)
-          .get();
-      final sSnap = await _firestore
-          .collection('support_tickets')
-          .where('clinicId', isEqualTo: clinicId)
-          .limit(15)
-          .get();
-
-      final items = <ClinicNotificationItem>[];
-
-      for (final doc in tSnap.docs) {
-        final d = doc.data();
-        final id = 'ticket_${doc.id}';
-        final token = d['tokenNumber'] ?? d['token'] ?? 'T';
-        final service = d['serviceName'] ?? 'Consultation';
-        final status = (d['status'] ?? 'waiting').toString();
-        items.add(
-          ClinicNotificationItem(
-            id: id,
-            title: 'Token #$token ($status)',
-            body: '${d['customerName'] ?? d['patientName'] ?? 'Walk-in'} joined $service',
-            timestamp: _parseDate(d['createdAt']),
-            type: ClinicNotificationType.queue,
-            routeNav: 'Live Queue',
-            isRead: readIds.contains(id),
-          ),
-        );
-      }
-
-      for (final doc in appts.docs) {
-        final d = doc.data();
-        final id = 'appt_${doc.id}';
-        final name = d['customerName'] ?? d['patientName'] ?? 'Patient';
-        final doctor = d['doctor'] ?? d['doctorName'] ?? 'Doctor';
-        final status = (d['status'] ?? 'Scheduled').toString().toUpperCase();
-        items.add(
-          ClinicNotificationItem(
-            id: id,
-            title: 'Appointment: $name ($status)',
-            body: 'With Dr. $doctor on ${d['date'] ?? 'Today'} at ${d['time'] ?? 'Scheduled'}',
-            timestamp: _parseDate(d['createdAt']),
-            type: ClinicNotificationType.appointment,
-            routeNav: 'Appointments',
-            isRead: readIds.contains(id),
-          ),
-        );
-      }
-
-      for (final doc in sSnap.docs) {
-        final d = doc.data();
-        final id = 'supp_${doc.id}';
-        final subject = d['subject'] ?? 'Patient inquiry';
-        final category = d['category'] ?? 'Support';
-        items.add(
-          ClinicNotificationItem(
-            id: id,
-            title: 'Support Inquiry: $category',
-            body: '${d['patientName'] ?? 'Patient'}: $subject',
-            timestamp: _parseDate(d['createdAt']),
-            type: ClinicNotificationType.support,
-            routeNav: 'Patient Tickets',
-            isRead: readIds.contains(id),
-          ),
-        );
-      }
-
-      items.sort((a, b) => b.timestamp.compareTo(a.timestamp));
-      yield items;
-    }
-  }
-
-  DateTime _parseDate(dynamic val) {
-    if (val is Timestamp) return val.toDate();
-    if (val is String) return DateTime.tryParse(val) ?? DateTime.now();
-    if (val is int) return DateTime.fromMillisecondsSinceEpoch(val);
-    return DateTime.now();
+    ctrl = StreamController.broadcast(
+      onListen: () {
+        void watchCol(String col, void Function(List<QueryDocumentSnapshot<Map<String, dynamic>>>) set) {
+          subs.add(fs.collection(col).where('clinicId', isEqualTo: clinicId).limit(15).snapshots().listen(
+            (s) {
+              set(s.docs);
+              unawaited(emit());
+            },
+            onError: (_) {},
+          ));
+        }
+        watchCol('tickets', (d) => tkts = d);
+        watchCol('appointments', (d) => apts = d);
+        watchCol('support_tickets', (d) => supps = d);
+        subs.add(fs.collection('clinics').doc(clinicId).snapshots().listen((snap) {
+          clinicData = snap.data();
+          final remoteIds = ClinicNotificationsReadStore.extractRemoteIds(clinicData);
+          if (remoteIds.isNotEmpty) {
+            unawaited(_readStore.cacheRemote(clinicId, remoteIds));
+          }
+          unawaited(emit());
+        }, onError: (_) {}));
+        subs.add(_localRefresh.stream.listen((_) => unawaited(emit())));
+        unawaited(emit());
+      },
+      onCancel: () {
+        for (final s in subs) {
+          s.cancel();
+        }
+        subs.clear();
+      },
+    );
+    return ctrl.stream;
   }
 }

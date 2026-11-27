@@ -17,6 +17,9 @@ class PatientQueueHistoryEntity extends Equatable {
   final String status; // 'waiting', 'called', 'completed', 'cancelled'
   final bool isActive;
   final DateTime? joinedAt;
+  final String? clinicImageUrl;
+  final int clinicImageVersion;
+  final String doctorPhotoUrl;
 
   const PatientQueueHistoryEntity({
     required this.id,
@@ -34,6 +37,9 @@ class PatientQueueHistoryEntity extends Equatable {
     this.status = 'waiting',
     this.isActive = false,
     this.joinedAt,
+    this.clinicImageUrl,
+    this.clinicImageVersion = 0,
+    this.doctorPhotoUrl = '',
   });
 
   bool get isCompleted => status.toLowerCase() == 'completed';
@@ -56,6 +62,9 @@ class PatientQueueHistoryEntity extends Equatable {
     String? status,
     bool? isActive,
     DateTime? joinedAt,
+    String? clinicImageUrl,
+    int? clinicImageVersion,
+    String? doctorPhotoUrl,
   }) {
     return PatientQueueHistoryEntity(
       id: id ?? this.id,
@@ -73,6 +82,9 @@ class PatientQueueHistoryEntity extends Equatable {
       status: status ?? this.status,
       isActive: isActive ?? this.isActive,
       joinedAt: joinedAt ?? this.joinedAt,
+      clinicImageUrl: clinicImageUrl ?? this.clinicImageUrl,
+      clinicImageVersion: clinicImageVersion ?? this.clinicImageVersion,
+      doctorPhotoUrl: doctorPhotoUrl ?? this.doctorPhotoUrl,
     );
   }
 
@@ -93,5 +105,8 @@ class PatientQueueHistoryEntity extends Equatable {
     status,
     isActive,
     joinedAt,
+    clinicImageUrl,
+    clinicImageVersion,
+    doctorPhotoUrl,
   ];
 }

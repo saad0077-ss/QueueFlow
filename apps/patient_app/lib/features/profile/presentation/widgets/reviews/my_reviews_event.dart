@@ -7,7 +7,10 @@ abstract class MyReviewsEvent extends Equatable {
 }
 
 class LoadMyReviewsEvent extends MyReviewsEvent {
-  const LoadMyReviewsEvent();
+  final bool silent;
+  const LoadMyReviewsEvent({this.silent = false});
+  @override
+  List<Object?> get props => [silent];
 }
 
 class SetMyReviewsFilterEvent extends MyReviewsEvent {

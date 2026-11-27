@@ -2,7 +2,7 @@ name: patient_app
 description: "A new Flutter project."
 publish_to: 'none'
 
-version: 0.1.0+1
+version: 1.0.0+1
 
 environment:
   sdk: ^3.13.3
@@ -45,7 +45,8 @@ dependencies:
     path: ../../packages/queueflow_ui
   firebase_storage: ^13.6.1
   firebase_messaging: ^16.7.1
-  flutter_local_notifications: ^22.3.3
+  awesome_notifications: ^0.12.1
+  workmanager: ^0.10.10
 
 dev_dependencies:
   flutter_test:

@@ -27,7 +27,7 @@ class ClinicTicketsGrid extends StatelessWidget {
       itemCount: tickets.length,
       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: 440,
-        mainAxisExtent: 154,
+        mainAxisExtent: 204,
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
       ),

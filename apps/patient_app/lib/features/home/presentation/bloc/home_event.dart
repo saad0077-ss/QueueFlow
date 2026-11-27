@@ -89,3 +89,16 @@ class HomeCancelTicketRequested extends HomeEvent {
   @override
   List<Object?> get props => [ticketId];
 }
+
+class HomeUnreadNotificationsUpdated extends HomeEvent {
+  final int count;
+
+  const HomeUnreadNotificationsUpdated(this.count);
+
+  @override
+  List<Object?> get props => [count];
+}
+
+class HomeAuthCleared extends HomeEvent {
+  const HomeAuthCleared();
+}

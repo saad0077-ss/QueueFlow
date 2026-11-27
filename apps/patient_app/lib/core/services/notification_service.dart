@@ -1,147 +1,139 @@
-import 'dart:io' show Platform;
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:async';
+
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+import '../../features/notifications/data/services/patient_notifications_service.dart';
+import '../../features/notifications/domain/entities/patient_notification_entity.dart';
+import '../../firebase_options.dart';
+import 'notification_background_worker.dart';
+import 'notification_controller.dart';
 import 'notification_navigator.dart';
+import 'notification_payload_helper.dart';
+import 'notification_token_sync.dart';
 
 @pragma('vm:entry-point')
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {}
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  try {
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+    }
+  } catch (_) {}
+  if (message.notification == null && !kIsWeb) {
+    await NotificationController.ensureInitialized();
+  }
+  await NotificationPayloadHelper.handleIncomingPush(
+    message,
+    showLocalAlert: message.notification == null && !kIsWeb,
+  );
+}
 
 class NotificationService {
-  static final GlobalKey<NavigatorState> navigatorKey =
-      GlobalKey<NavigatorState>();
+  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   static final FirebaseMessaging _fcm = FirebaseMessaging.instance;
-  static final FlutterLocalNotificationsPlugin _localNotifications =
-      FlutterLocalNotificationsPlugin();
-
-  static const AndroidNotificationChannel _channel = AndroidNotificationChannel(
-    'queueflow_high_importance_channel',
-    'QueueFlow Queue & Appointment Alerts',
-    description:
-        'High-priority notifications for live queue status and doctor consultations.',
-    importance: Importance.max,
-    playSound: true,
-  );
+  static StreamSubscription<List<PatientNotificationEntity>>? _liveSub;
 
   static Future<void> initialize() async {
     try {
-      final settings = await _fcm.requestPermission(
-        alert: true,
-        badge: true,
-        sound: true,
-      );
-
-      if (settings.authorizationStatus == AuthorizationStatus.authorized ||
-          settings.authorizationStatus == AuthorizationStatus.provisional) {
-        await _setupLocalNotifications();
-        _setupMessageListeners();
-        await syncTokenToFirestore();
-
-        _fcm.onTokenRefresh.listen(_saveToken);
-        FirebaseAuth.instance.authStateChanges().listen((u) {
-          if (u != null) syncTokenToFirestore();
-        });
-
-        if (!kIsWeb) {
-          try {
-            await _fcm.subscribeToTopic('broadcast_announcements');
-          } catch (_) {}
+      await NotificationController.ensureInitialized();
+      await NotificationController.registerListeners();
+      final initAction = !kIsWeb
+          ? await AwesomeNotifications().getInitialNotificationAction(removeFromActionEvents: false)
+          : null;
+      if (initAction != null) NotificationNavigator.setPendingRoute(initAction.payload?['route']);
+      await requestPermissions();
+      await NotificationBackgroundWorker.register();
+      FirebaseAuth.instance.authStateChanges().listen((u) {
+        if (u == null) {
+          _liveSub?.cancel();
+          return;
         }
-      }
+        NotificationTokenSync.syncToken(_fcm);
+        _restartBridge();
+      });
+      if (FirebaseAuth.instance.currentUser != null) _restartBridge();
+      await _initFcm();
     } catch (e) {
       debugPrint('NotificationService init error: $e');
     }
   }
 
-  static Future<void> _setupLocalNotifications() async {
+  static Future<void> _initFcm() async {
+    try {
+      FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+      final s = await _fcm.requestPermission(alert: true, badge: true, sound: true);
+      final ok = s.authorizationStatus == AuthorizationStatus.authorized ||
+          s.authorizationStatus == AuthorizationStatus.provisional;
+      if (!ok) return;
+      _setupMessageListeners();
+      await NotificationTokenSync.syncToken(_fcm);
+      _fcm.onTokenRefresh.listen(NotificationTokenSync.saveToken);
+      if (!kIsWeb) await _fcm.subscribeToTopic('broadcast_announcements').catchError((_) {});
+    } catch (e) {
+      debugPrint('FCM setup skipped: $e');
+    }
+  }
+
+  static void _restartBridge() {
     if (kIsWeb) return;
+    _liveSub?.cancel();
+    _liveSub = NotificationPayloadHelper.startBridge();
+  }
 
-    await _localNotifications
-        .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin
-        >()
-        ?.createNotificationChannel(_channel);
+  static Future<bool> areAlertsAllowed() async {
+    if (kIsWeb) return true;
+    try {
+      return await AwesomeNotifications().isNotificationAllowed();
+    } catch (_) {
+      return false;
+    }
+  }
 
-    await _localNotifications.initialize(
-      settings: const InitializationSettings(
-        android: AndroidInitializationSettings('@mipmap/ic_launcher'),
-        iOS: DarwinInitializationSettings(),
-      ),
-      onDidReceiveNotificationResponse: (res) {
-        NotificationNavigator.navigate(navigatorKey, res.payload);
-      },
+  static Future<bool> requestPermissions() async {
+    if (kIsWeb) return true;
+    var allowed = false;
+    try {
+      final ok = await AwesomeNotifications().isNotificationAllowed();
+      allowed = ok ? true : await AwesomeNotifications().requestPermissionToSendNotifications();
+    } catch (_) {}
+    try {
+      await _fcm.requestPermission(alert: true, badge: true, sound: true);
+    } catch (_) {}
+    return allowed;
+  }
+
+  static Future<bool> sendTestAlert() async {
+    final allowed = await requestPermissions();
+    await NotificationController.showStatusBarNotification(
+      id: DateTime.now().millisecondsSinceEpoch % 100000,
+      title: '🔔 Your Turn Soon • Token QF-GC-001',
+      body: 'Sunrise Family Care Center is ready for your consultation. Please proceed to reception.',
+      route: '/live_queue',
+      summary: 'Live Queue Alert',
+      category: NotificationCategory.Reminder,
+      wakeUpScreen: true,
     );
-
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    return allowed;
   }
 
   static void _setupMessageListeners() {
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      final n = message.notification;
-      if (n != null && !kIsWeb) {
-        _localNotifications.show(
-          id: n.hashCode,
-          title: n.title,
-          body: n.body,
-          notificationDetails: NotificationDetails(
-            android: AndroidNotificationDetails(
-              _channel.id,
-              _channel.name,
-              channelDescription: _channel.description,
-              icon: message.notification?.android?.smallIcon ??
-                  '@mipmap/ic_launcher',
-              importance: Importance.max,
-              priority: Priority.high,
-            ),
-            iOS: const DarwinNotificationDetails(
-              presentAlert: true,
-              presentBadge: true,
-              presentSound: true,
-            ),
-          ),
-          payload: message.data['route']?.toString(),
-        );
-      }
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      await NotificationPayloadHelper.handleIncomingPush(
+        message,
+        showLocalAlert: !kIsWeb,
+      );
+      PatientNotificationsService.instance.notifyLocalUpdate();
     });
-
-    FirebaseMessaging.onMessageOpenedApp.listen((msg) {
-      NotificationNavigator.navigate(navigatorKey, msg.data['route']?.toString());
+    FirebaseMessaging.onMessageOpenedApp.listen((m) {
+      NotificationNavigator.navigate(navigatorKey, m.data['route']?.toString());
     });
-
-    _fcm.getInitialMessage().then((msg) {
-      if (msg != null) {
-        NotificationNavigator.navigate(navigatorKey, msg.data['route']?.toString());
-      }
+    _fcm.getInitialMessage().then((m) {
+      if (m != null) NotificationNavigator.setPendingRoute(m.data['route']?.toString());
     });
   }
 
-  static Future<void> syncTokenToFirestore() async {
-    try {
-      if (kIsWeb) return;
-      final token = await _fcm.getToken();
-      if (token != null && token.isNotEmpty) await _saveToken(token);
-    } catch (e) {
-      debugPrint('Error getting FCM token: $e');
-    }
-  }
-
-  static Future<void> _saveToken(String token) async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return;
-
-    try {
-      final platform = kIsWeb ? 'web' : Platform.operatingSystem;
-      await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
-        'fcmToken': token,
-        'platform': platform,
-        'fcmUpdatedAt': FieldValue.serverTimestamp(),
-      }, SetOptions(merge: true));
-    } catch (e) {
-      debugPrint('Error saving FCM token to Firestore: $e');
-    }
-  }
 }

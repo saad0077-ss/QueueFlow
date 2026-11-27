@@ -5,6 +5,7 @@ import '../../../billing/presentation/pages/clinic_billing_view.dart';
 import '../../../doctors/presentation/pages/clinic_doctors_view.dart';
 import '../../../queue/presentation/pages/clinic_live_queue_view.dart';
 import '../../../reports/presentation/pages/clinic_reports_view.dart';
+import '../../../revenue/presentation/pages/clinic_revenue_view.dart';
 import '../../../services/presentation/pages/clinic_services_view.dart';
 import '../../../settings/presentation/pages/clinic_settings_view.dart';
 import '../../../tickets/presentation/pages/clinic_patient_tickets_view.dart';
@@ -49,6 +50,7 @@ class ClinicDashboardNavRouter extends StatelessWidget {
     if (state.activeNav == 'Appointments') return const ClinicAppointmentsView();
     if (state.activeNav == 'Services') return const ClinicServicesView();
     if (state.activeNav == 'Reports') return const ClinicReportsView();
+    if (state.activeNav == 'Revenue') return const ClinicRevenueView();
     if (state.activeNav == 'Plan & Billing') return const ClinicBillingView();
     if (state.activeNav == 'Clinic Settings') return const ClinicSettingsView();
 

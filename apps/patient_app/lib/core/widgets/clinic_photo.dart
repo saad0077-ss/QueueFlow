@@ -73,6 +73,21 @@ class _ClinicPhotoState extends State<ClinicPhoto> {
   Widget _fallback() {
     final url = widget.imageUrl?.trim() ?? '';
     if (url.isEmpty) return widget.placeholder;
+    if (url.startsWith('data:image')) {
+      final comma = url.indexOf(',');
+      if (comma > 0) {
+        try {
+          final bytes = base64Decode(url.substring(comma + 1));
+          return Image.memory(
+            bytes,
+            fit: widget.fit,
+            gaplessPlayback: true,
+            errorBuilder: (_, _, _) => widget.placeholder,
+          );
+        } catch (_) {}
+      }
+      return widget.placeholder;
+    }
     return Image.network(
       url,
       fit: widget.fit,

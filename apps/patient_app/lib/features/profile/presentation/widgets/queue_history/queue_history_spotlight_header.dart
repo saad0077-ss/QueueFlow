@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:patient_app/core/widgets/clinic_profile_avatar.dart';
 
 import '../../../domain/entities/patient_queue_history_entity.dart';
+import 'queue_history_doctor_row.dart';
 
 class QueueHistorySpotlightHeader extends StatelessWidget {
   final PatientQueueHistoryEntity ticket;
@@ -51,27 +53,57 @@ class QueueHistorySpotlightHeader extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: 6),
-              Text(
-                ticket.clinicName,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.white,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  ClinicProfileAvatar(
+                    clinicId: ticket.clinicId,
+                    clinicName: ticket.clinicName,
+                    imageVersion: ticket.clinicImageVersion,
+                    imageUrl: ticket.clinicImageUrl,
+                    size: 40,
+                    borderRadius: 11,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          ticket.clinicName,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          '${ticket.departmentName} · ${ticket.serviceName}',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.white.withValues(alpha: 0.9),
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 2),
-              Text(
-                '${ticket.departmentName} · ${ticket.serviceName}',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.white.withValues(alpha: 0.9),
+              if (ticket.doctorName.trim().isNotEmpty) ...[
+                const SizedBox(height: 8),
+                QueueHistoryDoctorRow(
+                  doctorName: ticket.doctorName,
+                  photoUrl: ticket.doctorPhotoUrl,
+                  textColor: Colors.white.withValues(alpha: 0.92),
+                  borderColor: Colors.white.withValues(alpha: 0.5),
+                  radius: 10,
                 ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
+              ],
             ],
           ),
         ),

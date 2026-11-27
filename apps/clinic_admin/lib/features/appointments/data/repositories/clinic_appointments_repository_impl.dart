@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../../../core/services/current_clinic_resolver.dart';
+import '../../../queue/data/services/appointment_queue_status_sync.dart';
+import '../../../queue/data/services/checked_in_appointment_queue_sync.dart';
 import '../../domain/entities/clinic_appointment_entity.dart';
 import '../../domain/repositories/clinic_appointments_repository.dart';
 
@@ -269,25 +271,41 @@ class ClinicAppointmentsRepositoryImpl implements ClinicAppointmentsRepository {
       '${_s(m['serviceName'] ?? m['service'], 'appointment')} at ${_s(m['clinicName'], 'the clinic')}';
 
   @override
-  Future<void> checkInAppointment(String id) => _update(
-    id,
-    {'status': 'checkedin', 'checkedInAt': FieldValue.serverTimestamp()},
-    notifyTitle: 'Checked In',
-    notifyBody: (m) =>
-        'You have been checked in for ${_what(m)}. Please wait to be called.',
-  );
+  Future<void> checkInAppointment(String id) async {
+    await _update(
+      id,
+      {'status': 'checkedin', 'checkedInAt': FieldValue.serverTimestamp()},
+      notifyTitle: 'Checked In',
+      notifyBody: (m) =>
+          'You have been checked in for ${_what(m)}. Please wait to be called.',
+    );
+    try {
+      await CheckedInAppointmentQueueSync.ensureTicketForAppointment(
+        _firestore,
+        appointmentId: id,
+        clinicNameHint: _clinicDoc?.data()?['name']?.toString(),
+      );
+    } catch (_) {}
+  }
 
   @override
-  Future<void> completeAppointment(String id) => _update(
-    id,
-    {
-      'status': 'completed',
-      'isCompleted': true,
-      'completedAt': FieldValue.serverTimestamp(),
-    },
-    notifyTitle: 'Appointment Completed',
-    notifyBody: (m) => 'Your visit for ${_what(m)} is complete. Thank you!',
-  );
+  Future<void> completeAppointment(String id) async {
+    await _update(
+      id,
+      {
+        'status': 'completed',
+        'isCompleted': true,
+        'completedAt': FieldValue.serverTimestamp(),
+      },
+      notifyTitle: 'Appointment Completed',
+      notifyBody: (m) => 'Your visit for ${_what(m)} is complete. Thank you!',
+    );
+    await AppointmentQueueStatusSync.syncTicketFromAppointment(
+      _firestore,
+      id,
+      status: 'completed',
+    );
+  }
 
   @override
   Future<void> rescheduleAppointment(
@@ -348,6 +366,11 @@ class ClinicAppointmentsRepositoryImpl implements ClinicAppointmentsRepository {
       notifyTitle: 'Appointment Cancelled',
       notifyBody: (m) =>
           'Your ${_what(m)} was cancelled by the clinic.${reason != null ? ' Reason: $reason' : ''}',
+    );
+    await AppointmentQueueStatusSync.syncTicketFromAppointment(
+      _firestore,
+      id,
+      status: 'cancelled',
     );
   }
 

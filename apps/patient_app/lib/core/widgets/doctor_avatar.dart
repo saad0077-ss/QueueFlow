@@ -23,6 +23,20 @@ class DoctorPhotoAvatar extends StatelessWidget {
     this.borderWidth = 2,
   });
 
+  /// Returns 1-2 uppercase initials for a doctor's display name.
+  static String initialsFor(String name) {
+    final parts = name
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((p) => p.isNotEmpty)
+        .toList();
+    if (parts.length >= 2) return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
+    if (parts.isNotEmpty) {
+      return parts[0].substring(0, parts[0].length >= 2 ? 2 : 1).toUpperCase();
+    }
+    return 'DR';
+  }
+
   static Uint8List? _decode(String url) {
     if (!url.startsWith('data:image')) return null;
     final comma = url.indexOf(',');

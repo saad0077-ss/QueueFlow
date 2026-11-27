@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:patient_app/core/widgets/app_snack_bar.dart';
@@ -8,21 +7,12 @@ import '../../../../clinic_details/data/models/clinic_doctor_model.dart';
 import '../../../../clinic_details/data/repositories/clinic_details_repository_impl.dart';
 import '../../../../clinic_details/presentation/widgets/doctor_rate_dialog.dart';
 import '../../../../home/data/models/clinic_model.dart';
-import '../../../../home/data/repositories/home_repository_impl.dart'
-    show allocateClinicToken;
 import '../../../../home/presentation/bloc/home_bloc.dart';
 import '../../../../home/presentation/bloc/home_event.dart';
 import '../../../domain/entities/appointment_entity.dart';
 import '../../pages/booking_wizard_screen.dart';
 
 class MyBookingsActionsHelper {
-  static bool isTodayApt(AppointmentEntity apt) {
-    final now = DateTime.now();
-    final todayIso =
-        '${now.year.toString().padLeft(4, '0')}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
-    return apt.dateRaw == todayIso;
-  }
-
   static Future<void> rateDoctor(
     BuildContext context,
     AppointmentEntity apt,
@@ -104,63 +94,16 @@ class MyBookingsActionsHelper {
     }
   }
 
-  static Future<void> trackLiveQueue(
+  static void openLiveQueueRadar(
     BuildContext context,
-    AppointmentEntity apt,
     VoidCallback? onTrackLiveQueue,
-  ) async {
-    if (!apt.isCheckedIn) {
-      try {
-        await FirebaseFirestore.instance
-            .collection('appointments')
-            .doc(apt.id)
-            .update({
-              'status': 'checkedin',
-              'checkedInAt': FieldValue.serverTimestamp(),
-            });
-      } catch (_) {}
-    }
-    try {
-      final user = FirebaseAuth.instance.currentUser;
-      final fs = FirebaseFirestore.instance;
-      final ticketRef = fs.collection('tickets').doc(apt.id);
-      final existing = await ticketRef.get();
-      if (!existing.exists) {
-        final token = await allocateClinicToken(
-          fs,
-          clinicId: apt.clinicId,
-          clinicName: apt.clinicName,
-          serviceName: apt.serviceName,
-        );
-        await ticketRef.set({
-          'token': token,
-          'clinicId': apt.clinicId,
-          'clinicName': apt.clinicName,
-          'serviceName': apt.serviceName,
-          'doctorName': apt.doctorName,
-          'patientName': apt.customerName,
-          'patientEmail':
-              (apt.customerEmail.isNotEmpty
-                      ? apt.customerEmail
-                      : user?.email ?? '')
-                  .trim()
-                  .toLowerCase(),
-          'position': 0,
-          'estWaitMin': 0,
-          'nowServing': '',
-          'status': 'waiting',
-          'createdAt': FieldValue.serverTimestamp(),
-        });
-      }
-    } catch (_) {}
-
-    if (context.mounted) {
-      if (onTrackLiveQueue != null) {
-        onTrackLiveQueue();
-      } else {
-        context.read<HomeBloc>().add(const HomeRefreshRequested());
-        context.read<HomeBloc>().add(const HomeNavTabChanged(1));
-      }
+  ) {
+    if (!context.mounted) return;
+    if (onTrackLiveQueue != null) {
+      onTrackLiveQueue();
+    } else {
+      context.read<HomeBloc>().add(const HomeRefreshRequested());
+      context.read<HomeBloc>().add(const HomeNavTabChanged(1));
     }
   }
 }

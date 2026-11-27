@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../notifications/data/services/patient_notifications_service.dart';
 import '../../domain/entities/clinic_entity.dart';
 import '../../domain/usecases/cancel_ticket_usecase.dart';
 import '../../domain/usecases/get_active_ticket_usecase.dart';
@@ -18,6 +20,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final CancelTicketUseCase cancelTicketUseCase;
   final FirebaseAuth _firebaseAuth;
   StreamSubscription<List<ClinicEntity>>? _clinicsSubscription;
+  StreamSubscription<int>? _unreadSubscription;
+  StreamSubscription<User?>? _authSubscription;
+  String? _lastAuthUid;
 
   HomeBloc({
     required this.getFeaturedClinicsUseCase,
@@ -27,6 +32,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     FirebaseAuth? firebaseAuth,
   }) : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
        super(_initialState(firebaseAuth ?? FirebaseAuth.instance)) {
+    _lastAuthUid = _firebaseAuth.currentUser?.uid;
     on<HomeInitialDataRequested>(_onInitialDataRequested);
     on<HomeClinicsUpdated>(_onClinicsUpdated);
     on<HomeRefreshRequested>(_onRefreshRequested);
@@ -36,6 +42,41 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<HomeJoinQueueRequested>(_onJoinQueueRequested);
     on<HomeCancelTicketRequested>(_onCancelTicketRequested);
     on<HomeActiveTicketEnded>(_onActiveTicketEnded);
+    on<HomeUnreadNotificationsUpdated>((e, emit) {
+      emit(state.copyWith(unreadNotificationsCount: e.count));
+    });
+    on<HomeAuthCleared>(_onAuthCleared);
+
+    if (Firebase.apps.isNotEmpty) {
+      _authSubscription = _firebaseAuth.authStateChanges().listen((user) {
+        final nextUid = user?.uid;
+        if (nextUid == _lastAuthUid) return;
+        _lastAuthUid = nextUid;
+        if (!isClosed) {
+          add(
+            nextUid == null
+                ? const HomeAuthCleared()
+                : const HomeInitialDataRequested(),
+          );
+        }
+      });
+    }
+  }
+
+  Future<void> _onAuthCleared(
+    HomeAuthCleared event,
+    Emitter<HomeState> emit,
+  ) async {
+    await _unreadSubscription?.cancel();
+    _unreadSubscription = null;
+    emit(
+      state.copyWith(
+        clearActiveTicket: true,
+        unreadNotificationsCount: 0,
+        userName: '',
+        userInitials: '',
+      ),
+    );
   }
 
   void _onActiveTicketEnded(
@@ -95,6 +136,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     _clinicsSubscription = getFeaturedClinicsUseCase.watch().listen((clinics) {
       add(HomeClinicsUpdated(clinics));
     });
+    if (Firebase.apps.isNotEmpty) {
+      await _unreadSubscription?.cancel();
+      _unreadSubscription = PatientNotificationsService.instance
+          .watchUnreadCount()
+          .listen((count) {
+            if (!isClosed) add(HomeUnreadNotificationsUpdated(count));
+          }, onError: (_) {});
+    }
 
     final clinics = await getFeaturedClinicsUseCase();
     final activeTicket = await getActiveTicketUseCase();
@@ -262,6 +311,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   @override
   Future<void> close() {
     _clinicsSubscription?.cancel();
+    _unreadSubscription?.cancel();
+    _authSubscription?.cancel();
     return super.close();
   }
 }

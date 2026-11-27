@@ -5,6 +5,7 @@ import '../../../../core/services/user_location_service.dart';
 import '../../../booking/presentation/widgets/my_bookings_tab_view.dart';
 import '../../../profile/presentation/bloc/profile_bloc.dart';
 import '../../../profile/presentation/bloc/profile_bloc_factory.dart';
+import '../../../profile/presentation/bloc/profile_event.dart';
 import '../../../profile/presentation/widgets/profile_tab_view.dart';
 import '../../data/repositories/home_repository_impl.dart';
 import '../../domain/repositories/home_repository.dart';
@@ -68,22 +69,55 @@ class PatientHomeScreen extends StatelessWidget {
   }
 }
 
-class _PatientHomeView extends StatelessWidget {
+class _PatientHomeView extends StatefulWidget {
   const _PatientHomeView();
 
   @override
+  State<_PatientHomeView> createState() => _PatientHomeViewState();
+}
+
+class _PatientHomeViewState extends State<_PatientHomeView> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<ProfileBloc>().add(const ProfileLoadRequested());
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HomeBloc, HomeState>(
+    return BlocConsumer<HomeBloc, HomeState>(
+      listenWhen: (prev, curr) =>
+          prev.currentTabIndex != curr.currentTabIndex &&
+          curr.currentTabIndex == 3,
+      listener: (context, _) {
+        context.read<ProfileBloc>().add(const ProfileLoadRequested());
+      },
       builder: (context, state) {
         final bloc = context.read<HomeBloc>();
+        void goToBookings() => bloc.add(const HomeNavTabChanged(2));
+        void goToLiveQueue() {
+          bloc.add(const HomeRefreshRequested());
+          bloc.add(const HomeNavTabChanged(1));
+        }
+
         return PatientResponsiveHomeShell(
           state: state,
           bloc: bloc,
-          tabs: const [
-            HomeTabView(),
-            LiveQueueTabView(),
-            MyBookingsTabView(),
-            ProfileTabView(),
+          tabs: [
+            const HomeTabView(),
+            const LiveQueueTabView(),
+            MyBookingsTabView(
+              onExploreClinics: () => bloc.add(const HomeNavTabChanged(0)),
+              onTrackLiveQueue: goToLiveQueue,
+            ),
+            ProfileTabView(
+              onVisitsTap: goToBookings,
+              onTrackLiveQueue: goToLiveQueue,
+            ),
           ],
         );
       },

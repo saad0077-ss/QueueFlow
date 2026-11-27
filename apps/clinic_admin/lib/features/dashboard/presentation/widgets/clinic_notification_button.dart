@@ -1,7 +1,11 @@
-﻿import 'package:flutter/material.dart';
+﻿import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:queueflow_ui/queueflow_ui.dart';
 import '../../../../core/services/clinic_session_manager.dart';
+import '../../../../core/services/current_clinic_resolver.dart';
 import '../../../notifications/data/services/clinic_notifications_service.dart';
 import '../../../notifications/domain/entities/clinic_notification_item.dart';
 import '../../../notifications/presentation/widgets/clinic_notification_dialog.dart';
@@ -29,11 +33,23 @@ class _ClinicNotificationButtonState extends State<ClinicNotificationButton> {
     super.initState();
     _activeClinicId = widget.clinicId ?? '';
     if (_activeClinicId.isEmpty) {
-      ClinicSessionManager.getSavedClinicId().then((id) {
-        if (mounted && id != null && id.isNotEmpty) {
-          setState(() => _activeClinicId = id);
-        }
-      });
+      _resolveClinicId();
+    }
+  }
+
+  Future<void> _resolveClinicId() async {
+    var id = await ClinicSessionManager.getSavedClinicId();
+    if ((id == null || id.isEmpty) && Firebase.apps.isNotEmpty) {
+      try {
+        final doc = await CurrentClinicResolver.resolve(
+          auth: FirebaseAuth.instance,
+          firestore: FirebaseFirestore.instance,
+        );
+        id = doc?.id;
+      } catch (_) {}
+    }
+    if (mounted && id != null && id.isNotEmpty) {
+      setState(() => _activeClinicId = id!);
     }
   }
 
@@ -41,7 +57,9 @@ class _ClinicNotificationButtonState extends State<ClinicNotificationButton> {
   void didUpdateWidget(covariant ClinicNotificationButton oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.clinicId != null && widget.clinicId != _activeClinicId) {
-      _activeClinicId = widget.clinicId!;
+      setState(() => _activeClinicId = widget.clinicId!);
+    } else if (_activeClinicId.isEmpty) {
+      _resolveClinicId();
     }
   }
 
@@ -85,6 +103,7 @@ class _ClinicNotificationButtonState extends State<ClinicNotificationButton> {
                 ClinicNotificationDialog.show(
                   context,
                   notifications: notifications,
+                  clinicId: _activeClinicId,
                   onNavigate: widget.onNavigate,
                 );
               },
